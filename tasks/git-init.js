@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_tags_1 = require("common-tags");
-const Promise = require('../ember-cli/lib/ext/promise');
-const exec = Promise.denodeify(require('child_process').exec);
+const denodeify = require("denodeify");
+const exec = denodeify(require('child_process').exec);
 const path = require('path');
 const pkg = require('../package.json');
 const fs = require('fs');
@@ -65,4 +65,4 @@ module.exports = Task.extend({
     }
 });
 module.exports.overrideCore = true;
-//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11752-29458-1s41dfr.bcn9bv5cdi/angular-cli/tasks/git-init.js.map
+//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11756-34955-heb2o6.8aqm9xjemi/angular-cli/tasks/git-init.js.map

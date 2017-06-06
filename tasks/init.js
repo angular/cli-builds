@@ -88,10 +88,14 @@ exports.default = Task.extend({
                 return linkCli.run();
             }
         })
-            .then(check_package_manager_1.checkYarnOrCNPM)
+            .then(() => {
+            if (!commandOptions.skipInstall || commandOptions.linkCli) {
+                return check_package_manager_1.checkYarnOrCNPM();
+            }
+        })
             .then(() => {
             this.ui.writeLine(chalk.green(`Project '${packageName}' successfully created.`));
         });
     }
 });
-//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11752-29458-1s41dfr.bcn9bv5cdi/angular-cli/tasks/init.js.map
+//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11756-34955-heb2o6.8aqm9xjemi/angular-cli/tasks/init.js.map

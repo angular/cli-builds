@@ -49,7 +49,7 @@ function _createAotPlugin(wco, options) {
         const sourcePath = appConfig.environmentSource;
         const envFile = appConfig.environments[buildOptions.environment];
         hostReplacementPaths = {
-            [path.join(appRoot, sourcePath)]: path.join(appRoot, envFile)
+            [path.resolve(appRoot, sourcePath)]: path.resolve(appRoot, envFile)
         };
     }
     return new webpack_1.AotPlugin(Object.assign({}, {
@@ -102,4 +102,4 @@ exports.getNonAotTestConfig = function (wco) {
         plugins: [_createAotPlugin(wco, pluginOptions)]
     };
 };
-//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11752-29458-1s41dfr.bcn9bv5cdi/angular-cli/models/webpack-configs/typescript.js.map
+//# sourceMappingURL=/private/var/folders/lp/5h0nls311ws4fn75nn7kzz600037zs/t/angular-cli-builds11756-34955-heb2o6.8aqm9xjemi/angular-cli/models/webpack-configs/typescript.js.map
