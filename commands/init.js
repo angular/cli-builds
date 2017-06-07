@@ -35,4 +35,4 @@ const InitCommand = Command.extend({
 });
 InitCommand.overrideCore = true;
 exports.default = InitCommand;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/init.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/init.js.map

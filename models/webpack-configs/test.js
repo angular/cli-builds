@@ -60,4 +60,4 @@ function getTestConfig(testConfig) {
     };
 }
 exports.getTestConfig = getTestConfig;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/test.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/test.js.map

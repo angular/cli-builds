@@ -149,4 +149,4 @@ class Version {
     }
 }
 exports.Version = Version;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/upgrade/version.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/upgrade/version.js.map

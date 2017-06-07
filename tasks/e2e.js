@@ -73,4 +73,4 @@ exports.E2eTask = Task.extend({
         });
     }
 });
-//# sourceMappingURL=/users/hansl/sources/angular-cli/tasks/e2e.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/tasks/e2e.js.map

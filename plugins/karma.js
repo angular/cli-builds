@@ -206,4 +206,4 @@ module.exports = Object.assign({
     'preprocessor:@angular/cli': ['factory', preprocessor],
     'middleware:angularCliBlocker': ['factory', requestBlocker]
 });
-//# sourceMappingURL=/users/hansl/sources/angular-cli/plugins/karma.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/plugins/karma.js.map

@@ -65,4 +65,4 @@ module.exports = Task.extend({
     }
 });
 module.exports.overrideCore = true;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/tasks/git-init.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/tasks/git-init.js.map

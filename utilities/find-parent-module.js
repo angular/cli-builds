@@ -30,4 +30,4 @@ function findParentModule(projectRoot, appRoot, currentDir) {
     throw new SilentError('No module files found');
 }
 exports.default = findParentModule;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/find-parent-module.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/utilities/find-parent-module.js.map

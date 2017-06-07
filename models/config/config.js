@@ -88,4 +88,4 @@ class CliConfig {
     }
 }
 exports.CliConfig = CliConfig;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/config/config.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/config/config.js.map

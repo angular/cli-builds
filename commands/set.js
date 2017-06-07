@@ -108,4 +108,4 @@ function parseValue(rawValue, path) {
     }
 }
 exports.default = SetCommand;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/set.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/set.js.map

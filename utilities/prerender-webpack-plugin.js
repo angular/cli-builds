@@ -45,4 +45,4 @@ class PrerenderWebpackPlugin {
     }
 }
 exports.PrerenderWebpackPlugin = PrerenderWebpackPlugin;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/prerender-webpack-plugin.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/utilities/prerender-webpack-plugin.js.map

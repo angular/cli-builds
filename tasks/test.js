@@ -36,4 +36,4 @@ exports.default = Task.extend({
         });
     }
 });
-//# sourceMappingURL=/users/hansl/sources/angular-cli/tasks/test.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/tasks/test.js.map

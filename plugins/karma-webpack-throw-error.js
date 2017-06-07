@@ -13,4 +13,4 @@ class KarmaWebpackThrowError {
     }
 }
 exports.KarmaWebpackThrowError = KarmaWebpackThrowError;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/plugins/karma-webpack-throw-error.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/plugins/karma-webpack-throw-error.js.map

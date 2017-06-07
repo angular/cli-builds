@@ -6,4 +6,4 @@ exports.getDevConfig = function (_wco) {
         plugins: [new webpack_1.NamedModulesPlugin()]
     };
 };
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/development.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/development.js.map

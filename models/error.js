@@ -12,4 +12,4 @@ class NgToolkitError extends Error {
     }
 }
 exports.NgToolkitError = NgToolkitError;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/error.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/error.js.map

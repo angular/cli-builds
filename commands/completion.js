@@ -173,4 +173,4 @@ const CompletionCommand = Command.extend({
     }
 });
 exports.default = CompletionCommand;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/completion.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/completion.js.map

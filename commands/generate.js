@@ -116,4 +116,4 @@ exports.default = Command.extend({
         });
     }
 });
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/generate.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/generate.js.map

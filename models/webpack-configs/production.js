@@ -89,4 +89,4 @@ exports.getProdConfig = function (wco) {
         ].concat(extraPlugins)
     };
 };
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/production.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/production.js.map

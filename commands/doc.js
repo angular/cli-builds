@@ -28,4 +28,4 @@ const DocCommand = Command.extend({
     }
 });
 exports.default = DocCommand;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/doc.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/doc.js.map

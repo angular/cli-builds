@@ -54,4 +54,4 @@ function getBrowserConfig(wco) {
     };
 }
 exports.getBrowserConfig = getBrowserConfig;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/browser.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/browser.js.map

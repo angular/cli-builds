@@ -89,4 +89,4 @@ const VersionCommand = Command.extend({
 });
 VersionCommand.overrideCore = true;
 exports.default = VersionCommand;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/version.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/version.js.map

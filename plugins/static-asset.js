@@ -16,4 +16,4 @@ class StaticAssetPlugin {
     }
 }
 exports.StaticAssetPlugin = StaticAssetPlugin;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/plugins/static-asset.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/plugins/static-asset.js.map

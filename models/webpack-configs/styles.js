@@ -192,4 +192,4 @@ function getStylesConfig(wco) {
     };
 }
 exports.getStylesConfig = getStylesConfig;
-//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/styles.js.map
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/styles.js.map
