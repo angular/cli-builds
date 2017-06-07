@@ -42,4 +42,4 @@ function buildFullPath(project, relativeModulePath, appConfig, projectRoot) {
     const fullModulePath = path.join(projectRoot, parsedPath.dir, parsedPath.base);
     return fullModulePath;
 }
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/utilities/resolve-module-file.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/resolve-module-file.js.map

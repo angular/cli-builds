@@ -103,4 +103,4 @@ const TestCommand = Command.extend({
 });
 TestCommand.overrideCore = true;
 exports.default = TestCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/test.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/test.js.map

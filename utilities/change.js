@@ -6,4 +6,4 @@ exports.MultiChange = ast_tools_1.MultiChange;
 exports.InsertChange = ast_tools_1.InsertChange;
 exports.RemoveChange = ast_tools_1.RemoveChange;
 exports.ReplaceChange = ast_tools_1.ReplaceChange;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/utilities/change.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/change.js.map

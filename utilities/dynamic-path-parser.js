@@ -56,4 +56,4 @@ function dynamicPathParser(options) {
     return Object.assign({}, parsedPath, { appRoot, sourceDir });
 }
 exports.dynamicPathParser = dynamicPathParser;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/utilities/dynamic-path-parser.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/dynamic-path-parser.js.map

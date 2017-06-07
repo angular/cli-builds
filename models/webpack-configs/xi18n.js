@@ -20,4 +20,4 @@ exports.getWebpackExtractI18nConfig = function (projectRoot, appConfig, genDir, 
         ]
     };
 };
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/models/webpack-configs/xi18n.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/models/webpack-configs/xi18n.js.map

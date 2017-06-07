@@ -36,4 +36,4 @@ function packageChunkSort(appConfig) {
     return sort;
 }
 exports.packageChunkSort = packageChunkSort;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/utilities/package-chunk-sort.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/package-chunk-sort.js.map

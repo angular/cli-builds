@@ -27,4 +27,4 @@ const MakeThisAwesomeCommand = Command.extend({
     }
 });
 exports.default = MakeThisAwesomeCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/easter-egg.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/easter-egg.js.map

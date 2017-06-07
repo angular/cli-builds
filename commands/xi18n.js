@@ -61,4 +61,4 @@ const Xi18nCommand = Command.extend({
     }
 });
 exports.default = Xi18nCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/xi18n.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/xi18n.js.map

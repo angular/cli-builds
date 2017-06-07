@@ -169,4 +169,4 @@ const NewCommand = Command.extend({
 });
 NewCommand.overrideCore = true;
 exports.default = NewCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/new.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/new.js.map

@@ -13,4 +13,4 @@ exports.addDeclarationToModule = ast_tools_1.addDeclarationToModule;
 exports.addProviderToModule = ast_tools_1.addProviderToModule;
 exports.addImportToModule = ast_tools_1.addImportToModule;
 exports.addExportToModule = ast_tools_1.addExportToModule;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/utilities/ast-utils.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/utilities/ast-utils.js.map

@@ -37,4 +37,4 @@ const GetCommand = Command.extend({
     }
 });
 exports.default = GetCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/get.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/get.js.map

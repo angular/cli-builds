@@ -31,4 +31,4 @@ const EjectCommand = Command.extend({
     }
 });
 exports.default = EjectCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/eject.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/eject.js.map

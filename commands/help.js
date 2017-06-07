@@ -59,4 +59,4 @@ const HelpCommand = Command.extend({
 });
 HelpCommand.overrideCore = true;
 exports.default = HelpCommand;
-//# sourceMappingURL=/tmp/angular-cli-builds11756-6272-uix5qo.mmnh77gb9/angular-cli/commands/help.js.map
+//# sourceMappingURL=/users/hansl/sources/angular-cli/commands/help.js.map
