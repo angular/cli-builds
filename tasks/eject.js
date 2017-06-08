@@ -358,7 +358,7 @@ exports.default = Task.extend({
         const tsConfigPath = path.join(process.cwd(), appConfig.root, appConfig.tsconfig);
         const outputPath = runTaskOptions.outputPath || appConfig.outDir;
         const force = runTaskOptions.force;
-        if (project.root === path.resolve(outputPath)) {
+        if (project.root === outputPath) {
             throw new SilentError('Output path MUST not be project root directory!');
         }
         const webpackConfig = new webpack_config_1.NgCliWebpackConfig(runTaskOptions, appConfig).buildConfig();

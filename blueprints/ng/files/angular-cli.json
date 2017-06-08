@@ -51,30 +51,7 @@
     }
   },
   "defaults": {
-    "styleExt": "<%= styleExt %>",<% if (!minimal) { %>
-    "component": {}<% } else { %>
-    "component": {
-      "spec": false,
-      "inlineStyle": true,
-      "inlineTemplate": true
-    },
-    "directive": {
-      "spec": false
-    },
-    "class": {
-      "spec": false
-    },
-    "guard": {
-      "spec": false
-    },
-    "module": {
-      "spec": false
-    },
-    "pipe": {
-      "spec": false
-    },
-    "service": {
-      "spec": false
-    } <% } %>
+    "styleExt": "<%= styleExt %>",
+    "component": {}
   }
 }

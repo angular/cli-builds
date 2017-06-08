@@ -41,12 +41,7 @@ function getBrowserConfig(wco) {
                 filename: path.resolve(buildOptions.outputPath, appConfig.index),
                 chunksSortMode: package_chunk_sort_1.packageChunkSort(appConfig),
                 excludeChunks: lazyChunks,
-                xhtml: true,
-                minify: buildOptions.target === 'production' ? {
-                    caseSensitive: true,
-                    collapseWhitespace: true,
-                    keepClosingSlash: true
-                } : false
+                xhtml: true
             }),
             new base_href_webpack_1.BaseHrefWebpackPlugin({
                 baseHref: buildOptions.baseHref

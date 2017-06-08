@@ -113,12 +113,6 @@ const NewCommand = Command.extend({
             default: false,
             aliases: ['it'],
             description: 'Should have an inline template.'
-        },
-        {
-            name: 'minimal',
-            type: Boolean,
-            default: false,
-            description: 'Should create a minimal app.'
         }
     ],
     isProject: function (projectPath) {
