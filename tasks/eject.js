@@ -138,6 +138,9 @@ class JsonWebpackSerializer {
                 case webpack.optimize.UglifyJsPlugin:
                     this._addImport('webpack.optimize', 'UglifyJsPlugin');
                     break;
+                case webpack.optimize.ModuleConcatenationPlugin:
+                    this._addImport('webpack.optimize', 'ModuleConcatenationPlugin');
+                    break;
                 case angularCliPlugins.BaseHrefWebpackPlugin:
                 case angularCliPlugins.GlobCopyWebpackPlugin:
                 case angularCliPlugins.SuppressExtractedTextChunksWebpackPlugin:
@@ -362,6 +365,8 @@ exports.default = Task.extend({
             throw new SilentError('Output path MUST not be project root directory!');
         }
         const webpackConfig = new webpack_config_1.NgCliWebpackConfig(runTaskOptions, appConfig).buildConfig();
+        // Without node['global'] = true, webpack-dev-server will break at runtime due to sockjs.
+        webpackConfig.node['global'] = true;
         const serializer = new JsonWebpackSerializer(process.cwd(), outputPath, appConfig.root);
         const output = serializer.serialize(webpackConfig);
         const webpackConfigStr = `${serializer.generateVariables()}\n\nmodule.exports = ${output};\n`;
