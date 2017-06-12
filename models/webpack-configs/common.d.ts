@@ -10,6 +10,7 @@ import { WebpackConfigOptions } from '../webpack-config';
  * require('json-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('ngo-loader')
  */
 export declare function getCommonConfig(wco: WebpackConfigOptions): {
     devtool: string | boolean;

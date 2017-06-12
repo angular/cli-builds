@@ -52,11 +52,6 @@ function getBrowserConfig(wco) {
                 baseHref: buildOptions.baseHref
             }),
             new webpack.optimize.CommonsChunkPlugin({
-                async: 'common',
-                children: true,
-                minChunks: 2
-            }),
-            new webpack.optimize.CommonsChunkPlugin({
                 minChunks: Infinity,
                 name: 'inline'
             })

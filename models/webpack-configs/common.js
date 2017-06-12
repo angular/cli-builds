@@ -15,6 +15,7 @@ const ProgressPlugin = require('webpack/lib/ProgressPlugin');
  * require('json-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('ngo-loader')
  */
 function getCommonConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
@@ -49,6 +50,15 @@ function getCommonConfig(wco) {
     }
     if (buildOptions.progress) {
         extraPlugins.push(new ProgressPlugin({ profile: buildOptions.verbose, colors: true }));
+    }
+    if (buildOptions.ngo) {
+        extraRules.push({
+            test: /\.js$/,
+            use: [{
+                    loader: 'ngo-loader',
+                    options: { sourceMap: buildOptions.sourcemaps }
+                }]
+        });
     }
     return {
         devtool: buildOptions.sourcemaps ? 'source-map' : false,
