@@ -41,7 +41,6 @@ exports.baseBuildCommandOptions = [
     {
         name: 'vendor-chunk',
         type: Boolean,
-        default: true,
         aliases: ['vc'],
         description: 'Use a separate bundle containing only vendor libraries.'
     },
@@ -136,6 +135,12 @@ exports.baseBuildCommandOptions = [
         type: Boolean,
         default: true,
         description: 'Extract all licenses in a separate file, in the case of production builds only.'
+    },
+    {
+        name: 'ngo',
+        type: Boolean,
+        default: false,
+        description: 'Enables NGO optimizations when using `--aot`.'
     }
 ];
 const BuildCommand = Command.extend({

@@ -84,10 +84,16 @@ exports.default = Task.extend({
           `);
                 }
             }
+            // Live reload an additional entry point.
             if (!webpackConfig.entry.main) {
                 webpackConfig.entry.main = [];
             }
             webpackConfig.entry.main.unshift(...entryPoints);
+            // Live reload required the node `global` to be set to true.
+            if (!webpackConfig.node) {
+                webpackConfig.node = {};
+            }
+            webpackConfig.node.global = true;
         }
         else if (serveTaskOptions.hmr) {
             ui.writeLine(chalk.yellow('Live reload is disabled. HMR option ignored.'));
