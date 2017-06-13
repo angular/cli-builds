@@ -7,6 +7,7 @@ const semver = require("semver");
 const common_tags_1 = require("common-tags");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
+const PurifyPlugin = require('ngo-loader').PurifyPlugin;
 const licensePlugin = require('license-webpack-plugin');
 exports.getProdConfig = function (wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
@@ -73,20 +74,25 @@ exports.getProdConfig = function (wco) {
             suppressErrors: true
         }));
     }
+    if (buildOptions.ngo) {
+        // This plugin must be before webpack.optimize.UglifyJsPlugin.
+        extraPlugins.push(new PurifyPlugin());
+    }
     return {
         entry: entryPoints,
-        plugins: [
+        plugins: extraPlugins.concat([
             new webpack.EnvironmentPlugin({
                 'NODE_ENV': 'production'
             }),
             new webpack.HashedModuleIdsPlugin(),
+            new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.optimize.UglifyJsPlugin({
                 mangle: { screw_ie8: true },
-                compress: { screw_ie8: true, warnings: buildOptions.verbose },
+                compress: { screw_ie8: true, warnings: buildOptions.verbose, pure_getters: true },
                 sourceMap: buildOptions.sourcemaps,
                 comments: false
             })
-        ].concat(extraPlugins)
+        ])
     };
 };
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/production.js.map

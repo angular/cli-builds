@@ -136,6 +136,12 @@ exports.baseBuildCommandOptions = [
         type: Boolean,
         default: true,
         description: 'Extract all licenses in a separate file, in the case of production builds only.'
+    },
+    {
+        name: 'ngo',
+        type: Boolean,
+        default: false,
+        description: 'Enables NGO optimizations when using `--aot`.'
     }
 ];
 const BuildCommand = Command.extend({

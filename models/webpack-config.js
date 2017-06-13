@@ -44,6 +44,9 @@ class NgCliWebpackConfig {
         if (buildOptions.target !== 'development' && buildOptions.target !== 'production') {
             throw new Error("Invalid build target. Only 'development' and 'production' are available.");
         }
+        if (buildOptions.ngo && !(buildOptions.aot || buildOptions.target === 'production')) {
+            throw new Error('The `--ngo` option cannot be used without `--aot` (or `--prod`).');
+        }
     }
     // Fill in defaults for build targets
     addTargetDefaults(buildOptions) {
@@ -59,7 +62,8 @@ class NgCliWebpackConfig {
                 outputHashing: 'all',
                 sourcemaps: false,
                 extractCss: true,
-                aot: true
+                aot: true,
+                vendorChunk: false
             }
         };
         return Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
