@@ -15,6 +15,7 @@ const ProgressPlugin = require('webpack/lib/ProgressPlugin');
  * require('json-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('ngo-loader')
  */
 function getCommonConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
@@ -58,6 +59,15 @@ function getCommonConfig(wco) {
             sourceRoot: 'webpack:///'
         }));
     }
+    if (buildOptions.ngo) {
+        extraRules.push({
+            test: /\.js$/,
+            use: [{
+                    loader: 'ngo-loader',
+                    options: { sourceMap: buildOptions.sourcemaps }
+                }]
+        });
+    }
     return {
         resolve: {
             extensions: ['.ts', '.js'],
@@ -92,7 +102,7 @@ function getCommonConfig(wco) {
         ].concat(extraPlugins),
         node: {
             fs: 'empty',
-            global: true,
+            global: false,
             crypto: 'empty',
             tls: 'empty',
             net: 'empty',
