@@ -49,8 +49,12 @@ exports.getProdConfig = function (wco) {
       `);
         }
         extraPlugins.push(new glob_copy_webpack_plugin_1.GlobCopyWebpackPlugin({
-            patterns: ['ngsw-manifest.json', 'src/ngsw-manifest.json'],
+            patterns: [
+                'ngsw-manifest.json',
+                { glob: 'ngsw-manifest.json', input: path.resolve(projectRoot, appConfig.root), output: '' }
+            ],
             globOptions: {
+                cwd: projectRoot,
                 optional: true,
             },
         }));
