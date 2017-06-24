@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const fs = require("fs");
 const semver = require("semver");
 const common_tags_1 = require("common-tags");
+const ngo_loader_1 = require("ngo-loader");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const licensePlugin = require('license-webpack-plugin');
@@ -79,14 +80,28 @@ exports.getProdConfig = function (wco) {
     }
     return {
         entry: entryPoints,
+        module: {
+            rules: [
+                {
+                    'test': /(\\|\/)@angular(\\|\/).*\.js$/, use: [{
+                            loader: 'ngo-loader',
+                            options: {
+                                sourceMap: buildOptions.sourcemaps
+                            }
+                        }]
+                },
+            ]
+        },
         plugins: [
             new webpack.EnvironmentPlugin({
                 'NODE_ENV': 'production'
             }),
             new webpack.HashedModuleIdsPlugin(),
+            new ngo_loader_1.PurifyPlugin(),
+            new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.optimize.UglifyJsPlugin({
                 mangle: { screw_ie8: true },
-                compress: { screw_ie8: true, warnings: buildOptions.verbose },
+                compress: { screw_ie8: true, warnings: buildOptions.verbose, pure_getters: true },
                 sourceMap: buildOptions.sourcemaps,
                 comments: false
             })
