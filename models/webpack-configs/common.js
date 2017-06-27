@@ -5,6 +5,7 @@ const path = require("path");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const utils_1 = require("./utils");
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
  * know they are used.
@@ -56,6 +57,11 @@ function getCommonConfig(wco) {
             moduleFilenameTemplate: '[resource-path]',
             fallbackModuleFilenameTemplate: '[resource-path]?[hash]',
             sourceRoot: 'webpack:///'
+        }));
+    }
+    if (!appConfig.hideCircularDependencyWarnings) {
+        extraPlugins.push(new CircularDependencyPlugin({
+            exclude: /(\\|\/)node_modules(\\|\/)/
         }));
     }
     return {
