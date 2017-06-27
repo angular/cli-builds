@@ -60,6 +60,14 @@ class JsonWebpackSerializer {
             this.imports[module].push(importName);
         }
     }
+    _globCopyWebpackPluginSerialize(value) {
+        let patterns = value.options.patterns;
+        let globOptions = value.options.globOptions;
+        return {
+            patterns,
+            globOptions: this._globReplacer(globOptions)
+        };
+    }
     _commonsChunkPluginSerialize(value) {
         let minChunks = value.minChunks;
         switch (typeof minChunks) {
@@ -142,9 +150,12 @@ class JsonWebpackSerializer {
                     this._addImport('webpack.optimize', 'UglifyJsPlugin');
                     break;
                 case angularCliPlugins.BaseHrefWebpackPlugin:
-                case angularCliPlugins.GlobCopyWebpackPlugin:
                 case angularCliPlugins.SuppressExtractedTextChunksWebpackPlugin:
                     this._addImport('@angular/cli/plugins/webpack', plugin.constructor.name);
+                    break;
+                case angularCliPlugins.GlobCopyWebpackPlugin:
+                    args = this._globCopyWebpackPluginSerialize(plugin);
+                    this._addImport('@angular/cli/plugins/webpack', 'GlobCopyWebpackPlugin');
                     break;
                 case webpack.optimize.CommonsChunkPlugin:
                     args = this._commonsChunkPluginSerialize(plugin);
@@ -283,6 +294,11 @@ class JsonWebpackSerializer {
     _moduleReplacer(value) {
         return Object.assign({}, value, {
             rules: value.rules && value.rules.map((x) => this._ruleReplacer(x))
+        });
+    }
+    _globReplacer(value) {
+        return Object.assign({}, value, {
+            cwd: this._relativePath('process.cwd()', path.relative(this._root, value.cwd))
         });
     }
     _replacer(_key, value) {
