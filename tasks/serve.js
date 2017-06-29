@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
+const rimraf = require("rimraf");
 const webpack = require("webpack");
 const url = require("url");
 const common_tags_1 = require("common-tags");
@@ -29,7 +30,7 @@ exports.default = Task.extend({
             throw new SilentError('An ejected project cannot use the build command anymore.');
         }
         if (serveTaskOptions.deleteOutputPath) {
-            fs.removeSync(path.resolve(this.project.root, outputPath));
+            rimraf.sync(path.resolve(this.project.root, outputPath));
         }
         const serveDefaults = {
             // default deployUrl to '' on serve to prevent the default from .angular-cli.json

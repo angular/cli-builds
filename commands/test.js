@@ -83,12 +83,6 @@ const TestCommand = Command.extend({
             description: 'Enable and define the file watching poll time period (milliseconds).'
         },
         {
-            name: 'environment',
-            type: String,
-            aliases: ['e'],
-            description: 'Defines the build environment.'
-        },
-        {
             name: 'app',
             type: String,
             aliases: ['a'],
