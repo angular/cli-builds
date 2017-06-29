@@ -1,10 +1,10 @@
-import { AppPage } from './app.po';
+import { <%= jsComponentName %>Page } from './app.po';
 
 describe('<%= htmlComponentName %> App', () => {
-  let page: AppPage;
+  let page: <%= jsComponentName %>Page;
 
   beforeEach(() => {
-    page = new AppPage();
+    page = new <%= jsComponentName %>Page();
   });
 
   it('should display welcome message', () => {

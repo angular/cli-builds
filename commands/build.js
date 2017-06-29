@@ -136,12 +136,6 @@ exports.baseBuildCommandOptions = [
         type: Boolean,
         default: true,
         description: 'Extract all licenses in a separate file, in the case of production builds only.'
-    },
-    {
-        name: 'show-circular-dependencies',
-        type: Boolean,
-        aliases: ['scd'],
-        description: 'Show circular dependency warnings on builds.'
     }
 ];
 const BuildCommand = Command.extend({
