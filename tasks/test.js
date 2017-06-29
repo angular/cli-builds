@@ -26,6 +26,7 @@ exports.default = Task.extend({
                 sourcemaps: options.sourcemaps,
                 progress: options.progress,
                 poll: options.poll,
+                environment: options.environment,
                 app: options.app
             };
             // Assign additional karmaConfig options to the local ngapp config
