@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
 const path = require("path");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
+const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
 const utils_1 = require("./utils");
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -94,7 +95,8 @@ function getCommonConfig(wco) {
             ].concat(extraRules)
         },
         plugins: [
-            new webpack.NoEmitOnErrorsPlugin()
+            new webpack.NoEmitOnErrorsPlugin(),
+            new named_lazy_chunks_webpack_plugin_1.NamedLazyChunksWebpackPlugin(),
         ].concat(extraPlugins),
         node: {
             fs: 'empty',
