@@ -5,7 +5,10 @@ const version_1 = require("../upgrade/version");
 const common_tags_1 = require("common-tags");
 const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
-const pollDefault = config.config.defaults && config.config.defaults.poll;
+const buildConfigDefaults = config.getPaths('defaults.build', [
+    'sourcemaps', 'baseHref', 'progress', 'poll', 'deleteOutputPath', 'preserveSymlinks',
+    'showCircularDependencies'
+]);
 // defaults for BuildOptions
 exports.baseBuildCommandOptions = [
     {
@@ -36,7 +39,8 @@ exports.baseBuildCommandOptions = [
         name: 'sourcemaps',
         type: Boolean,
         aliases: ['sm', 'sourcemap'],
-        description: 'Output sourcemaps.'
+        description: 'Output sourcemaps.',
+        default: buildConfigDefaults['sourcemaps']
     },
     {
         name: 'vendor-chunk',
@@ -49,7 +53,8 @@ exports.baseBuildCommandOptions = [
         name: 'base-href',
         type: String,
         aliases: ['bh'],
-        description: 'Base url for the application being built.'
+        description: 'Base url for the application being built.',
+        default: buildConfigDefaults['base-href']
     },
     {
         name: 'deploy-url',
@@ -67,9 +72,9 @@ exports.baseBuildCommandOptions = [
     {
         name: 'progress',
         type: Boolean,
-        default: true,
         aliases: ['pr'],
-        description: 'Log progress to the console while building.'
+        description: 'Log progress to the console while building.',
+        default: buildConfigDefaults['progress']
     },
     {
         name: 'i18n-file',
@@ -109,8 +114,8 @@ exports.baseBuildCommandOptions = [
     {
         name: 'poll',
         type: Number,
-        default: pollDefault,
-        description: 'Enable and define the file watching poll time period (milliseconds).'
+        description: 'Enable and define the file watching poll time period (milliseconds).',
+        default: buildConfigDefaults['poll']
     },
     {
         name: 'app',
@@ -121,15 +126,15 @@ exports.baseBuildCommandOptions = [
     {
         name: 'delete-output-path',
         type: Boolean,
-        default: true,
         aliases: ['dop'],
-        description: 'Delete output path before build.'
+        description: 'Delete output path before build.',
+        default: buildConfigDefaults['deleteOutputPath'],
     },
     {
         name: 'preserve-symlinks',
         type: Boolean,
-        default: false,
-        description: 'Do not use the real path when resolving modules.'
+        description: 'Do not use the real path when resolving modules.',
+        default: buildConfigDefaults['preserveSymlinks']
     },
     {
         name: 'extract-licenses',
@@ -141,7 +146,8 @@ exports.baseBuildCommandOptions = [
         name: 'show-circular-dependencies',
         type: Boolean,
         aliases: ['scd'],
-        description: 'Show circular dependency warnings on builds.'
+        description: 'Show circular dependency warnings on builds.',
+        default: buildConfigDefaults['showCircularDependencies']
     }
 ];
 const BuildCommand = Command.extend({

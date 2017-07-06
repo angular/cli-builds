@@ -46,6 +46,11 @@ class CliConfig {
     set(jsonPath, value) {
         this._config.$$set(jsonPath, value);
     }
+    getPaths(baseJsonPath, keys) {
+        const ret = {};
+        keys.forEach(key => ret[key] = this.get(`${baseJsonPath}.${key}`));
+        return ret;
+    }
     static fromJson(content, ...global) {
         const schemaContent = fs.readFileSync(DEFAULT_CONFIG_SCHEMA_PATH, 'utf-8');
         let schema;

@@ -16,7 +16,6 @@ export declare class NgCliWebpackConfig {
         outputPath: any;
         deployUrl: any;
         baseHref: any;
-        showCircularDependencies: any;
     } & BuildOptions;
     addAppConfigDefaults(appConfig: any): any;
 }
