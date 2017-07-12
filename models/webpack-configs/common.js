@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
 const path = require("path");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
-const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
 const utils_1 = require("./utils");
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
-const CircularDependencyPlugin = require('circular-dependency-plugin');
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
  * know they are used.
@@ -52,9 +50,12 @@ function getCommonConfig(wco) {
     if (buildOptions.progress) {
         extraPlugins.push(new ProgressPlugin({ profile: buildOptions.verbose, colors: true }));
     }
-    if (buildOptions.showCircularDependencies) {
-        extraPlugins.push(new CircularDependencyPlugin({
-            exclude: /(\\|\/)node_modules(\\|\/)/
+    if (buildOptions.sourcemaps) {
+        extraPlugins.push(new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map[query]',
+            moduleFilenameTemplate: '[resource-path]',
+            fallbackModuleFilenameTemplate: '[resource-path]?[hash]',
+            sourceRoot: 'webpack:///'
         }));
     }
     return {
@@ -87,13 +88,10 @@ function getCommonConfig(wco) {
             ].concat(extraRules)
         },
         plugins: [
-            new webpack.NoEmitOnErrorsPlugin(),
-            new named_lazy_chunks_webpack_plugin_1.NamedLazyChunksWebpackPlugin(),
+            new webpack.NoEmitOnErrorsPlugin()
         ].concat(extraPlugins),
         node: {
             fs: 'empty',
-            // `global` should be kept true, removing it resulted in a
-            // massive size increase with NGO on AIO.
             global: true,
             crypto: 'empty',
             tls: 'empty',

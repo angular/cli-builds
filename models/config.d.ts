@@ -7,5 +7,4 @@ export declare class CliConfig extends CliConfigBase<ConfigInterface> {
     static globalConfigFilePath(): string;
     static fromGlobal(): CliConfig;
     static fromProject(projectPath?: string): CliConfig;
-    static addAliases(cliConfig: CliConfigBase<ConfigInterface>): void;
 }

@@ -7,10 +7,11 @@ const check_port_1 = require("../utilities/check-port");
 const override_options_1 = require("../utilities/override-options");
 const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
-const serveConfigDefaults = config.getPaths('defaults.serve', [
-    'port', 'host', 'ssl', 'sslKey', 'sslCert', 'proxyConfig'
-]);
-const defaultPort = process.env.PORT || serveConfigDefaults['port'];
+const defaultPort = process.env.PORT || config.get('defaults.serve.port');
+const defaultHost = config.get('defaults.serve.host');
+const defaultSsl = config.get('defaults.serve.ssl');
+const defaultSslKey = config.get('defaults.serve.sslKey');
+const defaultSslCert = config.get('defaults.serve.sslCert');
 // Expose options unrelated to live-reload to other commands that need to run serve
 exports.baseServeCommandOptions = override_options_1.overrideOptions([
     ...build_1.baseBuildCommandOptions,
@@ -24,33 +25,32 @@ exports.baseServeCommandOptions = override_options_1.overrideOptions([
     {
         name: 'host',
         type: String,
-        default: serveConfigDefaults['host'],
+        default: defaultHost,
         aliases: ['H'],
-        description: `Listens only on ${serveConfigDefaults['host']} by default.`
+        description: `Listens only on ${defaultHost} by default.`
     },
     {
         name: 'proxy-config',
         type: 'Path',
-        default: serveConfigDefaults['proxyConfig'],
         aliases: ['pc'],
         description: 'Proxy configuration file.'
     },
     {
         name: 'ssl',
         type: Boolean,
-        default: serveConfigDefaults['ssl'],
+        default: defaultSsl,
         description: 'Serve using HTTPS.'
     },
     {
         name: 'ssl-key',
         type: String,
-        default: serveConfigDefaults['sslKey'],
+        default: defaultSslKey,
         description: 'SSL key to use for serving HTTPS.'
     },
     {
         name: 'ssl-cert',
         type: String,
-        default: serveConfigDefaults['sslCert'],
+        default: defaultSslCert,
         description: 'SSL certificate to use for serving HTTPS.'
     },
     {
