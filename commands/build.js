@@ -7,7 +7,7 @@ const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
     'sourcemaps', 'baseHref', 'progress', 'poll', 'deleteOutputPath', 'preserveSymlinks',
-    'showCircularDependencies'
+    'showCircularDependencies', 'commonChunk'
 ]);
 // defaults for BuildOptions
 exports.baseBuildCommandOptions = [
@@ -48,6 +48,14 @@ exports.baseBuildCommandOptions = [
         default: true,
         aliases: ['vc'],
         description: 'Use a separate bundle containing only vendor libraries.'
+    },
+    {
+        name: 'common-chunk',
+        type: Boolean,
+        default: buildConfigDefaults['common-chunk'] === undefined ?
+            true : buildConfigDefaults['common-chunk'],
+        aliases: ['cc'],
+        description: 'Use a separate bundle containing code used across multiple bundles.'
     },
     {
         name: 'base-href',

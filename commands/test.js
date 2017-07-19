@@ -5,7 +5,9 @@ const test_1 = require("../tasks/test");
 const config_1 = require("../models/config");
 const common_tags_1 = require("common-tags");
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
-const pollDefault = config.config.defaults && config.config.defaults.poll;
+const testConfigDefaults = config.getPaths('defaults.build', [
+    'progress', 'poll'
+]);
 const TestCommand = Command.extend({
     name: 'test',
     aliases: ['t'],
@@ -41,7 +43,7 @@ const TestCommand = Command.extend({
         {
             name: 'progress',
             type: Boolean,
-            default: true,
+            default: testConfigDefaults['progress'],
             description: 'Log progress to the console while in progress.'
         },
         {
@@ -79,7 +81,7 @@ const TestCommand = Command.extend({
         {
             name: 'poll',
             type: Number,
-            default: pollDefault,
+            default: testConfigDefaults['poll'],
             description: 'Enable and define the file watching poll time period (milliseconds).'
         },
         {
