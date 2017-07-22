@@ -388,6 +388,9 @@ exports.default = Task.extend({
         if (project.root === path.resolve(outputPath)) {
             throw new SilentError('Output path MUST not be project root directory!');
         }
+        if (appConfig.platform === 'server') {
+            throw new SilentError('ng eject for platform server applications is coming soon!');
+        }
         const webpackConfig = new webpack_config_1.NgCliWebpackConfig(runTaskOptions, appConfig).buildConfig();
         const serializer = new JsonWebpackSerializer(process.cwd(), outputPath, appConfig.root);
         const output = serializer.serialize(webpackConfig);
@@ -492,7 +495,7 @@ exports.default = Task.extend({
 
           To run your builds, you now need to do the following commands:
              - "npm run build" to build.
-             - "npm run test" to run unit tests.
+             - "npm test" to run unit tests.
              - "npm start" to serve the app using webpack-dev-server.
              - "npm run e2e" to run protractor.
 

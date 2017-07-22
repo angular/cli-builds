@@ -7,7 +7,7 @@ const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
     'sourcemaps', 'baseHref', 'progress', 'poll', 'deleteOutputPath', 'preserveSymlinks',
-    'showCircularDependencies', 'commonChunk'
+    'showCircularDependencies', 'commonChunk', 'namedChunks'
 ]);
 // defaults for BuildOptions
 exports.baseBuildCommandOptions = [
@@ -45,7 +45,6 @@ exports.baseBuildCommandOptions = [
     {
         name: 'vendor-chunk',
         type: Boolean,
-        default: true,
         aliases: ['vc'],
         description: 'Use a separate bundle containing only vendor libraries.'
     },
@@ -156,6 +155,21 @@ exports.baseBuildCommandOptions = [
         aliases: ['scd'],
         description: 'Show circular dependency warnings on builds.',
         default: buildConfigDefaults['showCircularDependencies']
+    },
+    {
+        name: 'build-optimizer',
+        type: Boolean,
+        default: false,
+        aliases: ['bo'],
+        description: '(Experimental) Enables @angular-devkit/build-optimizer '
+            + 'optimizations when using `--aot`.'
+    },
+    {
+        name: 'named-chunks',
+        type: Boolean,
+        aliases: ['nc'],
+        description: 'Use file name for lazy loaded chunks.',
+        default: buildConfigDefaults['namedChunks']
     }
 ];
 const BuildCommand = Command.extend({
@@ -174,6 +188,10 @@ const BuildCommand = Command.extend({
     run: function (commandOptions) {
         // Check angular version.
         version_1.Version.assertAngularVersionIs2_3_1OrHigher(this.project.root);
+        // Default vendor chunk to false when build optimizer is on.
+        if (commandOptions.vendorChunk === undefined) {
+            commandOptions.vendorChunk = !commandOptions.buildOptimizer;
+        }
         const BuildTask = require('../tasks/build').default;
         const buildTask = new BuildTask({
             project: this.project,

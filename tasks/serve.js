@@ -10,6 +10,7 @@ const utils_1 = require("../models/webpack-configs/utils");
 const webpack_config_1 = require("../models/webpack-config");
 const config_1 = require("../models/config");
 const app_utils_1 = require("../utilities/app-utils");
+const stats_1 = require("../utilities/stats");
 const WebpackDevServer = require('webpack-dev-server');
 const Task = require('../ember-cli/lib/models/task');
 const SilentError = require('silent-error');
@@ -27,6 +28,9 @@ exports.default = Task.extend({
         }
         if (projectConfig.project && projectConfig.project.ejected) {
             throw new SilentError('An ejected project cannot use the build command anymore.');
+        }
+        if (appConfig.platform === 'server') {
+            throw new SilentError('ng serve for platform server applications is coming soon!');
         }
         if (serveTaskOptions.deleteOutputPath) {
             fs.removeSync(path.resolve(this.project.root, outputPath));
@@ -144,7 +148,7 @@ exports.default = Task.extend({
                 disableDotRule: true,
                 htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
             },
-            stats: statsConfig,
+            stats: serveTaskOptions.verbose ? statsConfig : 'none',
             inline: true,
             proxy: proxyConfig,
             compress: serveTaskOptions.target === 'production',
@@ -188,6 +192,20 @@ exports.default = Task.extend({
       **
     `));
         const server = new WebpackDevServer(webpackCompiler, webpackDevServerConfiguration);
+        if (!serveTaskOptions.verbose) {
+            webpackCompiler.plugin('done', (stats) => {
+                const str = stats_1.statsToString(stats.toJson(), statsConfig);
+                if (stats.hasErrors()) {
+                    this.ui.writeError(str);
+                }
+                else if (stats.hasWarnings()) {
+                    this.ui.writeWarnLine(str);
+                }
+                else {
+                    this.ui.writeLine(str);
+                }
+            });
+        }
         return new Promise((_resolve, reject) => {
             server.listen(serveTaskOptions.port, serveTaskOptions.host, (err, _stats) => {
                 if (err) {

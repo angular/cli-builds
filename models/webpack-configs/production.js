@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const fs = require("fs");
 const semver = require("semver");
 const common_tags_1 = require("common-tags");
+const build_optimizer_1 = require("@angular-devkit/build-optimizer");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const licensePlugin = require('license-webpack-plugin');
@@ -77,9 +78,15 @@ exports.getProdConfig = function (wco) {
             suppressErrors: true
         }));
     }
+    const uglifyCompressOptions = { screw_ie8: true, warnings: buildOptions.verbose };
+    if (buildOptions.buildOptimizer) {
+        // This plugin must be before webpack.optimize.UglifyJsPlugin.
+        extraPlugins.push(new build_optimizer_1.PurifyPlugin());
+        uglifyCompressOptions.pure_getters = true;
+    }
     return {
         entry: entryPoints,
-        plugins: [
+        plugins: extraPlugins.concat([
             new webpack.EnvironmentPlugin({
                 'NODE_ENV': 'production'
             }),
@@ -87,11 +94,11 @@ exports.getProdConfig = function (wco) {
             new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.optimize.UglifyJsPlugin({
                 mangle: { screw_ie8: true },
-                compress: { screw_ie8: true, warnings: buildOptions.verbose },
+                compress: uglifyCompressOptions,
                 sourceMap: buildOptions.sourcemaps,
                 comments: false
             })
-        ].concat(extraPlugins)
+        ])
     };
 };
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/production.js.map

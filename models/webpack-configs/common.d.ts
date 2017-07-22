@@ -1,4 +1,4 @@
-import { NamedLazyChunksWebpackPlugin } from '../../plugins/named-lazy-chunks-webpack-plugin';
+import * as webpack from 'webpack';
 import { WebpackConfigOptions } from '../webpack-config';
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
@@ -10,6 +10,7 @@ import { WebpackConfigOptions } from '../webpack-config';
  * require('json-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('@angular-devkit/build-optimizer')
  */
 export declare function getCommonConfig(wco: WebpackConfigOptions): {
     resolve: {
@@ -41,7 +42,7 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
             loader: string;
         })[];
     };
-    plugins: NamedLazyChunksWebpackPlugin[];
+    plugins: webpack.NoEmitOnErrorsPlugin[];
     node: {
         fs: string;
         global: boolean;
