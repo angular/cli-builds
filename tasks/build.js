@@ -39,6 +39,12 @@ exports.default = Task.extend({
                 else {
                     this.ui.writeLine(stats_1.statsToString(json, statsConfig));
                 }
+                if (stats.hasWarnings()) {
+                    this.ui.writeLine(stats_1.statsWarningsToString(json, statsConfig));
+                }
+                if (stats.hasErrors()) {
+                    this.ui.writeError(stats_1.statsErrorsToString(json, statsConfig));
+                }
                 if (runTaskOptions.watch) {
                     return;
                 }

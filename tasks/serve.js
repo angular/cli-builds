@@ -194,15 +194,13 @@ exports.default = Task.extend({
         const server = new WebpackDevServer(webpackCompiler, webpackDevServerConfiguration);
         if (!serveTaskOptions.verbose) {
             webpackCompiler.plugin('done', (stats) => {
-                const str = stats_1.statsToString(stats.toJson(), statsConfig);
+                const json = stats.toJson('verbose');
+                this.ui.writeLine(stats_1.statsToString(json, statsConfig));
+                if (stats.hasWarnings()) {
+                    this.ui.writeLine(stats_1.statsWarningsToString(json, statsConfig));
+                }
                 if (stats.hasErrors()) {
-                    this.ui.writeError(str);
-                }
-                else if (stats.hasWarnings()) {
-                    this.ui.writeWarnLine(str);
-                }
-                else {
-                    this.ui.writeLine(str);
+                    this.ui.writeError(stats_1.statsErrorsToString(json, statsConfig));
                 }
             });
         }

@@ -12,11 +12,11 @@ function _formatSize(size) {
 }
 function statsToString(json, statsConfig) {
     const colors = statsConfig.colors;
-    const r = (x) => colors ? chalk_1.reset(x) : x;
+    const rs = (x) => colors ? chalk_1.reset(x) : x;
     const w = (x) => colors ? chalk_1.bold(chalk_1.white(x)) : x;
     const g = (x) => colors ? chalk_1.bold(chalk_1.green(x)) : x;
     const y = (x) => colors ? chalk_1.bold(chalk_1.yellow(x)) : x;
-    return r(common_tags_1.stripIndents `
+    return rs(common_tags_1.stripIndents `
     Date: ${w(new Date().toISOString())}
     Hash: ${w(json.hash)}
     Time: ${w('' + json.time)}ms
@@ -32,10 +32,21 @@ function statsToString(json, statsConfig) {
             .join('');
         return `chunk {${y(chunk.id)}} ${g(files)}${names}${size}${parents} ${initial}${flags}`;
     }).join('\n')}
-
-    ${json.warnings.map((warning) => y(`WARNING in ${warning}`)).join('\n\n')}
-    ${json.errors.map((error) => r(`ERROR in ${error}`)).join('\n')}
     `);
 }
 exports.statsToString = statsToString;
+function statsWarningsToString(json, statsConfig) {
+    const colors = statsConfig.colors;
+    const rs = (x) => colors ? chalk_1.reset(x) : x;
+    const y = (x) => colors ? chalk_1.bold(chalk_1.yellow(x)) : x;
+    return rs('\n' + json.warnings.map((warning) => y(`WARNING in ${warning}`)).join('\n\n'));
+}
+exports.statsWarningsToString = statsWarningsToString;
+function statsErrorsToString(json, statsConfig) {
+    const colors = statsConfig.colors;
+    const rs = (x) => colors ? chalk_1.reset(x) : x;
+    const r = (x) => colors ? chalk_1.bold(chalk_1.red(x)) : x;
+    return rs('\n' + json.errors.map((error) => r(`ERROR in ${error}`)).join('\n'));
+}
+exports.statsErrorsToString = statsErrorsToString;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/utilities/stats.js.map
