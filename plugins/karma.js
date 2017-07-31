@@ -11,6 +11,7 @@ const karma_webpack_throw_error_1 = require("./karma-webpack-throw-error");
  * Enumerate needed (but not require/imported) dependencies from this file
  *  to let the dependency validator know they are used.
  *
+ * require('source-map-support')
  * require('karma-source-map-support')
  */
 const getAppFromConfig = require('../utilities/app-utils').getAppFromConfig;
