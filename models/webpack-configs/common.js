@@ -81,7 +81,7 @@ function getCommonConfig(wco) {
         context: __dirname,
         entry: entryPoints,
         output: {
-            path: path.resolve(projectRoot, buildOptions.outputPath),
+            path: path.resolve(buildOptions.outputPath),
             publicPath: buildOptions.deployUrl,
             filename: `[name]${hashFormat.chunk}.bundle.js`,
             chunkFilename: `[id]${hashFormat.chunk}.chunk.js`

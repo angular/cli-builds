@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const webpackMerge = require('webpack-merge');
 const config_1 = require("./config");
 const webpack_configs_1 = require("./webpack-configs");
-const path = require('path');
+const path = require("path");
 class NgCliWebpackConfig {
     constructor(buildOptions, appConfig) {
         this.validateBuildOptions(buildOptions);
@@ -11,7 +11,7 @@ class NgCliWebpackConfig {
         const projectRoot = path.dirname(configPath);
         appConfig = this.addAppConfigDefaults(appConfig);
         buildOptions = this.addTargetDefaults(buildOptions);
-        buildOptions = this.mergeConfigs(buildOptions, appConfig);
+        buildOptions = this.mergeConfigs(buildOptions, appConfig, projectRoot);
         this.wco = { projectRoot, buildOptions, appConfig };
     }
     buildConfig() {
@@ -74,9 +74,9 @@ class NgCliWebpackConfig {
         return Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
     }
     // Fill in defaults from .angular-cli.json
-    mergeConfigs(buildOptions, appConfig) {
+    mergeConfigs(buildOptions, appConfig, projectRoot) {
         const mergeableOptions = {
-            outputPath: appConfig.outDir,
+            outputPath: path.resolve(projectRoot, appConfig.outDir),
             deployUrl: appConfig.deployUrl,
             baseHref: appConfig.baseHref
         };
