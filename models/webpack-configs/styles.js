@@ -116,7 +116,8 @@ function getStylesConfig(wco) {
         { test: /\.less$/, use: [{
                     loader: 'less-loader',
                     options: {
-                        sourceMap: cssSourceMap
+                        sourceMap: cssSourceMap,
+                        paths: includePaths
                     }
                 }]
         },
