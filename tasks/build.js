@@ -49,7 +49,7 @@ exports.default = Task.extend({
                     return;
                 }
                 else if (runTaskOptions.statsJson) {
-                    fs.writeFileSync(path.resolve(this.project.root, outputPath, 'stats.json'), JSON.stringify(json, null, 2));
+                    fs.writeFileSync(path.resolve(this.project.root, outputPath, 'stats.json'), JSON.stringify(stats.toJson(), null, 2));
                 }
                 if (stats.hasErrors()) {
                     reject();
