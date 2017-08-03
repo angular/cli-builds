@@ -551,32 +551,6 @@ let Command = CoreObject.extend({
   _printCommand: printCommand,
 
   /**
-    Prints short help for the command.
-    Short help looks like this:
-        ng generate <blueprint> <options...>
-          Generates new code from blueprints
-          aliases: g
-    The default implementation is designed to cover all bases
-    but may be overridden if necessary.
-    @method printShortHelp
-  */
-  printShortHelp() {
-    // ng command-name
-    let output;
-    if (this.isRoot) {
-      output = `Usage: ${this.name}`;
-    } else {
-      output = `ng ${this.name}`;
-    }
-
-    output += EOL;
-    output += `   ${this.description}`;
-    output += EOL;
-
-    return output;
-  },
-
-  /**
     Prints basic help for the command.
     Basic help looks like this:
         ng generate <blueprint> <options...>
@@ -585,7 +559,7 @@ let Command = CoreObject.extend({
           --dry-run (Default: false)
           --verbose (Default: false)
     The default implementation is designed to cover all bases
-    but may be overridden if necessary.
+    but may be overriden if necessary.
     @method printBasicHelp
   */
   printBasicHelp() {
