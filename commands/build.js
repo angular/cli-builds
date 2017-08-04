@@ -51,8 +51,7 @@ exports.baseBuildCommandOptions = [
     {
         name: 'common-chunk',
         type: Boolean,
-        default: buildConfigDefaults['common-chunk'] === undefined ?
-            true : buildConfigDefaults['common-chunk'],
+        default: buildConfigDefaults['commonChunk'],
         aliases: ['cc'],
         description: 'Use a separate bundle containing code used across multiple bundles.'
     },
@@ -61,7 +60,7 @@ exports.baseBuildCommandOptions = [
         type: String,
         aliases: ['bh'],
         description: 'Base url for the application being built.',
-        default: buildConfigDefaults['base-href']
+        default: buildConfigDefaults['baseHref']
     },
     {
         name: 'deploy-url',
