@@ -98,6 +98,7 @@ exports.getProdConfig = function (wco) {
             new webpack.optimize.UglifyJsPlugin({
                 mangle: { screw_ie8: true },
                 compress: uglifyCompressOptions,
+                output: { ascii_only: true },
                 sourceMap: buildOptions.sourcemaps,
                 comments: false
             })
