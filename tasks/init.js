@@ -8,18 +8,12 @@ const check_package_manager_1 = require("../utilities/check-package-manager");
 const config_1 = require("../models/config");
 const Task = require('../ember-cli/lib/models/task');
 const SilentError = require('silent-error');
-const normalizeBlueprint = require('../ember-cli/lib/utilities/normalize-blueprint-option');
 const GitInit = require('../tasks/git-init');
-const InstallBlueprint = require('../ember-cli/lib/tasks/install-blueprint');
 exports.default = Task.extend({
     run: function (commandOptions, rawArgs) {
         if (commandOptions.dryRun) {
             commandOptions.skipInstall = true;
         }
-        const installBlueprint = new InstallBlueprint({
-            ui: this.ui,
-            project: this.project
-        });
         // needs an explicit check in case it's just 'undefined'
         // due to passing of options from 'new' and 'addon'
         let gitInit;
@@ -54,43 +48,50 @@ exports.default = Task.extend({
                 'For more details, use `ng help`.';
             return Promise.reject(new SilentError(message));
         }
-        const blueprintOpts = {
-            dryRun: commandOptions.dryRun,
-            blueprint: 'ng',
-            rawName: packageName,
-            targetFiles: rawArgs || '',
-            rawArgs: rawArgs.toString(),
-            sourceDir: commandOptions.sourceDir,
-            style: commandOptions.style,
-            prefix: commandOptions.prefix.trim() || 'app',
-            routing: commandOptions.routing,
-            inlineStyle: commandOptions.inlineStyle,
-            inlineTemplate: commandOptions.inlineTemplate,
-            minimal: commandOptions.minimal,
-            ignoredUpdateFiles: ['favicon.ico'],
-            skipGit: commandOptions.skipGit,
-            skipTests: commandOptions.skipTests
-        };
         validate_project_name_1.validateProjectName(packageName);
-        blueprintOpts.blueprint = normalizeBlueprint(blueprintOpts.blueprint);
-        return installBlueprint.run(blueprintOpts)
+        const SchematicRunTask = require('../tasks/schematic-run').default;
+        const schematicRunTask = new SchematicRunTask({
+            ui: this.ui,
+            project: this.project
+        });
+        const cwd = this.project.root;
+        const schematicName = config_1.CliConfig.fromGlobal().get('defaults.schematics.newApp');
+        const runOptions = {
+            taskOptions: commandOptions,
+            workingDir: cwd,
+            collectionName: commandOptions.collectionName,
+            schematicName
+        };
+        return schematicRunTask.run(runOptions)
+            .then(function () {
+            if (!commandOptions.dryRun) {
+                process.chdir(commandOptions.directory);
+            }
+        })
             .then(function () {
             if (!commandOptions.skipInstall) {
                 return check_package_manager_1.checkYarnOrCNPM().then(() => npmInstall.run());
             }
         })
             .then(function () {
-            if (commandOptions.skipGit === false) {
+            if (!commandOptions.dryRun && commandOptions.skipGit === false) {
                 return gitInit.run(commandOptions, rawArgs);
             }
         })
             .then(function () {
-            if (commandOptions.linkCli) {
+            if (!commandOptions.dryRun && commandOptions.skipInstall === false) {
+                return npmInstall.run();
+            }
+        })
+            .then(function () {
+            if (!commandOptions.dryRun && commandOptions.linkCli) {
                 return linkCli.run();
             }
         })
             .then(() => {
-            this.ui.writeLine(chalk.green(`Project '${packageName}' successfully created.`));
+            if (!commandOptions.dryRun) {
+                this.ui.writeLine(chalk.green(`Project '${packageName}' successfully created.`));
+            }
         });
     }
 });
