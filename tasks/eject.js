@@ -9,6 +9,7 @@ const webpack_config_1 = require("../models/webpack-config");
 const config_1 = require("../models/config");
 const webpack_1 = require("@ngtools/webpack");
 const chalk_1 = require("chalk");
+const license_webpack_plugin_1 = require("license-webpack-plugin");
 const denodeify = require("denodeify");
 const common_tags_1 = require("common-tags");
 const exists = (p) => Promise.resolve(fs.existsSync(p));
@@ -17,7 +18,6 @@ const angularCliPlugins = require('../plugins/webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SilentError = require('silent-error');
-const licensePlugin = require('license-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const Task = require('../ember-cli/lib/models/task');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
@@ -124,9 +124,7 @@ class JsonWebpackSerializer {
         return plugin.defaultValues;
     }
     _licenseWebpackPlugin(plugin) {
-        return {
-            'pattern': plugin.pattern
-        };
+        return plugin.options;
     }
     _pluginsReplacer(plugins) {
         return plugins.map(plugin => {
@@ -185,9 +183,9 @@ class JsonWebpackSerializer {
                     args = this._environmentPlugin(plugin);
                     this._addImport('webpack', 'EnvironmentPlugin');
                     break;
-                case licensePlugin:
+                case license_webpack_plugin_1.LicenseWebpackPlugin:
                     args = this._licenseWebpackPlugin(plugin);
-                    this.variableImports['license-webpack-plugin'] = 'licensePlugin';
+                    this._addImport('license-webpack-plugin', 'LicenseWebpackPlugin');
                 default:
                     if (plugin.constructor.name == 'AngularServiceWorkerPlugin') {
                         this._addImport('@angular/service-worker/build/webpack', plugin.constructor.name);

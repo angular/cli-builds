@@ -80,6 +80,11 @@ exports.baseServeCommandOptions = override_options_1.overrideOptions([
         description: 'Don\'t verify connected clients are part of allowed hosts.',
     },
     {
+        name: 'serve-path',
+        type: String,
+        description: 'The pathname where the app will be served.'
+    },
+    {
         name: 'hmr',
         type: Boolean,
         default: false,
