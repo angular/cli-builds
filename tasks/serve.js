@@ -16,34 +16,6 @@ const Task = require('../ember-cli/lib/models/task');
 const SilentError = require('silent-error');
 const opn = require('opn');
 const yellow = require('chalk').yellow;
-function findDefaultServePath(baseHref, deployUrl) {
-    if (!baseHref && !deployUrl) {
-        return '';
-    }
-    if (/^(\w+:)?\/\//.test(baseHref) || /^(\w+:)?\/\//.test(deployUrl)) {
-        // If baseHref or deployUrl is absolute, unsupported by ng serve
-        return null;
-    }
-    // normalize baseHref
-    // for ng serve the starting base is always `/` so a relative
-    // and root relative value are identical
-    const baseHrefParts = (baseHref || '')
-        .split('/')
-        .filter(part => part !== '');
-    if (baseHref && !baseHref.endsWith('/')) {
-        baseHrefParts.pop();
-    }
-    const normalizedBaseHref = baseHrefParts.length === 0 ? '/' : `/${baseHrefParts.join('/')}/`;
-    if (deployUrl && deployUrl[0] === '/') {
-        if (baseHref && baseHref[0] === '/' && normalizedBaseHref !== deployUrl) {
-            // If baseHref and deployUrl are root relative and not equivalent, unsupported by ng serve
-            return null;
-        }
-        return deployUrl;
-    }
-    // Join together baseHref and deployUrl
-    return `${normalizedBaseHref}${deployUrl || ''}`;
-}
 exports.default = Task.extend({
     run: function (serveTaskOptions, rebuildDoneCb) {
         const ui = this.ui;
@@ -169,28 +141,10 @@ exports.default = Task.extend({
                 sslCert = fs.readFileSync(certPath, 'utf-8');
             }
         }
-        let servePath = serveTaskOptions.servePath;
-        if (!servePath && servePath !== '') {
-            const defaultServePath = findDefaultServePath(serveTaskOptions.baseHref, serveTaskOptions.deployUrl);
-            if (defaultServePath == null) {
-                ui.writeLine(common_tags_1.oneLine `
-            ${chalk.yellow('WARNING')} --deploy-url and/or --base-href contain
-            unsupported values for ng serve.  Default serve path of '/' used.
-            Use --serve-path to override.
-          `);
-            }
-            servePath = defaultServePath || '';
-        }
-        if (servePath.endsWith('/')) {
-            servePath = servePath.substr(0, servePath.length - 1);
-        }
-        if (!servePath.startsWith('/')) {
-            servePath = `/${servePath}`;
-        }
         const webpackDevServerConfiguration = {
             headers: { 'Access-Control-Allow-Origin': '*' },
             historyApiFallback: {
-                index: `${servePath}/${appConfig.index}`,
+                index: `/${appConfig.index}`,
                 disableDotRule: true,
                 htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
             },
@@ -208,14 +162,19 @@ exports.default = Task.extend({
             },
             contentBase: false,
             public: serveTaskOptions.publicHost,
-            disableHostCheck: serveTaskOptions.disableHostCheck,
-            publicPath: servePath
+            disableHostCheck: serveTaskOptions.disableHostCheck
         };
         if (sslKey != null && sslCert != null) {
             webpackDevServerConfiguration.key = sslKey;
             webpackDevServerConfiguration.cert = sslCert;
         }
         webpackDevServerConfiguration.hot = serveTaskOptions.hmr;
+        // set publicPath property to be sent on webpack server config
+        if (serveTaskOptions.deployUrl) {
+            webpackDevServerConfiguration.publicPath = serveTaskOptions.deployUrl;
+            webpackDevServerConfiguration.historyApiFallback.index =
+                serveTaskOptions.deployUrl + `/${appConfig.index}`;
+        }
         if (serveTaskOptions.target === 'production') {
             ui.writeLine(chalk.red(common_tags_1.stripIndents `
         ****************************************************************************************
@@ -229,7 +188,7 @@ exports.default = Task.extend({
         ui.writeLine(chalk.green(common_tags_1.oneLine `
       **
       NG Live Development Server is listening on ${serveTaskOptions.host}:${serveTaskOptions.port},
-      open your browser on ${serverAddress}${servePath}
+      open your browser on ${serverAddress}
       **
     `));
         const server = new WebpackDevServer(webpackCompiler, webpackDevServerConfiguration);

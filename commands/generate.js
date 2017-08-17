@@ -1,21 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const chalk_1 = require("chalk");
-const stringUtils = require('ember-cli-string-utils');
+const chalk = require("chalk");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const common_tags_1 = require("common-tags");
 const config_1 = require("../models/config");
-require("rxjs/add/observable/of");
-require("rxjs/add/operator/ignoreElements");
-const schematics_1 = require("../utilities/schematics");
-const dynamic_path_parser_1 = require("../utilities/dynamic-path-parser");
-const app_utils_1 = require("../utilities/app-utils");
-const path = require("path");
 const Command = require('../ember-cli/lib/models/command');
+const Blueprint = require('../ember-cli/lib/models/blueprint');
+const parseOptions = require('../ember-cli/lib/utilities/parse-options');
 const SilentError = require('silent-error');
-const separatorRegEx = /[\/\\]/g;
+function loadBlueprints() {
+    const blueprintList = fs.readdirSync(path.join(__dirname, '..', 'blueprints'));
+    const blueprints = blueprintList
+        .filter(bp => bp.indexOf('-test') === -1)
+        .filter(bp => bp !== 'ng')
+        .map(bp => Blueprint.load(path.join(__dirname, '..', 'blueprints', bp)));
+    return blueprints;
+}
 exports.default = Command.extend({
     name: 'generate',
-    description: 'Generates and/or modifies files based on a schematic.',
+    description: 'Generates and/or modifies files based on a blueprint.',
     aliases: ['g'],
     availableOptions: [
         {
@@ -26,127 +31,89 @@ exports.default = Command.extend({
             description: 'Run through without making any changes.'
         },
         {
-            name: 'force',
-            type: Boolean,
-            default: false,
-            aliases: ['f'],
-            description: 'Forces overwriting of files.'
-        },
-        {
-            name: 'app',
-            type: String,
-            aliases: ['a'],
-            description: 'Specifies app name to use.'
-        },
-        {
-            name: 'collection',
-            type: String,
-            aliases: ['c'],
-            description: 'Schematics collection to use.'
-        },
-        {
             name: 'lint-fix',
             type: Boolean,
             aliases: ['lf'],
             description: 'Use lint to fix files after generation.'
+        },
+        {
+            name: 'verbose',
+            type: Boolean,
+            default: false,
+            aliases: ['v'],
+            description: 'Adds more details to output logging.'
         }
     ],
     anonymousOptions: [
-        '<schematic>'
+        '<blueprint>'
     ],
-    getCollectionName(rawArgs) {
-        let collectionName = config_1.CliConfig.getValue('defaults.schematics.collection');
-        if (rawArgs) {
-            const parsedArgs = this.parseArgs(rawArgs, false);
-            if (parsedArgs.options.collection) {
-                collectionName = parsedArgs.options.collection;
-            }
-        }
-        return collectionName;
-    },
     beforeRun: function (rawArgs) {
+        if (!rawArgs.length) {
+            return;
+        }
         const isHelp = ['--help', '-h'].includes(rawArgs[0]);
         if (isHelp) {
             return;
         }
-        const schematicName = rawArgs[0];
-        if (!schematicName) {
+        this.blueprints = loadBlueprints();
+        const name = rawArgs[0];
+        const blueprint = this.blueprints.find((bp) => bp.name === name
+            || (bp.aliases && bp.aliases.includes(name)));
+        if (!blueprint) {
+            SilentError.debugOrThrow('@angular/cli/commands/generate', `Invalid blueprint: ${name}`);
+        }
+        if (!rawArgs[1]) {
+            SilentError.debugOrThrow('@angular/cli/commands/generate', `The \`ng generate ${name}\` command requires a name to be specified.`);
+        }
+        if (/^\d/.test(rawArgs[1])) {
+            SilentError.debugOrThrow('@angular/cli/commands/generate', `The \`ng generate ${name} ${rawArgs[1]}\` file name cannot begin with a digit.`);
+        }
+        rawArgs[0] = blueprint.name;
+        this.registerOptions(blueprint);
+    },
+    printDetailedHelp: function () {
+        if (!this.blueprints) {
+            this.blueprints = loadBlueprints();
+        }
+        this.ui.writeLine(chalk.cyan('  Available blueprints'));
+        this.ui.writeLine(this.blueprints.map((bp) => bp.printBasicHelp(false)).join(os.EOL));
+    },
+    run: function (commandOptions, rawArgs) {
+        const name = rawArgs[0];
+        if (!name) {
             return Promise.reject(new SilentError(common_tags_1.oneLine `
           The "ng generate" command requires a
-          schematic name to be specified.
+          blueprint name to be specified.
           For more details, use "ng help".
       `));
         }
-        if (/^\d/.test(rawArgs[1])) {
-            SilentError.debugOrThrow('@angular/cli/commands/generate', `The \`ng generate ${schematicName} ${rawArgs[1]}\` file name cannot begin with a digit.`);
-        }
-        const SchematicGetOptionsTask = require('../tasks/schematic-get-options').default;
-        const getOptionsTask = new SchematicGetOptionsTask({
-            ui: this.ui,
-            project: this.project
-        });
-        const collectionName = this.getCollectionName(rawArgs);
-        return getOptionsTask.run({
-            schematicName,
-            collectionName
-        })
-            .then((availableOptions) => {
-            let anonymousOptions = [];
-            if (collectionName === '@schematics/angular' && schematicName === 'interface') {
-                anonymousOptions = ['<type>'];
+        const blueprint = this.blueprints.find((bp) => bp.name === name
+            || (bp.aliases && bp.aliases.includes(name)));
+        const projectName = config_1.CliConfig.getValue('project.name');
+        const blueprintOptions = Object.assign({ target: this.project.root, entity: {
+                name: rawArgs[1],
+                options: parseOptions(rawArgs.slice(2))
+            }, projectName, ui: this.ui, project: this.project, settings: this.settings, testing: this.testing, args: rawArgs }, commandOptions);
+        return blueprint.install(blueprintOptions)
+            .then(() => {
+            const lintFix = commandOptions.lintFix !== undefined ?
+                commandOptions.lintFix : config_1.CliConfig.getValue('defaults.lintFix');
+            if (lintFix && blueprint.modifiedFiles) {
+                const LintTask = require('../tasks/lint').default;
+                const lintTask = new LintTask({
+                    ui: this.ui,
+                    project: this.project
+                });
+                return lintTask.run({
+                    fix: true,
+                    force: true,
+                    silent: true,
+                    configs: [{
+                            files: blueprint.modifiedFiles.filter((file) => /.ts$/.test(file))
+                        }]
+                });
             }
-            this.registerOptions({
-                anonymousOptions: anonymousOptions,
-                availableOptions: availableOptions
-            });
         });
-    },
-    run: function (commandOptions, rawArgs) {
-        if (rawArgs[0] === 'module' && !rawArgs[1]) {
-            throw 'The `ng generate module` command requires a name to be specified.';
-        }
-        const entityName = rawArgs[1];
-        commandOptions.name = stringUtils.dasherize(entityName.split(separatorRegEx).pop());
-        const appConfig = app_utils_1.getAppFromConfig(commandOptions.app);
-        const dynamicPathOptions = {
-            project: this.project,
-            entityName: entityName,
-            appConfig: appConfig,
-            dryRun: commandOptions.dryRun
-        };
-        const parsedPath = dynamic_path_parser_1.dynamicPathParser(dynamicPathOptions);
-        commandOptions.sourceDir = appConfig.root;
-        commandOptions.path = parsedPath.dir
-            .replace(appConfig.root + path.sep, '')
-            .replace(separatorRegEx, '/');
-        const cwd = this.project.root;
-        const schematicName = rawArgs[0];
-        const SchematicRunTask = require('../tasks/schematic-run').default;
-        const schematicRunTask = new SchematicRunTask({
-            ui: this.ui,
-            project: this.project
-        });
-        const collectionName = this.getCollectionName(rawArgs);
-        if (collectionName === '@schematics/angular' && schematicName === 'interface' && rawArgs[2]) {
-            commandOptions.type = rawArgs[2];
-        }
-        return schematicRunTask.run({
-            taskOptions: commandOptions,
-            workingDir: cwd,
-            collectionName,
-            schematicName
-        });
-    },
-    printDetailedHelp: function () {
-        const engineHost = schematics_1.getEngineHost();
-        const collectionName = this.getCollectionName();
-        const collection = schematics_1.getCollection(collectionName);
-        const schematicNames = engineHost.listSchematics(collection);
-        this.ui.writeLine(chalk_1.cyan('Available schematics:'));
-        schematicNames.forEach(schematicName => {
-            this.ui.writeLine(chalk_1.yellow(`    ${schematicName}`));
-        });
-        this.ui.writeLine('');
     }
 });
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/generate.js.map
