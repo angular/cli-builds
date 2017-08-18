@@ -98,6 +98,11 @@ exports.baseBuildCommandOptions = [
         description: 'Locale to use for i18n.'
     },
     {
+        name: 'missing-translation',
+        type: String,
+        description: 'How to handle missing translations for i18n.'
+    },
+    {
         name: 'extract-css',
         type: Boolean,
         aliases: ['ec'],
