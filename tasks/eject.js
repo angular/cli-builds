@@ -19,6 +19,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SilentError = require('silent-error');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const ConcatPlugin = require('webpack-concat-plugin');
 const Task = require('../ember-cli/lib/models/task');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 exports.pluginArgs = Symbol('plugin-args');
@@ -68,6 +69,9 @@ class JsonWebpackSerializer {
             patterns,
             globOptions: this._globReplacer(globOptions)
         };
+    }
+    _insertConcatAssetsWebpackPluginSerialize(value) {
+        return value.entryNames;
     }
     _commonsChunkPluginSerialize(value) {
         let minChunks = value.minChunks;
@@ -126,6 +130,9 @@ class JsonWebpackSerializer {
     _licenseWebpackPlugin(plugin) {
         return plugin.options;
     }
+    _concatPlugin(plugin) {
+        return plugin.settings;
+    }
     _pluginsReplacer(plugins) {
         return plugins.map(plugin => {
             let args = plugin.options || undefined;
@@ -160,6 +167,10 @@ class JsonWebpackSerializer {
                     args = this._globCopyWebpackPluginSerialize(plugin);
                     this._addImport('@angular/cli/plugins/webpack', 'GlobCopyWebpackPlugin');
                     break;
+                case angularCliPlugins.InsertConcatAssetsWebpackPlugin:
+                    args = this._insertConcatAssetsWebpackPluginSerialize(plugin);
+                    this._addImport('@angular/cli/plugins/webpack', 'InsertConcatAssetsWebpackPlugin');
+                    break;
                 case webpack.optimize.CommonsChunkPlugin:
                     args = this._commonsChunkPluginSerialize(plugin);
                     this._addImport('webpack.optimize', 'CommonsChunkPlugin');
@@ -186,6 +197,11 @@ class JsonWebpackSerializer {
                 case license_webpack_plugin_1.LicenseWebpackPlugin:
                     args = this._licenseWebpackPlugin(plugin);
                     this._addImport('license-webpack-plugin', 'LicenseWebpackPlugin');
+                    break;
+                case ConcatPlugin:
+                    args = this._concatPlugin(plugin);
+                    this.variableImports['webpack-concat-plugin'] = 'ConcatPlugin';
+                    break;
                 default:
                     if (plugin.constructor.name == 'AngularServiceWorkerPlugin') {
                         this._addImport('@angular/service-worker/build/webpack', plugin.constructor.name);
@@ -458,13 +474,13 @@ exports.default = Task.extend({
                 'postcss-url',
                 'raw-loader',
                 'sass-loader',
-                'script-loader',
                 'source-map-loader',
                 'istanbul-instrumenter-loader',
                 'style-loader',
                 'stylus-loader',
                 'url-loader',
                 'circular-dependency-plugin',
+                'webpack-concat-plugin',
             ].forEach((packageName) => {
                 packageJson['devDependencies'][packageName] = ourPackageJson['dependencies'][packageName];
             });
