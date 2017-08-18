@@ -9,6 +9,7 @@ const config_1 = require("../models/config");
 const Task = require('../ember-cli/lib/models/task');
 const SilentError = require('silent-error');
 const GitInit = require('../tasks/git-init');
+const packageJson = require('../package.json');
 exports.default = Task.extend({
     run: function (commandOptions, rawArgs) {
         if (commandOptions.dryRun) {
@@ -56,6 +57,7 @@ exports.default = Task.extend({
         });
         const cwd = this.project.root;
         const schematicName = config_1.CliConfig.fromGlobal().get('defaults.schematics.newApp');
+        commandOptions.version = packageJson.version;
         const runOptions = {
             taskOptions: commandOptions,
             workingDir: cwd,
@@ -76,11 +78,6 @@ exports.default = Task.extend({
             .then(function () {
             if (!commandOptions.dryRun && commandOptions.skipGit === false) {
                 return gitInit.run(commandOptions, rawArgs);
-            }
-        })
-            .then(function () {
-            if (!commandOptions.dryRun && commandOptions.skipInstall === false) {
-                return npmInstall.run();
             }
         })
             .then(function () {
