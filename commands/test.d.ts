@@ -1,6 +1,5 @@
 export interface TestOptions {
     watch?: boolean;
-    codeCoverage?: boolean;
     singleRun?: boolean;
     browsers?: string;
     colors?: boolean;
@@ -11,7 +10,6 @@ export interface TestOptions {
     progress?: boolean;
     config: string;
     poll?: number;
-    environment?: string;
     app?: string;
 }
 declare const TestCommand: any;

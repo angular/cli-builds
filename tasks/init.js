@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = require("chalk");
 const link_cli_1 = require("../tasks/link-cli");
 const npm_install_1 = require("../tasks/npm-install");
+const bazel_init_1 = require("../tasks/bazel-init");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const check_package_manager_1 = require("../utilities/check-package-manager");
 const config_1 = require("../models/config");
@@ -26,11 +27,15 @@ exports.default = Task.extend({
         }
         const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
         let npmInstall;
+        let bazelInit;
         if (!commandOptions.skipInstall) {
             npmInstall = new npm_install_1.default({
                 ui: this.ui,
                 project: this.project,
                 packageManager
+            });
+            bazelInit = new bazel_init_1.default({
+                ui: this.ui,
             });
         }
         let linkCli;
@@ -78,6 +83,16 @@ exports.default = Task.extend({
             .then(function () {
             if (!commandOptions.dryRun && commandOptions.skipGit === false) {
                 return gitInit.run(commandOptions, rawArgs);
+            }
+        })
+            .then(function () {
+            if (!commandOptions.dryRun && commandOptions.skipInstall === false) {
+                return npmInstall.run();
+            }
+        })
+            .then(function () {
+            if (!commandOptions.dryRun && commandOptions.skipInstall === false) {
+                return bazelInit.run();
             }
         })
             .then(function () {
