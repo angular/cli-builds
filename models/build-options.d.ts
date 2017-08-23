@@ -13,7 +13,6 @@ export interface BuildOptions {
     i18nFile?: string;
     i18nFormat?: string;
     locale?: string;
-    missingTranslation?: string;
     extractCss?: boolean;
     watch?: boolean;
     outputHashing?: string;

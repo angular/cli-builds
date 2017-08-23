@@ -4,9 +4,7 @@ const webpack = require("webpack");
 const path = require("path");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
-const insert_concat_assets_webpack_plugin_1 = require("../../plugins/insert-concat-assets-webpack-plugin");
 const utils_1 = require("./utils");
-const ConcatPlugin = require('webpack-concat-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 /**
@@ -15,6 +13,7 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
  *
  * require('source-map-loader')
  * require('raw-loader')
+ * require('script-loader')
  * require('url-loader')
  * require('file-loader')
  * require('@angular-devkit/build-optimizer')
@@ -37,35 +36,11 @@ function getCommonConfig(wco) {
     // process global scripts
     if (appConfig.scripts.length > 0) {
         const globalScripts = utils_1.extraEntryParser(appConfig.scripts, appRoot, 'scripts');
-        const globalScriptsByEntry = globalScripts
-            .reduce((prev, curr) => {
-            let existingEntry = prev.find((el) => el.entry === curr.entry);
-            if (existingEntry) {
-                existingEntry.paths.push(curr.path);
-                // All entries have to be lazy for the bundle to be lazy.
-                existingEntry.lazy = existingEntry.lazy && curr.lazy;
-            }
-            else {
-                prev.push({ entry: curr.entry, paths: [curr.path], lazy: curr.lazy });
-            }
-            return prev;
-        }, []);
-        // Add a new asset for each entry.
-        globalScriptsByEntry.forEach((script) => {
-            const hash = hashFormat.chunk !== '' && !script.lazy ? '.[hash]' : '';
-            extraPlugins.push(new ConcatPlugin({
-                uglify: buildOptions.target === 'production' ? { sourceMapIncludeSources: true } : false,
-                sourceMap: buildOptions.sourcemaps,
-                name: script.entry,
-                // Lazy scripts don't get a hash, otherwise they can't be loaded by name.
-                fileName: `[name]${script.lazy ? '' : hash}.bundle.js`,
-                filesToConcat: script.paths
-            }));
+        // add entry points and lazy chunks
+        globalScripts.forEach(script => {
+            let scriptPath = `script-loader!${script.path}`;
+            entryPoints[script.entry] = (entryPoints[script.entry] || []).concat(scriptPath);
         });
-        // Insert all the assets created by ConcatPlugin in the right place in index.html.
-        extraPlugins.push(new insert_concat_assets_webpack_plugin_1.InsertConcatAssetsWebpackPlugin(globalScriptsByEntry
-            .filter((el) => !el.lazy)
-            .map((el) => el.entry)));
     }
     // process asset entries
     if (appConfig.assets) {

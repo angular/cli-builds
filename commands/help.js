@@ -9,15 +9,7 @@ const HelpCommand = Command.extend({
     name: 'help',
     description: 'Shows help for the CLI.',
     works: 'everywhere',
-    availableOptions: [
-        {
-            name: 'short',
-            type: Boolean,
-            default: false,
-            aliases: ['s'],
-            description: 'Display command name and description only.'
-        },
-    ],
+    availableOptions: [],
     anonymousOptions: ['command-name (Default: all)'],
     run: function (commandOptions, rawArgs) {
         let commandFiles = fs.readdirSync(__dirname)
@@ -51,10 +43,7 @@ const HelpCommand = Command.extend({
                     commandInput = Command.prototype.name;
                 }
                 if (cmd === commandInput) {
-                    if (commandOptions.short) {
-                        this.ui.writeLine(command.printShortHelp(commandOptions));
-                    }
-                    else if (command.printDetailedHelp(commandOptions)) {
+                    if (command.printDetailedHelp(commandOptions)) {
                         this.ui.writeLine(command.printDetailedHelp(commandOptions));
                     }
                     else {
@@ -63,12 +52,7 @@ const HelpCommand = Command.extend({
                 }
             }
             else {
-                if (commandOptions.short) {
-                    this.ui.writeLine(command.printShortHelp(commandOptions));
-                }
-                else {
-                    this.ui.writeLine(command.printBasicHelp(commandOptions));
-                }
+                this.ui.writeLine(command.printBasicHelp(commandOptions));
             }
         });
     }

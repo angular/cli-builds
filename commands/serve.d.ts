@@ -11,7 +11,6 @@ export interface ServeTaskOptions extends BuildOptions {
     sslCert?: string;
     open?: boolean;
     hmr?: boolean;
-    servePath?: string;
 }
 export declare const baseServeCommandOptions: any;
 declare const ServeCommand: any;
