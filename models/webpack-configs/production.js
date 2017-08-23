@@ -5,10 +5,10 @@ const webpack = require("webpack");
 const fs = require("fs");
 const semver = require("semver");
 const common_tags_1 = require("common-tags");
-const license_webpack_plugin_1 = require("license-webpack-plugin");
 const build_optimizer_1 = require("@angular-devkit/build-optimizer");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
+const licensePlugin = require('license-webpack-plugin');
 exports.getProdConfig = function (wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     let extraPlugins = [];
@@ -73,11 +73,9 @@ exports.getProdConfig = function (wco) {
         entryPoints['sw-register'] = [registerPath];
     }
     if (buildOptions.extractLicenses) {
-        extraPlugins.push(new license_webpack_plugin_1.LicenseWebpackPlugin({
+        extraPlugins.push(new licensePlugin({
             pattern: /^(MIT|ISC|BSD.*)$/,
-            suppressErrors: true,
-            perChunkOutput: false,
-            outputFilename: `3rdpartylicenses.txt`
+            suppressErrors: true
         }));
     }
     const uglifyCompressOptions = { screw_ie8: true, warnings: buildOptions.verbose };
