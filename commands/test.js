@@ -21,13 +21,6 @@ const TestCommand = Command.extend({
             description: 'Run build when files change.'
         },
         {
-            name: 'code-coverage',
-            type: Boolean,
-            default: false,
-            aliases: ['cc'],
-            description: 'Coverage report will be in the coverage/ directory.'
-        },
-        {
             name: 'config',
             type: String,
             aliases: ['c'],
@@ -77,18 +70,6 @@ const TestCommand = Command.extend({
             default: true,
             aliases: ['sm', 'sourcemap'],
             description: 'Output sourcemaps.'
-        },
-        {
-            name: 'poll',
-            type: Number,
-            default: testConfigDefaults['poll'],
-            description: 'Enable and define the file watching poll time period (milliseconds).'
-        },
-        {
-            name: 'environment',
-            type: String,
-            aliases: ['e'],
-            description: 'Defines the build environment.'
         },
         {
             name: 'app',

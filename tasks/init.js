@@ -43,9 +43,6 @@ exports.default = Task.extend({
         }
         const project = this.project;
         const packageName = commandOptions.name !== '.' && commandOptions.name || project.name();
-        if (commandOptions.style === undefined) {
-            commandOptions.style = config_1.CliConfig.fromGlobal().get('defaults.styleExt');
-        }
         if (!packageName) {
             const message = 'The `ng ' + this.name + '` command requires a ' +
                 'package.json in current folder with name attribute or a specified name via arguments. ' +
@@ -81,6 +78,11 @@ exports.default = Task.extend({
             .then(function () {
             if (!commandOptions.dryRun && commandOptions.skipGit === false) {
                 return gitInit.run(commandOptions, rawArgs);
+            }
+        })
+            .then(function () {
+            if (!commandOptions.dryRun && commandOptions.skipInstall === false) {
+                return npmInstall.run();
             }
         })
             .then(function () {

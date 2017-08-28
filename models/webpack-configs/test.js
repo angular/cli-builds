@@ -34,7 +34,6 @@ function getTestConfig(testConfig) {
         }
         extraRules.push({
             test: /\.(js|ts)$/, loader: 'istanbul-instrumenter-loader',
-            options: { esModules: true },
             enforce: 'post',
             exclude
         });
