@@ -136,6 +136,7 @@ class JsonWebpackSerializer {
     _pluginsReplacer(plugins) {
         return plugins.map(plugin => {
             let args = plugin.options || undefined;
+            const serializer = (args) => JSON.stringify(args, (k, v) => this._replacer(k, v), 2);
             switch (plugin.constructor) {
                 case ProgressPlugin:
                     this.variableImports['webpack/lib/ProgressPlugin'] = 'ProgressPlugin';
@@ -206,9 +207,16 @@ class JsonWebpackSerializer {
                     if (plugin.constructor.name == 'AngularServiceWorkerPlugin') {
                         this._addImport('@angular/service-worker/build/webpack', plugin.constructor.name);
                     }
+                    else if (plugin['copyWebpackPluginPatterns']) {
+                        // CopyWebpackPlugin doesn't have a constructor nor save args.
+                        this.variableImports['copy-webpack-plugin'] = 'CopyWebpackPlugin';
+                        const patternsSerialized = serializer(plugin['copyWebpackPluginPatterns']);
+                        const optionsSerialized = serializer(plugin['copyWebpackPluginOptions']) || 'undefined';
+                        return `\uFF02CopyWebpackPlugin(${patternsSerialized}, ${optionsSerialized})\uFF02`;
+                    }
                     break;
             }
-            const argsSerialized = JSON.stringify(args, (k, v) => this._replacer(k, v), 2) || '';
+            const argsSerialized = serializer(args) || '';
             return `\uFF02${plugin.constructor.name}(${argsSerialized})\uFF02`;
         });
     }
@@ -481,6 +489,7 @@ exports.default = Task.extend({
                 'url-loader',
                 'circular-dependency-plugin',
                 'webpack-concat-plugin',
+                'copy-webpack-plugin',
             ].forEach((packageName) => {
                 packageJson['devDependencies'][packageName] = ourPackageJson['dependencies'][packageName];
             });

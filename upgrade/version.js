@@ -7,6 +7,7 @@ const fs_1 = require("fs");
 const path = require("path");
 const config_1 = require("../models/config");
 const find_up_1 = require("../utilities/find-up");
+const require_project_module_1 = require("../utilities/require-project-module");
 const resolve = require('resolve');
 function _hasOldCliBuildFile() {
     return fs_1.existsSync(find_up_1.findUp('angular-cli-build.js', process.cwd()))
@@ -71,10 +72,16 @@ class Version {
         }
     }
     static assertAngularVersionIs2_3_1OrHigher(projectRoot) {
-        const angularCorePath = path.join(projectRoot, 'node_modules/@angular/core');
-        const pkgJson = fs_1.existsSync(angularCorePath)
-            ? JSON.parse(fs_1.readFileSync(path.join(angularCorePath, 'package.json'), 'utf8'))
-            : null;
+        let pkgJson;
+        try {
+            pkgJson = require_project_module_1.requireProjectModule(projectRoot, '@angular/core/package.json');
+        }
+        catch (_) {
+            console.error(chalk_1.bold(chalk_1.red(common_tags_1.stripIndents `
+        You seem to not be depending on "@angular/core". This is an error.
+      `)));
+            process.exit(2);
+        }
         // Just check @angular/core.
         if (pkgJson && pkgJson['version']) {
             const v = new Version(pkgJson['version']);

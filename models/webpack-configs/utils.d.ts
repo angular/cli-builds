@@ -28,3 +28,8 @@ export interface HashFormat {
     script: string;
 }
 export declare function getOutputHashFormat(option: string, length?: number): HashFormat;
+export interface AssetPattern {
+    glob: string;
+    input?: string;
+    output?: string;
+}

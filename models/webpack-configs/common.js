@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
 const path = require("path");
-const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
 const insert_concat_assets_webpack_plugin_1 = require("../../plugins/insert-concat-assets-webpack-plugin");
 const utils_1 = require("./utils");
+const is_directory_1 = require("../../utilities/is-directory");
 const ConcatPlugin = require('webpack-concat-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -69,10 +70,37 @@ function getCommonConfig(wco) {
     }
     // process asset entries
     if (appConfig.assets) {
-        extraPlugins.push(new glob_copy_webpack_plugin_1.GlobCopyWebpackPlugin({
-            patterns: appConfig.assets,
-            globOptions: { cwd: appRoot, dot: true, ignore: '**/.gitkeep' }
-        }));
+        const copyWebpackPluginPatterns = appConfig.assets.map((asset) => {
+            // Convert all string assets to object notation.
+            asset = typeof asset === 'string' ? { glob: asset } : asset;
+            // Add defaults.
+            // Input is always resolved relative to the appRoot.
+            asset.input = path.resolve(appRoot, asset.input || '');
+            asset.output = asset.output || '';
+            asset.glob = asset.glob || '';
+            // Ensure trailing slash.
+            if (is_directory_1.isDirectory(path.resolve(asset.input))) {
+                asset.input += '/';
+            }
+            // Convert dir patterns to globs.
+            if (is_directory_1.isDirectory(path.resolve(asset.input, asset.glob))) {
+                asset.glob = asset.glob + '/**/*';
+            }
+            return {
+                context: asset.input,
+                to: asset.output,
+                from: {
+                    glob: asset.glob,
+                    dot: true
+                }
+            };
+        });
+        const copyWebpackPluginOptions = { ignore: ['.gitkeep'] };
+        const copyWebpackPluginInstance = new CopyWebpackPlugin(copyWebpackPluginPatterns, copyWebpackPluginOptions);
+        // Save options so we can use them in eject.
+        copyWebpackPluginInstance['copyWebpackPluginPatterns'] = copyWebpackPluginPatterns;
+        copyWebpackPluginInstance['copyWebpackPluginOptions'] = copyWebpackPluginOptions;
+        extraPlugins.push(copyWebpackPluginInstance);
     }
     if (buildOptions.progress) {
         extraPlugins.push(new ProgressPlugin({ profile: buildOptions.verbose, colors: true }));
