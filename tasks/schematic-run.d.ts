@@ -3,6 +3,7 @@ import 'rxjs/add/operator/map';
 export interface SchematicRunOptions {
     taskOptions: SchematicOptions;
     workingDir: string;
+    emptyHost: boolean;
     collectionName: string;
     schematicName: string;
 }

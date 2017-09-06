@@ -121,6 +121,11 @@ exports.default = Command.extend({
             .replace(separatorRegEx, '/');
         const cwd = this.project.root;
         const schematicName = rawArgs[0];
+        if (schematicName === 'component' || schematicName === 'directive') {
+            if (commandOptions.prefix === undefined) {
+                commandOptions.prefix = appConfig.prefix;
+            }
+        }
         const SchematicRunTask = require('../tasks/schematic-run').default;
         const schematicRunTask = new SchematicRunTask({
             ui: this.ui,
