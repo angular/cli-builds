@@ -1,6 +1,7 @@
 "use strict";
-// Add assets from `ConcatPlugin` to index.html.
 Object.defineProperty(exports, "__esModule", { value: true });
+// Add assets from `ConcatPlugin` to index.html.
+const path = require("path");
 class InsertConcatAssetsWebpackPlugin {
     constructor(entryNames) {
         this.entryNames = entryNames;
@@ -20,7 +21,7 @@ class InsertConcatAssetsWebpackPlugin {
                         // Something went wrong and the asset was not correctly added.
                         throw new Error(`Cannot find file for ${entryName} script.`);
                     }
-                    return fileName;
+                    return path.join(htmlPluginData.assets.publicPath, fileName);
                 });
                 let insertAt = 0;
                 // TODO: try to figure out if there are duplicate bundle names when adding and throw
