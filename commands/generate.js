@@ -121,7 +121,7 @@ exports.default = Command.extend({
             .replace(separatorRegEx, '/');
         const cwd = this.project.root;
         const schematicName = rawArgs[0];
-        if (schematicName === 'component' || schematicName === 'directive') {
+        if (['component', 'c', 'directive', 'd'].indexOf(schematicName) !== -1) {
             if (commandOptions.prefix === undefined) {
                 commandOptions.prefix = appConfig.prefix;
             }
