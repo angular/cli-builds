@@ -1,7 +1,6 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // Add assets from `ConcatPlugin` to index.html.
-const path = require("path");
+Object.defineProperty(exports, "__esModule", { value: true });
 class InsertConcatAssetsWebpackPlugin {
     constructor(entryNames) {
         this.entryNames = entryNames;
@@ -21,7 +20,13 @@ class InsertConcatAssetsWebpackPlugin {
                         // Something went wrong and the asset was not correctly added.
                         throw new Error(`Cannot find file for ${entryName} script.`);
                     }
-                    return path.join(htmlPluginData.assets.publicPath, fileName);
+                    if (htmlPluginData.assets.publicPath) {
+                        if (htmlPluginData.assets.publicPath.endsWith('/')) {
+                            return htmlPluginData.assets.publicPath + fileName;
+                        }
+                        return htmlPluginData.assets.publicPath + '/' + fileName;
+                    }
+                    return fileName;
                 });
                 let insertAt = 0;
                 // TODO: try to figure out if there are duplicate bundle names when adding and throw
