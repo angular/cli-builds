@@ -3,12 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ts = require("typescript");
 const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
 const insert_concat_assets_webpack_plugin_1 = require("../../plugins/insert-concat-assets-webpack-plugin");
 const utils_1 = require("./utils");
 const is_directory_1 = require("../../utilities/is-directory");
-const read_tsconfig_1 = require("../../utilities/read-tsconfig");
 const ConcatPlugin = require('webpack-concat-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -124,19 +122,10 @@ function getCommonConfig(wco) {
     if (buildOptions.namedChunks) {
         extraPlugins.push(new named_lazy_chunks_webpack_plugin_1.NamedLazyChunksWebpackPlugin());
     }
-    // Read the tsconfig to determine if we should prefer ES2015 modules.
-    const tsconfigPath = path.resolve(projectRoot, appConfig.root, appConfig.tsconfig);
-    const tsConfig = read_tsconfig_1.readTsconfig(tsconfigPath);
-    const supportES2015 = tsConfig.options.target !== ts.ScriptTarget.ES3
-        && tsConfig.options.target !== ts.ScriptTarget.ES5;
     return {
         resolve: {
             extensions: ['.ts', '.js'],
             modules: ['node_modules', nodeModules],
-            mainFields: [
-                ...(supportES2015 ? ['es2015'] : []),
-                'browser', 'module', 'main'
-            ],
             symlinks: !buildOptions.preserveSymlinks
         },
         resolveLoader: {
@@ -152,9 +141,7 @@ function getCommonConfig(wco) {
         },
         module: {
             rules: [
-                { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader', exclude: [
-                        nodeModules, /\.ngfactory\.js$/, /\.ngstyle\.js$/
-                    ] },
+                { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader', exclude: [nodeModules] },
                 { test: /\.html$/, loader: 'raw-loader' },
                 { test: /\.(eot|svg|cur)$/, loader: `file-loader?name=[name]${hashFormat.file}.[ext]` },
                 {

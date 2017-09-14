@@ -45,7 +45,6 @@ const init = (config, emitter, customFileHandlers) => {
         codeCoverage: false,
         sourcemaps: true,
         progress: true,
-        preserveSymlinks: false,
     }, config.angularCli);
     if (testConfig.sourcemaps) {
         // Add a reporter that fixes sourcemap urls.
