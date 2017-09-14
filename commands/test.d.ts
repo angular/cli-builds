@@ -13,6 +13,7 @@ export interface TestOptions {
     poll?: number;
     environment?: string;
     app?: string;
+    preserveSymlinks?: boolean;
 }
 declare const TestCommand: any;
 export default TestCommand;

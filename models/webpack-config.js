@@ -4,6 +4,7 @@ const webpackMerge = require('webpack-merge');
 const config_1 = require("./config");
 const webpack_configs_1 = require("./webpack-configs");
 const path = require("path");
+const webpack_1 = require("@ngtools/webpack");
 class NgCliWebpackConfig {
     constructor(buildOptions, appConfig) {
         this.validateBuildOptions(buildOptions);
@@ -49,6 +50,9 @@ class NgCliWebpackConfig {
         if (buildOptions.buildOptimizer
             && !(buildOptions.aot || buildOptions.target === 'production')) {
             throw new Error('The `--build-optimizer` option cannot be used without `--aot`.');
+        }
+        if (buildOptions.experimentalAngularCompiler && !webpack_1.AngularCompilerPlugin.isSupported()) {
+            throw new Error('You need Angular 5 and up to use --experimental-angular-compiler.');
         }
     }
     // Fill in defaults for build targets

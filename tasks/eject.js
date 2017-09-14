@@ -20,6 +20,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SilentError = require('silent-error');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const ConcatPlugin = require('webpack-concat-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const Task = require('../ember-cli/lib/models/task');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 exports.pluginArgs = Symbol('plugin-args');
@@ -133,6 +134,9 @@ class JsonWebpackSerializer {
     _concatPlugin(plugin) {
         return plugin.settings;
     }
+    _uglifyjsPlugin(plugin) {
+        return plugin.options;
+    }
     _pluginsReplacer(plugins) {
         return plugins.map(plugin => {
             let args = plugin.options || undefined;
@@ -187,6 +191,10 @@ class JsonWebpackSerializer {
                     args = this._aotPluginSerialize(plugin);
                     this._addImport('@ngtools/webpack', 'AotPlugin');
                     break;
+                case webpack_1.AngularCompilerPlugin:
+                    args = this._aotPluginSerialize(plugin);
+                    this._addImport('@ngtools/webpack', 'AngularCompilerPlugin');
+                    break;
                 case HtmlWebpackPlugin:
                     args = this._htmlWebpackPlugin(plugin);
                     this.variableImports['html-webpack-plugin'] = 'HtmlWebpackPlugin';
@@ -202,6 +210,10 @@ class JsonWebpackSerializer {
                 case ConcatPlugin:
                     args = this._concatPlugin(plugin);
                     this.variableImports['webpack-concat-plugin'] = 'ConcatPlugin';
+                    break;
+                case UglifyJSPlugin:
+                    args = this._uglifyjsPlugin(plugin);
+                    this.variableImports['uglifyjs-webpack-plugin'] = 'UglifyJsPlugin';
                     break;
                 default:
                     if (plugin.constructor.name == 'AngularServiceWorkerPlugin') {
@@ -490,6 +502,7 @@ exports.default = Task.extend({
                 'circular-dependency-plugin',
                 'webpack-concat-plugin',
                 'copy-webpack-plugin',
+                'uglifyjs-webpack-plugin',
             ].forEach((packageName) => {
                 packageJson['devDependencies'][packageName] = ourPackageJson['dependencies'][packageName];
             });
