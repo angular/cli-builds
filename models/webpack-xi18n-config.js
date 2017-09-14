@@ -10,8 +10,7 @@ class XI18nWebpackConfig extends webpack_config_1.NgCliWebpackConfig {
         super({
             target: 'development',
             verbose: extractOptions.verbose,
-            progress: extractOptions.progress,
-            experimentalAngularCompiler: false,
+            progress: extractOptions.progress
         }, appConfig);
         this.extractOptions = extractOptions;
         this.appConfig = appConfig;
