@@ -52,7 +52,7 @@ function _createAotPlugin(wco, options) {
             [path.resolve(appRoot, sourcePath)]: path.resolve(appRoot, envFile)
         };
     }
-    const pluginOptions = Object.assign({}, {
+    return new webpack_1.AotPlugin(Object.assign({}, {
         mainPath: path.join(projectRoot, appConfig.root, appConfig.main),
         i18nFile: buildOptions.i18nFile,
         i18nFormat: buildOptions.i18nFormat,
@@ -60,16 +60,9 @@ function _createAotPlugin(wco, options) {
         replaceExport: appConfig.platform === 'server',
         missingTranslation: buildOptions.missingTranslation,
         hostReplacementPaths,
-        sourceMap: buildOptions.sourcemaps,
         // If we don't explicitely list excludes, it will default to `['**/*.spec.ts']`.
         exclude: []
-    }, options);
-    if (wco.buildOptions.experimentalAngularCompiler && !options.skipCodeGeneration) {
-        return new webpack_1.AngularCompilerPlugin(pluginOptions);
-    }
-    else {
-        return new webpack_1.AotPlugin(pluginOptions);
-    }
+    }, options));
 }
 exports.getNonAotConfig = function (wco) {
     const { appConfig, projectRoot } = wco;

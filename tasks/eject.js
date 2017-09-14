@@ -191,10 +191,6 @@ class JsonWebpackSerializer {
                     args = this._aotPluginSerialize(plugin);
                     this._addImport('@ngtools/webpack', 'AotPlugin');
                     break;
-                case webpack_1.AngularCompilerPlugin:
-                    args = this._aotPluginSerialize(plugin);
-                    this._addImport('@ngtools/webpack', 'AngularCompilerPlugin');
-                    break;
                 case HtmlWebpackPlugin:
                     args = this._htmlWebpackPlugin(plugin);
                     this.variableImports['html-webpack-plugin'] = 'HtmlWebpackPlugin';

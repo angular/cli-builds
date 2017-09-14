@@ -35,7 +35,7 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
             enforce: string;
             test: RegExp;
             loader: string;
-            exclude: (string | RegExp)[];
+            exclude: string[];
         } | {
             test: RegExp;
             loader: string;

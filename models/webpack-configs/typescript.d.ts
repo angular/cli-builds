@@ -1,4 +1,4 @@
-import { AotPlugin, AngularCompilerPlugin } from '@ngtools/webpack';
+import { AotPlugin } from '@ngtools/webpack';
 import { WebpackConfigOptions } from '../webpack-config';
 export declare const getNonAotConfig: (wco: WebpackConfigOptions) => {
     module: {
@@ -7,7 +7,7 @@ export declare const getNonAotConfig: (wco: WebpackConfigOptions) => {
             loader: string;
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: AotPlugin[];
 };
 export declare const getAotConfig: (wco: WebpackConfigOptions) => {
     module: {
@@ -16,7 +16,7 @@ export declare const getAotConfig: (wco: WebpackConfigOptions) => {
             use: any[];
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: AotPlugin[];
 };
 export declare const getNonAotTestConfig: (wco: WebpackConfigOptions) => {
     module: {
@@ -25,5 +25,5 @@ export declare const getNonAotTestConfig: (wco: WebpackConfigOptions) => {
             loader: string;
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: AotPlugin[];
 };
