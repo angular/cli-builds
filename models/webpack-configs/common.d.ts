@@ -14,7 +14,6 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
     resolve: {
         extensions: string[];
         modules: string[];
-        mainFields: string[];
         symlinks: boolean;
     };
     resolveLoader: {
