@@ -6,7 +6,7 @@ const common_tags_1 = require("common-tags");
 const config_1 = require("../models/config");
 function getAppFromConfig(nameOrIndex) {
     const apps = config_1.CliConfig.getValue('apps');
-    if (!apps) {
+    if (!apps || apps.length === 0) {
         throw new SilentError(chalk.red('Unable to find any apps in `.angular-cli.json`.'));
     }
     if (nameOrIndex) {

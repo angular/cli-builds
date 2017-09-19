@@ -125,10 +125,9 @@ const NewCommand = Command.extend({
         Directory ${directoryName} exists and is already an Angular CLI project.
       `);
         }
-        if (commandOptions.collection) {
-            commandOptions.collectionName = commandOptions.collection;
-        }
-        else {
+        // rawArgs got mutated, so --collection is no longer there.
+        commandOptions.collectionName = commandOptions.collection;
+        if (!commandOptions.collectionName) {
             commandOptions.collectionName = this.getCollectionName(rawArgs);
         }
         const initCommand = new init_1.default({

@@ -6,7 +6,7 @@ const config_1 = require("../models/config");
 const common_tags_1 = require("common-tags");
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const testConfigDefaults = config.getPaths('defaults.build', [
-    'progress', 'poll', 'preserveSymlinks'
+    'progress', 'poll'
 ]);
 const TestCommand = Command.extend({
     name: 'test',
@@ -19,13 +19,6 @@ const TestCommand = Command.extend({
             type: Boolean,
             aliases: ['w'],
             description: 'Run build when files change.'
-        },
-        {
-            name: 'code-coverage',
-            type: Boolean,
-            default: false,
-            aliases: ['cc'],
-            description: 'Coverage report will be in the coverage/ directory.'
         },
         {
             name: 'config',
@@ -79,34 +72,19 @@ const TestCommand = Command.extend({
             description: 'Output sourcemaps.'
         },
         {
-            name: 'poll',
-            type: Number,
-            default: testConfigDefaults['poll'],
-            description: 'Enable and define the file watching poll time period (milliseconds).'
-        },
-        {
-            name: 'environment',
-            type: String,
-            aliases: ['e'],
-            description: 'Defines the build environment.'
-        },
-        {
-            name: 'preserve-symlinks',
-            type: Boolean,
-            description: 'Do not use the real path when resolving modules.',
-            default: testConfigDefaults['preserveSymlinks']
-        },
-        {
             name: 'app',
             type: String,
-            aliases: ['a'],
+            aliases: ['a', 'lib'],
             description: 'Specifies app name to use.'
         }
     ],
-    run: function (commandOptions) {
+    run: function (commandOptions, rawArgs) {
+        const app = (rawArgs.length > 0 && !rawArgs[0].startsWith('-')) ?
+            rawArgs[0] : commandOptions.app;
         const testTask = new test_1.default({
             ui: this.ui,
-            project: this.project
+            project: this.project,
+            app
         });
         if (commandOptions.watch !== undefined && !commandOptions.watch) {
             // if not watching ensure karma is doing a single run

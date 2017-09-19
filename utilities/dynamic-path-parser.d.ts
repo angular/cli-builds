@@ -5,7 +5,7 @@ export interface DynamicPathOptions {
     dryRun: boolean;
 }
 export declare function dynamicPathParser(options: DynamicPathOptions): {
-    appRoot: string;
+    appRoot: any;
     sourceDir: any;
     root: string;
     dir: string;
