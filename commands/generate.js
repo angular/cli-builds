@@ -115,10 +115,15 @@ exports.default = Command.extend({
             dryRun: commandOptions.dryRun
         };
         const parsedPath = dynamic_path_parser_1.dynamicPathParser(dynamicPathOptions);
+        const root = appConfig.root + path.sep;
         commandOptions.sourceDir = appConfig.root;
-        commandOptions.path = parsedPath.dir
-            .replace(appConfig.root + path.sep, '')
-            .replace(separatorRegEx, '/');
+        commandOptions.appRoot = parsedPath.appRoot.startsWith(root)
+            ? parsedPath.appRoot.substr(root.length)
+            : parsedPath.appRoot;
+        commandOptions.path = parsedPath.dir.replace(separatorRegEx, '/');
+        if (parsedPath.dir.startsWith(root)) {
+            commandOptions.path = commandOptions.path.substr(root.length);
+        }
         const cwd = this.project.root;
         const schematicName = rawArgs[0];
         if (['component', 'c', 'directive', 'd'].indexOf(schematicName) !== -1) {
