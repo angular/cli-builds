@@ -125,6 +125,11 @@ exports.default = Command.extend({
             if (commandOptions.prefix === undefined) {
                 commandOptions.prefix = appConfig.prefix;
             }
+            if (schematicName === 'component' || schematicName === 'c') {
+                if (commandOptions.styleext === undefined) {
+                    commandOptions.styleext = config_1.CliConfig.getValue('defaults.styleExt');
+                }
+            }
         }
         const SchematicRunTask = require('../tasks/schematic-run').default;
         const schematicRunTask = new SchematicRunTask({
