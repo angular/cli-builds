@@ -8,7 +8,6 @@ const cssnano = require('cssnano');
 const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const customProperties = require('postcss-custom-properties');
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
  * know they are used.
@@ -72,15 +71,13 @@ function getStylesConfig(wco) {
                 }
             }),
             autoprefixer(),
-            customProperties({ preserve: true })
         ].concat(minimizeCss ? [cssnano(minimizeOptions)] : []);
     };
     postcssPluginCreator[eject_1.postcssArgs] = {
         variableImports: {
             'autoprefixer': 'autoprefixer',
             'postcss-url': 'postcssUrl',
-            'cssnano': 'cssnano',
-            'postcss-custom-properties': 'customProperties'
+            'cssnano': 'cssnano'
         },
         variables: { minimizeCss, baseHref, deployUrl }
     };

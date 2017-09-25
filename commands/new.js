@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
+const init_1 = require("./init");
 const config_1 = require("../models/config");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const common_tags_1 = require("common-tags");
 const Command = require('../ember-cli/lib/models/command');
+const Project = require('../ember-cli/lib/models/project');
 const SilentError = require('silent-error');
 const NewCommand = Command.extend({
     name: 'new',
@@ -129,13 +131,13 @@ const NewCommand = Command.extend({
         else {
             commandOptions.collectionName = this.getCollectionName(rawArgs);
         }
-        const InitTask = require('../tasks/init').default;
-        const initTask = new InitTask({
-            project: this.project,
-            tasks: this.tasks,
+        const initCommand = new init_1.default({
             ui: this.ui,
+            tasks: this.tasks,
+            project: Project.nullProject(this.ui, this.cli)
         });
-        return initTask.run(commandOptions, rawArgs);
+        return Promise.resolve()
+            .then(initCommand.run.bind(initCommand, commandOptions, rawArgs));
     }
 });
 NewCommand.overrideCore = true;
