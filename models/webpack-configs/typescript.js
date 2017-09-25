@@ -71,15 +71,16 @@ function _createAotPlugin(wco, options) {
         return new webpack_1.AotPlugin(pluginOptions);
     }
 }
-exports.getNonAotConfig = function (wco) {
+function getNonAotConfig(wco) {
     const { appConfig, projectRoot } = wco;
     const tsConfigPath = path.resolve(projectRoot, appConfig.root, appConfig.tsconfig);
     return {
         module: { rules: [{ test: /\.ts$/, loader: webpackLoader }] },
         plugins: [_createAotPlugin(wco, { tsConfigPath, skipCodeGeneration: true })]
     };
-};
-exports.getAotConfig = function (wco) {
+}
+exports.getNonAotConfig = getNonAotConfig;
+function getAotConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     const tsConfigPath = path.resolve(projectRoot, appConfig.root, appConfig.tsconfig);
     const testTsConfigPath = path.resolve(projectRoot, appConfig.root, appConfig.testTsconfig);
@@ -103,8 +104,9 @@ exports.getAotConfig = function (wco) {
         module: { rules: [{ test: /\.ts$/, use: [...boLoader, webpackLoader] }] },
         plugins: [_createAotPlugin(wco, pluginOptions)]
     };
-};
-exports.getNonAotTestConfig = function (wco) {
+}
+exports.getAotConfig = getAotConfig;
+function getNonAotTestConfig(wco) {
     const { projectRoot, appConfig } = wco;
     const tsConfigPath = path.resolve(projectRoot, appConfig.root, appConfig.testTsconfig);
     const appTsConfigPath = path.resolve(projectRoot, appConfig.root, appConfig.tsconfig);
@@ -117,5 +119,6 @@ exports.getNonAotTestConfig = function (wco) {
         module: { rules: [{ test: /\.ts$/, loader: webpackLoader }] },
         plugins: [_createAotPlugin(wco, pluginOptions)]
     };
-};
+}
+exports.getNonAotTestConfig = getNonAotTestConfig;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/typescript.js.map

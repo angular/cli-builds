@@ -12,7 +12,7 @@ const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const read_tsconfig_1 = require("../../utilities/read-tsconfig");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-exports.getProdConfig = function (wco) {
+function getProdConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     let extraPlugins = [];
     let entryPoints = {};
@@ -140,5 +140,6 @@ exports.getProdConfig = function (wco) {
             ...extraPlugins
         ]
     };
-};
+}
+exports.getProdConfig = getProdConfig;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/production.js.map
