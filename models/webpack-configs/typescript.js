@@ -10,6 +10,10 @@ const webpackLoader = g['angularCliIsLocal']
     : '@ngtools/webpack';
 function _createAotPlugin(wco, options) {
     const { appConfig, projectRoot, buildOptions } = wco;
+    options.compilerOptions = options.compilerOptions || {};
+    if (wco.buildOptions.preserveSymlinks) {
+        options.compilerOptions.preserveSymlinks = true;
+    }
     // Read the environment, and set it in the compiler host.
     let hostReplacementPaths = {};
     // process environment file replacement
