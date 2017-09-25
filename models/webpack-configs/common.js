@@ -12,6 +12,7 @@ const read_tsconfig_1 = require("../../utilities/read-tsconfig");
 const ConcatPlugin = require('webpack-concat-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const SilentError = require('silent-error');
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
  * know they are used.
@@ -80,6 +81,12 @@ function getCommonConfig(wco) {
             asset.input = path.resolve(appRoot, asset.input || '');
             asset.output = asset.output || '';
             asset.glob = asset.glob || '';
+            // Prevent asset configurations from writing outside of the output path
+            const fullOutputPath = path.resolve(buildOptions.outputPath, asset.output);
+            if (!fullOutputPath.startsWith(path.resolve(buildOptions.outputPath))) {
+                const message = 'An asset cannot be written to a location outside of the output path.';
+                throw new SilentError(message);
+            }
             // Ensure trailing slash.
             if (is_directory_1.isDirectory(path.resolve(asset.input))) {
                 asset.input += '/';
