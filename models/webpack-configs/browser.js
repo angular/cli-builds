@@ -4,6 +4,7 @@ const fs = require("fs");
 const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
 const package_chunk_sort_1 = require("../../utilities/package-chunk-sort");
 const base_href_webpack_1 = require("../../lib/base-href-webpack");
 const utils_1 = require("./utils");
@@ -50,7 +51,15 @@ function getBrowserConfig(wco) {
             minChunks: 2
         }));
     }
+    if (buildOptions.subresourceIntegrity) {
+        extraPlugins.push(new SubresourceIntegrityPlugin({
+            hashFuncNames: ['sha384']
+        }));
+    }
     return {
+        output: {
+            crossOriginLoading: buildOptions.subresourceIntegrity ? 'anonymous' : false
+        },
         plugins: [
             new HtmlWebpackPlugin({
                 template: path.resolve(appRoot, appConfig.index),

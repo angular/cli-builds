@@ -17,6 +17,7 @@ const writeFile = denodeify(fs.writeFile);
 const angularCliPlugins = require('../plugins/webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
 const SilentError = require('silent-error');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const ConcatPlugin = require('webpack-concat-plugin');
@@ -214,6 +215,9 @@ class JsonWebpackSerializer {
                 case UglifyJSPlugin:
                     args = this._uglifyjsPlugin(plugin);
                     this.variableImports['uglifyjs-webpack-plugin'] = 'UglifyJsPlugin';
+                    break;
+                case SubresourceIntegrityPlugin:
+                    this.variableImports['webpack-subresource-integrity'] = 'SubresourceIntegrityPlugin';
                     break;
                 default:
                     if (plugin.constructor.name == 'AngularServiceWorkerPlugin') {
