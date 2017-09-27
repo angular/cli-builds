@@ -81,7 +81,7 @@ exports.default = Task.extend({
           for more information.
         `);
         }
-        let clientAddress = `${serveTaskOptions.ssl ? 'https' : 'http'}://0.0.0.0:0`;
+        let clientAddress = serverAddress;
         if (serveTaskOptions.publicHost) {
             let publicHost = serveTaskOptions.publicHost;
             if (!/^\w+:\/\//.test(publicHost)) {
