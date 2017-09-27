@@ -81,7 +81,7 @@ exports.default = Task.extend({
           for more information.
         `);
         }
-        let clientAddress = serverAddress;
+        let clientAddress = `${serveTaskOptions.ssl ? 'https' : 'http'}://0.0.0.0:0`;
         if (serveTaskOptions.publicHost) {
             let publicHost = serveTaskOptions.publicHost;
             if (!/^\w+:\/\//.test(publicHost)) {
@@ -251,7 +251,7 @@ exports.default = Task.extend({
                     return reject(err);
                 }
                 if (serveTaskOptions.open) {
-                    opn(serverAddress);
+                    opn(serverAddress + servePath);
                 }
             });
             // Node 8 has a keepAliveTimeout bug which doesn't respect active connections.
