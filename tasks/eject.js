@@ -102,7 +102,7 @@ class JsonWebpackSerializer {
         const basePath = path.dirname(tsConfigPath);
         return Object.assign({}, value.options, {
             tsConfigPath,
-            mainPath: path.relative(value.basePath, value.options.mainPath),
+            mainPath: path.relative(basePath, value.options.mainPath),
             hostReplacementPaths: Object.keys(value.options.hostReplacementPaths)
                 .reduce((acc, key) => {
                 const replacementPath = value.options.hostReplacementPaths[key];
@@ -112,7 +112,7 @@ class JsonWebpackSerializer {
             }, {}),
             exclude: Array.isArray(value.options.exclude)
                 ? value.options.exclude.map((p) => {
-                    return p.startsWith('/') ? path.relative(value.basePath, p) : p;
+                    return p.startsWith('/') ? path.relative(basePath, p) : p;
                 })
                 : value.options.exclude
         });
@@ -133,7 +133,13 @@ class JsonWebpackSerializer {
         return plugin.options;
     }
     _concatPlugin(plugin) {
-        return plugin.settings;
+        const options = plugin.settings;
+        if (!options || !options.filesToConcat) {
+            return options;
+        }
+        const filesToConcat = options.filesToConcat
+            .map((file) => path.relative(process.cwd(), file));
+        return Object.assign({}, options, { filesToConcat });
     }
     _uglifyjsPlugin(plugin) {
         return plugin.options;
@@ -226,7 +232,14 @@ class JsonWebpackSerializer {
                     else if (plugin['copyWebpackPluginPatterns']) {
                         // CopyWebpackPlugin doesn't have a constructor nor save args.
                         this.variableImports['copy-webpack-plugin'] = 'CopyWebpackPlugin';
-                        const patternsSerialized = serializer(plugin['copyWebpackPluginPatterns']);
+                        const patternOptions = plugin['copyWebpackPluginPatterns'].map((pattern) => {
+                            if (!pattern.context) {
+                                return pattern;
+                            }
+                            const context = path.relative(process.cwd(), pattern.context);
+                            return Object.assign({}, pattern, { context });
+                        });
+                        const patternsSerialized = serializer(patternOptions);
                         const optionsSerialized = serializer(plugin['copyWebpackPluginOptions']) || 'undefined';
                         return `\uFF02CopyWebpackPlugin(${patternsSerialized}, ${optionsSerialized})\uFF02`;
                     }

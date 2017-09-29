@@ -56,22 +56,36 @@ function _createAotPlugin(wco, options) {
             [path.resolve(appRoot, sourcePath)]: path.resolve(appRoot, envFile)
         };
     }
-    const pluginOptions = Object.assign({}, {
-        mainPath: path.join(projectRoot, appConfig.root, appConfig.main),
-        i18nFile: buildOptions.i18nFile,
-        i18nFormat: buildOptions.i18nFormat,
-        locale: buildOptions.locale,
-        replaceExport: appConfig.platform === 'server',
-        missingTranslation: buildOptions.missingTranslation,
-        hostReplacementPaths,
-        sourceMap: buildOptions.sourcemaps,
-        // If we don't explicitely list excludes, it will default to `['**/*.spec.ts']`.
-        exclude: []
-    }, options);
-    if (wco.buildOptions.experimentalAngularCompiler && !options.skipCodeGeneration) {
+    if (wco.buildOptions.experimentalAngularCompiler) {
+        const pluginOptions = Object.assign({}, {
+            mainPath: path.join(projectRoot, appConfig.root, appConfig.main),
+            i18nInFile: buildOptions.i18nFile,
+            i18nInFormat: buildOptions.i18nFormat,
+            i18nOutFile: buildOptions.i18nOutFile,
+            i18nOutFormat: buildOptions.i18nOutFormat,
+            locale: buildOptions.locale,
+            platform: appConfig.platform === 'server' ? webpack_1.PLATFORM.Server : webpack_1.PLATFORM.Browser,
+            missingTranslation: buildOptions.missingTranslation,
+            hostReplacementPaths,
+            sourceMap: buildOptions.sourcemaps,
+            // If we don't explicitely list excludes, it will default to `['**/*.spec.ts']`.
+            exclude: []
+        }, options);
         return new webpack_1.AngularCompilerPlugin(pluginOptions);
     }
     else {
+        const pluginOptions = Object.assign({}, {
+            mainPath: path.join(projectRoot, appConfig.root, appConfig.main),
+            i18nFile: buildOptions.i18nFile,
+            i18nFormat: buildOptions.i18nFormat,
+            locale: buildOptions.locale,
+            replaceExport: appConfig.platform === 'server',
+            missingTranslation: buildOptions.missingTranslation,
+            hostReplacementPaths,
+            sourceMap: buildOptions.sourcemaps,
+            // If we don't explicitely list excludes, it will default to `['**/*.spec.ts']`.
+            exclude: []
+        }, options);
         return new webpack_1.AotPlugin(pluginOptions);
     }
 }
