@@ -8,6 +8,7 @@ export interface XI18WebpackOptions {
     verbose?: boolean;
     progress?: boolean;
     app?: string;
+    experimentalAngularCompiler?: boolean;
 }
 export declare class XI18nWebpackConfig extends NgCliWebpackConfig {
     extractOptions: XI18WebpackOptions;
