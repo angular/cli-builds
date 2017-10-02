@@ -10,10 +10,10 @@ const MemoryFS = require('memory-fs');
 exports.Extracti18nTask = Task.extend({
     run: function (runTaskOptions) {
         const appConfig = app_utils_1.getAppFromConfig(runTaskOptions.app);
-        const experimentalAngularCompiler = webpack_1.AngularCompilerPlugin.isSupported();
+        const useExperimentalAngularCompiler = webpack_1.AngularCompilerPlugin.isSupported();
         // We need to determine the outFile name so that AngularCompiler can retrieve it.
         let outFile = runTaskOptions.outFile || getI18nOutfile(runTaskOptions.i18nFormat);
-        if (experimentalAngularCompiler && runTaskOptions.outputPath) {
+        if (useExperimentalAngularCompiler && runTaskOptions.outputPath) {
             // AngularCompilerPlugin doesn't support genDir so we have to adjust outFile instead.
             outFile = path_1.join(runTaskOptions.outputPath, outFile);
         }
@@ -26,7 +26,7 @@ exports.Extracti18nTask = Task.extend({
             verbose: runTaskOptions.verbose,
             progress: runTaskOptions.progress,
             app: runTaskOptions.app,
-            experimentalAngularCompiler,
+            aot: useExperimentalAngularCompiler,
         }, appConfig).buildConfig();
         const webpackCompiler = webpack(config);
         webpackCompiler.outputFileSystem = new MemoryFS();

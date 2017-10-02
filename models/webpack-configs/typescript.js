@@ -56,7 +56,7 @@ function _createAotPlugin(wco, options) {
             [path.resolve(appRoot, sourcePath)]: path.resolve(appRoot, envFile)
         };
     }
-    if (wco.buildOptions.experimentalAngularCompiler) {
+    if (webpack_1.AngularCompilerPlugin.isSupported()) {
         const pluginOptions = Object.assign({}, {
             mainPath: path.join(projectRoot, appConfig.root, appConfig.main),
             i18nInFile: buildOptions.i18nFile,

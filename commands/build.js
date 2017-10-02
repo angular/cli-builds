@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../models/config");
 const version_1 = require("../upgrade/version");
 const common_tags_1 = require("common-tags");
-const webpack_1 = require("@ngtools/webpack");
 const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
@@ -174,13 +173,6 @@ exports.baseBuildCommandOptions = [
         aliases: ['nc'],
         description: 'Use file name for lazy loaded chunks.',
         default: buildConfigDefaults['namedChunks']
-    },
-    {
-        name: 'experimental-angular-compiler',
-        type: Boolean,
-        // aliases: ['eac'],  // We should not have shorthand aliases for experimental flags.
-        description: '(Experimental) Use new Angular Compiler (Angular version 5 and greater only).',
-        default: webpack_1.AngularCompilerPlugin.isSupported()
     },
     {
         name: 'subresource-integrity',

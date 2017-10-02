@@ -7,7 +7,7 @@ export declare function getNonAotConfig(wco: WebpackConfigOptions): {
             loader: string;
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: (AotPlugin | AngularCompilerPlugin)[];
 };
 export declare function getAotConfig(wco: WebpackConfigOptions): {
     module: {
@@ -16,7 +16,7 @@ export declare function getAotConfig(wco: WebpackConfigOptions): {
             use: any[];
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: (AotPlugin | AngularCompilerPlugin)[];
 };
 export declare function getNonAotTestConfig(wco: WebpackConfigOptions): {
     module: {
@@ -25,5 +25,5 @@ export declare function getNonAotTestConfig(wco: WebpackConfigOptions): {
             loader: string;
         }[];
     };
-    plugins: (AngularCompilerPlugin | AotPlugin)[];
+    plugins: (AotPlugin | AngularCompilerPlugin)[];
 };
