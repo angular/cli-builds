@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const read_tsconfig_1 = require("../utilities/read-tsconfig");
 const webpackMerge = require('webpack-merge');
 const config_1 = require("./config");
 const webpack_configs_1 = require("./webpack-configs");
@@ -12,7 +13,9 @@ class NgCliWebpackConfig {
         appConfig = this.addAppConfigDefaults(appConfig);
         buildOptions = this.addTargetDefaults(buildOptions);
         buildOptions = this.mergeConfigs(buildOptions, appConfig, projectRoot);
-        this.wco = { projectRoot, buildOptions, appConfig };
+        const tsconfigPath = path.resolve(projectRoot, appConfig.root, appConfig.tsconfig);
+        const tsConfig = read_tsconfig_1.readTsconfig(tsconfigPath);
+        this.wco = { projectRoot, buildOptions, appConfig, tsConfig };
     }
     buildConfig() {
         const platformConfig = this.wco.appConfig.platform === 'server' ?

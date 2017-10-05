@@ -1,18 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const ts = require("typescript");
 /**
  * Returns a partial specific to creating a bundle for node
- * @param _wco Options which are include the build options and app config
+ * @param wco Options which are include the build options and app config
  */
-function getServerConfig(_wco) {
-    return {
+function getServerConfig(wco) {
+    const supportES2015 = wco.tsConfig.options.target !== ts.ScriptTarget.ES3
+        && wco.tsConfig.options.target !== ts.ScriptTarget.ES5;
+    const config = {
+        resolve: {
+            mainFields: [
+                ...(supportES2015 ? ['es2015'] : []),
+                'main', 'module',
+            ],
+        },
         target: 'node',
         output: {
             libraryTarget: 'commonjs'
         },
-        externals: [
+        node: false,
+    };
+    if (wco.buildOptions.bundleDependencies == 'none') {
+        config.externals = [
             /^@angular/,
-            function (_, request, callback) {
+            (_, request, callback) => {
                 // Absolute & Relative paths are not externals
                 if (request.match(/^\.{0,2}\//)) {
                     return callback();
@@ -34,8 +46,9 @@ function getServerConfig(_wco) {
                     callback();
                 }
             }
-        ]
-    };
+        ];
+    }
+    return config;
 }
 exports.getServerConfig = getServerConfig;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/models/webpack-configs/server.js.map

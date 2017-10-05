@@ -14,7 +14,6 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
     resolve: {
         extensions: string[];
         modules: string[];
-        mainFields: string[];
         symlinks: boolean;
     };
     resolveLoader: {
@@ -42,15 +41,4 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
         })[];
     };
     plugins: webpack.NoEmitOnErrorsPlugin[];
-    node: {
-        fs: string;
-        global: boolean;
-        crypto: string;
-        tls: string;
-        net: string;
-        process: boolean;
-        module: boolean;
-        clearImmediate: boolean;
-        setImmediate: boolean;
-    };
 };
