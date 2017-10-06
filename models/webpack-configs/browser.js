@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const webpack = require("webpack");
 const path = require("path");
+const ts = require("typescript");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
 const package_chunk_sort_1 = require("../../utilities/package-chunk-sort");
@@ -36,12 +37,23 @@ function getBrowserConfig(wco) {
         }));
     }
     if (buildOptions.sourcemaps) {
-        extraPlugins.push(new webpack.SourceMapDevToolPlugin({
-            filename: '[file].map[query]',
-            moduleFilenameTemplate: '[resource-path]',
-            fallbackModuleFilenameTemplate: '[resource-path]?[hash]',
-            sourceRoot: 'webpack:///'
-        }));
+        // See https://webpack.js.org/configuration/devtool/ for sourcemap types.
+        if (buildOptions.evalSourcemaps && buildOptions.target === 'development') {
+            // Produce eval sourcemaps for development with serve, which are faster.
+            extraPlugins.push(new webpack.EvalSourceMapDevToolPlugin({
+                moduleFilenameTemplate: '[resource-path]',
+                sourceRoot: 'webpack:///'
+            }));
+        }
+        else {
+            // Produce full separate sourcemaps for production.
+            extraPlugins.push(new webpack.SourceMapDevToolPlugin({
+                filename: '[file].map[query]',
+                moduleFilenameTemplate: '[resource-path]',
+                fallbackModuleFilenameTemplate: '[resource-path]?[hash]',
+                sourceRoot: 'webpack:///'
+            }));
+        }
     }
     if (buildOptions.commonChunk) {
         extraPlugins.push(new webpack.optimize.CommonsChunkPlugin({
@@ -56,7 +68,15 @@ function getBrowserConfig(wco) {
             hashFuncNames: ['sha384']
         }));
     }
+    const supportES2015 = wco.tsConfig.options.target !== ts.ScriptTarget.ES3
+        && wco.tsConfig.options.target !== ts.ScriptTarget.ES5;
     return {
+        resolve: {
+            mainFields: [
+                ...(supportES2015 ? ['es2015'] : []),
+                'browser', 'module', 'main'
+            ]
+        },
         output: {
             crossOriginLoading: buildOptions.subresourceIntegrity ? 'anonymous' : false
         },
@@ -80,7 +100,20 @@ function getBrowserConfig(wco) {
                 minChunks: Infinity,
                 name: 'inline'
             })
-        ].concat(extraPlugins)
+        ].concat(extraPlugins),
+        node: {
+            fs: 'empty',
+            // `global` should be kept true, removing it resulted in a
+            // massive size increase with Build Optimizer on AIO.
+            global: true,
+            crypto: 'empty',
+            tls: 'empty',
+            net: 'empty',
+            process: true,
+            module: false,
+            clearImmediate: false,
+            setImmediate: false
+        }
     };
 }
 exports.getBrowserConfig = getBrowserConfig;

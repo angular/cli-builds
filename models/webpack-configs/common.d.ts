@@ -14,7 +14,6 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
     resolve: {
         extensions: string[];
         modules: string[];
-        mainFields: string[];
         symlinks: boolean;
     };
     resolveLoader: {
@@ -31,26 +30,10 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
         chunkFilename: string;
     };
     module: {
-        rules: ({
-            enforce: string;
+        rules: {
             test: RegExp;
             loader: string;
-            exclude: (string | RegExp)[];
-        } | {
-            test: RegExp;
-            loader: string;
-        })[];
+        }[];
     };
     plugins: webpack.NoEmitOnErrorsPlugin[];
-    node: {
-        fs: string;
-        global: boolean;
-        crypto: string;
-        tls: string;
-        net: string;
-        process: boolean;
-        module: boolean;
-        clearImmediate: boolean;
-        setImmediate: boolean;
-    };
 };

@@ -4,6 +4,7 @@ export interface BuildOptions {
     outputPath?: string;
     aot?: boolean;
     sourcemaps?: boolean;
+    evalSourcemaps?: boolean;
     vendorChunk?: boolean;
     commonChunk?: boolean;
     baseHref?: string;
@@ -17,6 +18,7 @@ export interface BuildOptions {
     locale?: string;
     missingTranslation?: string;
     extractCss?: boolean;
+    bundleDependencies?: 'none' | 'all';
     watch?: boolean;
     outputHashing?: string;
     poll?: number;
