@@ -1,6 +1,10 @@
-import { AssetPattern } from '../models/webpack-configs/utils';
+export interface Pattern {
+    glob: string;
+    input?: string;
+    output?: string;
+}
 export interface GlobCopyWebpackPluginOptions {
-    patterns: (string | AssetPattern)[];
+    patterns: (string | Pattern)[];
     globOptions: any;
 }
 export declare class GlobCopyWebpackPlugin {

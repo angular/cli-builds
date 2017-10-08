@@ -20,12 +20,6 @@ class InsertConcatAssetsWebpackPlugin {
                         // Something went wrong and the asset was not correctly added.
                         throw new Error(`Cannot find file for ${entryName} script.`);
                     }
-                    if (htmlPluginData.assets.publicPath) {
-                        if (htmlPluginData.assets.publicPath.endsWith('/')) {
-                            return htmlPluginData.assets.publicPath + fileName;
-                        }
-                        return htmlPluginData.assets.publicPath + '/' + fileName;
-                    }
                     return fileName;
                 });
                 let insertAt = 0;

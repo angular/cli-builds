@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
+const init_1 = require("./init");
 const config_1 = require("../models/config");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const common_tags_1 = require("common-tags");
 const Command = require('../ember-cli/lib/models/command');
+const Project = require('../ember-cli/lib/models/project');
 const SilentError = require('silent-error');
 const NewCommand = Command.extend({
     name: 'new',
@@ -45,6 +47,13 @@ const NewCommand = Command.extend({
             default: false,
             aliases: ['si'],
             description: 'Skip installing packages.'
+        },
+        {
+            name: 'skip-git',
+            type: Boolean,
+            default: false,
+            aliases: ['sg'],
+            description: 'Skip initializing a git repository.'
         },
         {
             name: 'skip-commit',
@@ -116,21 +125,18 @@ const NewCommand = Command.extend({
         Directory ${directoryName} exists and is already an Angular CLI project.
       `);
         }
-        if (commandOptions.collection) {
-            commandOptions.collectionName = commandOptions.collection;
-        }
-        else {
+        // rawArgs got mutated, so --collection is no longer there.
+        commandOptions.collectionName = commandOptions.collection;
+        if (!commandOptions.collectionName) {
             commandOptions.collectionName = this.getCollectionName(rawArgs);
         }
-        const InitTask = require('../tasks/init').default;
-        const initTask = new InitTask({
-            project: this.project,
-            tasks: this.tasks,
+        const initCommand = new init_1.default({
             ui: this.ui,
+            tasks: this.tasks,
+            project: Project.nullProject(this.ui, this.cli)
         });
-        // Ensure skipGit has a boolean value.
-        commandOptions.skipGit = commandOptions.skipGit === undefined ? false : commandOptions.skipGit;
-        return initTask.run(commandOptions, rawArgs);
+        return Promise.resolve()
+            .then(initCommand.run.bind(initCommand, commandOptions, rawArgs));
     }
 });
 NewCommand.overrideCore = true;

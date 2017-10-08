@@ -35,7 +35,7 @@ exports.default = Command.extend({
         {
             name: 'app',
             type: String,
-            aliases: ['a'],
+            aliases: ['a', 'lib'],
             description: 'Specifies app name to use.'
         },
         {
@@ -85,7 +85,15 @@ exports.default = Command.extend({
             ui: this.ui,
             project: this.project
         });
-        const collectionName = this.getCollectionName(rawArgs);
+        // TODO: Delete it once this is implemented https://github.com/angular/devkit/issues/34
+        let collectionName = this.getCollectionName(rawArgs);
+        try {
+            const collection = schematics_1.getCollection(collectionName);
+            collection.createSchematic(schematicName);
+        }
+        catch (e) {
+            collectionName = '@schematics/angular';
+        }
         return getOptionsTask.run({
             schematicName,
             collectionName
@@ -102,49 +110,46 @@ exports.default = Command.extend({
         });
     },
     run: function (commandOptions, rawArgs) {
-        if (rawArgs[0] === 'module' && !rawArgs[1]) {
-            throw 'The `ng generate module` command requires a name to be specified.';
-        }
-        const entityName = rawArgs[1];
-        commandOptions.name = stringUtils.dasherize(entityName.split(separatorRegEx).pop());
-        const appConfig = app_utils_1.getAppFromConfig(commandOptions.app);
-        const dynamicPathOptions = {
-            project: this.project,
-            entityName: entityName,
-            appConfig: appConfig,
-            dryRun: commandOptions.dryRun
-        };
-        const parsedPath = dynamic_path_parser_1.dynamicPathParser(dynamicPathOptions);
-        commandOptions.sourceDir = appConfig.root;
-        const root = appConfig.root + path.sep;
-        commandOptions.appRoot = parsedPath.appRoot === appConfig.root ? '' :
-            parsedPath.appRoot.startsWith(root)
-                ? parsedPath.appRoot.substr(root.length)
-                : parsedPath.appRoot;
-        commandOptions.path = parsedPath.dir.replace(separatorRegEx, '/');
-        commandOptions.path = parsedPath.dir === appConfig.root ? '' :
-            parsedPath.dir.startsWith(root)
-                ? commandOptions.path.substr(root.length)
-                : commandOptions.path;
-        const cwd = this.project.root;
         const schematicName = rawArgs[0];
-        if (['component', 'c', 'directive', 'd'].indexOf(schematicName) !== -1) {
-            if (commandOptions.prefix === undefined) {
-                commandOptions.prefix = appConfig.prefix;
+        const entityName = rawArgs[1];
+        if ((schematicName === 'module' || this.generatesProject(schematicName)) && !entityName) {
+            throw `The \`ng generate ${schematicName}\` command requires a name to be specified.`;
+        }
+        commandOptions.name = stringUtils.dasherize(entityName.split(separatorRegEx).pop());
+        if (!this.generatesProject(schematicName)) {
+            const appConfig = app_utils_1.getAppFromConfig(commandOptions.app);
+            const dynamicPathOptions = {
+                project: this.project,
+                entityName: entityName,
+                appConfig: appConfig,
+                dryRun: commandOptions.dryRun
+            };
+            const parsedPath = dynamic_path_parser_1.dynamicPathParser(dynamicPathOptions);
+            commandOptions.sourceDir = appConfig.root;
+            if (parsedPath.dir === commandOptions.sourceDir) {
+                commandOptions.path = '';
             }
-            if (schematicName === 'component' || schematicName === 'c') {
-                if (commandOptions.styleext === undefined) {
-                    commandOptions.styleext = config_1.CliConfig.getValue('defaults.styleExt');
-                }
+            else {
+                commandOptions.path = parsedPath.dir
+                    .replace(appConfig.root + path.sep, '')
+                    .replace(separatorRegEx, '/');
             }
         }
+        const cwd = this.project.root;
         const SchematicRunTask = require('../tasks/schematic-run').default;
         const schematicRunTask = new SchematicRunTask({
             ui: this.ui,
             project: this.project
         });
-        const collectionName = commandOptions.collection ||
-            config_1.CliConfig.getValue('defaults.schematics.collection');
+        // TODO: Delete it once this is implemented https://github.com/angular/devkit/issues/34
+        let collectionName = this.getCollectionName(rawArgs);
+        try {
+            const collection = schematics_1.getCollection(collectionName);
+            collection.createSchematic(schematicName);
+        }
+        catch (e) {
+            collectionName = '@schematics/angular';
+        }
         if (collectionName === '@schematics/angular' && schematicName === 'interface' && rawArgs[2]) {
             commandOptions.type = rawArgs[2];
         }
@@ -154,6 +159,12 @@ exports.default = Command.extend({
             collectionName,
             schematicName
         });
+    },
+    // Currently we assume that we always have a record in the apps array when running schematics.
+    // This does not work with schematics as we can generate new records in that array.
+    // For now, let's whitelist the schematic names, but a more generic solution is needed
+    generatesProject: function (schematicName) {
+        return schematicName === 'app' || schematicName === 'lib' || schematicName === 'nglib';
     },
     printDetailedHelp: function () {
         const engineHost = schematics_1.getEngineHost();

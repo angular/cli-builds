@@ -13,7 +13,7 @@ const app_utils_1 = require("../utilities/app-utils");
 const Task = require('../ember-cli/lib/models/task');
 exports.default = Task.extend({
     run: function (options) {
-        const { taskOptions, workingDir, emptyHost, collectionName, schematicName } = options;
+        const { taskOptions, workingDir, collectionName, schematicName } = options;
         const ui = this.ui;
         const collection = schematics_2.getCollection(collectionName);
         const schematic = schematics_2.getSchematic(collection, schematicName);
@@ -26,8 +26,7 @@ exports.default = Task.extend({
         const projectRoot = !!this.project ? this.project.root : workingDir;
         const preppedOptions = prepOptions(schematic, taskOptions);
         const opts = Object.assign({}, taskOptions, preppedOptions);
-        const tree = emptyHost ? new schematics_1.EmptyTree() : new schematics_1.FileSystemTree(new tools_1.FileSystemHost(workingDir));
-        const host = Observable_1.Observable.of(tree);
+        const host = Observable_1.Observable.of(new schematics_1.FileSystemTree(new tools_1.FileSystemHost(workingDir)));
         const dryRunSink = new schematics_1.DryRunSink(workingDir, opts.force);
         const fsSink = new schematics_1.FileSystemSink(workingDir, opts.force);
         let error = false;
@@ -129,7 +128,7 @@ exports.default = Task.extend({
 function prepOptions(schematic, options) {
     const properties = schematic.description.schemaJson.properties;
     const keys = Object.keys(properties);
-    if (['component', 'c', 'directive', 'd'].indexOf(schematic.description.name) !== -1) {
+    if (schematic.description.name === 'component') {
         options.prefix = (options.prefix === 'false' || options.prefix === '')
             ? '' : options.prefix;
     }
