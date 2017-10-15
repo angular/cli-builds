@@ -119,8 +119,11 @@ function getAotConfig(wco) {
                 options: { sourceMap: buildOptions.sourcemaps }
             }];
     }
+    const test = webpack_1.AngularCompilerPlugin.isSupported()
+        ? /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/
+        : /\.ts$/;
     return {
-        module: { rules: [{ test: /\.ts$/, use: [...boLoader, webpackLoader] }] },
+        module: { rules: [{ test, use: [...boLoader, webpackLoader] }] },
         plugins: [_createAotPlugin(wco, pluginOptions)]
     };
 }
