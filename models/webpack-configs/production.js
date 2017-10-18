@@ -12,6 +12,12 @@ const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const read_tsconfig_1 = require("../../utilities/read-tsconfig");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+/**
+ * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
+ * let the dependency validator know it is used.
+ *
+ * require('webpack-sources')
+ */
 function getProdConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     let extraPlugins = [];
