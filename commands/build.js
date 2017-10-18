@@ -163,9 +163,7 @@ exports.baseBuildCommandOptions = [
     {
         name: 'build-optimizer',
         type: Boolean,
-        default: false,
-        description: '(Experimental) Enables @angular-devkit/build-optimizer '
-            + 'optimizations when using `--aot`.'
+        description: 'Enables @angular-devkit/build-optimizer optimizations when using `--aot`.'
     },
     {
         name: 'named-chunks',
