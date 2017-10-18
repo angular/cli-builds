@@ -30,10 +30,17 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
         chunkFilename: string;
     };
     module: {
-        rules: {
+        rules: ({
             test: RegExp;
             loader: string;
-        }[];
+        } | {
+            test: RegExp;
+            loader: string;
+            options: {
+                name: string;
+                limit: number;
+            };
+        })[];
     };
     plugins: webpack.NoEmitOnErrorsPlugin[];
 };
