@@ -7,6 +7,7 @@ const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chu
 const insert_concat_assets_webpack_plugin_1 = require("../../plugins/insert-concat-assets-webpack-plugin");
 const utils_1 = require("./utils");
 const is_directory_1 = require("../../utilities/is-directory");
+const require_project_module_1 = require("../../utilities/require-project-module");
 const ConcatPlugin = require('webpack-concat-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
@@ -130,11 +131,21 @@ function getCommonConfig(wco) {
         extraPlugins.push(new named_lazy_chunks_webpack_plugin_1.NamedLazyChunksWebpackPlugin());
     }
     // Read the tsconfig to determine if we should prefer ES2015 modules.
+    // Load rxjs path aliases.
+    // https://github.com/ReactiveX/rxjs/blob/master/doc/lettable-operators.md#build-and-treeshaking
+    let alias = {};
+    try {
+        const rxjsPathMappingImport = 'rxjs/_esm5/path-mapping';
+        const rxPaths = require_project_module_1.requireProjectModule(projectRoot, rxjsPathMappingImport);
+        alias = rxPaths(nodeModules);
+    }
+    catch (e) { }
     return {
         resolve: {
             extensions: ['.ts', '.js'],
             modules: ['node_modules', nodeModules],
-            symlinks: !buildOptions.preserveSymlinks
+            symlinks: !buildOptions.preserveSymlinks,
+            alias
         },
         resolveLoader: {
             modules: [nodeModules, 'node_modules']
