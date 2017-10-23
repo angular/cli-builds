@@ -103,9 +103,7 @@ function getBrowserConfig(wco) {
         ].concat(extraPlugins),
         node: {
             fs: 'empty',
-            // `global` should be kept true, removing it resulted in a
-            // massive size increase with Build Optimizer on AIO.
-            global: true,
+            global: false,
             crypto: 'empty',
             tls: 'empty',
             net: 'empty',

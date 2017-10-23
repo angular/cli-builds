@@ -14,6 +14,11 @@ function _createAotPlugin(wco, options) {
     if (wco.buildOptions.preserveSymlinks) {
         options.compilerOptions.preserveSymlinks = true;
     }
+    // Forcing commonjs seems to drastically improve rebuild speeds on webpack.
+    // Dev builds on watch mode will set this option to true.
+    if (wco.buildOptions.forceTsCommonjs) {
+        options.compilerOptions.module = 'commonjs';
+    }
     // Read the environment, and set it in the compiler host.
     let hostReplacementPaths = {};
     // process environment file replacement

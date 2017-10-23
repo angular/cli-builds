@@ -108,33 +108,6 @@ function getProdConfig(wco) {
     const tsConfig = read_tsconfig_1.readTsconfig(tsconfigPath);
     const supportES2015 = tsConfig.options.target !== ts.ScriptTarget.ES3
         && tsConfig.options.target !== ts.ScriptTarget.ES5;
-    if (supportES2015) {
-        extraPlugins.push(new UglifyJSPlugin({
-            sourceMap: buildOptions.sourcemaps,
-            uglifyOptions: {
-                ecma: 6,
-                warnings: buildOptions.verbose,
-                ie8: false,
-                mangle: true,
-                compress: uglifyCompressOptions,
-                output: {
-                    ascii_only: true,
-                    comments: false
-                },
-            }
-        }));
-    }
-    else {
-        uglifyCompressOptions.screw_ie8 = true;
-        uglifyCompressOptions.warnings = buildOptions.verbose;
-        extraPlugins.push(new webpack.optimize.UglifyJsPlugin({
-            mangle: { screw_ie8: true },
-            compress: uglifyCompressOptions,
-            output: { ascii_only: true },
-            sourceMap: buildOptions.sourcemaps,
-            comments: false
-        }));
-    }
     return {
         entry: entryPoints,
         plugins: [
@@ -143,6 +116,20 @@ function getProdConfig(wco) {
             }),
             new webpack.HashedModuleIdsPlugin(),
             new webpack.optimize.ModuleConcatenationPlugin(),
+            new UglifyJSPlugin({
+                sourceMap: buildOptions.sourcemaps,
+                uglifyOptions: {
+                    ecma: supportES2015 ? 6 : 5,
+                    warnings: buildOptions.verbose,
+                    ie8: false,
+                    mangle: true,
+                    compress: uglifyCompressOptions,
+                    output: {
+                        ascii_only: true,
+                        comments: false
+                    },
+                }
+            }),
             ...extraPlugins
         ]
     };
