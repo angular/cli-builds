@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
-const chalk = require("chalk");
+const chalk_1 = require("chalk");
 const config_1 = require("../models/config");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const common_tags_1 = require("common-tags");
@@ -101,7 +101,7 @@ const NewCommand = Command.extend({
         const packageName = rawArgs.shift();
         if (!packageName) {
             return Promise.reject(new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. ` +
-                chalk.yellow('ng new [name] ') +
+                chalk_1.default.yellow('ng new [name] ') +
                 `For more details, use "ng help".`));
         }
         validate_project_name_1.validateProjectName(packageName);

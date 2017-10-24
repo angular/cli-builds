@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const chalk = require("chalk");
+const chalk_1 = require("chalk");
 const common_tags_1 = require("common-tags");
 // Force basic color support on terminals with no color support.
 // Chalk typings don't have the correct constructor parameters.
-const chalkCtx = new chalk.constructor(chalk.supportsColor ? {} : { level: 1 });
+const chalkCtx = new chalk_1.default.constructor(chalk_1.default.supportsColor ? {} : { level: 1 });
 const { bold, green, red, reset, white, yellow } = chalkCtx;
 function _formatSize(size) {
     if (size <= 0) {

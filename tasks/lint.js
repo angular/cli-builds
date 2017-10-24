@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const chalk = require("chalk");
+const chalk_1 = require("chalk");
 const fs = require("fs");
 const glob = require("glob");
 const path = require("path");
@@ -24,7 +24,7 @@ exports.default = Task.extend({
         const lintConfigs = options.configs || [];
         if (lintConfigs.length === 0) {
             if (!options.silent) {
-                ui.writeLine(chalk.yellow('No lint configuration(s) found.'));
+                ui.writeLine(chalk_1.default.yellow('No lint configuration(s) found.'));
             }
             return Promise.resolve(0);
         }
@@ -39,7 +39,7 @@ exports.default = Task.extend({
             }
             else if (options.typeCheck) {
                 if (!options.silent) {
-                    ui.writeLine(chalk.yellow('A "project" must be specified to enable type checking.'));
+                    ui.writeLine(chalk_1.default.yellow('A "project" must be specified to enable type checking.'));
                 }
             }
             const files = getFilesToLint(program, config, Linter);
@@ -83,7 +83,7 @@ exports.default = Task.extend({
         if (!options.silent) {
             const Formatter = tslint.findFormatter(options.format);
             if (!Formatter) {
-                throw new SilentError(chalk.red(`Invalid lint format "${options.format}".`));
+                throw new SilentError(chalk_1.default.red(`Invalid lint format "${options.format}".`));
             }
             const formatter = new Formatter();
             const output = formatter.format(result.failures, result.fixes);
@@ -98,12 +98,12 @@ exports.default = Task.extend({
         }
         if (result.failures.length > 0) {
             if (!options.silent) {
-                ui.writeLine(chalk.red('Lint errors found in the listed files.'));
+                ui.writeLine(chalk_1.default.red('Lint errors found in the listed files.'));
             }
             return options.force ? Promise.resolve(0) : Promise.resolve(2);
         }
         if (!options.silent) {
-            ui.writeLine(chalk.green('All files pass linting.'));
+            ui.writeLine(chalk_1.default.green('All files pass linting.'));
         }
         return Promise.resolve(0);
     }

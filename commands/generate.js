@@ -12,6 +12,7 @@ const app_utils_1 = require("../utilities/app-utils");
 const path = require("path");
 const Command = require('../ember-cli/lib/models/command');
 const SilentError = require('silent-error');
+const { cyan, yellow } = chalk_1.default;
 const separatorRegEx = /[\/\\]/g;
 exports.default = Command.extend({
     name: 'generate',
@@ -160,9 +161,9 @@ exports.default = Command.extend({
         const collectionName = this.getCollectionName();
         const collection = schematics_1.getCollection(collectionName);
         const schematicNames = engineHost.listSchematics(collection);
-        this.ui.writeLine(chalk_1.cyan('Available schematics:'));
+        this.ui.writeLine(cyan('Available schematics:'));
         schematicNames.forEach(schematicName => {
-            this.ui.writeLine(chalk_1.yellow(`    ${schematicName}`));
+            this.ui.writeLine(yellow(`    ${schematicName}`));
         });
         this.ui.writeLine('');
     }

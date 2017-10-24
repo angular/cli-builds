@@ -5,7 +5,7 @@ const common_tags_1 = require("common-tags");
 const fs = require("fs");
 const path = require("path");
 const child_process = require("child_process");
-const chalk = require("chalk");
+const chalk_1 = require("chalk");
 const config_1 = require("../models/config");
 const VersionCommand = Command.extend({
     name: 'version',
@@ -69,7 +69,7 @@ const VersionCommand = Command.extend({
                |___/
     `;
         this.ui.writeLine(common_tags_1.stripIndents `
-    ${chalk.red(asciiArt)}
+    ${chalk_1.default.red(asciiArt)}
     Angular CLI: ${ngCliVersion}
     Node: ${process.versions.node}
     OS: ${process.platform} ${process.arch}

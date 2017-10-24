@@ -4,11 +4,11 @@ const fs = require("fs");
 const path = require("path");
 const ts = require("typescript");
 const webpack = require("webpack");
+const chalk_1 = require("chalk");
 const app_utils_1 = require("../utilities/app-utils");
 const webpack_config_1 = require("../models/webpack-config");
 const config_1 = require("../models/config");
 const webpack_1 = require("@ngtools/webpack");
-const chalk_1 = require("chalk");
 const license_webpack_plugin_1 = require("license-webpack-plugin");
 const denodeify = require("denodeify");
 const common_tags_1 = require("common-tags");
@@ -26,6 +26,7 @@ const Task = require('../ember-cli/lib/models/task');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 exports.pluginArgs = Symbol('plugin-args');
 exports.postcssArgs = Symbol('postcss-args');
+const yellow = chalk_1.default.yellow;
 const pree2eNpmScript = `webdriver-manager update --standalone false --gecko false --quiet`;
 class JsonWebpackSerializer {
     constructor(_root, _dist, _appRoot) {
@@ -543,7 +544,7 @@ exports.default = Task.extend({
             cliConfig.save();
         })
             .then(() => {
-            console.log(chalk_1.yellow(common_tags_1.stripIndent `
+            console.log(yellow(common_tags_1.stripIndent `
           ==========================================================================================
           Ejection was successful.
 
