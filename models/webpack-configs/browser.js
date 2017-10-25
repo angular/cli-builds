@@ -3,14 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const webpack = require("webpack");
 const path = require("path");
-const ts = require("typescript");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
 const package_chunk_sort_1 = require("../../utilities/package-chunk-sort");
 const base_href_webpack_1 = require("../../lib/base-href-webpack");
 const utils_1 = require("./utils");
+const require_project_module_1 = require("../../utilities/require-project-module");
 function getBrowserConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
+    const projectTs = require_project_module_1.requireProjectModule(projectRoot, 'typescript');
     const appRoot = path.resolve(projectRoot, appConfig.root);
     let extraPlugins = [];
     // figure out which are the lazy loaded entry points
@@ -68,8 +69,8 @@ function getBrowserConfig(wco) {
             hashFuncNames: ['sha384']
         }));
     }
-    const supportES2015 = wco.tsConfig.options.target !== ts.ScriptTarget.ES3
-        && wco.tsConfig.options.target !== ts.ScriptTarget.ES5;
+    const supportES2015 = wco.tsConfig.options.target !== projectTs.ScriptTarget.ES3
+        && wco.tsConfig.options.target !== projectTs.ScriptTarget.ES5;
     return {
         resolve: {
             mainFields: [

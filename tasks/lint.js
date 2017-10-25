@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// We only use typescript for type information here.
+// @ignoreDep typescript
 const chalk_1 = require("chalk");
 const fs = require("fs");
 const glob = require("glob");

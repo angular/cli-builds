@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
-const ts = require("typescript");
+const require_project_module_1 = require("../utilities/require-project-module");
 function readTsconfig(tsconfigPath) {
-    const configResult = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
-    const tsConfig = ts.parseJsonConfigFileContent(configResult.config, ts.sys, path.dirname(tsconfigPath), undefined, tsconfigPath);
+    const projectTs = require_project_module_1.requireProjectModule(path.dirname(tsconfigPath), 'typescript');
+    const configResult = projectTs.readConfigFile(tsconfigPath, projectTs.sys.readFile);
+    const tsConfig = projectTs.parseJsonConfigFileContent(configResult.config, projectTs.sys, path.dirname(tsconfigPath), undefined, tsconfigPath);
     return tsConfig;
 }
 exports.readTsconfig = readTsconfig;
