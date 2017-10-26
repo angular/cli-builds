@@ -64,7 +64,7 @@ class NgCliWebpackConfig {
                 sourcemaps: true,
                 extractCss: false,
                 namedChunks: true,
-                aot: false,
+                aot: webpack_1.AngularCompilerPlugin.isSupported(),
                 buildOptimizer: false
             },
             production: {
@@ -79,7 +79,7 @@ class NgCliWebpackConfig {
         let merged = Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
         // Use Build Optimizer on prod AOT builds by default when AngularCompilerPlugin is supported.
         const buildOptimizerDefault = {
-            buildOptimizer: merged.aot && webpack_1.AngularCompilerPlugin.isSupported()
+            buildOptimizer: buildOptions.target == 'production' && webpack_1.AngularCompilerPlugin.isSupported()
         };
         merged = Object.assign({}, buildOptimizerDefault, merged);
         // Default vendor chunk to false when build optimizer is on.
