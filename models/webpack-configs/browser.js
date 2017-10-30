@@ -104,7 +104,7 @@ function getBrowserConfig(wco) {
         ].concat(extraPlugins),
         node: {
             fs: 'empty',
-            global: false,
+            global: true,
             crypto: 'empty',
             tls: 'empty',
             net: 'empty',
