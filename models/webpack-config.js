@@ -64,7 +64,7 @@ class NgCliWebpackConfig {
                 sourcemaps: true,
                 extractCss: false,
                 namedChunks: true,
-                aot: webpack_1.AngularCompilerPlugin.isSupported(),
+                aot: false,
                 buildOptimizer: false
             },
             production: {
