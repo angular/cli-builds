@@ -6,6 +6,7 @@ const chalk_1 = require("chalk");
 const config_1 = require("../models/config");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const common_tags_1 = require("common-tags");
+const { cyan } = chalk_1.default;
 const Command = require('../ember-cli/lib/models/command');
 const SilentError = require('silent-error');
 const NewCommand = Command.extend({
@@ -131,6 +132,27 @@ const NewCommand = Command.extend({
         // Ensure skipGit has a boolean value.
         commandOptions.skipGit = commandOptions.skipGit === undefined ? false : commandOptions.skipGit;
         return initTask.run(commandOptions, rawArgs);
+    },
+    printDetailedHelp: function () {
+        const collectionName = this.getCollectionName();
+        const schematicName = config_1.CliConfig.getValue('defaults.schematics.newApp');
+        const SchematicGetHelpOutputTask = require('../tasks/schematic-get-help-output').default;
+        const getHelpOutputTask = new SchematicGetHelpOutputTask({
+            ui: this.ui,
+            project: this.project
+        });
+        return getHelpOutputTask.run({
+            schematicName,
+            collectionName,
+            nonSchematicOptions: this.availableOptions.filter((o) => !o.hidden)
+        })
+            .then((output) => {
+            const outputLines = [
+                cyan(`ng new ${cyan('[name]')} ${cyan('<options...>')}`),
+                ...output
+            ];
+            return outputLines.join('\n');
+        });
     }
 });
 NewCommand.overrideCore = true;
