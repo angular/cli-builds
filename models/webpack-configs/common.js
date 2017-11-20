@@ -118,7 +118,7 @@ function getCommonConfig(wco) {
                 }
             };
         });
-        const copyWebpackPluginOptions = { ignore: ['.gitkeep'] };
+        const copyWebpackPluginOptions = { ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db'] };
         const copyWebpackPluginInstance = new CopyWebpackPlugin(copyWebpackPluginPatterns, copyWebpackPluginOptions);
         // Save options so we can use them in eject.
         copyWebpackPluginInstance['copyWebpackPluginPatterns'] = copyWebpackPluginPatterns;
