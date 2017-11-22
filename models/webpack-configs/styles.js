@@ -155,7 +155,8 @@ function getStylesConfig(wco) {
             options: {
                 // A non-function property is required to workaround a webpack option handling bug
                 ident: 'postcss',
-                plugins: postcssPluginCreator
+                plugins: postcssPluginCreator,
+                sourceMap: cssSourceMap
             }
         }
     ];
