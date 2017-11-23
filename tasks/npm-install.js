@@ -11,25 +11,21 @@ exports.default = Task.extend({
             packageManager = 'npm';
         }
         ui.writeLine(chalk_1.default.green(`Installing packages for tooling via ${packageManager}.`));
-        const installArgs = ['install'];
+        let installCommand = `${packageManager} install`;
         if (packageManager === 'npm') {
-            installArgs.push('--quiet');
+            installCommand = `${packageManager} --quiet install`;
         }
-        const installOptions = {
-            stdio: 'inherit',
-            shell: true
-        };
         return new Promise((resolve, reject) => {
-            child_process_1.spawn(packageManager, installArgs, installOptions)
-                .on('close', (code) => {
-                if (code === 0) {
-                    ui.writeLine(chalk_1.default.green(`Installed packages for tooling via ${packageManager}.`));
-                    resolve();
-                }
-                else {
+            child_process_1.exec(installCommand, (err, _stdout, stderr) => {
+                if (err) {
+                    ui.writeLine(stderr);
                     const message = 'Package install failed, see above.';
                     ui.writeLine(chalk_1.default.red(message));
                     reject(message);
+                }
+                else {
+                    ui.writeLine(chalk_1.default.green(`Installed packages for tooling via ${packageManager}.`));
+                    resolve();
                 }
             });
         });

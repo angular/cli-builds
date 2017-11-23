@@ -29,8 +29,8 @@ const Xi18nCommand = Command.extend({
         {
             name: 'progress',
             type: Boolean,
-            description: 'Log progress to the console while running.',
-            default: process.stdout.isTTY === true,
+            default: true,
+            description: 'Log progress to the console while running.'
         },
         {
             name: 'app',
