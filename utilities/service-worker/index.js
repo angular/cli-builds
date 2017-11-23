@@ -58,9 +58,9 @@ function augmentAppWithServiceWorker(projectRoot, appRoot, outputPath, baseHref)
     const workerPath = path.resolve(swModule, 'ngsw-worker.js');
     const configPath = path.resolve(appRoot, 'ngsw-config.json');
     if (!fs.existsSync(configPath)) {
-        throw new Error(common_tags_1.stripIndent `Expected to find an ngsw-config.json configuration file in the
-                                application root. Either provide one or disable Service Worker
-                                build support in angular-cli.json.`);
+        throw new Error(common_tags_1.oneLine `Error: Expected to find an ngsw-config.json configuration
+      file in the ${appRoot} folder. Either provide one or disable Service Worker
+      in .angular-cli.json.`);
     }
     const config = fs.readFileSync(configPath, 'utf8');
     const Generator = require('@angular/service-worker/config').Generator;
