@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../models/config");
 const version_1 = require("../upgrade/version");
 const common_tags_1 = require("common-tags");
+const app_utils_1 = require("../utilities/app-utils");
+const path_1 = require("path");
 const Command = require('../ember-cli/lib/models/command');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
@@ -195,6 +197,12 @@ exports.baseBuildCommandOptions = [
         aliases: ['sw'],
         description: 'Generates a service worker config for production builds, if the app has '
             + 'service worker enabled.'
+    },
+    {
+        name: 'skip-app-shell',
+        type: Boolean,
+        description: 'Flag to prevent building an app shell',
+        default: false
     }
 ];
 const BuildCommand = Command.extend({
@@ -223,7 +231,34 @@ const BuildCommand = Command.extend({
             project: this.project,
             ui: this.ui,
         });
-        return buildTask.run(commandOptions);
+        const buildPromise = buildTask.run(commandOptions);
+        const clientApp = app_utils_1.getAppFromConfig(commandOptions.app);
+        const doAppShell = commandOptions.target === 'production' &&
+            (commandOptions.aot === undefined || commandOptions.aot === true) &&
+            !commandOptions.skipAppShell;
+        if (!clientApp.appShell || !doAppShell) {
+            return buildPromise;
+        }
+        const serverApp = app_utils_1.getAppFromConfig(clientApp.appShell.app);
+        return buildPromise
+            .then(() => {
+            const serverOptions = Object.assign({}, commandOptions, { app: clientApp.appShell.app });
+            return buildTask.run(serverOptions);
+        })
+            .then(() => {
+            const RenderUniversalTask = require('../tasks/render-universal').default;
+            const renderUniversalTask = new RenderUniversalTask({
+                project: this.project,
+                ui: this.ui,
+            });
+            const renderUniversalOptions = {
+                inputIndexPath: path_1.join(this.project.root, clientApp.outDir, clientApp.index),
+                route: clientApp.appShell.route,
+                serverOutDir: path_1.join(this.project.root, serverApp.outDir),
+                outputIndexPath: path_1.join(this.project.root, clientApp.outDir, clientApp.index)
+            };
+            return renderUniversalTask.run(renderUniversalOptions);
+        });
     }
 });
 BuildCommand.overrideCore = true;
