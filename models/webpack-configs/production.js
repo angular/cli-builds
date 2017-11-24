@@ -115,8 +115,6 @@ function getProdConfig(wco) {
             }),
             new webpack.HashedModuleIdsPlugin(),
             new webpack.optimize.ModuleConcatenationPlugin(),
-            ...extraPlugins,
-            // Uglify should be the last plugin as PurifyPlugin needs to be before it.
             new UglifyJSPlugin({
                 sourceMap: buildOptions.sourcemaps,
                 uglifyOptions: {
@@ -131,6 +129,7 @@ function getProdConfig(wco) {
                     },
                 }
             }),
+            ...extraPlugins
         ]
     };
 }
