@@ -98,7 +98,13 @@ function getProdConfig(wco) {
             outputFilename: `3rdpartylicenses.txt`
         }));
     }
-    const uglifyCompressOptions = {};
+    const uglifyCompressOptions = {
+        // Disabled because of an issue with Uglify breaking seemingly valid code:
+        // https://github.com/angular/angular-cli/issues/5804
+        // Further investigation:
+        // https://github.com/mishoo/UglifyJS2/issues/2011
+        comparisons: false
+    };
     if (buildOptions.buildOptimizer) {
         // This plugin must be before webpack.optimize.UglifyJsPlugin.
         extraPlugins.push(new build_optimizer_1.PurifyPlugin());

@@ -6,6 +6,7 @@ const common_tags_1 = require("common-tags");
 const app_utils_1 = require("../utilities/app-utils");
 const path_1 = require("path");
 const Command = require('../ember-cli/lib/models/command');
+const SilentError = require('silent-error');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
     'sourcemaps', 'baseHref', 'progress', 'poll', 'deleteOutputPath', 'preserveSymlinks',
@@ -231,15 +232,21 @@ const BuildCommand = Command.extend({
             project: this.project,
             ui: this.ui,
         });
-        const buildPromise = buildTask.run(commandOptions);
         const clientApp = app_utils_1.getAppFromConfig(commandOptions.app);
         const doAppShell = commandOptions.target === 'production' &&
             (commandOptions.aot === undefined || commandOptions.aot === true) &&
             !commandOptions.skipAppShell;
+        let serverApp = null;
+        if (clientApp.appShell && doAppShell) {
+            serverApp = app_utils_1.getAppFromConfig(clientApp.appShell.app);
+            if (serverApp.platform !== 'server') {
+                throw new SilentError(`Shell app's platform is not "server"`);
+            }
+        }
+        const buildPromise = buildTask.run(commandOptions);
         if (!clientApp.appShell || !doAppShell) {
             return buildPromise;
         }
-        const serverApp = app_utils_1.getAppFromConfig(clientApp.appShell.app);
         return buildPromise
             .then(() => {
             const serverOptions = Object.assign({}, commandOptions, { app: clientApp.appShell.app });
