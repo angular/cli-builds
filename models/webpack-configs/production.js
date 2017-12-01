@@ -99,11 +99,11 @@ function getProdConfig(wco) {
         }));
     }
     const uglifyCompressOptions = {
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
+        // Disabled because of an issue with Mapbox GL when using the Webpack node global and UglifyJS:
+        // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-303880888
         // https://github.com/angular/angular-cli/issues/5804
-        // Further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false
+        // https://github.com/angular/angular-cli/pull/7931
+        typeofs: false
     };
     if (buildOptions.buildOptimizer) {
         // This plugin must be before webpack.optimize.UglifyJsPlugin.
