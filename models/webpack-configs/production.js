@@ -38,7 +38,7 @@ function getProdConfig(wco) {
         const swPackageJson = fs.readFileSync(`${swModule}/package.json`).toString();
         const swVersion = JSON.parse(swPackageJson)['version'];
         const isLegacySw = semver.satisfies(swVersion, OLD_SW_VERSION);
-        const isModernSw = semver.satisfies(swVersion, service_worker_1.NEW_SW_VERSION);
+        const isModernSw = semver.gte(swVersion, service_worker_1.NEW_SW_VERSION);
         if (!isLegacySw && !isModernSw) {
             throw new Error(common_tags_1.stripIndent `
         The installed version of @angular/service-worker is ${swVersion}. This version of the CLI

@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
-exports.NEW_SW_VERSION = '>= 5.0.0-rc.0';
+exports.NEW_SW_VERSION = '5.0.0-rc.0';
 class CliFilesystem {
     constructor(base) {
         this.base = base;
@@ -48,7 +48,7 @@ function usesServiceWorker(projectRoot) {
     }
     const swPackageJson = fs.readFileSync(`${swModule}/package.json`).toString();
     const swVersion = JSON.parse(swPackageJson)['version'];
-    return semver.satisfies(swVersion, exports.NEW_SW_VERSION);
+    return semver.gte(swVersion, exports.NEW_SW_VERSION);
 }
 exports.usesServiceWorker = usesServiceWorker;
 function augmentAppWithServiceWorker(projectRoot, appRoot, outputPath, baseHref) {
