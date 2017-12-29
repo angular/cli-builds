@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Exports the webpack plugins we use internally.
 var base_href_webpack_plugin_1 = require("../lib/base-href-webpack/base-href-webpack-plugin");
 exports.BaseHrefWebpackPlugin = base_href_webpack_plugin_1.BaseHrefWebpackPlugin;
+var cleancss_webpack_plugin_1 = require("./cleancss-webpack-plugin");
+exports.CleanCssWebpackPlugin = cleancss_webpack_plugin_1.CleanCssWebpackPlugin;
 var glob_copy_webpack_plugin_1 = require("./glob-copy-webpack-plugin");
 exports.GlobCopyWebpackPlugin = glob_copy_webpack_plugin_1.GlobCopyWebpackPlugin;
 var named_lazy_chunks_webpack_plugin_1 = require("./named-lazy-chunks-webpack-plugin");

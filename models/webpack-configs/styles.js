@@ -4,7 +4,7 @@ const path = require("path");
 const suppress_entry_chunks_webpack_plugin_1 = require("../../plugins/suppress-entry-chunks-webpack-plugin");
 const utils_1 = require("./utils");
 const eject_1 = require("../../tasks/eject");
-const cssnano = require('cssnano');
+const cleancss_webpack_plugin_1 = require("../../plugins/cleancss-webpack-plugin");
 const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -37,15 +37,11 @@ function getStylesConfig(wco) {
     const baseHref = wco.buildOptions.baseHref || '';
     const deployUrl = wco.buildOptions.deployUrl || '';
     const postcssPluginCreator = function () {
-        // safe settings based on: https://github.com/ben-eb/cssnano/issues/358#issuecomment-283696193
-        const importantCommentRe = /@preserve|@licen[cs]e|[@#]\s*source(?:Mapping)?URL|^!/i;
-        const minimizeOptions = {
-            autoprefixer: false,
-            safe: true,
-            mergeLonghand: false,
-            discardComments: { remove: (comment) => !importantCommentRe.test(comment) }
-        };
         return [
+            postcssUrl({
+                filter: ({ url }) => url.startsWith('~'),
+                url: ({ url }) => path.join(projectRoot, 'node_modules', url.substr(1)),
+            }),
             postcssUrl([
                 {
                     // Only convert root relative URLs, which CSS-Loader won't process into require().
@@ -77,16 +73,15 @@ function getStylesConfig(wco) {
             ]),
             autoprefixer(),
             customProperties({ preserve: true })
-        ].concat(minimizeCss ? [cssnano(minimizeOptions)] : []);
+        ];
     };
     postcssPluginCreator[eject_1.postcssArgs] = {
         variableImports: {
             'autoprefixer': 'autoprefixer',
             'postcss-url': 'postcssUrl',
-            'cssnano': 'cssnano',
             'postcss-custom-properties': 'customProperties'
         },
-        variables: { minimizeCss, baseHref, deployUrl }
+        variables: { minimizeCss, baseHref, deployUrl, projectRoot }
     };
     // determine hashing format
     const hashFormat = utils_1.getOutputHashFormat(buildOptions.outputHashing);
@@ -194,6 +189,9 @@ function getStylesConfig(wco) {
         extraPlugins.push(new ExtractTextPlugin({ filename: `[name]${hashFormat.extract}.bundle.css` }));
         // suppress empty .js files in css only entry points
         extraPlugins.push(new suppress_entry_chunks_webpack_plugin_1.SuppressExtractedTextChunksWebpackPlugin());
+    }
+    if (minimizeCss) {
+        extraPlugins.push(new cleancss_webpack_plugin_1.CleanCssWebpackPlugin({ sourceMap: cssSourceMap }));
     }
     return {
         entry: entryPoints,
