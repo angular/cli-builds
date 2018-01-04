@@ -9,21 +9,6 @@ const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const customProperties = require('postcss-custom-properties');
-/**
- * Enumerate loaders and their dependencies from this file to let the dependency validator
- * know they are used.
- *
- * require('exports-loader')
- * require('style-loader')
- * require('postcss-loader')
- * require('css-loader')
- * require('stylus')
- * require('stylus-loader')
- * require('less')
- * require('less-loader')
- * require('node-sass')
- * require('sass-loader')
- */
 function getStylesConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     const appRoot = path.resolve(projectRoot, appConfig.root);
@@ -36,11 +21,14 @@ function getStylesConfig(wco) {
     // Convert absolute resource URLs to account for base-href and deploy-url.
     const baseHref = wco.buildOptions.baseHref || '';
     const deployUrl = wco.buildOptions.deployUrl || '';
-    const postcssPluginCreator = function () {
+    const postcssPluginCreator = function (loader) {
         return [
             postcssUrl({
                 filter: ({ url }) => url.startsWith('~'),
-                url: ({ url }) => path.join(projectRoot, 'node_modules', url.substr(1)),
+                url: ({ url }) => {
+                    const fullPath = path.join(projectRoot, 'node_modules', url.substr(1));
+                    return path.relative(loader.context, fullPath).replace(/\\/g, '/');
+                }
             }),
             postcssUrl([
                 {
