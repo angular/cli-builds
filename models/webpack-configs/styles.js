@@ -9,6 +9,7 @@ const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const customProperties = require('postcss-custom-properties');
+const postcssImports = require('postcss-import');
 function getStylesConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     const appRoot = path.resolve(projectRoot, appConfig.root);
@@ -23,6 +24,31 @@ function getStylesConfig(wco) {
     const deployUrl = wco.buildOptions.deployUrl || '';
     const postcssPluginCreator = function (loader) {
         return [
+            postcssImports({
+                resolve: (url, context) => {
+                    return new Promise((resolve, reject) => {
+                        loader.resolve(context, url, (err, result) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            resolve(result);
+                        });
+                    });
+                },
+                load: (filename) => {
+                    return new Promise((resolve, reject) => {
+                        loader.fs.readFile(filename, (err, data) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            const content = data.toString();
+                            resolve(content);
+                        });
+                    });
+                }
+            }),
             postcssUrl({
                 filter: ({ url }) => url.startsWith('~'),
                 url: ({ url }) => {
@@ -67,7 +93,8 @@ function getStylesConfig(wco) {
         variableImports: {
             'autoprefixer': 'autoprefixer',
             'postcss-url': 'postcssUrl',
-            'postcss-custom-properties': 'customProperties'
+            'postcss-custom-properties': 'customProperties',
+            'postcss-import': 'postcssImports',
         },
         variables: { minimizeCss, baseHref, deployUrl, projectRoot }
     };
@@ -127,7 +154,7 @@ function getStylesConfig(wco) {
             loader: 'css-loader',
             options: {
                 sourceMap: cssSourceMap,
-                importLoaders: 1,
+                import: false,
             }
         },
         {
