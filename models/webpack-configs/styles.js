@@ -8,7 +8,6 @@ const cleancss_webpack_plugin_1 = require("../../plugins/cleancss-webpack-plugin
 const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const customProperties = require('postcss-custom-properties');
 const postcssImports = require('postcss-import');
 function getStylesConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
@@ -86,14 +85,12 @@ function getStylesConfig(wco) {
                 }
             ]),
             autoprefixer(),
-            customProperties({ preserve: true })
         ];
     };
     postcssPluginCreator[eject_1.postcssArgs] = {
         variableImports: {
             'autoprefixer': 'autoprefixer',
             'postcss-url': 'postcssUrl',
-            'postcss-custom-properties': 'customProperties',
             'postcss-import': 'postcssImports',
         },
         variables: { minimizeCss, baseHref, deployUrl, projectRoot }
