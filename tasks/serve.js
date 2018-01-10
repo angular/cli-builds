@@ -64,8 +64,8 @@ exports.default = Task.extend({
             fs.removeSync(path.resolve(this.project.root, outputPath));
         }
         const serveDefaults = {
-            // default deployUrl to '' on serve to prevent the default from .angular-cli.json
-            deployUrl: ''
+            deployUrl: appConfig.deployUrl || '',
+            baseHref: appConfig.baseHref || '',
         };
         serveTaskOptions = Object.assign({}, serveDefaults, serveTaskOptions);
         let webpackConfig = new webpack_config_1.NgCliWebpackConfig(serveTaskOptions, appConfig).buildConfig();
