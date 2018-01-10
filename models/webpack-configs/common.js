@@ -104,11 +104,14 @@ function getCommonConfig(wco) {
             if (is_directory_1.isDirectory(path.resolve(asset.input, asset.glob))) {
                 asset.glob = asset.glob + '/**/*';
             }
+            // Escape the input in case it has special charaters and use to make glob absolute
+            const escapedInput = asset.input
+                .replace(/[\\|\*|\?|\!|\(|\)|\[|\]|\{|\}]/g, (substring) => `\\${substring}`);
             return {
                 context: asset.input,
                 to: asset.output,
                 from: {
-                    glob: asset.glob,
+                    glob: path.resolve(escapedInput, asset.glob),
                     dot: true
                 }
             };
