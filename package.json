@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "1.7.0-beta.0-d53eb59",
+  "version": "1.7.0-beta.0-f8dde33",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -28,9 +28,10 @@
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
     "@angular-devkit/build-optimizer": "~0.0.37",
+    "@angular-devkit/core": "~0.0.24",
     "@angular-devkit/schematics": "~0.0.45",
     "@ngtools/json-schema": "1.1.0",
-    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#d53eb59",
+    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#f8dde33",
     "@schematics/angular": "~0.1.12",
     "autoprefixer": "^7.2.3",
     "chalk": "~2.2.0",
@@ -66,7 +67,7 @@
     "raw-loader": "^0.5.1",
     "resolve": "^1.1.7",
     "rxjs": "^5.5.2",
-    "sass-loader": "^6.0.3",
+    "sass-loader": "^6.0.6",
     "semver": "^5.1.0",
     "silent-error": "^1.0.0",
     "source-map-loader": "^0.2.0",
@@ -79,13 +80,12 @@
     "url-loader": "^0.6.2",
     "webpack": "~3.10.0",
     "webpack-dev-middleware": "~1.12.0",
-    "webpack-dev-server": "~2.9.3",
+    "webpack-dev-server": "~2.11.0",
     "webpack-merge": "^4.1.0",
     "webpack-sources": "^1.0.0",
-    "webpack-subresource-integrity": "^1.0.1",
-    "zone.js": "^0.8.14"
+    "webpack-subresource-integrity": "^1.0.1"
   },
   "optionalDependencies": {
-    "node-sass": "^4.3.0"
+    "node-sass": "^4.7.2"
   }
 }

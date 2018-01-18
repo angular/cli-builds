@@ -6,6 +6,7 @@
  * require('@schematics/angular')
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const json_schema_1 = require("@ngtools/json-schema");
@@ -14,6 +15,9 @@ require("rxjs/add/operator/map");
 const SilentError = require('silent-error');
 const engineHost = new tools_1.NodeModulesEngineHost();
 const engine = new schematics_1.SchematicEngine(engineHost);
+// Add support for schemaJson.
+const registry = new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats);
+engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(registry));
 function getEngineHost() {
     return engineHost;
 }
