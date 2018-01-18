@@ -16,6 +16,8 @@ function getStylesConfig(wco) {
     const globalStylePaths = [];
     const extraPlugins = [];
     const cssSourceMap = buildOptions.sourcemaps;
+    // Maximum resource size to inline (KiB)
+    const maximumInlineSize = 10;
     // Minify/optimize css in production.
     const minimizeCss = buildOptions.target === 'production';
     // Convert absolute resource URLs to account for base-href and deploy-url.
@@ -81,12 +83,15 @@ function getStylesConfig(wco) {
                 },
                 {
                     // TODO: inline .cur if not supporting IE (use browserslist to check)
-                    filter: (asset) => !asset.hash && !asset.absolutePath.endsWith('.cur'),
+                    filter: (asset) => {
+                        return maximumInlineSize > 0 && !asset.hash && !asset.absolutePath.endsWith('.cur');
+                    },
                     url: 'inline',
                     // NOTE: maxSize is in KB
-                    maxSize: 10,
+                    maxSize: maximumInlineSize,
                     fallback: 'rebase',
-                }
+                },
+                { url: 'rebase' },
             ]),
             autoprefixer(),
         ];
@@ -97,7 +102,7 @@ function getStylesConfig(wco) {
             'postcss-url': 'postcssUrl',
             'postcss-import': 'postcssImports',
         },
-        variables: { minimizeCss, baseHref, deployUrl, projectRoot }
+        variables: { minimizeCss, baseHref, deployUrl, projectRoot, maximumInlineSize }
     };
     // determine hashing format
     const hashFormat = utils_1.getOutputHashFormat(buildOptions.outputHashing);
