@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "1.7.0-beta.0-a6ce9ab",
+  "version": "1.7.0-beta.0-d53eb59",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -30,7 +30,7 @@
     "@angular-devkit/build-optimizer": "~0.0.37",
     "@angular-devkit/schematics": "~0.0.45",
     "@ngtools/json-schema": "1.1.0",
-    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#a6ce9ab",
+    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#d53eb59",
     "@schematics/angular": "~0.1.12",
     "autoprefixer": "^7.2.3",
     "chalk": "~2.2.0",
