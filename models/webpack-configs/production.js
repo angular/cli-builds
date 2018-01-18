@@ -7,6 +7,7 @@ const semver = require("semver");
 const common_tags_1 = require("common-tags");
 const license_webpack_plugin_1 = require("license-webpack-plugin");
 const build_optimizer_1 = require("@angular-devkit/build-optimizer");
+const bundle_budget_1 = require("../../plugins/bundle-budget");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
 const service_worker_1 = require("../../utilities/service-worker");
@@ -90,6 +91,9 @@ function getProdConfig(wco) {
             entryPoints['sw-register'] = [registerPath];
         }
     }
+    extraPlugins.push(new bundle_budget_1.BundleBudgetPlugin({
+        budgets: appConfig.budgets
+    }));
     if (buildOptions.extractLicenses) {
         extraPlugins.push(new license_webpack_plugin_1.LicenseWebpackPlugin({
             pattern: /^(MIT|ISC|BSD.*)$/,

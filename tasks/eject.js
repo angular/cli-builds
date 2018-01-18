@@ -74,6 +74,14 @@ class JsonWebpackSerializer {
             globOptions: this._globReplacer(globOptions)
         };
     }
+    _bundleBudgetPluginSerialize(value) {
+        console.log('VALUE!!!');
+        console.log(value);
+        let budgets = value.options.budgets;
+        return {
+            budgets
+        };
+    }
     _insertConcatAssetsWebpackPluginSerialize(value) {
         return value.entryNames;
     }
@@ -173,6 +181,10 @@ class JsonWebpackSerializer {
                 case angularCliPlugins.GlobCopyWebpackPlugin:
                     args = this._globCopyWebpackPluginSerialize(plugin);
                     this._addImport('@angular/cli/plugins/webpack', 'GlobCopyWebpackPlugin');
+                    break;
+                case angularCliPlugins.BundleBudgetPlugin:
+                    args = this._bundleBudgetPluginSerialize(plugin);
+                    this._addImport('@angular/cli/plugins/webpack', 'BundleBudgetPlugin');
                     break;
                 case angularCliPlugins.InsertConcatAssetsWebpackPlugin:
                     args = this._insertConcatAssetsWebpackPluginSerialize(plugin);
