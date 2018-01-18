@@ -26,9 +26,6 @@ function getStylesConfig(wco) {
             postcssImports({
                 resolve: (url, context) => {
                     return new Promise((resolve, reject) => {
-                        if (url && url.startsWith('~')) {
-                            url = url.substr(1);
-                        }
                         loader.resolve(context, url, (err, result) => {
                             if (err) {
                                 reject(err);
@@ -84,8 +81,7 @@ function getStylesConfig(wco) {
                     filter: (asset) => !asset.hash && !asset.absolutePath.endsWith('.cur'),
                     url: 'inline',
                     // NOTE: maxSize is in KB
-                    maxSize: 10,
-                    fallback: 'rebase',
+                    maxSize: 10
                 }
             ]),
             autoprefixer(),
