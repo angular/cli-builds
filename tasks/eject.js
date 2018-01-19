@@ -75,8 +75,6 @@ class JsonWebpackSerializer {
         };
     }
     _bundleBudgetPluginSerialize(value) {
-        console.log('VALUE!!!');
-        console.log(value);
         let budgets = value.options.budgets;
         return {
             budgets
