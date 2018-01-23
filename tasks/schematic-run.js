@@ -123,7 +123,9 @@ exports.default = Task.extend({
     }
 });
 function prepOptions(schematic, options) {
-    const properties = schematic.description.schemaJson.properties;
+    const properties = schematic.description.schemaJson
+        ? schematic.description.schemaJson.properties
+        : options;
     const keys = Object.keys(properties);
     if (['component', 'c', 'directive', 'd'].indexOf(schematic.description.name) !== -1) {
         options.prefix = (options.prefix === 'false' || options.prefix === '')
