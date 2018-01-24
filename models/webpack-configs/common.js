@@ -166,17 +166,22 @@ function getCommonConfig(wco) {
         alias = rxPaths(nodeModules);
     }
     catch (e) { }
+    // Allow loaders to be in a node_modules nested inside the CLI package
+    const loaderNodeModules = ['node_modules'];
+    const potentialNodeModules = path.join(__dirname, '..', '..', 'node_modules');
+    if (is_directory_1.isDirectory(potentialNodeModules)) {
+        loaderNodeModules.push(potentialNodeModules);
+    }
     return {
         resolve: {
             extensions: ['.ts', '.js'],
-            modules: ['node_modules', nodeModules],
             symlinks: !buildOptions.preserveSymlinks,
             alias
         },
         resolveLoader: {
-            modules: [nodeModules, 'node_modules']
+            modules: loaderNodeModules
         },
-        context: __dirname,
+        context: projectRoot,
         entry: entryPoints,
         output: {
             path: path.resolve(buildOptions.outputPath),

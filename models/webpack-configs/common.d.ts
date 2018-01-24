@@ -14,7 +14,6 @@ import { WebpackConfigOptions } from '../webpack-config';
 export declare function getCommonConfig(wco: WebpackConfigOptions): {
     resolve: {
         extensions: string[];
-        modules: string[];
         symlinks: boolean;
         alias: {};
     };
