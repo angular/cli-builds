@@ -11,6 +11,7 @@ const scripts_webpack_plugin_1 = require("../../plugins/scripts-webpack-plugin")
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const SilentError = require('silent-error');
+const resolve = require('resolve');
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
  * know they are used.
@@ -19,6 +20,7 @@ const SilentError = require('silent-error');
  * require('raw-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('cache-loader')
  * require('@angular-devkit/build-optimizer')
  */
 function getCommonConfig(wco) {
@@ -136,12 +138,18 @@ function getCommonConfig(wco) {
         }));
     }
     if (buildOptions.buildOptimizer) {
+        // Set the cache directory to the Build Optimizer dir, so that package updates will delete it.
+        const buildOptimizerDir = path.dirname(resolve.sync('@angular-devkit/build-optimizer', { basedir: projectRoot }));
+        const cacheDirectory = path.resolve(buildOptimizerDir, './.cache/');
         extraRules.push({
             test: /\.js$/,
             use: [{
+                    loader: 'cache-loader',
+                    options: { cacheDirectory }
+                }, {
                     loader: '@angular-devkit/build-optimizer/webpack-loader',
                     options: { sourceMap: buildOptions.sourcemaps }
-                }]
+                }],
         });
     }
     if (buildOptions.namedChunks) {

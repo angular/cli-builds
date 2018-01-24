@@ -4,8 +4,6 @@ const chalk_1 = require("chalk");
 const stringUtils = require('ember-cli-string-utils');
 const common_tags_1 = require("common-tags");
 const config_1 = require("../models/config");
-require("rxjs/add/observable/of");
-require("rxjs/add/operator/ignoreElements");
 const schematics_1 = require("../utilities/schematics");
 const dynamic_path_parser_1 = require("../utilities/dynamic-path-parser");
 const app_utils_1 = require("../utilities/app-utils");

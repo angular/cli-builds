@@ -10,8 +10,6 @@ const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const json_schema_1 = require("@ngtools/json-schema");
-require("rxjs/add/operator/concatMap");
-require("rxjs/add/operator/map");
 const SilentError = require('silent-error');
 const engineHost = new tools_1.NodeModulesEngineHost();
 const engine = new schematics_1.SchematicEngine(engineHost);

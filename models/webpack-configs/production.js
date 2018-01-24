@@ -130,6 +130,7 @@ function getProdConfig(wco) {
             new UglifyJSPlugin({
                 sourceMap: buildOptions.sourcemaps,
                 parallel: true,
+                cache: true,
                 uglifyOptions: {
                     ecma: wco.supportES2015 ? 6 : 5,
                     warnings: buildOptions.verbose,

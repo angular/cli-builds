@@ -8,6 +8,7 @@ import { WebpackConfigOptions } from '../webpack-config';
  * require('raw-loader')
  * require('url-loader')
  * require('file-loader')
+ * require('cache-loader')
  * require('@angular-devkit/build-optimizer')
  */
 export declare function getCommonConfig(wco: WebpackConfigOptions): {
