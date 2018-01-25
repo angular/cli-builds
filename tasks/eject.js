@@ -292,27 +292,31 @@ class JsonWebpackSerializer {
             if (loader.loader) {
                 loader.loader = this._loaderReplacer(loader.loader);
             }
-            if (loader.loader === 'postcss-loader' && !this._postcssProcessed) {
-                const args = loader.options.plugins[exports.postcssArgs];
-                Object.keys(args.variableImports)
-                    .forEach(key => this.variableImports[key] = args.variableImports[key]);
-                Object.keys(args.variables)
-                    .forEach(key => {
-                    const value = args.variables[key];
-                    if (value === process.cwd()) {
-                        this.variables[key] = 'process.cwd()';
-                    }
-                    else if (typeof value == 'string' && value.startsWith(process.cwd())) {
-                        this.variables[key] = 'process.cwd() + '
-                            + JSON.stringify(value.substr(process.cwd().length));
-                    }
-                    else {
-                        this.variables[key] = JSON.stringify(value);
-                    }
-                });
-                this.variables['postcssPlugins'] = loader.options.plugins;
+            if (loader.loader === 'postcss-loader') {
+                if (!this._postcssProcessed) {
+                    const args = loader.options.plugins[exports.postcssArgs];
+                    Object.keys(args.imports)
+                        .forEach(key => this._addImport(key, args.imports[key]));
+                    Object.keys(args.variableImports)
+                        .forEach(key => this.variableImports[key] = args.variableImports[key]);
+                    Object.keys(args.variables)
+                        .forEach(key => {
+                        const value = args.variables[key];
+                        if (value === process.cwd()) {
+                            this.variables[key] = 'process.cwd()';
+                        }
+                        else if (typeof value == 'string' && value.startsWith(process.cwd())) {
+                            this.variables[key] = 'process.cwd() + '
+                                + JSON.stringify(value.substr(process.cwd().length));
+                        }
+                        else {
+                            this.variables[key] = JSON.stringify(value);
+                        }
+                    });
+                    this.variables['postcssPlugins'] = loader.options.plugins;
+                    this._postcssProcessed = true;
+                }
                 loader.options.plugins = this._escape('postcssPlugins');
-                this._postcssProcessed = true;
             }
         }
         return loader;
@@ -336,12 +340,14 @@ class JsonWebpackSerializer {
             }
         };
         if (value[exports.pluginArgs]) {
+            const options = value[exports.pluginArgs];
+            options.use = options.use.map((loader) => this._loaderReplacer(loader));
             return {
                 include: Array.isArray(value.include)
                     ? value.include.map((x) => replaceExcludeInclude(x))
                     : replaceExcludeInclude(value.include),
                 test: this._serializeRegExp(value.test),
-                loaders: this._escape(`ExtractTextPlugin.extract(${JSON.stringify(value[exports.pluginArgs], null, 2)})`)
+                loaders: this._escape(`ExtractTextPlugin.extract(${JSON.stringify(options, null, 2)})`)
             };
         }
         if (value.loaders) {

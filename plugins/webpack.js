@@ -15,4 +15,6 @@ var scripts_webpack_plugin_1 = require("./scripts-webpack-plugin");
 exports.ScriptsWebpackPlugin = scripts_webpack_plugin_1.ScriptsWebpackPlugin;
 var suppress_entry_chunks_webpack_plugin_1 = require("./suppress-entry-chunks-webpack-plugin");
 exports.SuppressExtractedTextChunksWebpackPlugin = suppress_entry_chunks_webpack_plugin_1.SuppressExtractedTextChunksWebpackPlugin;
+var postcss_cli_resources_1 = require("./postcss-cli-resources");
+exports.PostcssCliResources = postcss_cli_resources_1.default;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/plugins/webpack.js.map

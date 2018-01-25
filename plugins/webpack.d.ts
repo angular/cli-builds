@@ -5,3 +5,4 @@ export { BundleBudgetPlugin, BundleBudgetPluginOptions } from './bundle-budget';
 export { NamedLazyChunksWebpackPlugin } from './named-lazy-chunks-webpack-plugin';
 export { ScriptsWebpackPlugin, ScriptsWebpackPluginOptions } from './scripts-webpack-plugin';
 export { SuppressExtractedTextChunksWebpackPlugin } from './suppress-entry-chunks-webpack-plugin';
+export { default as PostcssCliResources, PostcssCliResourcesOptions } from './postcss-cli-resources';

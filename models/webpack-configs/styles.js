@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
-const suppress_entry_chunks_webpack_plugin_1 = require("../../plugins/suppress-entry-chunks-webpack-plugin");
+const webpack_1 = require("../../plugins/webpack");
 const utils_1 = require("./utils");
 const eject_1 = require("../../tasks/eject");
-const cleancss_webpack_plugin_1 = require("../../plugins/cleancss-webpack-plugin");
 const postcssUrl = require('postcss-url');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const postcssImports = require('postcss-import');
+const PostcssCliResources = require('../../plugins/webpack').PostcssCliResources;
 function getStylesConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     const appRoot = path.resolve(projectRoot, appConfig.root);
@@ -20,6 +20,8 @@ function getStylesConfig(wco) {
     const maximumInlineSize = 10;
     // Minify/optimize css in production.
     const minimizeCss = buildOptions.target === 'production';
+    // determine hashing format
+    const hashFormat = utils_1.getOutputHashFormat(buildOptions.outputHashing);
     // Convert absolute resource URLs to account for base-href and deploy-url.
     const baseHref = wco.buildOptions.baseHref || '';
     const deployUrl = wco.buildOptions.deployUrl || '';
@@ -93,19 +95,25 @@ function getStylesConfig(wco) {
                 },
                 { url: 'rebase' },
             ]),
-            autoprefixer(),
+            PostcssCliResources({
+                deployUrl: loader.loaders[loader.loaderIndex].options.ident == 'extracted' ? '' : deployUrl,
+                loader,
+                filename: `[name]${hashFormat.file}.[ext]`,
+            }),
+            autoprefixer({ grid: true }),
         ];
     };
     postcssPluginCreator[eject_1.postcssArgs] = {
+        imports: {
+            '@angular/cli/plugins/webpack': 'PostcssCliResources',
+        },
         variableImports: {
             'autoprefixer': 'autoprefixer',
             'postcss-url': 'postcssUrl',
             'postcss-import': 'postcssImports',
         },
-        variables: { minimizeCss, baseHref, deployUrl, projectRoot, maximumInlineSize }
+        variables: { hashFormat, baseHref, deployUrl, projectRoot, maximumInlineSize }
     };
-    // determine hashing format
-    const hashFormat = utils_1.getOutputHashFormat(buildOptions.outputHashing);
     // use includePaths from appConfig
     const includePaths = [];
     let lessPathOptions;
@@ -156,28 +164,20 @@ function getStylesConfig(wco) {
         }
     ];
     const commonLoaders = [
-        {
-            loader: 'css-loader',
-            options: {
-                sourceMap: cssSourceMap,
-                import: false,
-            }
-        },
-        {
-            loader: 'postcss-loader',
-            options: {
-                // A non-function property is required to workaround a webpack option handling bug
-                ident: 'postcss',
-                plugins: postcssPluginCreator,
-                sourceMap: cssSourceMap
-            }
-        }
+        { loader: 'raw-loader' },
     ];
     // load component css as raw strings
     const rules = baseRules.map(({ test, use }) => ({
         exclude: globalStylePaths, test, use: [
-            'exports-loader?module.exports.toString()',
             ...commonLoaders,
+            {
+                loader: 'postcss-loader',
+                options: {
+                    ident: 'embedded',
+                    plugins: postcssPluginCreator,
+                    sourceMap: cssSourceMap
+                }
+            },
             ...use
         ]
     }));
@@ -187,6 +187,14 @@ function getStylesConfig(wco) {
             const extractTextPlugin = {
                 use: [
                     ...commonLoaders,
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: buildOptions.extractCss ? 'extracted' : 'embedded',
+                            plugins: postcssPluginCreator,
+                            sourceMap: cssSourceMap
+                        }
+                    },
                     ...use
                 ],
                 // publicPath needed as a workaround https://github.com/angular/angular-cli/issues/4035
@@ -209,10 +217,10 @@ function getStylesConfig(wco) {
         // extract global css from js files into own css file
         extraPlugins.push(new ExtractTextPlugin({ filename: `[name]${hashFormat.extract}.bundle.css` }));
         // suppress empty .js files in css only entry points
-        extraPlugins.push(new suppress_entry_chunks_webpack_plugin_1.SuppressExtractedTextChunksWebpackPlugin());
+        extraPlugins.push(new webpack_1.SuppressExtractedTextChunksWebpackPlugin());
     }
     if (minimizeCss) {
-        extraPlugins.push(new cleancss_webpack_plugin_1.CleanCssWebpackPlugin({ sourceMap: cssSourceMap }));
+        extraPlugins.push(new webpack_1.CleanCssWebpackPlugin({ sourceMap: cssSourceMap }));
     }
     return {
         entry: entryPoints,

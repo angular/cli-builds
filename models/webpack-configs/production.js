@@ -10,6 +10,7 @@ const build_optimizer_1 = require("@angular-devkit/build-optimizer");
 const bundle_budget_1 = require("../../plugins/bundle-budget");
 const static_asset_1 = require("../../plugins/static-asset");
 const glob_copy_webpack_plugin_1 = require("../../plugins/glob-copy-webpack-plugin");
+const require_project_module_1 = require("../../utilities/require-project-module");
 const service_worker_1 = require("../../utilities/service-worker");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OLD_SW_VERSION = '>= 1.0.0-beta.5 < 2.0.0';
@@ -24,10 +25,12 @@ function getProdConfig(wco) {
     let extraPlugins = [];
     let entryPoints = {};
     if (appConfig.serviceWorker) {
-        const nodeModules = path.resolve(projectRoot, 'node_modules');
-        const swModule = path.resolve(nodeModules, '@angular/service-worker');
-        // @angular/service-worker is required to be installed when serviceWorker is true.
-        if (!fs.existsSync(swModule)) {
+        let swPackageJsonPath;
+        try {
+            swPackageJsonPath = require_project_module_1.resolveProjectModule(projectRoot, '@angular/service-worker/package.json');
+        }
+        catch (_) {
+            // @angular/service-worker is required to be installed when serviceWorker is true.
             throw new Error(common_tags_1.stripIndent `
         Your project is configured with serviceWorker = true, but @angular/service-worker
         is not installed. Run \`npm install --save-dev @angular/service-worker\`
@@ -36,7 +39,7 @@ function getProdConfig(wco) {
         }
         // Read the version of @angular/service-worker and throw if it doesn't match the
         // expected version.
-        const swPackageJson = fs.readFileSync(`${swModule}/package.json`).toString();
+        const swPackageJson = fs.readFileSync(swPackageJsonPath).toString();
         const swVersion = JSON.parse(swPackageJson)['version'];
         const isLegacySw = semver.satisfies(swVersion, OLD_SW_VERSION);
         const isModernSw = semver.gte(swVersion, service_worker_1.NEW_SW_VERSION);
@@ -48,6 +51,8 @@ function getProdConfig(wco) {
       `);
         }
         if (isLegacySw) {
+            // Path to the @angular/service-worker package
+            const swModule = path.dirname(swPackageJsonPath);
             // Path to the worker script itself.
             const workerPath = path.resolve(swModule, 'bundles/worker-basic.min.js');
             // Path to a small script to register a service worker.
