@@ -4,6 +4,18 @@ const webpack_sources_1 = require("webpack-sources");
 const loader_utils_1 = require("loader-utils");
 const path = require("path");
 const Chunk = require('webpack/lib/Chunk');
+function addDependencies(compilation, scripts) {
+    if (compilation.fileDependencies.add) {
+        // Webpack 4+ uses a Set
+        for (const script of scripts) {
+            compilation.fileDependencies.add(script);
+        }
+    }
+    else {
+        // Webpack 3
+        compilation.fileDependencies.push(...scripts);
+    }
+}
 class ScriptsWebpackPlugin {
     constructor(options = {}) {
         this.options = options;
@@ -14,7 +26,15 @@ class ScriptsWebpackPlugin {
             return false;
         }
         for (let i = 0; i < scripts.length; i++) {
-            const scriptTime = compilation.fileTimestamps[scripts[i]];
+            let scriptTime;
+            if (compilation.fileTimestamps.get) {
+                // Webpack 4+ uses a Map
+                scriptTime = compilation.fileTimestamps.get(scripts[i]);
+            }
+            else {
+                // Webpack 3
+                scriptTime = compilation.fileTimestamps[scripts[i]];
+            }
             if (!scriptTime || scriptTime > this._lastBuildTime) {
                 this._lastBuildTime = Date.now();
                 return false;
@@ -46,7 +66,7 @@ class ScriptsWebpackPlugin {
                     if (this._cachedOutput) {
                         this._insertOutput(compilation, this._cachedOutput, true);
                     }
-                    compilation.fileDependencies.push(...scripts);
+                    addDependencies(compilation, scripts);
                     callback();
                     return;
                 }
@@ -86,7 +106,7 @@ class ScriptsWebpackPlugin {
                     const output = { filename, source: combinedSource };
                     this._insertOutput(compilation, output);
                     this._cachedOutput = output;
-                    compilation.fileDependencies.push(...scripts);
+                    addDependencies(compilation, scripts);
                     callback();
                 })
                     .catch((err) => callback(err));
