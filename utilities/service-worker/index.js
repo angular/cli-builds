@@ -58,6 +58,7 @@ exports.usesServiceWorker = usesServiceWorker;
 function augmentAppWithServiceWorker(projectRoot, appRoot, outputPath, baseHref) {
     // Path to the worker script itself.
     const workerPath = require_project_module_1.resolveProjectModule(projectRoot, '@angular/service-worker/ngsw-worker.js');
+    const safetyPath = path.join(path.dirname(workerPath), 'safety-worker.js');
     const configPath = path.resolve(appRoot, 'ngsw-config.json');
     if (!fs.existsSync(configPath)) {
         throw new Error(common_tags_1.oneLine `Error: Expected to find an ngsw-config.json configuration
@@ -75,6 +76,12 @@ function augmentAppWithServiceWorker(projectRoot, appRoot, outputPath, baseHref)
         // Copy worker script to dist directory.
         const workerCode = fs.readFileSync(workerPath);
         fs.writeFileSync(path.resolve(outputPath, 'ngsw-worker.js'), workerCode);
+        // If @angular/service-worker has the safety script, copy it into two locations.
+        if (fs.existsSync(safetyPath)) {
+            const safetyCode = fs.readFileSync(safetyPath);
+            fs.writeFileSync(path.resolve(outputPath, 'worker-basic.min.js'), safetyCode);
+            fs.writeFileSync(path.resolve(outputPath, 'safety-worker.js'), safetyCode);
+        }
     });
 }
 exports.augmentAppWithServiceWorker = augmentAppWithServiceWorker;
