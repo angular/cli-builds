@@ -30,13 +30,24 @@ function getStylesConfig(wco) {
             postcssImports({
                 resolve: (url, context) => {
                     return new Promise((resolve, reject) => {
+                        let hadTilde = false;
                         if (url && url.startsWith('~')) {
                             url = url.substr(1);
+                            hadTilde = true;
                         }
-                        loader.resolve(context, url, (err, result) => {
+                        loader.resolve(context, (hadTilde ? '' : './') + url, (err, result) => {
                             if (err) {
-                                reject(err);
-                                return;
+                                if (hadTilde) {
+                                    reject(err);
+                                    return;
+                                }
+                                loader.resolve(context, url, (err, result) => {
+                                    if (err) {
+                                        reject(err);
+                                        return;
+                                    }
+                                    resolve(result);
+                                });
                             }
                             resolve(result);
                         });
