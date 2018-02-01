@@ -13,5 +13,7 @@ export declare class BundleBudgetPlugin {
     private options;
     constructor(options: BundleBudgetPluginOptions);
     apply(compiler: any): void;
-    private calcualte(budget);
+    private checkMinimum(threshold, size, messages);
+    private checkMaximum(threshold, size, messages);
+    private calculate(budget);
 }

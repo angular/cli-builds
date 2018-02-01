@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * found in the LICENSE file at https://angular.io/license
  */
 const bundle_calculator_1 = require("../utilities/bundle-calculator");
+const stats_1 = require("../utilities/stats");
 class BundleBudgetPlugin {
     constructor(options) {
         this.options = options;
@@ -20,7 +21,7 @@ class BundleBudgetPlugin {
                 return;
             }
             budgets.map(budget => {
-                const thresholds = this.calcualte(budget);
+                const thresholds = this.calculate(budget);
                 return {
                     budget,
                     thresholds,
@@ -29,52 +30,38 @@ class BundleBudgetPlugin {
             })
                 .forEach(budgetCheck => {
                 budgetCheck.sizes.forEach(size => {
-                    if (budgetCheck.thresholds.maximumWarning) {
-                        if (budgetCheck.thresholds.maximumWarning < size.size) {
-                            compilation.warnings.push(`budgets, maximum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.maximumError) {
-                        if (budgetCheck.thresholds.maximumError < size.size) {
-                            compilation.errors.push(`budgets, maximum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.minimumWarning) {
-                        if (budgetCheck.thresholds.minimumWarning > size.size) {
-                            compilation.warnings.push(`budgets, minimum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.minimumError) {
-                        if (budgetCheck.thresholds.minimumError > size.size) {
-                            compilation.errors.push(`budgets, minimum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.warningLow) {
-                        if (budgetCheck.thresholds.warningLow > size.size) {
-                            compilation.warnings.push(`budgets, minimum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.warningHigh) {
-                        if (budgetCheck.thresholds.warningHigh < size.size) {
-                            compilation.warnings.push(`budgets, maximum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.errorLow) {
-                        if (budgetCheck.thresholds.errorLow > size.size) {
-                            compilation.errors.push(`budgets, minimum exceeded for ${size.label}.`);
-                        }
-                    }
-                    if (budgetCheck.thresholds.errorHigh) {
-                        if (budgetCheck.thresholds.errorHigh < size.size) {
-                            compilation.errors.push(`budgets, maximum exceeded for ${size.label}.`);
-                        }
-                    }
+                    this.checkMaximum(budgetCheck.thresholds.maximumWarning, size, compilation.warnings);
+                    this.checkMaximum(budgetCheck.thresholds.maximumError, size, compilation.errors);
+                    this.checkMinimum(budgetCheck.thresholds.minimumWarning, size, compilation.warnings);
+                    this.checkMinimum(budgetCheck.thresholds.minimumError, size, compilation.errors);
+                    this.checkMinimum(budgetCheck.thresholds.warningLow, size, compilation.warnings);
+                    this.checkMaximum(budgetCheck.thresholds.warningHigh, size, compilation.warnings);
+                    this.checkMinimum(budgetCheck.thresholds.errorLow, size, compilation.errors);
+                    this.checkMaximum(budgetCheck.thresholds.errorHigh, size, compilation.errors);
                 });
             });
             cb();
         });
     }
-    calcualte(budget) {
+    checkMinimum(threshold, size, messages) {
+        if (threshold) {
+            if (threshold > size.size) {
+                const sizeDifference = stats_1.formatSize(threshold - size.size);
+                messages.push(`budgets, minimum exceeded for ${size.label}. `
+                    + `Budget ${stats_1.formatSize(threshold)} was not reached by ${sizeDifference}.`);
+            }
+        }
+    }
+    checkMaximum(threshold, size, messages) {
+        if (threshold) {
+            if (threshold < size.size) {
+                const sizeDifference = stats_1.formatSize(size.size - threshold);
+                messages.push(`budgets, maximum exceeded for ${size.label}. `
+                    + `Budget ${stats_1.formatSize(threshold)} was exceeded by ${sizeDifference}.`);
+            }
+        }
+    }
+    calculate(budget) {
         let thresholds = {};
         if (budget.maximumWarning) {
             thresholds.maximumWarning = bundle_calculator_1.calculateBytes(budget.maximumWarning, budget.baseline, 'pos');
