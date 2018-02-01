@@ -89,12 +89,18 @@ exports.default = postcss.plugin('postcss-cli-resources', (options) => {
         });
     });
     return (root) => {
-        const resourceCache = new Map();
-        return root.walkDecls((decl) => __awaiter(this, void 0, void 0, function* () {
-            const value = decl.value;
-            if (!value || value.indexOf('url') === -1) {
-                return;
+        const urlDeclarations = [];
+        root.walkDecls(decl => {
+            if (decl.value && decl.value.includes('url')) {
+                urlDeclarations.push(decl);
             }
+        });
+        if (urlDeclarations.length === 0) {
+            return;
+        }
+        const resourceCache = new Map();
+        return Promise.all(urlDeclarations.map((decl) => __awaiter(this, void 0, void 0, function* () {
+            const value = decl.value;
             const urlRegex = /url\(\s*['"]?([ \S]+?)['"]??\s*\)/g;
             const segments = [];
             let match;
@@ -125,7 +131,7 @@ exports.default = postcss.plugin('postcss-cli-resources', (options) => {
             if (modified) {
                 decl.value = segments.join('');
             }
-        }));
+        })));
     };
 });
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/plugins/postcss-cli-resources.js.map
