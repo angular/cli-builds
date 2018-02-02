@@ -44,12 +44,15 @@ function getStylesConfig(wco) {
                                 loader.resolve(context, url, (err, result) => {
                                     if (err) {
                                         reject(err);
-                                        return;
                                     }
-                                    resolve(result);
+                                    else {
+                                        resolve(result);
+                                    }
                                 });
                             }
-                            resolve(result);
+                            else {
+                                resolve(result);
+                            }
                         });
                     });
                 },
