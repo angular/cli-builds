@@ -44,7 +44,7 @@ class Version {
             const angularCliPath = resolve.sync('@angular/cli', {
                 basedir: process.cwd(),
                 packageFilter: (pkg, _pkgFile) => {
-                    packageJson = pkg;
+                    return packageJson = pkg;
                 }
             });
             if (angularCliPath && packageJson) {

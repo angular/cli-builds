@@ -11,7 +11,8 @@ exports.UpdateTask = Task.extend({
         });
         const schematicRunOptions = {
             taskOptions: {
-                dryRun: options.dryRun
+                dryRun: options.dryRun,
+                version: options.next ? 'next' : undefined
             },
             workingDir: this.project.root,
             collectionName,
