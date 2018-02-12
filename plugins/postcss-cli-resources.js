@@ -67,12 +67,11 @@ exports.default = postcss.plugin('postcss-cli-resources', (options) => {
         });
         const result = yield resolve(pathname, loader.context, resolver);
         return new Promise((resolve, reject) => {
-            loader.fs.readFile(result, (err, data) => {
+            loader.fs.readFile(result, (err, content) => {
                 if (err) {
                     reject(err);
                     return;
                 }
-                const content = data.toString();
                 const outputPath = loader_utils_1.interpolateName({ resourcePath: result }, filename, { content });
                 loader.addDependency(result);
                 loader.emitFile(outputPath, content, undefined);
