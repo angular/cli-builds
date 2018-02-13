@@ -172,6 +172,7 @@ function getCommonConfig(wco) {
         resolve: {
             extensions: ['.ts', '.js'],
             symlinks: !buildOptions.preserveSymlinks,
+            modules: [appRoot, 'node_modules'],
             alias
         },
         resolveLoader: {
