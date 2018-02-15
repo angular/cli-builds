@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const webpack_sources_1 = require("webpack-sources");
 const CleanCSS = require('clean-css');
 class CleanCssWebpackPlugin {
-    constructor(options = {}) {
-        this.options = options;
+    constructor(options) {
+        this._options = Object.assign({ sourceMap: false, test: (file) => file.endsWith('.css') }, options);
     }
     apply(compiler) {
         compiler.plugin('compilation', (compilation) => {
@@ -14,7 +14,7 @@ class CleanCssWebpackPlugin {
                     level: 2,
                     inline: false,
                     returnPromise: true,
-                    sourceMap: this.options.sourceMap,
+                    sourceMap: this._options.sourceMap,
                 });
                 const files = [...compilation.additionalChunkAssets];
                 chunks.forEach(chunk => {
@@ -23,7 +23,7 @@ class CleanCssWebpackPlugin {
                     }
                 });
                 const actions = files
-                    .filter(file => file.endsWith('.css'))
+                    .filter(file => this._options.test(file))
                     .map(file => {
                     const asset = compilation.assets[file];
                     if (!asset) {

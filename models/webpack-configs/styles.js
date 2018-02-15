@@ -234,7 +234,11 @@ function getStylesConfig(wco) {
         extraPlugins.push(new webpack_1.SuppressExtractedTextChunksWebpackPlugin());
     }
     if (minimizeCss) {
-        extraPlugins.push(new webpack_1.CleanCssWebpackPlugin({ sourceMap: cssSourceMap }));
+        extraPlugins.push(new webpack_1.CleanCssWebpackPlugin({
+            sourceMap: cssSourceMap,
+            // component styles retain their original file name
+            test: (file) => /\.(?:css|scss|sass|less|styl)$/.test(file),
+        }));
     }
     return {
         entry: entryPoints,
