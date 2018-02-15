@@ -54,8 +54,11 @@ exports.default = Command.extend({
         '<schematic>'
     ],
     getCollectionName(rawArgs, parsedOptions) {
-        let schematicName = rawArgs[0];
         let collectionName = config_1.CliConfig.getValue('defaults.schematics.collection');
+        if (!rawArgs || rawArgs.length === 0) {
+            return [collectionName, null];
+        }
+        let schematicName = rawArgs[0];
         if (schematicName.match(/:/)) {
             [collectionName, schematicName] = schematicName.split(':', 2);
         }
@@ -176,7 +179,7 @@ exports.default = Command.extend({
     },
     printDetailedHelp: function (_options, rawArgs) {
         const engineHost = schematics_1.getEngineHost();
-        const collectionName = this.getCollectionName();
+        const [collectionName] = this.getCollectionName();
         const collection = schematics_1.getCollection(collectionName);
         const schematicName = rawArgs[1];
         if (schematicName) {
