@@ -6,8 +6,5 @@ import { WebpackConfigOptions } from '../webpack-config';
  * require('webpack-sources')
  */
 export declare function getProdConfig(wco: WebpackConfigOptions): {
-    entry: {
-        [key: string]: string[];
-    };
     plugins: any[];
 };

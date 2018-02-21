@@ -118,11 +118,6 @@ class JsonWebpackSerializer {
                 acc[key] = path.relative(basePath, replacementPath);
                 return acc;
             }, {}),
-            exclude: Array.isArray(value.options.exclude)
-                ? value.options.exclude.map((p) => {
-                    return p.startsWith('/') ? path.relative(basePath, p) : p;
-                })
-                : value.options.exclude
         });
     }
     _htmlWebpackPlugin(value) {
@@ -199,10 +194,6 @@ class JsonWebpackSerializer {
                 case CircularDependencyPlugin:
                     this.variableImports['circular-dependency-plugin'] = 'CircularDependencyPlugin';
                     args.cwd = this._escape('projectRoot');
-                    break;
-                case webpack_1.AotPlugin:
-                    args = this._aotPluginSerialize(plugin);
-                    this._addImport('@ngtools/webpack', 'AotPlugin');
                     break;
                 case build_optimizer_1.PurifyPlugin:
                     this._addImport('@angular-devkit/build-optimizer', 'PurifyPlugin');
