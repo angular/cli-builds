@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
+const util_1 = require("util");
 const webpack = require("webpack");
 const chalk_1 = require("chalk");
 const app_utils_1 = require("../utilities/app-utils");
@@ -12,10 +13,9 @@ const strip_bom_1 = require("../utilities/strip-bom");
 const webpack_1 = require("@ngtools/webpack");
 const build_optimizer_1 = require("@angular-devkit/build-optimizer");
 const license_webpack_plugin_1 = require("license-webpack-plugin");
-const denodeify = require("denodeify");
 const common_tags_1 = require("common-tags");
 const exists = (p) => Promise.resolve(fs.existsSync(p));
-const writeFile = denodeify(fs.writeFile);
+const writeFile = util_1.promisify(fs.writeFile);
 const angularCliPlugins = require('../plugins/webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -118,11 +118,6 @@ class JsonWebpackSerializer {
                 acc[key] = path.relative(basePath, replacementPath);
                 return acc;
             }, {}),
-            exclude: Array.isArray(value.options.exclude)
-                ? value.options.exclude.map((p) => {
-                    return p.startsWith('/') ? path.relative(basePath, p) : p;
-                })
-                : value.options.exclude
         });
     }
     _htmlWebpackPlugin(value) {
@@ -199,10 +194,6 @@ class JsonWebpackSerializer {
                 case CircularDependencyPlugin:
                     this.variableImports['circular-dependency-plugin'] = 'CircularDependencyPlugin';
                     args.cwd = this._escape('projectRoot');
-                    break;
-                case webpack_1.AotPlugin:
-                    args = this._aotPluginSerialize(plugin);
-                    this._addImport('@ngtools/webpack', 'AotPlugin');
                     break;
                 case build_optimizer_1.PurifyPlugin:
                     this._addImport('@angular-devkit/build-optimizer', 'PurifyPlugin');

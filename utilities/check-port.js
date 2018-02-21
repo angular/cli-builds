@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const denodeify = require("denodeify");
+const util_1 = require("util");
 const SilentError = require('silent-error');
 const PortFinder = require('portfinder');
-const getPort = denodeify(PortFinder.getPort);
+const getPort = util_1.promisify(PortFinder.getPort);
 function checkPort(port, host, basePort = 49152) {
     PortFinder.basePort = basePort;
     return getPort({ port, host })
