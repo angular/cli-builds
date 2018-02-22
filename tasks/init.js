@@ -8,6 +8,7 @@ const validate_project_name_1 = require("../utilities/validate-project-name");
 const config_1 = require("../models/config");
 const Task = require('../ember-cli/lib/models/task');
 const SilentError = require('silent-error');
+const packageJson = require('../package.json');
 exports.default = Task.extend({
     run: function (commandOptions, _rawArgs) {
         if (commandOptions.dryRun) {
@@ -33,14 +34,7 @@ exports.default = Task.extend({
         });
         const cwd = this.project.root;
         const schematicName = config_1.CliConfig.fromGlobal().get('defaults.schematics.newApp');
-        if (commandOptions.version) {
-            this.ui.writeLine(chalk_1.default.yellow('*** The "--version" option is intended for internal development purposes only.'
-                + '  Use at your own risk. ***'));
-        }
-        else {
-            const packageJson = require('../package.json');
-            commandOptions.version = packageJson.version;
-        }
+        commandOptions.version = packageJson.version;
         if (!commandOptions.skipCommit) {
             const commitMessage = fs.readFileSync(path.join(__dirname, '../utilities/INITIAL_COMMIT_MESSAGE.txt'), 'utf-8');
             commandOptions.commit = {
