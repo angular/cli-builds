@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = require("chalk");
 const child_process_1 = require("child_process");
-const util_1 = require("util");
 const config_1 = require("../models/config");
-const execPromise = util_1.promisify(child_process_1.exec);
+const denodeify = require("denodeify");
+const execPromise = denodeify(child_process_1.exec);
 const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
 function checkYarnOrCNPM() {
     // Don't show messages if user has already changed the default.

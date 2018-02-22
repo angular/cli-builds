@@ -100,36 +100,32 @@ exports.default = postcss.plugin('postcss-cli-resources', (options) => {
         const resourceCache = new Map();
         return Promise.all(urlDeclarations.map((decl) => __awaiter(this, void 0, void 0, function* () {
             const value = decl.value;
-            const urlRegex = /url\(\s*(?:"([^"]+)"|'([^']+)'|(.+))\s*\)/g;
+            const urlRegex = /url\(\s*['"]?([ \S]+?)['"]??\s*\)/g;
             const segments = [];
             let match;
             let lastIndex = 0;
             let modified = false;
             // tslint:disable-next-line:no-conditional-assignment
             while (match = urlRegex.exec(value)) {
-                const originalUrl = match[1] || match[2] || match[3];
                 let processedUrl;
                 try {
-                    processedUrl = yield process(originalUrl, resourceCache);
+                    processedUrl = yield process(match[1], resourceCache);
                 }
                 catch (err) {
-                    loader.emitError(decl.error(err.message, { word: originalUrl }).toString());
+                    loader.emitError(decl.error(err.message, { word: match[1] }).toString());
                     continue;
                 }
-                if (lastIndex < match.index) {
+                if (lastIndex !== match.index) {
                     segments.push(value.slice(lastIndex, match.index));
                 }
-                if (!processedUrl || originalUrl === processedUrl) {
+                if (!processedUrl || match[1] === processedUrl) {
                     segments.push(match[0]);
                 }
                 else {
                     segments.push(wrapUrl(processedUrl));
                     modified = true;
                 }
-                lastIndex = match.index + match[0].length;
-            }
-            if (lastIndex < value.length) {
-                segments.push(value.slice(lastIndex));
+                lastIndex = urlRegex.lastIndex;
             }
             if (modified) {
                 decl.value = segments.join('');
