@@ -100,7 +100,7 @@ exports.default = postcss.plugin('postcss-cli-resources', (options) => {
         const resourceCache = new Map();
         return Promise.all(urlDeclarations.map((decl) => __awaiter(this, void 0, void 0, function* () {
             const value = decl.value;
-            const urlRegex = /url\(\s*(?:"([^"]+)"|'([^']+)'|(.+))\s*\)/g;
+            const urlRegex = /url\(\s*(?:"([^"]+)"|'([^']+)'|(.+?))\s*\)/g;
             const segments = [];
             let match;
             let lastIndex = 0;

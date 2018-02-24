@@ -1,15 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const webpack = require("webpack");
 const fs = require("fs");
 const semver = require("semver");
 const common_tags_1 = require("common-tags");
 const license_webpack_plugin_1 = require("license-webpack-plugin");
-const build_optimizer_1 = require("@angular-devkit/build-optimizer");
 const bundle_budget_1 = require("../../plugins/bundle-budget");
 const require_project_module_1 = require("../../utilities/require-project-module");
 const service_worker_1 = require("../../utilities/service-worker");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 /**
  * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
  * let the dependency validator know it is used.
@@ -56,50 +53,8 @@ function getProdConfig(wco) {
             outputFilename: `3rdpartylicenses.txt`
         }));
     }
-    const uglifyCompressOptions = {
-        // Disabled because of an issue with Mapbox GL when using the Webpack node global and UglifyJS:
-        // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-303880888
-        // https://github.com/angular/angular-cli/issues/5804
-        // https://github.com/angular/angular-cli/pull/7931
-        typeofs: false
-    };
-    if (buildOptions.buildOptimizer) {
-        // This plugin must be before webpack.optimize.UglifyJsPlugin.
-        extraPlugins.push(new build_optimizer_1.PurifyPlugin());
-        uglifyCompressOptions.pure_getters = true;
-        // PURE comments work best with 3 passes.
-        // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
-        uglifyCompressOptions.passes = 3;
-    }
     return {
-        plugins: [
-            new webpack.EnvironmentPlugin({
-                'NODE_ENV': 'production'
-            }),
-            new webpack.HashedModuleIdsPlugin(),
-            new webpack.optimize.ModuleConcatenationPlugin(),
-            ...extraPlugins,
-            // Uglify should be the last plugin as PurifyPlugin needs to be before it.
-            new UglifyJSPlugin({
-                sourceMap: buildOptions.sourcemaps,
-                parallel: true,
-                cache: true,
-                uglifyOptions: {
-                    ecma: wco.supportES2015 ? 6 : 5,
-                    warnings: buildOptions.verbose,
-                    ie8: false,
-                    mangle: {
-                        safari10: true,
-                    },
-                    compress: uglifyCompressOptions,
-                    output: {
-                        ascii_only: true,
-                        comments: false,
-                        webkit: true,
-                    },
-                }
-            }),
-        ]
+        plugins: extraPlugins,
     };
 }
 exports.getProdConfig = getProdConfig;

@@ -6,6 +6,22 @@ export declare function getBrowserConfig(wco: WebpackConfigOptions): {
     output: {
         crossOriginLoading: string | boolean;
     };
+    optimization: {
+        runtimeChunk: string;
+        splitChunks: {
+            chunks: string;
+            cacheGroups: {
+                vendors: boolean;
+                vendor: {
+                    name: string;
+                    chunks: string;
+                    test: (module: any, chunks: {
+                        name: string;
+                    }[]) => boolean;
+                };
+            };
+        };
+    };
     plugins: any[];
     node: {
         fs: string;

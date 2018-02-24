@@ -1,4 +1,3 @@
-import * as webpack from 'webpack';
 import { WebpackTestOptions } from '../webpack-test-config';
 import { WebpackConfigOptions } from '../webpack-config';
 /**
@@ -19,5 +18,20 @@ export declare function getTestConfig(wco: WebpackConfigOptions<WebpackTestOptio
     module: {
         rules: any[];
     };
-    plugins: webpack.optimize.CommonsChunkPlugin[];
+    plugins: any[];
+    optimization: {
+        splitChunks: {
+            chunks: string;
+            cacheGroups: {
+                vendors: boolean;
+                vendor: {
+                    name: string;
+                    chunks: string;
+                    test: (module: any, chunks: {
+                        name: string;
+                    }[]) => boolean;
+                };
+            };
+        };
+    };
 };

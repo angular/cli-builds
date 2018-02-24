@@ -4,6 +4,7 @@ const webpack_sources_1 = require("webpack-sources");
 const loader_utils_1 = require("loader-utils");
 const path = require("path");
 const Chunk = require('webpack/lib/Chunk');
+const EntryPoint = require('webpack/lib/Entrypoint');
 function addDependencies(compilation, scripts) {
     if (compilation.fileDependencies.add) {
         // Webpack 4+ uses a Set
@@ -57,13 +58,14 @@ class ScriptsWebpackPlugin {
         return true;
     }
     _insertOutput(compilation, { filename, source }, cached = false) {
-        const chunk = new Chunk();
+        const chunk = new Chunk(this.options.name);
         chunk.rendered = !cached;
         chunk.id = this.options.name;
         chunk.ids = [chunk.id];
-        chunk.name = this.options.name;
-        chunk.isInitial = () => true;
         chunk.files.push(filename);
+        const entrypoint = new EntryPoint(this.options.name);
+        entrypoint.pushChunk(chunk);
+        compilation.entrypoints.set(this.options.name, entrypoint);
         compilation.chunks.push(chunk);
         compilation.assets[filename] = source;
     }

@@ -67,19 +67,7 @@ function _createAotPlugin(wco, options, useMain = true) {
             additionalLazyModules[lazyModule] = path.resolve(projectRoot, appConfig.root, lazyModule);
         }
     }
-    const pluginOptions = Object.assign({}, {
-        mainPath: useMain ? path.join(projectRoot, appConfig.root, appConfig.main) : undefined,
-        i18nInFile: buildOptions.i18nFile,
-        i18nInFormat: buildOptions.i18nFormat,
-        i18nOutFile: buildOptions.i18nOutFile,
-        i18nOutFormat: buildOptions.i18nOutFormat,
-        locale: buildOptions.locale,
-        platform: appConfig.platform === 'server' ? webpack_1.PLATFORM.Server : webpack_1.PLATFORM.Browser,
-        missingTranslation: buildOptions.missingTranslation,
-        hostReplacementPaths,
-        sourceMap: buildOptions.sourcemaps,
-        additionalLazyModules,
-    }, options);
+    const pluginOptions = Object.assign({ mainPath: useMain ? path.join(projectRoot, appConfig.root, appConfig.main) : undefined, i18nInFile: buildOptions.i18nFile, i18nInFormat: buildOptions.i18nFormat, i18nOutFile: buildOptions.i18nOutFile, i18nOutFormat: buildOptions.i18nOutFormat, locale: buildOptions.locale, platform: appConfig.platform === 'server' ? webpack_1.PLATFORM.Server : webpack_1.PLATFORM.Browser, missingTranslation: buildOptions.missingTranslation, hostReplacementPaths, sourceMap: buildOptions.sourcemaps, additionalLazyModules, nameLazyFiles: buildOptions.namedChunks }, options);
     return new webpack_1.AngularCompilerPlugin(pluginOptions);
 }
 function getNonAotConfig(wco) {

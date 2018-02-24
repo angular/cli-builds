@@ -18,8 +18,6 @@ function getStylesConfig(wco) {
     const cssSourceMap = buildOptions.sourcemaps;
     // Maximum resource size to inline (KiB)
     const maximumInlineSize = 10;
-    // Minify/optimize css in production.
-    const minimizeCss = buildOptions.target === 'production';
     // determine hashing format
     const hashFormat = utils_1.getOutputHashFormat(buildOptions.outputHashing);
     // Convert absolute resource URLs to account for base-href and deploy-url.
@@ -229,18 +227,13 @@ function getStylesConfig(wco) {
     }
     if (buildOptions.extractCss) {
         // extract global css from js files into own css file
-        extraPlugins.push(new ExtractTextPlugin({ filename: `[name]${hashFormat.extract}.bundle.css` }));
+        extraPlugins.push(new ExtractTextPlugin({ filename: `[name]${hashFormat.extract}.css` }));
         // suppress empty .js files in css only entry points
         extraPlugins.push(new webpack_1.SuppressExtractedTextChunksWebpackPlugin());
     }
-    if (minimizeCss) {
-        extraPlugins.push(new webpack_1.CleanCssWebpackPlugin({
-            sourceMap: cssSourceMap,
-            // component styles retain their original file name
-            test: (file) => /\.(?:css|scss|sass|less|styl)$/.test(file),
-        }));
-    }
     return {
+        // Workaround stylus-loader defect: https://github.com/shama/stylus-loader/issues/189
+        loader: { stylus: {} },
         entry: entryPoints,
         module: { rules },
         plugins: [].concat(extraPlugins)

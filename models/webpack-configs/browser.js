@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
 const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
 const package_chunk_sort_1 = require("../../utilities/package-chunk-sort");
 const base_href_webpack_1 = require("../../lib/base-href-webpack");
+const index_html_webpack_plugin_1 = require("../../plugins/index-html-webpack-plugin");
 const utils_1 = require("./utils");
 function getBrowserConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
@@ -17,22 +17,23 @@ function getBrowserConfig(wco) {
         ...utils_1.extraEntryParser(appConfig.scripts, appRoot, 'scripts'),
         ...utils_1.extraEntryParser(appConfig.styles, appRoot, 'styles')
     ]);
-    if (buildOptions.vendorChunk) {
-        // Separate modules from node_modules into a vendor chunk.
-        const nodeModules = path.resolve(projectRoot, 'node_modules');
-        // Resolves all symlink to get the actual node modules folder.
-        const realNodeModules = fs.realpathSync(nodeModules);
-        // --aot puts the generated *.ngfactory.ts in src/$$_gendir/node_modules.
-        const genDirNodeModules = path.resolve(appRoot, '$$_gendir', 'node_modules');
-        extraPlugins.push(new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            chunks: ['main'],
-            minChunks: (module) => {
-                return module.resource
-                    && (module.resource.startsWith(nodeModules)
-                        || module.resource.startsWith(genDirNodeModules)
-                        || module.resource.startsWith(realNodeModules));
-            }
+    // TODO: Enable this once HtmlWebpackPlugin supports Webpack 4
+    const generateIndexHtml = false;
+    if (generateIndexHtml) {
+        extraPlugins.push(new HtmlWebpackPlugin({
+            template: path.resolve(appRoot, appConfig.index),
+            filename: path.resolve(buildOptions.outputPath, appConfig.index),
+            chunksSortMode: package_chunk_sort_1.packageChunkSort(appConfig),
+            excludeChunks: lazyChunks,
+            xhtml: true,
+            minify: buildOptions.target === 'production' ? {
+                caseSensitive: true,
+                collapseWhitespace: true,
+                keepClosingSlash: true
+            } : false
+        }));
+        extraPlugins.push(new base_href_webpack_1.BaseHrefWebpackPlugin({
+            baseHref: buildOptions.baseHref
         }));
     }
     if (buildOptions.sourcemaps) {
@@ -54,19 +55,13 @@ function getBrowserConfig(wco) {
             }));
         }
     }
-    if (buildOptions.commonChunk) {
-        extraPlugins.push(new webpack.optimize.CommonsChunkPlugin({
-            name: 'main',
-            async: 'common',
-            children: true,
-            minChunks: 2
-        }));
-    }
     if (buildOptions.subresourceIntegrity) {
         extraPlugins.push(new SubresourceIntegrityPlugin({
             hashFuncNames: ['sha384']
         }));
     }
+    const globalStylesEntries = utils_1.extraEntryParser(appConfig.styles, appRoot, 'styles')
+        .map(style => style.entry);
     return {
         resolve: {
             mainFields: [
@@ -77,27 +72,34 @@ function getBrowserConfig(wco) {
         output: {
             crossOriginLoading: buildOptions.subresourceIntegrity ? 'anonymous' : false
         },
-        plugins: [
-            new HtmlWebpackPlugin({
-                template: path.resolve(appRoot, appConfig.index),
-                filename: path.resolve(buildOptions.outputPath, appConfig.index),
-                chunksSortMode: package_chunk_sort_1.packageChunkSort(appConfig),
-                excludeChunks: lazyChunks,
-                xhtml: true,
-                minify: buildOptions.target === 'production' ? {
-                    caseSensitive: true,
-                    collapseWhitespace: true,
-                    keepClosingSlash: true
-                } : false
+        optimization: {
+            runtimeChunk: 'single',
+            splitChunks: {
+                chunks: buildOptions.commonChunk ? 'all' : 'initial',
+                cacheGroups: {
+                    vendors: false,
+                    vendor: buildOptions.vendorChunk && {
+                        name: 'vendor',
+                        chunks: 'initial',
+                        test: (module, chunks) => {
+                            const moduleName = module.nameForCondition ? module.nameForCondition() : '';
+                            return /[\\/]node_modules[\\/]/.test(moduleName)
+                                && !chunks.some(({ name }) => name === 'polyfills'
+                                    || globalStylesEntries.includes(name));
+                        },
+                    },
+                }
+            }
+        },
+        plugins: extraPlugins.concat([
+            new index_html_webpack_plugin_1.IndexHtmlWebpackPlugin({
+                input: path.resolve(appRoot, appConfig.index),
+                output: appConfig.index,
+                baseHref: buildOptions.baseHref,
+                entrypoints: package_chunk_sort_1.generateEntryPoints(appConfig),
+                deployUrl: buildOptions.deployUrl,
             }),
-            new base_href_webpack_1.BaseHrefWebpackPlugin({
-                baseHref: buildOptions.baseHref
-            }),
-            new webpack.optimize.CommonsChunkPlugin({
-                minChunks: Infinity,
-                name: 'inline'
-            })
-        ].concat(extraPlugins),
+        ]),
         node: {
             fs: 'empty',
             global: true,
