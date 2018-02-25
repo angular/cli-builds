@@ -20,8 +20,6 @@ class NgCliWebpackConfig {
         const projectTs = require_project_module_1.requireProjectModule(projectRoot, 'typescript');
         const supportES2015 = tsConfig.options.target !== projectTs.ScriptTarget.ES3
             && tsConfig.options.target !== projectTs.ScriptTarget.ES5;
-        // TODO: Remove this functionality completely as it is no longer needed with Webpack 4
-        buildOptions.forceTsCommonjs = false;
         this.wco = { projectRoot, buildOptions, appConfig, tsConfig, supportES2015 };
     }
     buildConfig() {

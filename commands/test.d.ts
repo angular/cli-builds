@@ -14,7 +14,6 @@ export interface TestOptions {
     environment?: string;
     app?: string;
     preserveSymlinks?: boolean;
-    forceTsCommonjs?: boolean;
 }
 declare const TestCommand: any;
 export default TestCommand;
