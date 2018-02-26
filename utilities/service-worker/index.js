@@ -48,11 +48,22 @@ function usesServiceWorker(projectRoot) {
     }
     catch (_) {
         // @angular/service-worker is not installed
-        return false;
+        throw new Error(common_tags_1.stripIndent `
+    Your project is configured with serviceWorker = true, but @angular/service-worker
+    is not installed. Run \`npm install --save-dev @angular/service-worker\`
+    and try again, or run \`ng set apps.0.serviceWorker=false\` in your .angular-cli.json.
+  `);
     }
     const swPackageJson = fs.readFileSync(swPackageJsonPath).toString();
     const swVersion = JSON.parse(swPackageJson)['version'];
-    return semver.gte(swVersion, exports.NEW_SW_VERSION);
+    if (!semver.gte(swVersion, exports.NEW_SW_VERSION)) {
+        throw new Error(common_tags_1.stripIndent `
+    The installed version of @angular/service-worker is ${swVersion}. This version of the CLI
+    requires the @angular/service-worker version to satisfy ${exports.NEW_SW_VERSION}. Please upgrade
+    your service worker version.
+  `);
+    }
+    return true;
 }
 exports.usesServiceWorker = usesServiceWorker;
 function augmentAppWithServiceWorker(projectRoot, appRoot, outputPath, baseHref) {

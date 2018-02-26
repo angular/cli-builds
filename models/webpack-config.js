@@ -29,7 +29,6 @@ class NgCliWebpackConfig {
             webpack_configs_1.getCommonConfig(this.wco),
             platformConfig,
             webpack_configs_1.getStylesConfig(this.wco),
-            this.getTargetConfig(this.wco)
         ];
         if (this.wco.appConfig.main || this.wco.appConfig.polyfills) {
             const typescriptConfigPartial = this.wco.buildOptions.aot
@@ -39,12 +38,6 @@ class NgCliWebpackConfig {
         }
         this.config = webpackMerge(webpackConfigs);
         return this.config;
-    }
-    getTargetConfig(webpackConfigOptions) {
-        switch (webpackConfigOptions.buildOptions.target) {
-            case 'production':
-                return webpack_configs_1.getProdConfig(webpackConfigOptions);
-        }
     }
     // Validate build options
     validateBuildOptions(buildOptions) {
@@ -75,7 +68,8 @@ class NgCliWebpackConfig {
                 sourcemaps: false,
                 extractCss: true,
                 namedChunks: false,
-                aot: true
+                aot: true,
+                extractLicenses: true,
             }
         };
         let merged = Object.assign({}, targetDefaults[buildOptions.target], buildOptions);

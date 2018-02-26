@@ -4,10 +4,17 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
+const license_webpack_plugin_1 = require("license-webpack-plugin");
 const package_chunk_sort_1 = require("../../utilities/package-chunk-sort");
 const base_href_webpack_1 = require("../../lib/base-href-webpack");
 const index_html_webpack_plugin_1 = require("../../plugins/index-html-webpack-plugin");
 const utils_1 = require("./utils");
+/**
+ * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
+ * let the dependency validator know it is used.
+ *
+ * require('webpack-sources')
+ */
 function getBrowserConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
     const appRoot = path.resolve(projectRoot, appConfig.root);
@@ -58,6 +65,14 @@ function getBrowserConfig(wco) {
     if (buildOptions.subresourceIntegrity) {
         extraPlugins.push(new SubresourceIntegrityPlugin({
             hashFuncNames: ['sha384']
+        }));
+    }
+    if (buildOptions.extractLicenses) {
+        extraPlugins.push(new license_webpack_plugin_1.LicenseWebpackPlugin({
+            pattern: /^(MIT|ISC|BSD.*)$/,
+            suppressErrors: true,
+            perChunkOutput: false,
+            outputFilename: `3rdpartylicenses.txt`
         }));
     }
     const globalStylesEntries = utils_1.extraEntryParser(appConfig.styles, appRoot, 'styles')

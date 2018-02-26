@@ -155,7 +155,6 @@ exports.baseBuildCommandOptions = [
     {
         name: 'extract-licenses',
         type: Boolean,
-        default: true,
         description: 'Extract all licenses in a separate file, in the case of production builds only.'
     },
     {

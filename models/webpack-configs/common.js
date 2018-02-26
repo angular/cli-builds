@@ -6,6 +6,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const utils_1 = require("./utils");
 const is_directory_1 = require("../../utilities/is-directory");
 const require_project_module_1 = require("../../utilities/require-project-module");
+const bundle_budget_1 = require("../../plugins/bundle-budget");
 const cleancss_webpack_plugin_1 = require("../../plugins/cleancss-webpack-plugin");
 const scripts_webpack_plugin_1 = require("../../plugins/scripts-webpack-plugin");
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
@@ -214,6 +215,7 @@ function getCommonConfig(wco) {
             noEmitOnErrors: true,
             minimizer: [
                 new webpack_1.HashedModuleIdsPlugin(),
+                new bundle_budget_1.BundleBudgetPlugin({ budgets: appConfig.budgets }),
                 new cleancss_webpack_plugin_1.CleanCssWebpackPlugin({
                     sourceMap: buildOptions.sourcemaps,
                     // component styles retain their original file name
