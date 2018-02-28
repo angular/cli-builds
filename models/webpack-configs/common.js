@@ -188,6 +188,9 @@ function getCommonConfig(wco) {
             publicPath: buildOptions.deployUrl,
             filename: `[name]${hashFormat.chunk}.js`,
         },
+        performance: {
+            hints: false,
+        },
         module: {
             rules: [
                 { test: /\.html$/, loader: 'raw-loader' },

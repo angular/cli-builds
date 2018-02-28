@@ -30,6 +30,9 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
         publicPath: string;
         filename: string;
     };
+    performance: {
+        hints: boolean;
+    };
     module: {
         rules: ({
             test: RegExp;

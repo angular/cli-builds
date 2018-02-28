@@ -69,7 +69,7 @@ function getBrowserConfig(wco) {
     }
     if (buildOptions.extractLicenses) {
         extraPlugins.push(new license_webpack_plugin_1.LicenseWebpackPlugin({
-            pattern: /^(MIT|ISC|BSD.*)$/,
+            pattern: /.*/,
             suppressErrors: true,
             perChunkOutput: false,
             outputFilename: `3rdpartylicenses.txt`
