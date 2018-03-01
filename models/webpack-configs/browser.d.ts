@@ -29,15 +29,5 @@ export declare function getBrowserConfig(wco: WebpackConfigOptions): {
         };
     };
     plugins: any[];
-    node: {
-        fs: string;
-        global: boolean;
-        crypto: string;
-        tls: string;
-        net: string;
-        process: boolean;
-        module: boolean;
-        clearImmediate: boolean;
-        setImmediate: boolean;
-    };
+    node: boolean;
 };
