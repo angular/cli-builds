@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const webpack_1 = require("@ngtools/webpack");
 const read_tsconfig_1 = require("../utilities/read-tsconfig");
 const require_project_module_1 = require("../utilities/require-project-module");
 const webpackMerge = require('webpack-merge');
@@ -60,7 +59,8 @@ class NgCliWebpackConfig {
                 extractCss: false,
                 namedChunks: true,
                 aot: false,
-                buildOptimizer: false
+                vendorChunk: true,
+                buildOptimizer: false,
             },
             production: {
                 environment: 'prod',
@@ -70,21 +70,11 @@ class NgCliWebpackConfig {
                 namedChunks: false,
                 aot: true,
                 extractLicenses: true,
+                vendorChunk: false,
+                buildOptimizer: buildOptions.aot !== false,
             }
         };
-        let merged = Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
-        // Use Build Optimizer on prod AOT builds by default when AngularCompilerPlugin is supported.
-        const buildOptimizerDefault = {
-            buildOptimizer: buildOptions.target == 'production' && buildOptions.aot !== false
-                && webpack_1.AngularCompilerPlugin.isSupported()
-        };
-        merged = Object.assign({}, buildOptimizerDefault, merged);
-        // Default vendor chunk to false when build optimizer is on.
-        const vendorChunkDefault = {
-            vendorChunk: !merged.buildOptimizer
-        };
-        merged = Object.assign({}, vendorChunkDefault, merged);
-        return merged;
+        return Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
     }
     // Fill in defaults from .angular-cli.json
     mergeConfigs(buildOptions, appConfig, projectRoot) {
