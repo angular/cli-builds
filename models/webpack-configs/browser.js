@@ -115,17 +115,7 @@ function getBrowserConfig(wco) {
                 deployUrl: buildOptions.deployUrl,
             }),
         ]),
-        node: {
-            fs: 'empty',
-            global: true,
-            crypto: 'empty',
-            tls: 'empty',
-            net: 'empty',
-            process: true,
-            module: false,
-            clearImmediate: false,
-            setImmediate: false
-        }
+        node: false,
     };
 }
 exports.getBrowserConfig = getBrowserConfig;
