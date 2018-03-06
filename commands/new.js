@@ -1,66 +1,62 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const chalk_1 = require("chalk");
+const command_1 = require("../models/command");
 const config_1 = require("../models/config");
 const validate_project_name_1 = require("../utilities/validate-project-name");
 const common_tags_1 = require("common-tags");
-const { cyan } = chalk_1.default;
-const Command = require('../ember-cli/lib/models/command');
 const SilentError = require('silent-error');
-const NewCommand = Command.extend({
-    name: 'new',
-    aliases: ['n'],
-    description: `Creates a new directory and a new Angular app eg. "ng new [name]".`,
-    works: 'outsideProject',
-    availableOptions: [
-        {
-            name: 'dry-run',
-            type: Boolean,
-            default: false,
-            aliases: ['d'],
-            description: common_tags_1.oneLine `
+class NewCommand extends command_1.Command {
+    constructor() {
+        super(...arguments);
+        this.name = 'new';
+        this.description = 'Creates a new directory and a new Angular app eg. "ng new [name]".';
+        this.scope = command_1.CommandScope.outsideProject;
+        this.arguments = ['name'];
+        this.options = [
+            {
+                name: 'dry-run',
+                type: Boolean,
+                default: false,
+                aliases: ['d'],
+                description: common_tags_1.oneLine `
         Run through without making any changes.
         Will list all files that would have been created when running "ng new".
       `
-        },
-        {
-            name: 'verbose',
-            type: Boolean,
-            default: false,
-            aliases: ['v'],
-            description: 'Adds more details to output logging.'
-        },
-        {
-            name: 'collection',
-            type: String,
-            aliases: ['c'],
-            description: 'Schematics collection to use.'
-        }
-    ],
-    isProject: function (projectPath) {
-        return config_1.CliConfig.fromProject(projectPath) !== null;
-    },
-    getCollectionName(rawArgs) {
-        let collectionName = config_1.CliConfig.fromGlobal().get('defaults.schematics.collection');
-        if (rawArgs) {
-            const parsedArgs = this.parseArgs(rawArgs, false);
-            if (parsedArgs.options.collection) {
-                collectionName = parsedArgs.options.collection;
+            },
+            {
+                name: 'verbose',
+                type: Boolean,
+                default: false,
+                aliases: ['v'],
+                description: 'Adds more details to output logging.'
+            },
+            {
+                name: 'collection',
+                type: String,
+                aliases: ['c'],
+                description: 'Schematics collection to use.'
             }
+        ];
+        this.initialized = false;
+    }
+    initialize(options) {
+        if (this.initialized) {
+            return Promise.resolve();
         }
-        return collectionName;
-    },
-    beforeRun: function (rawArgs) {
-        const isHelp = ['--help', '-h'].includes(rawArgs[0]);
-        if (isHelp) {
-            return;
-        }
-        const schematicName = config_1.CliConfig.getValue('defaults.schematics.newApp');
-        if (/^\d/.test(rawArgs[1])) {
-            SilentError.debugOrThrow('@angular/cli/commands/generate', `The \`ng new ${rawArgs[0]}\` file name cannot begin with a digit.`);
-        }
+        this.initialized = true;
+        const collectionName = this.parseCollectionName(options);
+        const schematicName = config_1.CliConfig.fromGlobal().get('defaults.schematics.newApp');
         const SchematicGetOptionsTask = require('../tasks/schematic-get-options').default;
         const getOptionsTask = new SchematicGetOptionsTask({
             ui: this.ui,
@@ -68,71 +64,60 @@ const NewCommand = Command.extend({
         });
         return getOptionsTask.run({
             schematicName,
-            collectionName: this.getCollectionName(rawArgs)
+            collectionName
         })
             .then((availableOptions) => {
-            this.registerOptions({
-                availableOptions: availableOptions
-            });
-        });
-    },
-    run: function (commandOptions, rawArgs) {
-        const packageName = rawArgs.shift();
-        if (!packageName) {
-            return Promise.reject(new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. ` +
-                chalk_1.default.yellow('ng new [name] ') +
-                `For more details, use "ng help".`));
-        }
-        validate_project_name_1.validateProjectName(packageName);
-        commandOptions.name = packageName;
-        if (commandOptions.dryRun) {
-            commandOptions.skipGit = true;
-        }
-        commandOptions.directory = commandOptions.directory || packageName;
-        const directoryName = path.join(process.cwd(), commandOptions.directory);
-        if (fs.existsSync(directoryName) && this.isProject(directoryName)) {
-            throw new SilentError(common_tags_1.oneLine `
-        Directory ${directoryName} exists and is already an Angular CLI project.
-      `);
-        }
-        if (commandOptions.collection) {
-            commandOptions.collectionName = commandOptions.collection;
-        }
-        else {
-            commandOptions.collectionName = this.getCollectionName(rawArgs);
-        }
-        const InitTask = require('../tasks/init').default;
-        const initTask = new InitTask({
-            project: this.project,
-            tasks: this.tasks,
-            ui: this.ui,
-        });
-        // Ensure skipGit has a boolean value.
-        commandOptions.skipGit = commandOptions.skipGit === undefined ? false : commandOptions.skipGit;
-        return initTask.run(commandOptions, rawArgs);
-    },
-    printDetailedHelp: function () {
-        const collectionName = this.getCollectionName();
-        const schematicName = config_1.CliConfig.getValue('defaults.schematics.newApp');
-        const SchematicGetHelpOutputTask = require('../tasks/schematic-get-help-output').default;
-        const getHelpOutputTask = new SchematicGetHelpOutputTask({
-            ui: this.ui,
-            project: this.project
-        });
-        return getHelpOutputTask.run({
-            schematicName,
-            collectionName,
-            nonSchematicOptions: this.availableOptions.filter((o) => !o.hidden)
-        })
-            .then((output) => {
-            const outputLines = [
-                cyan(`ng new ${cyan('[name]')} ${cyan('<options...>')}`),
-                ...output
-            ];
-            return outputLines.join('\n');
+            if (availableOptions) {
+                availableOptions = availableOptions.filter(opt => opt.name !== 'name');
+            }
+            this.options = this.options.concat(availableOptions || []);
         });
     }
-});
-NewCommand.overrideCore = true;
+    run(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!options.name) {
+                return Promise.reject(new SilentError(`The "ng ${options.name}" command requires a name argument to be specified eg. ` +
+                    chalk_1.default.yellow('ng new [name] ') +
+                    `For more details, use "ng help".`));
+            }
+            validate_project_name_1.validateProjectName(options.name);
+            options.name = options.name;
+            if (options.dryRun) {
+                options.skipGit = true;
+            }
+            options.directory = options.directory || options.name;
+            const directoryName = path.join(process.cwd(), options.directory);
+            if (fs.existsSync(directoryName) && this.isProject(directoryName)) {
+                throw new SilentError(common_tags_1.oneLine `
+        Directory ${directoryName} exists and is already an Angular CLI project.
+      `);
+            }
+            if (options.collection) {
+                options.collectionName = options.collection;
+            }
+            else {
+                options.collectionName = this.parseCollectionName(options);
+            }
+            const InitTask = require('../tasks/init').default;
+            const initTask = new InitTask({
+                project: this.project,
+                ui: this.ui,
+            });
+            // Ensure skipGit has a boolean value.
+            options.skipGit = options.skipGit === undefined ? false : options.skipGit;
+            return yield initTask.run(options);
+        });
+    }
+    isProject(projectPath) {
+        return config_1.CliConfig.fromProject(projectPath) !== null;
+    }
+    parseCollectionName(options) {
+        let collectionName = options.collection ||
+            options.c ||
+            config_1.CliConfig.getValue('defaults.schematics.collection');
+        return collectionName;
+    }
+}
+NewCommand.aliases = ['n'];
 exports.default = NewCommand;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/new.js.map

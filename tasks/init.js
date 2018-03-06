@@ -41,7 +41,7 @@ exports.default = Task.extend({
             const packageJson = require('../package.json');
             commandOptions.version = packageJson.version;
         }
-        if (!commandOptions.skipCommit) {
+        if (!commandOptions.skipGit) {
             const commitMessage = fs.readFileSync(path.join(__dirname, '../utilities/INITIAL_COMMIT_MESSAGE.txt'), 'utf-8');
             commandOptions.commit = {
                 message: commitMessage,

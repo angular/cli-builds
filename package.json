@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.0-beta.4-9c4f9e9",
+  "version": "6.0.0-beta.4-9f77c86",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -31,7 +31,7 @@
     "@angular-devkit/core": "0.4.3",
     "@angular-devkit/schematics": "0.4.3",
     "@ngtools/json-schema": "1.2.0",
-    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#9c4f9e9",
+    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#9f77c86",
     "@schematics/angular": "0.4.3",
     "@schematics/package-update": "0.4.3",
     "ajv": "^6.1.1",
@@ -84,7 +84,8 @@
     "webpack-dev-server": "^3.0.1-beta.0",
     "webpack-merge": "^4.1.2",
     "webpack-sources": "^1.1.0",
-    "webpack-subresource-integrity": "^1.0.1"
+    "webpack-subresource-integrity": "^1.0.1",
+    "yargs-parser": "^9.0.2"
   },
   "optionalDependencies": {
     "node-sass": "^4.7.2"

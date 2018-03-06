@@ -1,3 +1,4 @@
+import { Command, CommandScope } from '../models/command';
 export interface TestOptions {
     watch?: boolean;
     codeCoverage?: boolean;
@@ -15,5 +16,50 @@ export interface TestOptions {
     app?: string;
     preserveSymlinks?: boolean;
 }
-declare const TestCommand: any;
-export default TestCommand;
+export default class TestCommand extends Command {
+    readonly name: string;
+    readonly description: string;
+    static aliases: string[];
+    readonly scope: CommandScope;
+    readonly arguments: string[];
+    readonly options: ({
+        name: string;
+        type: BooleanConstructor;
+        aliases: string[];
+        description: string;
+    } | {
+        name: string;
+        type: BooleanConstructor;
+        default: boolean;
+        aliases: string[];
+        description: string;
+    } | {
+        name: string;
+        type: StringConstructor;
+        aliases: string[];
+        description: string;
+    } | {
+        name: string;
+        type: BooleanConstructor;
+        description: string;
+        default: any;
+    } | {
+        name: string;
+        type: StringConstructor;
+        description: string;
+    } | {
+        name: string;
+        type: BooleanConstructor;
+        description: string;
+    } | {
+        name: string;
+        type: NumberConstructor;
+        description: string;
+    } | {
+        name: string;
+        type: NumberConstructor;
+        default: any;
+        description: string;
+    })[];
+    run(options: TestOptions): Promise<any>;
+}
