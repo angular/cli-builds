@@ -20,7 +20,7 @@ exports.default = Task.extend({
         if (!appConfig.main) {
             throw new SilentError(`An app without 'main' cannot use the test command.`);
         }
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const karma = require_project_module_1.requireProjectModule(projectRoot, 'karma');
             const karmaConfig = path.join(projectRoot, options.config ||
                 config_1.CliConfig.getValue('test.karma.config'));
@@ -36,19 +36,13 @@ exports.default = Task.extend({
                 poll: options.poll,
                 environment: options.environment,
                 preserveSymlinks: options.preserveSymlinks,
+                forceTsCommonjs: options.forceTsCommonjs,
                 app: options.app
             };
             // Assign additional karmaConfig options to the local ngapp config
             karmaOptions.configFile = karmaConfig;
             // :shipit:
-            const karmaServer = new karma.Server(karmaOptions, function (exitCode) {
-                if (exitCode === 0) {
-                    resolve();
-                }
-                else {
-                    reject(null);
-                }
-            });
+            const karmaServer = new karma.Server(karmaOptions, resolve);
             karmaServer.start();
         });
     }

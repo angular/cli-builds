@@ -1,19 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const config_1 = require("../models/config");
 const version_1 = require("../upgrade/version");
 const common_tags_1 = require("common-tags");
 const app_utils_1 = require("../utilities/app-utils");
 const path_1 = require("path");
+const Command = require('../ember-cli/lib/models/command');
 const SilentError = require('silent-error');
 const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
 const buildConfigDefaults = config.getPaths('defaults.build', [
@@ -26,8 +18,7 @@ exports.baseBuildCommandOptions = [
         name: 'target',
         type: String,
         default: 'development',
-        // TODO: re-add support for `--prod`
-        aliases: ['t'],
+        aliases: ['t', { 'dev': 'development' }, { 'prod': 'production' }],
         description: 'Defines the build target.'
     },
     {
@@ -164,6 +155,7 @@ exports.baseBuildCommandOptions = [
     {
         name: 'extract-licenses',
         type: Boolean,
+        default: true,
         description: 'Extract all licenses in a separate file, in the case of production builds only.'
     },
     {
@@ -214,55 +206,57 @@ exports.baseBuildCommandOptions = [
         default: false
     }
 ];
-class BuildCommand extends command_1.Command {
-    constructor() {
-        super(...arguments);
-        this.name = 'build';
-        this.description = 'Builds your app and places it into the output path (dist/ by default).';
-        this.scope = command_1.CommandScope.inProject;
-        this.options = exports.baseBuildCommandOptions.concat([
-            {
-                name: 'stats-json',
-                type: Boolean,
-                default: false,
-                description: common_tags_1.oneLine `Generates a \`stats.json\` file which can be analyzed using tools
+const BuildCommand = Command.extend({
+    name: 'build',
+    description: 'Builds your app and places it into the output path (dist/ by default).',
+    aliases: ['b'],
+    availableOptions: exports.baseBuildCommandOptions.concat([
+        {
+            name: 'stats-json',
+            type: Boolean,
+            default: false,
+            description: common_tags_1.oneLine `Generates a \`stats.json\` file which can be analyzed using tools
        such as: \`webpack-bundle-analyzer\` or https://webpack.github.io/analyse.`
-            }
-        ]);
-    }
-    validate(_options) {
+        }
+    ]),
+    run: function (commandOptions) {
+        // Check Angular and TypeScript versions.
         version_1.Version.assertAngularVersionIs2_3_1OrHigher(this.project.root);
         version_1.Version.assertTypescriptVersion(this.project.root);
-        return true;
-    }
-    run(options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Add trailing slash if missing to prevent https://github.com/angular/angular-cli/issues/7295
-            if (options.deployUrl && options.deployUrl.substr(-1) !== '/') {
-                options.deployUrl += '/';
+        // Force commonjs module format for TS on dev watch builds.
+        if (commandOptions.target === 'development' && commandOptions.watch === true) {
+            commandOptions.forceTsCommonjs = true;
+        }
+        // Add trailing slash if missing to prevent https://github.com/angular/angular-cli/issues/7295
+        if (commandOptions.deployUrl && commandOptions.deployUrl.substr(-1) !== '/') {
+            commandOptions.deployUrl += '/';
+        }
+        const BuildTask = require('../tasks/build').default;
+        const buildTask = new BuildTask({
+            project: this.project,
+            ui: this.ui,
+        });
+        const clientApp = app_utils_1.getAppFromConfig(commandOptions.app);
+        const doAppShell = commandOptions.target === 'production' &&
+            (commandOptions.aot === undefined || commandOptions.aot === true) &&
+            !commandOptions.skipAppShell;
+        let serverApp = null;
+        if (clientApp.appShell && doAppShell) {
+            serverApp = app_utils_1.getAppFromConfig(clientApp.appShell.app);
+            if (serverApp.platform !== 'server') {
+                throw new SilentError(`Shell app's platform is not "server"`);
             }
-            const BuildTask = require('../tasks/build').default;
-            const buildTask = new BuildTask({
-                project: this.project,
-                ui: this.ui,
-            });
-            const clientApp = app_utils_1.getAppFromConfig(options.app);
-            const doAppShell = options.target === 'production' &&
-                (options.aot === undefined || options.aot === true) &&
-                !options.skipAppShell;
-            let serverApp = null;
-            if (clientApp.appShell && doAppShell) {
-                serverApp = app_utils_1.getAppFromConfig(clientApp.appShell.app);
-                if (serverApp.platform !== 'server') {
-                    throw new SilentError(`Shell app's platform is not "server"`);
-                }
-            }
-            const buildTaskResult = yield buildTask.run(options);
-            if (!clientApp.appShell || !doAppShell) {
-                return buildTaskResult;
-            }
-            const serverOptions = Object.assign({}, options, { app: clientApp.appShell.app });
-            yield buildTask.run(serverOptions);
+        }
+        const buildPromise = buildTask.run(commandOptions);
+        if (!clientApp.appShell || !doAppShell) {
+            return buildPromise;
+        }
+        return buildPromise
+            .then(() => {
+            const serverOptions = Object.assign({}, commandOptions, { app: clientApp.appShell.app });
+            return buildTask.run(serverOptions);
+        })
+            .then(() => {
             const RenderUniversalTask = require('../tasks/render-universal').default;
             const renderUniversalTask = new RenderUniversalTask({
                 project: this.project,
@@ -274,10 +268,10 @@ class BuildCommand extends command_1.Command {
                 serverOutDir: path_1.join(this.project.root, serverApp.outDir),
                 outputIndexPath: path_1.join(this.project.root, clientApp.outDir, clientApp.index)
             };
-            return yield renderUniversalTask.run(renderUniversalOptions);
+            return renderUniversalTask.run(renderUniversalOptions);
         });
     }
-}
-BuildCommand.aliases = ['b'];
+});
+BuildCommand.overrideCore = true;
 exports.default = BuildCommand;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/build.js.map

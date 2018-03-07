@@ -1,21 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
+const Command = require('../ember-cli/lib/models/command');
 const common_tags_1 = require("common-tags");
 const fs = require("fs");
 const path = require("path");
 const child_process = require("child_process");
 const chalk_1 = require("chalk");
 const config_1 = require("../models/config");
-class VersionCommand extends command_1.Command {
-    constructor() {
-        super(...arguments);
-        this.name = 'version';
-        this.description = 'Outputs Angular CLI version.';
-        this.arguments = [];
-        this.options = [];
-    }
-    run(_options) {
+const VersionCommand = Command.extend({
+    name: 'version',
+    description: 'Outputs Angular CLI version.',
+    aliases: ['v', '--version', '-v'],
+    works: 'everywhere',
+    availableOptions: [],
+    run: function (_options) {
         let versions = {};
         let angular = {};
         let angularCoreVersion = '';
@@ -70,7 +68,7 @@ class VersionCommand extends command_1.Command {
 /_/   \\_\\_| |_|\\__, |\\__,_|_|\\__,_|_|       \\____|_____|___|
                |___/
     `;
-        this.logger.info(common_tags_1.stripIndents `
+        this.ui.writeLine(common_tags_1.stripIndents `
     ${chalk_1.default.red(asciiArt)}
     Angular CLI: ${ngCliVersion}
     Node: ${process.versions.node}
@@ -94,8 +92,8 @@ class VersionCommand extends command_1.Command {
     ${Object.keys(angular).map(module => module + ': ' + angular[module]).sort().join('\n')}
     ${Object.keys(versions).map(module => module + ': ' + versions[module]).sort().join('\n')}
     `);
-    }
-    getDependencyVersions(pkg, prefix) {
+    },
+    getDependencyVersions: function (pkg, prefix) {
         const modules = {};
         const deps = Object.keys(pkg['dependencies'] || {})
             .concat(Object.keys(pkg['devDependencies'] || {}))
@@ -113,8 +111,8 @@ class VersionCommand extends command_1.Command {
         }
         deps.forEach(name => modules[name] = this.getVersion(name));
         return modules;
-    }
-    getVersion(moduleName) {
+    },
+    getVersion: function (moduleName) {
         try {
             const modulePkg = require(path.resolve(this.project.root, 'node_modules', moduleName, 'package.json'));
             return modulePkg.version;
@@ -123,7 +121,7 @@ class VersionCommand extends command_1.Command {
             return 'error';
         }
     }
-}
-VersionCommand.aliases = ['v'];
+});
+VersionCommand.overrideCore = true;
 exports.default = VersionCommand;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/version.js.map
