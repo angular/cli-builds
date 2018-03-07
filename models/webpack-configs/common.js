@@ -1,17 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const webpack = require("webpack");
 const path = require("path");
-const webpack_1 = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const named_lazy_chunks_webpack_plugin_1 = require("../../plugins/named-lazy-chunks-webpack-plugin");
 const utils_1 = require("./utils");
 const is_directory_1 = require("../../utilities/is-directory");
 const require_project_module_1 = require("../../utilities/require-project-module");
-const bundle_budget_1 = require("../../plugins/bundle-budget");
-const cleancss_webpack_plugin_1 = require("../../plugins/cleancss-webpack-plugin");
 const scripts_webpack_plugin_1 = require("../../plugins/scripts-webpack-plugin");
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const SilentError = require('silent-error');
 const resolve = require('resolve');
 /**
@@ -29,6 +27,7 @@ function getCommonConfig(wco) {
     const appRoot = path.resolve(projectRoot, appConfig.root);
     const nodeModules = path.resolve(projectRoot, 'node_modules');
     let extraPlugins = [];
+    let extraRules = [];
     let entryPoints = {};
     if (appConfig.main) {
         entryPoints['main'] = [path.resolve(appRoot, appConfig.main)];
@@ -61,7 +60,7 @@ function getCommonConfig(wco) {
             extraPlugins.push(new scripts_webpack_plugin_1.ScriptsWebpackPlugin({
                 name: script.entry,
                 sourceMap: buildOptions.sourcemaps,
-                filename: `${script.entry}${hash}.js`,
+                filename: `${script.entry}${hash}.bundle.js`,
                 scripts: script.paths,
                 basePath: projectRoot,
             }));
@@ -131,26 +130,26 @@ function getCommonConfig(wco) {
     }
     if (buildOptions.showCircularDependencies) {
         extraPlugins.push(new CircularDependencyPlugin({
-            exclude: /[\\\/]node_modules[\\\/]/
+            exclude: /(\\|\/)node_modules(\\|\/)/
         }));
     }
-    let buildOptimizerUseRule;
     if (buildOptions.buildOptimizer) {
         // Set the cache directory to the Build Optimizer dir, so that package updates will delete it.
         const buildOptimizerDir = path.dirname(resolve.sync('@angular-devkit/build-optimizer', { basedir: projectRoot }));
         const cacheDirectory = path.resolve(buildOptimizerDir, './.cache/');
-        buildOptimizerUseRule = {
-            use: [
-                {
+        extraRules.push({
+            test: /\.js$/,
+            use: [{
                     loader: 'cache-loader',
                     options: { cacheDirectory }
-                },
-                {
+                }, {
                     loader: '@angular-devkit/build-optimizer/webpack-loader',
                     options: { sourceMap: buildOptions.sourcemaps }
-                },
-            ],
-        };
+                }],
+        });
+    }
+    if (buildOptions.namedChunks) {
+        extraPlugins.push(new named_lazy_chunks_webpack_plugin_1.NamedLazyChunksWebpackPlugin());
     }
     // Load rxjs path aliases.
     // https://github.com/ReactiveX/rxjs/blob/master/doc/lettable-operators.md#build-and-treeshaking
@@ -170,8 +169,6 @@ function getCommonConfig(wco) {
         loaderNodeModules.push(potentialNodeModules);
     }
     return {
-        mode: buildOptions.target,
-        devtool: false,
         resolve: {
             extensions: ['.ts', '.js'],
             symlinks: !buildOptions.preserveSymlinks,
@@ -186,10 +183,8 @@ function getCommonConfig(wco) {
         output: {
             path: path.resolve(buildOptions.outputPath),
             publicPath: buildOptions.deployUrl,
-            filename: `[name]${hashFormat.chunk}.js`,
-        },
-        performance: {
-            hints: false,
+            filename: `[name]${hashFormat.chunk}.bundle.js`,
+            chunkFilename: `[id]${hashFormat.chunk}.chunk.js`
         },
         module: {
             rules: [
@@ -209,45 +204,12 @@ function getCommonConfig(wco) {
                         name: `[name]${hashFormat.file}.[ext]`,
                         limit: 10000
                     }
-                },
-                Object.assign({ test: /[\/\\]@angular[\/\\].+\.js$/, sideEffects: false, parser: { system: true } }, buildOptimizerUseRule),
-                Object.assign({ test: /\.js$/ }, buildOptimizerUseRule),
-            ]
+                }
+            ].concat(extraRules)
         },
-        optimization: {
-            noEmitOnErrors: true,
-            minimizer: [
-                new webpack_1.HashedModuleIdsPlugin(),
-                new bundle_budget_1.BundleBudgetPlugin({ budgets: appConfig.budgets }),
-                new cleancss_webpack_plugin_1.CleanCssWebpackPlugin({
-                    sourceMap: buildOptions.sourcemaps,
-                    // component styles retain their original file name
-                    test: (file) => /\.(?:css|scss|sass|less|styl)$/.test(file),
-                }),
-                new UglifyJSPlugin({
-                    sourceMap: buildOptions.sourcemaps,
-                    parallel: true,
-                    cache: true,
-                    uglifyOptions: {
-                        ecma: wco.supportES2015 ? 6 : 5,
-                        warnings: buildOptions.verbose,
-                        safari10: true,
-                        compress: {
-                            pure_getters: buildOptions.buildOptimizer,
-                            // PURE comments work best with 3 passes.
-                            // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
-                            passes: buildOptions.buildOptimizer ? 3 : 1,
-                        },
-                        output: {
-                            ascii_only: true,
-                            comments: false,
-                            webkit: true,
-                        },
-                    }
-                }),
-            ],
-        },
-        plugins: extraPlugins,
+        plugins: [
+            new webpack.NoEmitOnErrorsPlugin()
+        ].concat(extraPlugins)
     };
 }
 exports.getCommonConfig = getCommonConfig;

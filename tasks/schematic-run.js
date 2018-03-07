@@ -76,31 +76,38 @@ exports.default = Task.extend({
                     break;
             }
         });
-        return schematic.call(opts, host).pipe(operators_1.map((tree) => schematics_1.Tree.optimize(tree)), operators_1.concatMap((tree) => {
-            return dryRunSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
-        }), operators_1.concatMap((tree) => {
-            if (!error) {
-                // Output the logging queue.
-                loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
-            }
-            if (opts.dryRun || error) {
-                return of_1.of(tree);
-            }
-            return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
-        }), operators_1.concatMap(() => {
-            if (!opts.dryRun) {
-                return schematics_2.getEngine().executePostTasks();
-            }
-            else {
-                return [];
-            }
-        }))
-            .toPromise()
-            .then(() => {
-            if (opts.dryRun) {
-                ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
-            }
-            return { modifiedFiles };
+        return new Promise((resolve, reject) => {
+            schematic.call(opts, host).pipe(operators_1.map((tree) => schematics_1.Tree.optimize(tree)), operators_1.concatMap((tree) => {
+                return dryRunSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
+            }), operators_1.concatMap((tree) => {
+                if (!error) {
+                    // Output the logging queue.
+                    loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
+                }
+                if (opts.dryRun || error) {
+                    return of_1.of(tree);
+                }
+                return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
+            }), operators_1.concatMap(() => {
+                if (!opts.dryRun) {
+                    return schematics_2.getEngine().executePostTasks();
+                }
+                else {
+                    return [];
+                }
+            }))
+                .subscribe({
+                error(err) {
+                    ui.writeLine(red(`Error: ${err.message}`));
+                    reject(err.message);
+                },
+                complete() {
+                    if (opts.dryRun) {
+                        ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
+                    }
+                    resolve({ modifiedFiles });
+                }
+            });
         })
             .then((output) => {
             const modifiedFiles = output.modifiedFiles;
@@ -132,9 +139,8 @@ function prepOptions(schematic, options) {
         : options;
     const keys = Object.keys(properties);
     if (['component', 'c', 'directive', 'd'].indexOf(schematic.description.name) !== -1) {
-        options.prefix =
-            (options.prefix === 'false' || options.prefix === false || options.prefix === '')
-                ? undefined : options.prefix;
+        options.prefix = (options.prefix === 'false' || options.prefix === '')
+            ? undefined : options.prefix;
     }
     let preppedOptions = Object.assign({}, options, readDefaults(schematic.description.name, keys, options));
     preppedOptions = Object.assign({}, preppedOptions, normalizeOptions(schematic.description.name, keys, options));
@@ -142,10 +148,7 @@ function prepOptions(schematic, options) {
 }
 function readDefaults(schematicName, optionKeys, options) {
     return optionKeys.reduce((acc, key) => {
-        const value = options[key] !== undefined ? options[key] : readDefault(schematicName, key);
-        if (value !== undefined) {
-            acc[key] = value;
-        }
+        acc[key] = options[key] !== undefined ? options[key] : readDefault(schematicName, key);
         return acc;
     }, {});
 }

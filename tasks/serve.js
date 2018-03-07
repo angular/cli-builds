@@ -142,7 +142,7 @@ exports.default = Task.extend({
             // we can override the file watcher instead.
             webpackConfig.plugins.unshift({
                 apply: (compiler) => {
-                    compiler.hooks.afterEnvironment.tap('angular-cli', () => {
+                    compiler.plugin('after-environment', () => {
                         compiler.watchFileSystem = { watch: () => { } };
                     });
                 }
@@ -150,7 +150,7 @@ exports.default = Task.extend({
         }
         webpackCompiler = webpack(webpackConfig);
         if (rebuildDoneCb) {
-            webpackCompiler.hooks.done.tap('angular-cli', rebuildDoneCb);
+            webpackCompiler.plugin('done', rebuildDoneCb);
         }
         const statsConfig = utils_1.getWebpackStatsConfig(serveTaskOptions.verbose);
         let proxyConfig = {};
@@ -202,7 +202,8 @@ exports.default = Task.extend({
                 disableDotRule: true,
                 htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
             },
-            stats: serveTaskOptions.verbose ? statsConfig : false,
+            stats: serveTaskOptions.verbose ? statsConfig : 'none',
+            inline: true,
             proxy: proxyConfig,
             compress: serveTaskOptions.target === 'production',
             watchOptions: {
@@ -216,13 +217,13 @@ exports.default = Task.extend({
             contentBase: false,
             public: serveTaskOptions.publicHost,
             disableHostCheck: serveTaskOptions.disableHostCheck,
-            publicPath: servePath,
-            hot: serveTaskOptions.hmr,
+            publicPath: servePath
         };
         if (sslKey != null && sslCert != null) {
             webpackDevServerConfiguration.key = sslKey;
             webpackDevServerConfiguration.cert = sslCert;
         }
+        webpackDevServerConfiguration.hot = serveTaskOptions.hmr;
         if (serveTaskOptions.target === 'production') {
             ui.writeLine(chalk_1.default.red(common_tags_1.stripIndents `
         ****************************************************************************************
@@ -240,8 +241,8 @@ exports.default = Task.extend({
       **
     `));
         const server = new WebpackDevServer(webpackCompiler, webpackDevServerConfiguration);
-        webpackCompiler.hooks.done.tap('angular-cli', (stats) => {
-            if (!serveTaskOptions.verbose) {
+        if (!serveTaskOptions.verbose) {
+            webpackCompiler.plugin('done', (stats) => {
                 const json = stats.toJson(statsConfig);
                 this.ui.writeLine(stats_1.statsToString(json, statsConfig));
                 if (stats.hasWarnings()) {
@@ -250,15 +251,15 @@ exports.default = Task.extend({
                 if (stats.hasErrors()) {
                     this.ui.writeError(stats_1.statsErrorsToString(json, statsConfig));
                 }
-            }
-            if (serveTaskOptions.open) {
-                opn(serverAddress + servePath);
-            }
-        });
+            });
+        }
         return new Promise((_resolve, reject) => {
-            const httpServer = server.listen(serveTaskOptions.port, serveTaskOptions.host, (err) => {
+            const httpServer = server.listen(serveTaskOptions.port, serveTaskOptions.host, (err, _stats) => {
                 if (err) {
-                    reject(err);
+                    return reject(err);
+                }
+                if (serveTaskOptions.open) {
+                    opn(serverAddress + servePath);
                 }
             });
             // Node 8 has a keepAliveTimeout bug which doesn't respect active connections.
@@ -274,8 +275,9 @@ exports.default = Task.extend({
         })
             .catch((err) => {
             if (err) {
-                this.ui.writeError('\nAn error occured during the build:\n' + (err.stack || err));
+                this.ui.writeError('\nAn error occured during the build:\n' + ((err && err.stack) || err));
             }
+            throw err;
         });
     }
 });

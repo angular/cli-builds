@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const webpack_1 = require("@ngtools/webpack");
 const read_tsconfig_1 = require("../utilities/read-tsconfig");
 const require_project_module_1 = require("../utilities/require-project-module");
 const webpackMerge = require('webpack-merge');
@@ -19,6 +20,10 @@ class NgCliWebpackConfig {
         const projectTs = require_project_module_1.requireProjectModule(projectRoot, 'typescript');
         const supportES2015 = tsConfig.options.target !== projectTs.ScriptTarget.ES3
             && tsConfig.options.target !== projectTs.ScriptTarget.ES5;
+        // Only force if the default module kind is used (ES2015)
+        // Allows user to adjust module kind (to esNext for example)
+        buildOptions.forceTsCommonjs = buildOptions.forceTsCommonjs
+            && tsConfig.options.module === projectTs.ModuleKind.ES2015;
         this.wco = { projectRoot, buildOptions, appConfig, tsConfig, supportES2015 };
     }
     buildConfig() {
@@ -28,6 +33,7 @@ class NgCliWebpackConfig {
             webpack_configs_1.getCommonConfig(this.wco),
             platformConfig,
             webpack_configs_1.getStylesConfig(this.wco),
+            this.getTargetConfig(this.wco)
         ];
         if (this.wco.appConfig.main || this.wco.appConfig.polyfills) {
             const typescriptConfigPartial = this.wco.buildOptions.aot
@@ -37,6 +43,14 @@ class NgCliWebpackConfig {
         }
         this.config = webpackMerge(webpackConfigs);
         return this.config;
+    }
+    getTargetConfig(webpackConfigOptions) {
+        switch (webpackConfigOptions.buildOptions.target) {
+            case 'development':
+                return webpack_configs_1.getDevConfig(webpackConfigOptions);
+            case 'production':
+                return webpack_configs_1.getProdConfig(webpackConfigOptions);
+        }
     }
     // Validate build options
     validateBuildOptions(buildOptions) {
@@ -59,8 +73,7 @@ class NgCliWebpackConfig {
                 extractCss: false,
                 namedChunks: true,
                 aot: false,
-                vendorChunk: true,
-                buildOptimizer: false,
+                buildOptimizer: false
             },
             production: {
                 environment: 'prod',
@@ -68,13 +81,22 @@ class NgCliWebpackConfig {
                 sourcemaps: false,
                 extractCss: true,
                 namedChunks: false,
-                aot: true,
-                extractLicenses: true,
-                vendorChunk: false,
-                buildOptimizer: buildOptions.aot !== false,
+                aot: true
             }
         };
-        return Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
+        let merged = Object.assign({}, targetDefaults[buildOptions.target], buildOptions);
+        // Use Build Optimizer on prod AOT builds by default when AngularCompilerPlugin is supported.
+        const buildOptimizerDefault = {
+            buildOptimizer: buildOptions.target == 'production' && buildOptions.aot !== false
+                && webpack_1.AngularCompilerPlugin.isSupported()
+        };
+        merged = Object.assign({}, buildOptimizerDefault, merged);
+        // Default vendor chunk to false when build optimizer is on.
+        const vendorChunkDefault = {
+            vendorChunk: !merged.buildOptimizer
+        };
+        merged = Object.assign({}, vendorChunkDefault, merged);
+        return merged;
     }
     // Fill in defaults from .angular-cli.json
     mergeConfigs(buildOptions, appConfig, projectRoot) {
