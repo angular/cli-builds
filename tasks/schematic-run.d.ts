@@ -1,4 +1,6 @@
 export interface SchematicRunOptions {
+    dryRun: boolean;
+    force: boolean;
     taskOptions: SchematicOptions;
     workingDir: string;
     emptyHost: boolean;
@@ -6,8 +8,6 @@ export interface SchematicRunOptions {
     schematicName: string;
 }
 export interface SchematicOptions {
-    dryRun: boolean;
-    force: boolean;
     [key: string]: any;
 }
 export interface SchematicOutput {

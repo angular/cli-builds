@@ -14,7 +14,7 @@ const SilentError = require('silent-error');
 const Task = require('../ember-cli/lib/models/task');
 exports.default = Task.extend({
     run: function (options) {
-        const { taskOptions, workingDir, emptyHost, collectionName, schematicName } = options;
+        const { taskOptions, force, dryRun, workingDir, emptyHost, collectionName, schematicName } = options;
         const ui = this.ui;
         const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
         const engineHost = schematics_2.getEngineHost();
@@ -30,8 +30,8 @@ exports.default = Task.extend({
         const opts = Object.assign({}, taskOptions, preppedOptions);
         const tree = emptyHost ? new schematics_1.EmptyTree() : new schematics_1.FileSystemTree(new tools_1.FileSystemHost(workingDir));
         const host = of_1.of(tree);
-        const dryRunSink = new schematics_1.DryRunSink(workingDir, opts.force);
-        const fsSink = new schematics_1.FileSystemSink(workingDir, opts.force);
+        const dryRunSink = new schematics_1.DryRunSink(workingDir, force);
+        const fsSink = new schematics_1.FileSystemSink(workingDir, force);
         let error = false;
         const loggingQueue = [];
         const modifiedFiles = [];
@@ -87,12 +87,12 @@ exports.default = Task.extend({
             else {
                 throw new SilentError();
             }
-            if (opts.dryRun) {
+            if (dryRun) {
                 return of_1.of(tree);
             }
             return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
         }), operators_1.concatMap(() => {
-            if (!opts.dryRun) {
+            if (!dryRun) {
                 return schematics_2.getEngine().executePostTasks();
             }
             else {
@@ -101,7 +101,7 @@ exports.default = Task.extend({
         }))
             .toPromise()
             .then(() => {
-            if (opts.dryRun) {
+            if (dryRun) {
                 ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
             }
             return { modifiedFiles };
