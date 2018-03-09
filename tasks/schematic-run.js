@@ -10,6 +10,7 @@ const config_1 = require("../models/config");
 const operators_1 = require("rxjs/operators");
 const schematics_2 = require("../utilities/schematics");
 const { green, red, yellow } = chalk_1.default;
+const SilentError = require('silent-error');
 const Task = require('../ember-cli/lib/models/task');
 exports.default = Task.extend({
     run: function (options) {
@@ -83,7 +84,10 @@ exports.default = Task.extend({
                 // Output the logging queue.
                 loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
             }
-            if (opts.dryRun || error) {
+            else {
+                throw new SilentError();
+            }
+            if (opts.dryRun) {
                 return of_1.of(tree);
             }
             return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
