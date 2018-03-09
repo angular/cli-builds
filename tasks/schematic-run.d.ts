@@ -6,6 +6,7 @@ export interface SchematicRunOptions {
     emptyHost: boolean;
     collectionName: string;
     schematicName: string;
+    allowPrivate?: boolean;
 }
 export interface SchematicOptions {
     [key: string]: any;

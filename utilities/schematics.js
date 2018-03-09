@@ -43,8 +43,8 @@ function getCollection(collectionName) {
     return collection;
 }
 exports.getCollection = getCollection;
-function getSchematic(collection, schematicName) {
-    return collection.createSchematic(schematicName);
+function getSchematic(collection, schematicName, allowPrivate) {
+    return collection.createSchematic(schematicName, allowPrivate);
 }
 exports.getSchematic = getSchematic;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/utilities/schematics.js.map

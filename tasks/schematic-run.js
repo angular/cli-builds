@@ -24,7 +24,7 @@ exports.default = Task.extend({
         });
         engineHost.registerTaskExecutor(node_1.BuiltinTaskExecutor.RepositoryInitializer, { rootDirectory: workingDir });
         const collection = schematics_2.getCollection(collectionName);
-        const schematic = schematics_2.getSchematic(collection, schematicName);
+        const schematic = schematics_2.getSchematic(collection, schematicName, options.allowPrivate);
         const projectRoot = !!this.project ? this.project.root : workingDir;
         const preppedOptions = prepOptions(schematic, taskOptions);
         const opts = Object.assign({}, taskOptions, preppedOptions);

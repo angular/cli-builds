@@ -3,4 +3,4 @@ import { FileSystemCollectionDesc, FileSystemSchematicDesc, NodeModulesEngineHos
 export declare function getEngineHost(): NodeModulesEngineHost;
 export declare function getEngine(): Engine<FileSystemCollectionDesc, FileSystemSchematicDesc>;
 export declare function getCollection(collectionName: string): Collection<any, any>;
-export declare function getSchematic(collection: Collection<any, any>, schematicName: string): Schematic<any, any>;
+export declare function getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;

@@ -16,6 +16,7 @@ const yargsParser = require('yargs-parser');
  * Run a command.
  * @param commandMap Map of available commands.
  * @param args Raw unparsed arguments.
+ * @param logger The logger to use.
  * @param context Execution context.
  */
 function runCommand(commandMap, args, logger, context) {
@@ -43,11 +44,10 @@ function runCommand(commandMap, args, logger, context) {
       For available options, see \`ng help\`.`);
         }
         const command = new Cmd(context, logger);
-        let options = parseOptions(yargsParser, args, command.options);
-        options = mapArguments(options, command.arguments);
+        args = yield command.initializeRaw(args);
+        let options = parseOptions(args, command.options, command.arguments);
         yield command.initialize(options);
-        options = parseOptions(yargsParser, args, command.options);
-        options = mapArguments(options, command.arguments);
+        options = parseOptions(args, command.options, command.arguments);
         if (commandName === 'help') {
             options.commandMap = commandMap;
         }
@@ -63,7 +63,8 @@ function runCommand(commandMap, args, logger, context) {
     });
 }
 exports.runCommand = runCommand;
-function parseOptions(parser, args, cmdOpts) {
+function parseOptions(args, cmdOpts, commandArguments) {
+    const parser = yargsParser;
     const aliases = cmdOpts.concat()
         .filter(o => o.aliases && o.aliases.length > 0)
         .reduce((aliases, opt) => {
@@ -109,21 +110,17 @@ function parseOptions(parser, args, cmdOpts) {
     Object.keys(parsedOptions)
         .filter(key => key.indexOf('-') !== -1)
         .forEach(key => delete parsedOptions[key]);
-    return parsedOptions;
-}
-// Map arguments to options.
-function mapArguments(options, args) {
-    const optsWithMappedArgs = Object.assign({}, options);
-    optsWithMappedArgs._.forEach((value, index) => {
+    parsedOptions._.forEach((value, index) => {
         // Remove the starting "<" and trailing ">".
-        const arg = args[index];
+        const arg = commandArguments[index];
         if (arg) {
-            optsWithMappedArgs[arg] = value;
+            parsedOptions[arg] = value;
         }
     });
-    delete optsWithMappedArgs._;
-    return optsWithMappedArgs;
+    delete parsedOptions._;
+    return parsedOptions;
 }
+exports.parseOptions = parseOptions;
 // Find a command.
 function findCommand(map, name) {
     let Cmd = map[name];
