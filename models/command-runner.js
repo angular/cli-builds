@@ -21,6 +21,10 @@ const yargsParser = require('yargs-parser');
  */
 function runCommand(commandMap, args, logger, context) {
     return __awaiter(this, void 0, void 0, function* () {
+        // if not args supplied, just run the help command.
+        if (!args || args.length === 0) {
+            args = ['help'];
+        }
         const rawOptions = yargsParser(args, { alias: { help: ['h'] }, boolean: ['help'] });
         let commandName = rawOptions._[0];
         // remove the command name
@@ -30,8 +34,7 @@ function runCommand(commandMap, args, logger, context) {
             : command_1.CommandScope.outsideProject;
         let Cmd;
         Cmd = findCommand(commandMap, commandName);
-        const versionAliases = ['-v', '--version'];
-        if (!Cmd && versionAliases.indexOf(commandName) !== -1) {
+        if (!Cmd && !commandName && (rawOptions.v || rawOptions.version)) {
             commandName = 'version';
             Cmd = findCommand(commandMap, commandName);
         }
@@ -40,8 +43,9 @@ function runCommand(commandMap, args, logger, context) {
             Cmd = findCommand(commandMap, commandName);
         }
         if (!Cmd) {
-            throw new Error(common_tags_1.oneLine `The specified command (${commandName}) is invalid.
-      For available options, see \`ng help\`.`);
+            logger.error(common_tags_1.oneLine `The specified command (${commandName}) is invalid.
+    For a list of available options, run \`ng help\`.`);
+            throw '';
         }
         const command = new Cmd(context, logger);
         args = yield command.initializeRaw(args);
