@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const update_1 = require("../tasks/update");
+const schematic_run_1 = require("../tasks/schematic-run");
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -35,12 +35,22 @@ class UpdateCommand extends command_1.Command {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const schematic = '@schematics/package-update:all';
-            const updateTask = new update_1.UpdateTask({
+            const collectionName = '@schematics/package-update';
+            const schematicName = 'all';
+            const schematicRunTask = new schematic_run_1.default({
                 ui: this.ui,
                 project: this.project
             });
-            return yield updateTask.run(schematic, options);
+            const schematicRunOptions = {
+                taskOptions: {
+                    dryRun: options.dryRun,
+                    version: options.next ? 'next' : undefined
+                },
+                workingDir: this.project.root,
+                collectionName,
+                schematicName
+            };
+            return schematicRunTask.run(schematicRunOptions);
         });
     }
 }

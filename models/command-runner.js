@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
 const common_tags_1 = require("common-tags");
 const strings_1 = require("@angular-devkit/core/src/utils/strings");
-const yargsParser = require('yargs-parser');
+const yargsParser = require("yargs-parser");
 /**
  * Run a command.
  * @param commandMap Map of available commands.

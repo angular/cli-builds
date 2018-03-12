@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const doc_1 = require("../tasks/doc");
 const command_1 = require("../models/command");
+const opn_1 = require("opn");
 class DocCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -26,14 +26,19 @@ class DocCommand extends command_1.Command {
             }
         ];
     }
+    validate(options) {
+        if (!options.keyword) {
+            this.logger.error(`keyword argument is required.`);
+            return false;
+        }
+    }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const keyword = options.keyword;
-            const docTask = new doc_1.DocTask({
-                ui: this.ui,
-                project: this.project
-            });
-            return yield docTask.run(keyword, options.search);
+            let searchUrl = `https://angular.io/api?query=${options.keyword}`;
+            if (options.search) {
+                searchUrl = `https://www.google.com/search?q=site%3Aangular.io+${options.keyword}`;
+            }
+            return opn_1.default(searchUrl, { wait: false });
         });
     }
 }
