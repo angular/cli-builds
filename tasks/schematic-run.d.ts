@@ -1,14 +1,15 @@
+import { logging } from '@angular-devkit/core';
 export interface SchematicRunOptions {
-    dryRun: boolean;
-    force: boolean;
     taskOptions: SchematicOptions;
     workingDir: string;
     emptyHost: boolean;
     collectionName: string;
     schematicName: string;
-    allowPrivate?: boolean;
+    logger: logging.Logger;
 }
 export interface SchematicOptions {
+    dryRun: boolean;
+    force: boolean;
     [key: string]: any;
 }
 export interface SchematicOutput {

@@ -10,11 +10,10 @@ const config_1 = require("../models/config");
 const operators_1 = require("rxjs/operators");
 const schematics_2 = require("../utilities/schematics");
 const { green, red, yellow } = chalk_1.default;
-const SilentError = require('silent-error');
 const Task = require('../ember-cli/lib/models/task');
 exports.default = Task.extend({
     run: function (options) {
-        const { taskOptions, force, dryRun, workingDir, emptyHost, collectionName, schematicName } = options;
+        const { taskOptions, workingDir, emptyHost, collectionName, schematicName, logger } = options;
         const ui = this.ui;
         const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
         const engineHost = schematics_2.getEngineHost();
@@ -24,14 +23,14 @@ exports.default = Task.extend({
         });
         engineHost.registerTaskExecutor(node_1.BuiltinTaskExecutor.RepositoryInitializer, { rootDirectory: workingDir });
         const collection = schematics_2.getCollection(collectionName);
-        const schematic = schematics_2.getSchematic(collection, schematicName, options.allowPrivate);
+        const schematic = schematics_2.getSchematic(collection, schematicName);
         const projectRoot = !!this.project ? this.project.root : workingDir;
         const preppedOptions = prepOptions(schematic, taskOptions);
         const opts = Object.assign({}, taskOptions, preppedOptions);
         const tree = emptyHost ? new schematics_1.EmptyTree() : new schematics_1.FileSystemTree(new tools_1.FileSystemHost(workingDir));
         const host = of_1.of(tree);
-        const dryRunSink = new schematics_1.DryRunSink(workingDir, force);
-        const fsSink = new schematics_1.FileSystemSink(workingDir, force);
+        const dryRunSink = new schematics_1.DryRunSink(workingDir, opts.force);
+        const fsSink = new schematics_1.FileSystemSink(workingDir, opts.force);
         let error = false;
         const loggingQueue = [];
         const modifiedFiles = [];
@@ -77,34 +76,38 @@ exports.default = Task.extend({
                     break;
             }
         });
-        return schematic.call(opts, host).pipe(operators_1.map((tree) => schematics_1.Tree.optimize(tree)), operators_1.concatMap((tree) => {
-            return dryRunSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
-        }), operators_1.concatMap((tree) => {
-            if (!error) {
-                // Output the logging queue.
-                loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
-            }
-            else {
-                throw new SilentError();
-            }
-            if (dryRun) {
-                return of_1.of(tree);
-            }
-            return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
-        }), operators_1.concatMap(() => {
-            if (!dryRun) {
-                return schematics_2.getEngine().executePostTasks();
-            }
-            else {
-                return [];
-            }
-        }))
-            .toPromise()
-            .then(() => {
-            if (dryRun) {
-                ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
-            }
-            return { modifiedFiles };
+        return new Promise((resolve, reject) => {
+            schematic.call(opts, host, { logger }).pipe(operators_1.map((tree) => schematics_1.Tree.optimize(tree)), operators_1.concatMap((tree) => {
+                return dryRunSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
+            }), operators_1.concatMap((tree) => {
+                if (!error) {
+                    // Output the logging queue.
+                    loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
+                }
+                if (opts.dryRun || error) {
+                    return of_1.of(tree);
+                }
+                return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
+            }), operators_1.concatMap(() => {
+                if (!opts.dryRun) {
+                    return schematics_2.getEngine().executePostTasks();
+                }
+                else {
+                    return [];
+                }
+            }))
+                .subscribe({
+                error(err) {
+                    ui.writeLine(red(`Error: ${err.message}`));
+                    reject(err.message);
+                },
+                complete() {
+                    if (opts.dryRun) {
+                        ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
+                    }
+                    resolve({ modifiedFiles });
+                }
+            });
         })
             .then((output) => {
             const modifiedFiles = output.modifiedFiles;
@@ -136,9 +139,8 @@ function prepOptions(schematic, options) {
         : options;
     const keys = Object.keys(properties);
     if (['component', 'c', 'directive', 'd'].indexOf(schematic.description.name) !== -1) {
-        options.prefix =
-            (options.prefix === 'false' || options.prefix === false || options.prefix === '')
-                ? undefined : options.prefix;
+        options.prefix = (options.prefix === 'false' || options.prefix === '')
+            ? undefined : options.prefix;
     }
     let preppedOptions = Object.assign({}, options, readDefaults(schematic.description.name, keys, options));
     preppedOptions = Object.assign({}, preppedOptions, normalizeOptions(schematic.description.name, keys, options));
@@ -146,10 +148,7 @@ function prepOptions(schematic, options) {
 }
 function readDefaults(schematicName, optionKeys, options) {
     return optionKeys.reduce((acc, key) => {
-        const value = options[key] !== undefined ? options[key] : readDefault(schematicName, key);
-        if (value !== undefined) {
-            acc[key] = value;
-        }
+        acc[key] = options[key] !== undefined ? options[key] : readDefault(schematicName, key);
         return acc;
     }, {});
 }

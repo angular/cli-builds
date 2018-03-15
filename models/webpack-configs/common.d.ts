@@ -1,3 +1,4 @@
+import * as webpack from 'webpack';
 import { WebpackConfigOptions } from '../webpack-config';
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
@@ -10,8 +11,6 @@ import { WebpackConfigOptions } from '../webpack-config';
  * require('@angular-devkit/build-optimizer')
  */
 export declare function getCommonConfig(wco: WebpackConfigOptions): {
-    mode: string;
-    devtool: boolean;
     resolve: {
         extensions: string[];
         symlinks: boolean;
@@ -29,9 +28,7 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
         path: string;
         publicPath: string;
         filename: string;
-    };
-    performance: {
-        hints: boolean;
+        chunkFilename: string;
     };
     module: {
         rules: ({
@@ -44,41 +41,7 @@ export declare function getCommonConfig(wco: WebpackConfigOptions): {
                 name: string;
                 limit: number;
             };
-        } | {
-            use: ({
-                loader: string;
-                options: {
-                    cacheDirectory: string;
-                };
-            } | {
-                loader: string;
-                options: {
-                    sourceMap: boolean;
-                };
-            })[];
-            test: RegExp;
-            sideEffects: boolean;
-            parser: {
-                system: boolean;
-            };
-        } | {
-            use: ({
-                loader: string;
-                options: {
-                    cacheDirectory: string;
-                };
-            } | {
-                loader: string;
-                options: {
-                    sourceMap: boolean;
-                };
-            })[];
-            test: RegExp;
         })[];
     };
-    optimization: {
-        noEmitOnErrors: boolean;
-        minimizer: any[];
-    };
-    plugins: any[];
+    plugins: webpack.NoEmitOnErrorsPlugin[];
 };

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const glob = require("glob");
+const webpack = require("webpack");
 const config_1 = require("../config");
 /**
  * Enumerate loaders and their dependencies from this file to let the dependency validator
@@ -12,6 +13,7 @@ const config_1 = require("../config");
  */
 function getTestConfig(wco) {
     const { projectRoot, buildOptions, appConfig } = wco;
+    const nodeModules = path.resolve(projectRoot, 'node_modules');
     const extraRules = [];
     const extraPlugins = [];
     if (buildOptions.codeCoverage && config_1.CliConfig.fromProject()) {
@@ -49,25 +51,17 @@ function getTestConfig(wco) {
         module: {
             rules: [].concat(extraRules)
         },
-        plugins: extraPlugins,
-        optimization: {
-            // runtimeChunk: 'single',
-            splitChunks: {
-                chunks: buildOptions.commonChunk ? 'all' : 'initial',
-                cacheGroups: {
-                    vendors: false,
-                    vendor: buildOptions.vendorChunk && {
-                        name: 'vendor',
-                        chunks: 'initial',
-                        test: (module, chunks) => {
-                            const moduleName = module.nameForCondition ? module.nameForCondition() : '';
-                            return /[\\/]node_modules[\\/]/.test(moduleName)
-                                && !chunks.some(({ name }) => name === 'polyfills');
-                        },
-                    },
-                }
-            }
-        },
+        plugins: [
+            new webpack.optimize.CommonsChunkPlugin({
+                minChunks: Infinity,
+                name: 'inline'
+            }),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'vendor',
+                chunks: ['main'],
+                minChunks: (module) => module.resource && module.resource.startsWith(nodeModules)
+            })
+        ].concat(extraPlugins)
     };
 }
 exports.getTestConfig = getTestConfig;
