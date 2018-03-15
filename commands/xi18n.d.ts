@@ -1,4 +1,4 @@
-import { Command, CommandScope } from '../models/command';
+import { Command, CommandScope, Option } from '../models/command';
 export interface Xi18nOptions {
     outputPath?: string;
     verbose?: boolean;
@@ -12,28 +12,6 @@ export default class Xi18nCommand extends Command {
     static aliases: string[];
     readonly scope: CommandScope;
     readonly arguments: string[];
-    readonly options: ({
-        name: string;
-        type: StringConstructor;
-        default: string;
-        aliases: string[];
-        description: string;
-    } | {
-        name: string;
-        type: string;
-        default: string;
-        aliases: string[];
-        description: string;
-    } | {
-        name: string;
-        type: BooleanConstructor;
-        default: boolean;
-        description: string;
-    } | {
-        name: string;
-        type: StringConstructor;
-        aliases: string[];
-        description: string;
-    })[];
+    readonly options: Option[];
     run(options: any): Promise<any>;
 }
