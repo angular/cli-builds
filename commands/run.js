@@ -9,31 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const architect_command_1 = require("../models/architect-command");
-class LintCommand extends architect_command_1.ArchitectCommand {
+const architect_1 = require("../utilities/architect");
+class RunCommand extends command_1.Command {
     constructor() {
         super(...arguments);
-        this.name = 'lint';
-        this.target = 'tslint';
-        this.description = 'Lints code in existing project.';
-        this.scope = command_1.CommandScope.inProject;
-        this.arguments = ['app'];
-        this.options = [
-            this.configurationOption
-        ];
+        this.name = 'run';
+        this.description = 'Runs an architect configuration.';
+        this.arguments = ['config'];
+        this.options = [];
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const overrides = Object.assign({}, options);
-            delete overrides.app;
-            return this.runArchitect({
-                app: options.app,
-                configuration: options.configuration,
-                overrides
-            });
+            const buildEvent = yield architect_1.runTarget(this.project.root, options.config, options)
+                .toPromise();
+            if (!buildEvent.success) {
+                throw new Error('');
+            }
         });
     }
 }
-LintCommand.aliases = ['l'];
-exports.default = LintCommand;
-//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/lint.js.map
+exports.default = RunCommand;
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/run.js.map
