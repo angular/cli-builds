@@ -44,7 +44,20 @@ class GenerateCommand extends command_1.Command {
             {
                 name: 'app',
                 type: String,
+                aliases: ['a'],
                 description: 'Specifies app name to use.'
+            },
+            {
+                name: 'collection',
+                type: String,
+                aliases: ['c'],
+                description: 'Schematics collection to use.'
+            },
+            {
+                name: 'lint-fix',
+                type: Boolean,
+                aliases: ['l'],
+                description: 'Use lint to fix files after generation.'
             }
         ];
         this.initialized = false;
@@ -146,18 +159,17 @@ class GenerateCommand extends command_1.Command {
         if (collectionName === '@schematics/angular' && schematicName === 'interface' && options.type) {
             options.type = options.type;
         }
-        const schematicOptions = this.stripLocalOptions(options);
         return schematicRunTask.run({
-            taskOptions: schematicOptions,
-            dryRun: options.dryRun,
-            force: options.force,
+            taskOptions: options,
             workingDir: cwd,
             collectionName,
             schematicName
         });
     }
     parseSchematicInfo(options) {
-        let collectionName = config_1.CliConfig.getValue('defaults.schematics.collection');
+        let collectionName = options.collection ||
+            options.c ||
+            config_1.CliConfig.getValue('defaults.schematics.collection');
         let schematicName = options.schematic;
         if (schematicName) {
             if (schematicName.match(/:/)) {
@@ -183,13 +195,6 @@ class GenerateCommand extends command_1.Command {
             this.logger.warn(`\nTo see help for a schematic run:`);
             this.logger.info(cyan(`  ng generate <schematic> --help`));
         }
-    }
-    stripLocalOptions(options) {
-        const opts = Object.assign({}, options);
-        delete opts.dryRun;
-        delete opts.force;
-        delete opts.app;
-        return opts;
     }
 }
 GenerateCommand.aliases = ['g'];

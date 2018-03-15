@@ -6,7 +6,6 @@ const fs = require("fs");
 const path = require("path");
 const child_process = require("child_process");
 const chalk_1 = require("chalk");
-const config_1 = require("../models/config");
 class VersionCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -39,12 +38,6 @@ class VersionCommand extends command_1.Command {
             catch (e) {
             }
             ngCliVersion = `local (v${pkg.version}, branch: ${gitBranch})`;
-        }
-        const config = config_1.CliConfig.fromProject();
-        if (config && config.config && config.config.project) {
-            if (config.config.project.ejected) {
-                ngCliVersion += ' (e)';
-            }
         }
         if (projPkg) {
             roots.forEach(root => {

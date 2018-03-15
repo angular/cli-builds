@@ -1,6 +1,6 @@
-import { logging } from '@angular-devkit/core';
+import { Logger } from '@angular-devkit/core/src/logger';
 export interface CommandConstructor {
-    new (context: CommandContext, logger: logging.Logger): Command;
+    new (context: CommandContext, logger: Logger): Command;
     aliases: string[];
     scope: CommandScope.everywhere;
 }
@@ -10,9 +10,7 @@ export declare enum CommandScope {
     outsideProject = 2,
 }
 export declare abstract class Command {
-    protected _rawArgs: string[];
-    constructor(context: CommandContext, logger: logging.Logger);
-    initializeRaw(args: string[]): Promise<any>;
+    constructor(context: CommandContext, logger: Logger);
     initialize(_options: any): Promise<void>;
     validate(_options: any): boolean | Promise<boolean>;
     printHelp(_options: any): void;
@@ -26,7 +24,7 @@ export declare abstract class Command {
     hidden: boolean;
     unknown: boolean;
     scope: CommandScope;
-    protected readonly logger: logging.Logger;
+    protected readonly logger: Logger;
     protected readonly project: any;
     protected readonly ui: Ui;
 }

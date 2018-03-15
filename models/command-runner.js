@@ -11,20 +11,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
 const common_tags_1 = require("common-tags");
 const strings_1 = require("@angular-devkit/core/src/utils/strings");
-const yargsParser = require("yargs-parser");
+const yargsParser = require('yargs-parser');
 /**
  * Run a command.
  * @param commandMap Map of available commands.
  * @param args Raw unparsed arguments.
- * @param logger The logger to use.
  * @param context Execution context.
  */
 function runCommand(commandMap, args, logger, context) {
     return __awaiter(this, void 0, void 0, function* () {
-        // if not args supplied, just run the help command.
-        if (!args || args.length === 0) {
-            args = ['help'];
-        }
         const rawOptions = yargsParser(args, { alias: { help: ['h'] }, boolean: ['help'] });
         let commandName = rawOptions._[0];
         // remove the command name
@@ -34,7 +29,8 @@ function runCommand(commandMap, args, logger, context) {
             : command_1.CommandScope.outsideProject;
         let Cmd;
         Cmd = findCommand(commandMap, commandName);
-        if (!Cmd && !commandName && (rawOptions.v || rawOptions.version)) {
+        const versionAliases = ['-v', '--version'];
+        if (!Cmd && versionAliases.indexOf(commandName) !== -1) {
             commandName = 'version';
             Cmd = findCommand(commandMap, commandName);
         }
@@ -43,15 +39,15 @@ function runCommand(commandMap, args, logger, context) {
             Cmd = findCommand(commandMap, commandName);
         }
         if (!Cmd) {
-            logger.error(common_tags_1.oneLine `The specified command (${commandName}) is invalid.
-    For a list of available options, run \`ng help\`.`);
-            throw '';
+            throw new Error(common_tags_1.oneLine `The specified command (${commandName}) is invalid.
+      For available options, see \`ng help\`.`);
         }
         const command = new Cmd(context, logger);
-        args = yield command.initializeRaw(args);
-        let options = parseOptions(args, command.options, command.arguments);
+        let options = parseOptions(yargsParser, args, command.options);
+        options = mapArguments(options, command.arguments);
         yield command.initialize(options);
-        options = parseOptions(args, command.options, command.arguments);
+        options = parseOptions(yargsParser, args, command.options);
+        options = mapArguments(options, command.arguments);
         if (commandName === 'help') {
             options.commandMap = commandMap;
         }
@@ -67,8 +63,7 @@ function runCommand(commandMap, args, logger, context) {
     });
 }
 exports.runCommand = runCommand;
-function parseOptions(args, cmdOpts, commandArguments) {
-    const parser = yargsParser;
+function parseOptions(parser, args, cmdOpts) {
     const aliases = cmdOpts.concat()
         .filter(o => o.aliases && o.aliases.length > 0)
         .reduce((aliases, opt) => {
@@ -114,17 +109,21 @@ function parseOptions(args, cmdOpts, commandArguments) {
     Object.keys(parsedOptions)
         .filter(key => key.indexOf('-') !== -1)
         .forEach(key => delete parsedOptions[key]);
-    parsedOptions._.forEach((value, index) => {
-        // Remove the starting "<" and trailing ">".
-        const arg = commandArguments[index];
-        if (arg) {
-            parsedOptions[arg] = value;
-        }
-    });
-    delete parsedOptions._;
     return parsedOptions;
 }
-exports.parseOptions = parseOptions;
+// Map arguments to options.
+function mapArguments(options, args) {
+    const optsWithMappedArgs = Object.assign({}, options);
+    optsWithMappedArgs._.forEach((value, index) => {
+        // Remove the starting "<" and trailing ">".
+        const arg = args[index];
+        if (arg) {
+            optsWithMappedArgs[arg] = value;
+        }
+    });
+    delete optsWithMappedArgs._;
+    return optsWithMappedArgs;
+}
 // Find a command.
 function findCommand(map, name) {
     let Cmd = map[name];

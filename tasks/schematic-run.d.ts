@@ -1,14 +1,13 @@
 export interface SchematicRunOptions {
-    dryRun: boolean;
-    force: boolean;
     taskOptions: SchematicOptions;
     workingDir: string;
     emptyHost: boolean;
     collectionName: string;
     schematicName: string;
-    allowPrivate?: boolean;
 }
 export interface SchematicOptions {
+    dryRun: boolean;
+    force: boolean;
     [key: string]: any;
 }
 export interface SchematicOutput {

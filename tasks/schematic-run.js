@@ -4,17 +4,15 @@ const schematics_1 = require("@angular-devkit/schematics");
 const node_1 = require("@angular-devkit/schematics/tasks/node");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const of_1 = require("rxjs/observable/of");
-const path = require("path");
 const chalk_1 = require("chalk");
 const config_1 = require("../models/config");
 const operators_1 = require("rxjs/operators");
 const schematics_2 = require("../utilities/schematics");
 const { green, red, yellow } = chalk_1.default;
-const SilentError = require('silent-error');
 const Task = require('../ember-cli/lib/models/task');
 exports.default = Task.extend({
     run: function (options) {
-        const { taskOptions, force, dryRun, workingDir, emptyHost, collectionName, schematicName } = options;
+        const { taskOptions, workingDir, emptyHost, collectionName, schematicName } = options;
         const ui = this.ui;
         const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
         const engineHost = schematics_2.getEngineHost();
@@ -24,14 +22,13 @@ exports.default = Task.extend({
         });
         engineHost.registerTaskExecutor(node_1.BuiltinTaskExecutor.RepositoryInitializer, { rootDirectory: workingDir });
         const collection = schematics_2.getCollection(collectionName);
-        const schematic = schematics_2.getSchematic(collection, schematicName, options.allowPrivate);
-        const projectRoot = !!this.project ? this.project.root : workingDir;
+        const schematic = schematics_2.getSchematic(collection, schematicName);
         const preppedOptions = prepOptions(schematic, taskOptions);
         const opts = Object.assign({}, taskOptions, preppedOptions);
         const tree = emptyHost ? new schematics_1.EmptyTree() : new schematics_1.FileSystemTree(new tools_1.FileSystemHost(workingDir));
         const host = of_1.of(tree);
-        const dryRunSink = new schematics_1.DryRunSink(workingDir, force);
-        const fsSink = new schematics_1.FileSystemSink(workingDir, force);
+        const dryRunSink = new schematics_1.DryRunSink(workingDir, opts.force);
+        const fsSink = new schematics_1.FileSystemSink(workingDir, opts.force);
         let error = false;
         const loggingQueue = [];
         const modifiedFiles = [];
@@ -84,15 +81,12 @@ exports.default = Task.extend({
                 // Output the logging queue.
                 loggingQueue.forEach(log => ui.writeLine(`  ${log.color(log.keyword)} ${log.message}`));
             }
-            else {
-                throw new SilentError();
-            }
-            if (dryRun) {
+            if (opts.dryRun || error) {
                 return of_1.of(tree);
             }
             return fsSink.commit(tree).pipe(operators_1.ignoreElements(), operators_1.concat(of_1.of(tree)));
         }), operators_1.concatMap(() => {
-            if (!dryRun) {
+            if (!opts.dryRun) {
                 return schematics_2.getEngine().executePostTasks();
             }
             else {
@@ -101,33 +95,34 @@ exports.default = Task.extend({
         }))
             .toPromise()
             .then(() => {
-            if (dryRun) {
+            if (opts.dryRun) {
                 ui.writeLine(yellow(`\nNOTE: Run with "dry run" no changes were made.`));
             }
             return { modifiedFiles };
-        })
-            .then((output) => {
-            const modifiedFiles = output.modifiedFiles;
-            const lintFix = taskOptions.lintFix !== undefined ?
-                taskOptions.lintFix : config_1.CliConfig.getValue('defaults.lintFix');
-            if (lintFix && modifiedFiles) {
-                const LintTask = require('./lint').default;
-                const lintTask = new LintTask({
-                    ui: this.ui,
-                    project: this.project
-                });
-                return lintTask.run({
-                    fix: true,
-                    force: true,
-                    silent: true,
-                    configs: [{
-                            files: modifiedFiles
-                                .filter((file) => /.ts$/.test(file))
-                                .map((file) => path.join(projectRoot, file))
-                        }]
-                });
-            }
         });
+        // TODO (architect): figure out what to do about lintFix
+        // .then((output: SchematicOutput) => {
+        //   const modifiedFiles = output.modifiedFiles;
+        //   const lintFix = taskOptions.lintFix !== undefined ?
+        //     taskOptions.lintFix : CliConfig.getValue('defaults.lintFix');
+        //   if (lintFix && modifiedFiles) {
+        //     const LintTask = require('./lint').default;
+        //     const lintTask = new LintTask({
+        //       ui: this.ui,
+        //       project: this.project
+        //     });
+        //     return lintTask.run({
+        //       fix: true,
+        //       force: true,
+        //       silent: true,
+        //       configs: [{
+        //         files: modifiedFiles
+        //           .filter((file: string) => /.ts$/.test(file))
+        //           .map((file: string) => path.join(projectRoot, file))
+        //       }]
+        //     });
+        //   }
+        // });
     }
 });
 function prepOptions(schematic, options) {

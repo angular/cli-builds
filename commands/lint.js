@@ -9,57 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const common_tags_1 = require("common-tags");
-const config_1 = require("../models/config");
-class LintCommand extends command_1.Command {
+const architect_command_1 = require("../models/architect-command");
+class LintCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
         this.name = 'lint';
+        this.target = 'tslint';
         this.description = 'Lints code in existing project.';
         this.scope = command_1.CommandScope.inProject;
-        this.arguments = [];
+        this.arguments = ['app'];
         this.options = [
-            {
-                name: 'fix',
-                type: Boolean,
-                default: false,
-                description: 'Fixes linting errors (may overwrite linted files).'
-            },
-            {
-                name: 'type-check',
-                type: Boolean,
-                default: false,
-                description: 'Controls the type check for linting.'
-            },
-            {
-                name: 'force',
-                type: Boolean,
-                default: false,
-                description: 'Succeeds even if there was linting errors.'
-            },
-            {
-                name: 'format',
-                aliases: ['t'],
-                type: String,
-                default: 'prose',
-                description: common_tags_1.oneLine `
-        Output format (prose, json, stylish, verbose, pmd, msbuild, checkstyle, vso, fileslist).
-      `
-            }
+            this.configurationOption
         ];
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const LintTask = require('../tasks/lint').default;
-            const lintTask = new LintTask({
-                ui: this.ui,
-                project: this.project
+            const overrides = Object.assign({}, options);
+            delete overrides.app;
+            return this.runArchitect({
+                app: options.app,
+                configuration: options.configuration,
+                overrides
             });
-            const lintResults = yield lintTask.run(Object.assign({}, options, { configs: config_1.CliConfig.fromProject().config.lint }));
-            if (lintResults != 0) {
-                throw '';
-            }
-            return lintResults;
         });
     }
 }

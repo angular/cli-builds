@@ -1,6 +1,5 @@
 import { Command } from '../models/command';
-export interface Options {
-    keyword: string;
+export interface DocOptions {
     search?: boolean;
 }
 export default class DocCommand extends Command {
@@ -15,6 +14,5 @@ export default class DocCommand extends Command {
         default: boolean;
         description: string;
     }[];
-    validate(options: Options): boolean;
-    run(options: Options): Promise<any>;
+    run(options: any): Promise<any>;
 }

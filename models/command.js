@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const { cyan } = require('chalk');
 var CommandScope;
@@ -26,16 +18,8 @@ class Command {
             this.ui = context.ui;
         }
     }
-    initializeRaw(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this._rawArgs = args;
-            return args;
-        });
-    }
     initialize(_options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return;
-        });
+        return Promise.resolve();
     }
     validate(_options) {
         return true;
