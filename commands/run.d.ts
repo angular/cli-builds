@@ -1,14 +1,13 @@
 import { CommandScope, Option } from '../models/command';
 import { ArchitectCommand } from '../models/architect-command';
-export interface Options {
-    project?: string;
-    configuration?: string;
+export interface RunOptions {
+    target: string;
 }
-export default class Xi18nCommand extends ArchitectCommand {
+export default class RunCommand extends ArchitectCommand {
     readonly name: string;
-    readonly target: string;
     readonly description: string;
     readonly scope: CommandScope;
+    readonly arguments: string[];
     readonly options: Option[];
-    run(options: Options): Promise<number>;
+    run(options: RunOptions): Promise<number>;
 }

@@ -10,29 +10,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
 const architect_command_1 = require("../models/architect-command");
-class Xi18nCommand extends architect_command_1.ArchitectCommand {
+class RunCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
-        this.name = 'xi81n';
-        this.target = 'extract-i18n';
-        this.description = 'Extracts i18n messages from source code.';
+        this.name = 'run';
+        this.description = 'Runs Architect targets.';
         this.scope = command_1.CommandScope.inProject;
+        this.arguments = ['target'];
         this.options = [
             this.configurationOption
         ];
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const overrides = Object.assign({}, options);
-            delete overrides.project;
-            return this.runArchitectTarget({
-                project: options.project,
-                target: this.target,
-                configuration: options.configuration,
-                overrides
-            });
+            if (options.target) {
+                const [project, target, configuration] = options.target.split(':');
+                const overrides = Object.assign({}, options);
+                delete overrides.target;
+                return this.runArchitectTarget({
+                    project,
+                    target,
+                    configuration,
+                    overrides
+                });
+            }
+            else {
+                throw new Error('Invalid architect target.');
+            }
         });
     }
 }
-exports.default = Xi18nCommand;
-//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/xi18n.js.map
+exports.default = RunCommand;
+//# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/run.js.map

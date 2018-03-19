@@ -1,27 +1,15 @@
-import { Command, CommandScope } from '../models/command';
-export interface LintCommandOptions {
-    fix?: boolean;
-    typeCheck?: boolean;
-    format?: string;
-    force?: boolean;
+import { CommandScope, Option } from '../models/command';
+import { ArchitectCommand } from '../models/architect-command';
+export interface Options {
+    project?: string;
+    configuration?: string;
 }
-export default class LintCommand extends Command {
+export default class LintCommand extends ArchitectCommand {
     readonly name: string;
+    readonly target: string;
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
-    readonly arguments: string[];
-    readonly options: ({
-        name: string;
-        type: BooleanConstructor;
-        default: boolean;
-        description: string;
-    } | {
-        name: string;
-        aliases: string[];
-        type: StringConstructor;
-        default: string;
-        description: string;
-    })[];
-    run(options: LintCommandOptions): Promise<number>;
+    readonly options: Option[];
+    run(options: Options): Promise<number>;
 }

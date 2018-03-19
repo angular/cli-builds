@@ -1,20 +1,16 @@
-import { Command, CommandScope } from '../models/command';
-import { ServeTaskOptions } from './serve';
-export interface E2eTaskOptions extends ServeTaskOptions {
-    config: string;
-    serve: boolean;
-    webdriverUpdate: boolean;
-    specs: string[];
-    suite: string;
-    elementExplorer: boolean;
+import { CommandScope, Option } from '../models/command';
+import { ArchitectCommand } from '../models/architect-command';
+export interface Options {
+    project?: string;
+    configuration?: string;
+    prod: boolean;
 }
-export default class E2eCommand extends Command {
+export default class E2eCommand extends ArchitectCommand {
     readonly name: string;
+    readonly target: string;
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
-    readonly arguments: string[];
-    options: any;
-    validate(options: E2eTaskOptions): boolean;
-    run(options: E2eTaskOptions): any;
+    readonly options: Option[];
+    run(options: Options): Promise<number>;
 }
