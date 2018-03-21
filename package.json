@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.0-beta.6-2ee7e9c",
+  "version": "6.0.0-beta.6-916731c",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -48,6 +48,6 @@
     "semver": "^5.1.0",
     "silent-error": "^1.0.0",
     "yargs-parser": "^9.0.2",
-    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#2ee7e9c"
+    "@ngtools/webpack": "https://github.com/angular/ngtools-webpack-builds.git#916731c"
   }
 }
