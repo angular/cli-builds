@@ -1,24 +1,15 @@
-import { Command, CommandScope } from '../models/command';
-export interface UpdateOptions {
+import { CommandScope, Option } from '../models/command';
+import { SchematicCommand, CoreSchematicOptions } from '../models/schematic-command';
+export interface UpdateOptions extends CoreSchematicOptions {
+    next: boolean;
     schematic?: boolean;
 }
-export default class UpdateCommand extends Command {
+export default class UpdateCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
     readonly arguments: string[];
-    readonly options: ({
-        name: string;
-        type: BooleanConstructor;
-        default: boolean;
-        aliases: string[];
-        description: string;
-    } | {
-        name: string;
-        type: BooleanConstructor;
-        default: boolean;
-        description: string;
-    })[];
-    run(options: any): Promise<any>;
+    readonly options: Option[];
+    run(options: UpdateOptions): Promise<{}>;
 }

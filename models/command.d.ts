@@ -9,6 +9,10 @@ export declare enum CommandScope {
     inProject = 1,
     outsideProject = 2,
 }
+export declare enum ArgumentStrategy {
+    MapToOptions = 0,
+    Nothing = 1,
+}
 export declare abstract class Command {
     protected _rawArgs: string[];
     constructor(context: CommandContext, logger: logging.Logger);
@@ -23,6 +27,7 @@ export declare abstract class Command {
     readonly abstract description: string;
     readonly abstract arguments: string[];
     readonly abstract options: Option[];
+    argStrategy: ArgumentStrategy;
     hidden: boolean;
     unknown: boolean;
     scope: CommandScope;
@@ -45,6 +50,7 @@ export declare abstract class Option {
     readonly required?: boolean;
     readonly abstract aliases?: string[];
     readonly abstract type: any;
+    readonly format?: string;
     readonly values?: any[];
     readonly hidden?: boolean;
 }

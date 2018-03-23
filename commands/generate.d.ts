@@ -1,5 +1,6 @@
-import { Command, CommandScope, Option } from '../models/command';
-export default class GenerateCommand extends Command {
+import { CommandScope, Option } from '../models/command';
+import { SchematicCommand } from '../models/schematic-command';
+export default class GenerateCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     static aliases: string[];
@@ -9,8 +10,7 @@ export default class GenerateCommand extends Command {
     private initialized;
     initialize(options: any): Promise<void>;
     validate(options: any): boolean | Promise<boolean>;
-    run(options: any): any;
+    run(options: any): Promise<{}>;
     private parseSchematicInfo(options);
     printHelp(options: any): void;
-    private stripLocalOptions(options);
 }

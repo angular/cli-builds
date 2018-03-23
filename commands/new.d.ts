@@ -1,25 +1,14 @@
-import { Command, CommandScope } from '../models/command';
-export default class NewCommand extends Command {
+import { CommandScope, Option } from '../models/command';
+import { SchematicCommand } from '../models/schematic-command';
+export default class NewCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     static aliases: string[];
     scope: CommandScope;
-    arguments: string[];
-    options: ({
-        name: string;
-        type: BooleanConstructor;
-        default: boolean;
-        aliases: string[];
-        description: string;
-    } | {
-        name: string;
-        type: StringConstructor;
-        aliases: string[];
-        description: string;
-    })[];
+    options: Option[];
     private initialized;
-    initialize(options: any): any;
-    run(options: any): Promise<any>;
-    private isProject(projectPath);
+    initialize(options: any): Promise<void>;
+    run(options: any): Promise<{}>;
     private parseCollectionName(options);
+    private removeLocalOptions(options);
 }

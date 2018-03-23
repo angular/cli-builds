@@ -49,9 +49,9 @@ function runCommand(commandMap, args, logger, context) {
         }
         const command = new Cmd(context, logger);
         args = yield command.initializeRaw(args);
-        let options = parseOptions(args, command.options, command.arguments);
+        let options = parseOptions(args, command.options, command.arguments, command.argStrategy);
         yield command.initialize(options);
-        options = parseOptions(args, command.options, command.arguments);
+        options = parseOptions(args, command.options, command.arguments, command.argStrategy);
         if (commandName === 'help') {
             options.commandMap = commandMap;
         }
@@ -67,7 +67,7 @@ function runCommand(commandMap, args, logger, context) {
     });
 }
 exports.runCommand = runCommand;
-function parseOptions(args, cmdOpts, commandArguments) {
+function parseOptions(args, cmdOpts, commandArguments, argStrategy) {
     const parser = yargsParser;
     const aliases = cmdOpts.concat()
         .filter(o => o.aliases && o.aliases.length > 0)
@@ -93,8 +93,6 @@ function parseOptions(args, cmdOpts, commandArguments) {
         default: defaults
     };
     const parsedOptions = parser(args, yargsOptions);
-    // remove the command name
-    parsedOptions._ = parsedOptions._.slice(1);
     // Remove aliases.
     cmdOpts
         .filter(o => o.aliases && o.aliases.length > 0)
@@ -114,14 +112,19 @@ function parseOptions(args, cmdOpts, commandArguments) {
     Object.keys(parsedOptions)
         .filter(key => key.indexOf('-') !== -1)
         .forEach(key => delete parsedOptions[key]);
-    parsedOptions._.forEach((value, index) => {
-        // Remove the starting "<" and trailing ">".
-        const arg = commandArguments[index];
-        if (arg) {
-            parsedOptions[arg] = value;
-        }
-    });
-    delete parsedOptions._;
+    // remove the command name
+    parsedOptions._ = parsedOptions._.slice(1);
+    switch (argStrategy) {
+        case command_1.ArgumentStrategy.MapToOptions:
+            parsedOptions._.forEach((value, index) => {
+                const arg = commandArguments[index];
+                if (arg) {
+                    parsedOptions[arg] = value;
+                }
+            });
+            delete parsedOptions._;
+            break;
+    }
     return parsedOptions;
 }
 exports.parseOptions = parseOptions;

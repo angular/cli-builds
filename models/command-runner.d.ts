@@ -1,4 +1,4 @@
-import { Option, CommandContext, CommandConstructor } from '../models/command';
+import { Option, CommandContext, CommandConstructor, ArgumentStrategy } from '../models/command';
 import { logging } from '@angular-devkit/core';
 export interface CommandMap {
     [key: string]: CommandConstructor;
@@ -11,4 +11,4 @@ export interface CommandMap {
  * @param context Execution context.
  */
 export declare function runCommand(commandMap: CommandMap, args: string[], logger: logging.Logger, context: CommandContext): Promise<any>;
-export declare function parseOptions<T = any>(args: string[], cmdOpts: Option[], commandArguments: string[]): T;
+export declare function parseOptions<T = any>(args: string[], cmdOpts: Option[], commandArguments: string[], argStrategy: ArgumentStrategy): T;

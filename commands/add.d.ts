@@ -1,5 +1,6 @@
-import { Command, CommandScope, Option } from '../models/command';
-export default class AddCommand extends Command {
+import { CommandScope, Option } from '../models/command';
+import { SchematicCommand } from '../models/schematic-command';
+export default class AddCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     scope: CommandScope;
@@ -7,5 +8,5 @@ export default class AddCommand extends Command {
     options: Option[];
     private _parseSchematicOptions(collectionName);
     validate(options: any): boolean;
-    run(commandOptions: any): Promise<void>;
+    run(options: any): Promise<void>;
 }

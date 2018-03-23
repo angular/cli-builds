@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const schematic_run_1 = require("../tasks/schematic-run");
-class UpdateCommand extends command_1.Command {
+const schematic_command_1 = require("../models/schematic-command");
+class UpdateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.name = 'update';
@@ -18,6 +18,7 @@ class UpdateCommand extends command_1.Command {
         this.scope = command_1.CommandScope.inProject;
         this.arguments = [];
         this.options = [
+            ...this.coreOptions,
             {
                 name: 'dry-run',
                 type: Boolean,
@@ -37,20 +38,17 @@ class UpdateCommand extends command_1.Command {
         return __awaiter(this, void 0, void 0, function* () {
             const collectionName = '@schematics/package-update';
             const schematicName = 'all';
-            const schematicRunTask = new schematic_run_1.default({
-                ui: this.ui,
-                project: this.project
-            });
             const schematicRunOptions = {
-                taskOptions: {
-                    dryRun: options.dryRun,
+                collectionName,
+                schematicName,
+                schematicOptions: {
                     version: options.next ? 'next' : undefined
                 },
+                dryRun: options.dryRun,
+                force: options.force,
                 workingDir: this.project.root,
-                collectionName,
-                schematicName
             };
-            return schematicRunTask.run(schematicRunOptions);
+            return this.runSchematic(schematicRunOptions);
         });
     }
 }

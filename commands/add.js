@@ -12,8 +12,9 @@ const chalk_1 = require("chalk");
 const command_1 = require("../models/command");
 const command_runner_1 = require("../models/command-runner");
 const config_1 = require("../models/config");
+const schematic_command_1 = require("../models/schematic-command");
 const SilentError = require('silent-error');
-class AddCommand extends command_1.Command {
+class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.name = 'add';
@@ -24,64 +25,49 @@ class AddCommand extends command_1.Command {
     }
     _parseSchematicOptions(collectionName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const SchematicGetOptionsTask = require('../tasks/schematic-get-options').default;
-            const getOptionsTask = new SchematicGetOptionsTask({
-                ui: this.ui,
-                project: this.project
-            });
-            const availableOptions = yield getOptionsTask.run({
+            const availableOptions = yield this.getOptions({
                 schematicName: 'ng-add',
                 collectionName,
             });
             const options = this.options.concat(availableOptions || []);
-            return command_runner_1.parseOptions(this._rawArgs, options, []);
+            return command_runner_1.parseOptions(this._rawArgs, options, [], this.argStrategy);
         });
     }
     validate(options) {
-        const collectionName = options.collection;
+        const collectionName = options._[0];
         if (!collectionName) {
             throw new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. `
                 + `${chalk_1.default.yellow('ng add [name] ')}. For more details, use "ng help".`);
         }
         return true;
     }
-    run(commandOptions) {
+    run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const collectionName = commandOptions.collection;
+            const collectionName = options._[0];
             if (!collectionName) {
                 throw new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. `
                     + `${chalk_1.default.yellow('ng add [name] ')}. For more details, use "ng help".`);
             }
             const packageManager = config_1.CliConfig.fromGlobal().get('packageManager');
-            const NpmInstall = require('../tasks/npm-install').default;
-            const SchematicRunTask = require('../tasks/schematic-run').default;
+            const npmInstall = require('../tasks/npm-install').default;
             const packageName = collectionName.startsWith('@')
                 ? collectionName.split('/', 2).join('/')
                 : collectionName.split('/', 1)[0];
             // We don't actually add the package to package.json, that would be the work of the package
             // itself.
-            let npmInstall = new NpmInstall({
-                ui: this.ui,
-                project: this.project,
-                packageManager,
-                packageName,
-                save: false,
-            });
-            const schematicRunTask = new SchematicRunTask({
-                ui: this.ui,
-                project: this.project
-            });
-            yield npmInstall.run();
+            yield npmInstall(packageName, this.logger, packageManager, this.project.root, false);
             // Reparse the options with the new schematic accessible.
-            commandOptions = yield this._parseSchematicOptions(collectionName);
+            options = yield this._parseSchematicOptions(collectionName);
             const runOptions = {
-                taskOptions: commandOptions,
+                schematicOptions: options,
                 workingDir: this.project.root,
                 collectionName,
                 schematicName: 'ng-add',
                 allowPrivate: true,
+                dryRun: false,
+                force: false,
             };
-            yield schematicRunTask.run(runOptions);
+            yield this.runSchematic(runOptions);
         });
     }
 }

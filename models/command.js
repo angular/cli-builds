@@ -15,8 +15,14 @@ var CommandScope;
     CommandScope[CommandScope["inProject"] = 1] = "inProject";
     CommandScope[CommandScope["outsideProject"] = 2] = "outsideProject";
 })(CommandScope = exports.CommandScope || (exports.CommandScope = {}));
+var ArgumentStrategy;
+(function (ArgumentStrategy) {
+    ArgumentStrategy[ArgumentStrategy["MapToOptions"] = 0] = "MapToOptions";
+    ArgumentStrategy[ArgumentStrategy["Nothing"] = 1] = "Nothing";
+})(ArgumentStrategy = exports.ArgumentStrategy || (exports.ArgumentStrategy = {}));
 class Command {
     constructor(context, logger) {
+        this.argStrategy = ArgumentStrategy.MapToOptions;
         this.hidden = false;
         this.unknown = false;
         this.scope = CommandScope.everywhere;
