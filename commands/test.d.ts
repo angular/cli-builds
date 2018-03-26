@@ -3,6 +3,7 @@ import { ArchitectCommand } from '../models/architect-command';
 export interface Options {
     project?: string;
     configuration?: string;
+    prod: boolean;
 }
 export default class TestCommand extends ArchitectCommand {
     readonly name: string;

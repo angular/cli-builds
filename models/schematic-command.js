@@ -74,7 +74,7 @@ class SchematicCommand extends command_1.Command {
         const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.project.root));
         const workflow = new tools_1.NodeWorkflow(fsHost, { force, dryRun });
         const cwd = process.env.PWD;
-        const workingDir = cwd.replace(this.project.root, '');
+        const workingDir = cwd.replace(this.project.root, '').replace(/\\/g, '/');
         const pathOptions = this.setPathOptions(schematicOptions, workingDir);
         schematicOptions = Object.assign({}, schematicOptions, pathOptions);
         const defaultOptions = this.readDefaults(collectionName, schematicName, schematicOptions);

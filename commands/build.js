@@ -36,6 +36,7 @@ class BuildCommand extends architect_command_1.ArchitectCommand {
             }
             const overrides = Object.assign({}, options);
             delete overrides.project;
+            delete overrides.configuration;
             delete overrides.prod;
             return this.runArchitectTarget({
                 project: options.project,
