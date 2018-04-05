@@ -3,7 +3,7 @@
 
 <!-- Badges section here. -->
 [![Build Status](https://img.shields.io/travis/angular/angular-cli/master.svg?label=travis)][travis-badge-url]
-[![CircleCI branch](https://img.shields.io/circleci/project/github/angular/angular-cli/master.svg?label=circleci)](https://circleci.com/gh/angular/angular-cli)
+[![CircleCI branch](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser/master.svg?label=circleci)](https://circleci.com/gh/angular/angular-cli)
 [![Dependency Status][david-badge]][david-badge-url]
 [![devDependency Status][david-dev-badge]][david-dev-badge-url]
 
@@ -127,8 +127,8 @@ To update Angular CLI to a new version, you must update both the global package 
 Global package:
 ```bash
 npm uninstall -g @angular/cli
-npm cache verify
-# if npm version is < 5 then use `npm cache clean`
+npm cache clean
+# if npm version is > 5 then use `npm cache verify` to avoid errors (or to avoid using --force)
 npm install -g @angular/cli@latest
 ```
 

@@ -3,10 +3,10 @@
 /**
 @module ember-cli
 */
+const denodeify = require('denodeify');
 const path = require('path');
 const findUp = require('../../../utilities/find-up').findUp;
-const { promisify } = require('util');
-let resolve = promisify(require('resolve'));
+let resolve = denodeify(require('resolve'));
 const fs = require('fs-extra');
 const _ = require('lodash');
 const nodeModulesPath = require('node-modules-path');
@@ -97,12 +97,9 @@ class Project {
     @return {String} Package name
    */
   name() {
-    if (!this.pkg.name) {
-      return null;
-    }
+    const getPackageBaseName = require('../utilities/get-package-base-name');
 
-    const packageParts = this.pkg.name.split('/');
-    return packageParts[(packageParts.length - 1)];
+    return getPackageBaseName(this.pkg.name);
   }
 
   /**
