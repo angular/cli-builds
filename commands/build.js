@@ -24,7 +24,8 @@ class BuildCommand extends architect_command_1.ArchitectCommand {
         ];
     }
     validate(options) {
-        version_1.Version.assertAngularVersionIs2_3_1OrHigher(this.project.root);
+        // Check Angular and TypeScript versions.
+        version_1.Version.assertCompatibleAngularVersion(this.project.root);
         version_1.Version.assertTypescriptVersion(this.project.root);
         return super.validate(options);
     }

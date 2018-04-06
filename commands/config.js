@@ -1,10 +1,107 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
 const command_1 = require("../models/command");
-const fs = require("fs");
-const config_1 = require("../models/config");
-const common_tags_1 = require("common-tags");
+const config_1 = require("../utilities/config");
+const core_1 = require("@angular-devkit/core");
 const SilentError = require('silent-error');
+const validCliPaths = new Map([
+    ['cli.warnings.versionMismatch', 'boolean'],
+    ['cli.warnings.typescriptMismatch', 'boolean'],
+    ['cli.defaultCollection', 'string'],
+    ['cli.packageManager', 'string'],
+]);
+/**
+ * Splits a JSON path string into fragments. Fragments can be used to get the value referenced
+ * by the path. For example, a path of "a[3].foo.bar[2]" would give you a fragment array of
+ * ["a", 3, "foo", "bar", 2].
+ * @param path The JSON string to parse.
+ * @returns {string[]} The fragments for the string.
+ * @private
+ */
+function parseJsonPath(path) {
+    const fragments = (path || '').split(/\./g);
+    const result = [];
+    while (fragments.length > 0) {
+        const fragment = fragments.shift();
+        const match = fragment.match(/([^\[]+)((\[.*\])*)/);
+        if (!match) {
+            throw new Error('Invalid JSON path.');
+        }
+        result.push(match[1]);
+        if (match[2]) {
+            const indices = match[2].slice(1, -1).split('][');
+            result.push(...indices);
+        }
+    }
+    return result.filter(fragment => !!fragment);
+}
+function getValueFromPath(root, path) {
+    const fragments = parseJsonPath(path);
+    try {
+        return fragments.reduce((value, current) => {
+            if (value == undefined || typeof value != 'object') {
+                return undefined;
+            }
+            else if (typeof current == 'string' && !Array.isArray(value)) {
+                return value[current];
+            }
+            else if (typeof current == 'number' && Array.isArray(value)) {
+                return value[current];
+            }
+            else {
+                return undefined;
+            }
+        }, root);
+    }
+    catch (_a) {
+        return undefined;
+    }
+}
+function setValueFromPath(root, path, newValue) {
+    const fragments = parseJsonPath(path);
+    try {
+        return fragments.reduce((value, current, index) => {
+            if (value == undefined || typeof value != 'object') {
+                return undefined;
+            }
+            else if (typeof current == 'string' && !Array.isArray(value)) {
+                if (index === fragments.length - 1) {
+                    value[current] = newValue;
+                }
+                else if (value[current] == undefined) {
+                    if (typeof fragments[index + 1] == 'number') {
+                        value[current] = [];
+                    }
+                    else if (typeof fragments[index + 1] == 'string') {
+                        value[current] = {};
+                    }
+                }
+                return value[current];
+            }
+            else if (typeof current == 'number' && Array.isArray(value)) {
+                if (index === fragments.length - 1) {
+                    value[current] = newValue;
+                }
+                else if (value[current] == undefined) {
+                    if (typeof fragments[index + 1] == 'number') {
+                        value[current] = [];
+                    }
+                    else if (typeof fragments[index + 1] == 'string') {
+                        value[current] = {};
+                    }
+                }
+                return value[current];
+            }
+            else {
+                return undefined;
+            }
+        }, root);
+    }
+    catch (_a) {
+        return undefined;
+    }
+}
 class ConfigCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -22,22 +119,21 @@ class ConfigCommand extends command_1.Command {
         ];
     }
     run(options) {
-        const config = options.global ? config_1.CliConfig.fromGlobal() : config_1.CliConfig.fromProject();
-        if (config === null) {
-            throw new SilentError('No config found. If you want to use global configuration, '
-                + 'you need the --global argument.');
+        const level = options.global ? 'global' : 'local';
+        const config = config_1.getWorkspace(level);
+        if (!config) {
+            throw new SilentError('No config found.');
         }
-        const action = !!options.value ? 'set' : 'get';
-        if (action === 'get') {
-            this.get(config, options);
+        if (options.value == undefined) {
+            this.get(config._workspace, options);
         }
         else {
-            this.set(config, options);
+            this.set(options);
         }
     }
     get(config, options) {
-        const value = config.get(options.jsonPath);
-        if (value === null || value === undefined) {
+        const value = options.jsonPath ? getValueFromPath(config, options.jsonPath) : config;
+        if (value === undefined) {
             throw new SilentError('Value cannot be found.');
         }
         else if (typeof value == 'object') {
@@ -47,81 +143,38 @@ class ConfigCommand extends command_1.Command {
             this.logger.info(value.toString());
         }
     }
-    set(config, options) {
-        const type = config.typeOf(options.jsonPath);
-        let value = options.value;
-        switch (type) {
-            case 'boolean':
-                value = this.asBoolean(options.value);
-                break;
-            case 'number':
-                value = this.asNumber(options.value);
-                break;
-            case 'string':
-                value = options.value;
-                break;
-            default: value = this.parseValue(options.value, options.jsonPath);
+    set(options) {
+        if (!options.jsonPath || !options.jsonPath.trim()) {
+            throw new Error('Invalid Path.');
         }
-        if (options.jsonPath.endsWith('.prefix')) {
-            // update tslint if prefix is updated
-            this.updateLintForPrefix(this.project.root + '/tslint.json', value);
+        if (options.global
+            && !options.jsonPath.startsWith('schematics.')
+            && !validCliPaths.has(options.jsonPath)) {
+            throw new Error('Invalid Path.');
+        }
+        const [config, configPath] = config_1.getWorkspaceRaw(options.global ? 'global' : 'local');
+        // TODO: Modify & save without destroying comments
+        const configValue = config.value;
+        const value = core_1.parseJson(options.value, core_1.JsonParseMode.Loose);
+        const pathType = validCliPaths.get(options.jsonPath);
+        if (pathType) {
+            if (typeof value != pathType) {
+                throw new Error(`Invalid value type; expected a ${pathType}.`);
+            }
+        }
+        const result = setValueFromPath(configValue, options.jsonPath, value);
+        if (result === undefined) {
+            throw new SilentError('Value cannot be found.');
         }
         try {
-            config.set(options.jsonPath, value);
-            config.save();
+            config_1.validateWorkspace(configValue);
         }
         catch (error) {
-            throw new SilentError(error.message);
+            this.logger.error(error.message);
+            throw new SilentError();
         }
-    }
-    asBoolean(raw) {
-        if (raw == 'true' || raw == '1') {
-            return true;
-        }
-        else if (raw == 'false' || raw == '' || raw == '0') {
-            return false;
-        }
-        else {
-            throw new SilentError(`Invalid boolean value: "${raw}"`);
-        }
-    }
-    asNumber(raw) {
-        const val = Number(raw);
-        if (Number.isNaN(val)) {
-            throw new SilentError(`Invalid number value: "${raw}"`);
-        }
-        return val;
-    }
-    parseValue(rawValue, path) {
-        try {
-            return JSON.parse(rawValue);
-        }
-        catch (error) {
-            throw new SilentError(`No node found at path ${path}`);
-        }
-    }
-    updateLintForPrefix(filePath, prefix) {
-        if (!fs.existsSync(filePath)) {
-            return;
-        }
-        const tsLint = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        if (Array.isArray(tsLint.rules['component-selector'][2])) {
-            tsLint.rules['component-selector'][2].push(prefix);
-        }
-        else {
-            tsLint.rules['component-selector'][2] = prefix;
-        }
-        if (Array.isArray(tsLint.rules['directive-selector'][2])) {
-            tsLint.rules['directive-selector'][2].push(prefix);
-        }
-        else {
-            tsLint.rules['directive-selector'][2] = prefix;
-        }
-        fs.writeFileSync(filePath, JSON.stringify(tsLint, null, 2));
-        this.logger.warn(common_tags_1.oneLine `
-      tslint configuration updated to match new prefix,
-      you may need to fix any linting errors.
-    `);
+        const output = JSON.stringify(configValue, null, 2);
+        fs_1.writeFileSync(configPath, output);
     }
 }
 exports.default = ConfigCommand;

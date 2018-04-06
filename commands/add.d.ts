@@ -3,6 +3,7 @@ import { SchematicCommand } from '../models/schematic-command';
 export default class AddCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
+    readonly allowPrivateSchematics: boolean;
     scope: CommandScope;
     arguments: string[];
     options: Option[];

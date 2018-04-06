@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const config_1 = require("../models/config");
+const config_1 = require("../utilities/config");
 const schematic_command_1 = require("../models/schematic-command");
 class NewCommand extends schematic_command_1.SchematicCommand {
     constructor() {
@@ -17,6 +17,8 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         this.name = 'new';
         this.description = 'Creates a new directory and a new Angular app.';
         this.scope = command_1.CommandScope.outsideProject;
+        this.allowMissingWorkspace = true;
+        this.arguments = [];
         this.options = [
             ...this.coreOptions,
             {
@@ -39,18 +41,18 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         if (this.initialized) {
             return Promise.resolve();
         }
+        super.initialize(options);
         this.initialized = true;
         const collectionName = this.parseCollectionName(options);
-        const schematicName = config_1.CliConfig.fromGlobal().get('defaults.schematics.newApp');
+        const schematicName = 'application';
         return this.getOptions({
             schematicName,
             collectionName
         })
-            .then((availableOptions) => {
-            // if (availableOptions) {
-            //   availableOptions = availableOptions.filter(opt => opt.name !== 'name');
-            // }
-            this.options = this.options.concat(availableOptions || []);
+            .then((schematicOptions) => {
+            this.options = this.options.concat(schematicOptions.options);
+            const args = schematicOptions.arguments.map(arg => arg.name);
+            this.arguments = this.arguments.concat(args);
         });
     }
     run(options) {
@@ -83,9 +85,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         });
     }
     parseCollectionName(options) {
-        let collectionName = options.collection ||
-            options.c ||
-            config_1.CliConfig.getValue('defaults.schematics.collection');
+        const collectionName = options.collection || options.c || config_1.getDefaultSchematicCollection();
         return collectionName;
     }
     removeLocalOptions(options) {

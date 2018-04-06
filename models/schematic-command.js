@@ -13,21 +13,15 @@ const node_1 = require("@angular-devkit/core/node");
 const command_1 = require("./command");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const schematics_1 = require("@angular-devkit/schematics");
+const config_1 = require("../utilities/config");
 const schematics_2 = require("../utilities/schematics");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
-const chalk_1 = require("chalk");
-const hiddenOptions = [
-    'name',
-    'path',
-    'source-dir',
-    'app-root',
-    'link-cli',
-];
 class SchematicCommand extends command_1.Command {
     constructor() {
         super(...arguments);
         this.options = [];
+        this.allowPrivateSchematics = false;
         this._host = new node_1.NodeJsSyncHost();
         this.argStrategy = command_1.ArgumentStrategy.Nothing;
         this.coreOptions = [
@@ -72,15 +66,18 @@ class SchematicCommand extends command_1.Command {
         let nothingDone = true;
         const loggingQueue = [];
         const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.project.root));
-        const workflow = new tools_1.NodeWorkflow(fsHost, { force, dryRun });
+        const workflow = new tools_1.NodeWorkflow(fsHost, {
+            force,
+            dryRun,
+            packageManager: config_1.getPackageManager(),
+            root: this.project.root,
+        });
         const cwd = process.env.PWD;
         const workingDir = cwd.replace(this.project.root, '').replace(/\\/g, '/');
         const pathOptions = this.setPathOptions(schematicOptions, workingDir);
         schematicOptions = Object.assign({}, schematicOptions, pathOptions);
         const defaultOptions = this.readDefaults(collectionName, schematicName, schematicOptions);
-        // schematicOptions = { ...schematicOptions, ...defaultOptions };
-        schematicOptions.x = defaultOptions;
-        delete schematicOptions.x;
+        schematicOptions = Object.assign({}, schematicOptions, defaultOptions);
         // Pass the rest of the arguments as the smart default "argv". Then delete it.
         // Removing the first item which is the schematic name.
         const rawArgs = schematicOptions._;
@@ -127,6 +124,7 @@ class SchematicCommand extends command_1.Command {
                 options: schematicOptions,
                 debug: debug,
                 logger: this.logger,
+                allowPrivate: this.allowPrivateSchematics,
             })
                 .subscribe({
                 error: (err) => {
@@ -156,18 +154,30 @@ class SchematicCommand extends command_1.Command {
     }
     removeCoreOptions(options) {
         const opts = Object.assign({}, options);
-        delete opts.dryRun;
-        delete opts.force;
-        delete opts.debug;
+        if (this._originalOptions.find(option => option.name == 'dryRun')) {
+            delete opts.dryRun;
+        }
+        if (this._originalOptions.find(option => option.name == 'force')) {
+            delete opts.force;
+        }
+        if (this._originalOptions.find(option => option.name == 'debug')) {
+            delete opts.debug;
+        }
         return opts;
     }
     getOptions(options) {
+        // Make a copy.
+        this._originalOptions = [...this.options];
         // TODO: get default collectionName
         const collectionName = options.collectionName || '@schematics/angular';
         const collection = schematics_2.getCollection(collectionName);
         const schematic = schematics_2.getSchematic(collection, options.schematicName);
+        this._deAliasedName = schematic.description.name;
         if (!schematic.description.schemaJson) {
-            return Promise.resolve(null);
+            return Promise.resolve({
+                options: [],
+                arguments: []
+            });
         }
         const properties = schematic.description.schemaJson.properties;
         const keys = Object.keys(properties);
@@ -205,46 +215,30 @@ class SchematicCommand extends command_1.Command {
                 schematicDefault, hidden: opt.visible === false });
         })
             .filter(x => x);
-        return Promise.resolve(availableOptions);
-    }
-    getHelpOutput({ schematicName, collectionName, nonSchematicOptions }) {
-        const SchematicGetOptionsTask = require('./schematic-get-options').default;
-        const getOptionsTask = new SchematicGetOptionsTask({
-            ui: this.ui,
-            project: this.project
-        });
-        return Promise.all([getOptionsTask.run({
-                schematicName: schematicName,
-                collectionName: collectionName,
-            }), nonSchematicOptions])
-            .then(([availableOptions, nonSchematicOptions]) => {
-            const output = [];
-            [...(nonSchematicOptions || []), ...availableOptions || []]
-                .filter(opt => hiddenOptions.indexOf(opt.name) === -1)
-                .forEach(opt => {
-                let text = chalk_1.default.cyan(`    --${opt.name}`);
-                if (opt.schematicType) {
-                    text += chalk_1.default.cyan(` (${opt.schematicType})`);
-                }
-                if (opt.schematicDefault) {
-                    text += chalk_1.default.cyan(` (Default: ${opt.schematicDefault})`);
-                }
-                if (opt.description) {
-                    text += ` ${opt.description}`;
-                }
-                output.push(text);
-                if (opt.aliases && opt.aliases.length > 0) {
-                    const aliasText = opt.aliases.reduce((acc, curr) => {
-                        return acc + ` -${curr}`;
-                    }, '');
-                    output.push(chalk_1.default.grey(`      aliases: ${aliasText}`));
-                }
-            });
-            if (availableOptions === null) {
-                output.push(chalk_1.default.green('This schematic accept additional options, but did not provide '
-                    + 'documentation.'));
+        const schematicOptions = availableOptions
+            .filter(opt => opt.$default === undefined || opt.$default.$source !== 'argv');
+        const schematicArguments = availableOptions
+            .filter(opt => opt.$default !== undefined && opt.$default.$source === 'argv')
+            .sort((a, b) => {
+            if (a.$default.index === undefined) {
+                return 1;
             }
-            return output;
+            if (b.$default.index === undefined) {
+                return -1;
+            }
+            if (a.$default.index == b.$default.index) {
+                return 0;
+            }
+            else if (a.$default.index > b.$default.index) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        });
+        return Promise.resolve({
+            options: schematicOptions,
+            arguments: schematicArguments
         });
     }
     _loadWorkspace() {
@@ -252,22 +246,39 @@ class SchematicCommand extends command_1.Command {
             return;
         }
         const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
-        return workspaceLoader.loadWorkspace().pipe(operators_1.tap(workspace => this._workspace = workspace));
+        try {
+            workspaceLoader.loadWorkspace().pipe(operators_1.take(1))
+                .subscribe((workspace) => this._workspace = workspace, (err) => {
+                if (!this.allowMissingWorkspace) {
+                    // Ignore missing workspace
+                    throw err;
+                }
+            });
+        }
+        catch (err) {
+            if (!this.allowMissingWorkspace) {
+                // Ignore missing workspace
+                throw err;
+            }
+        }
     }
     readDefaults(collectionName, schematicName, options) {
         let defaults = {};
         if (!this._workspace) {
             return {};
         }
+        if (this._deAliasedName) {
+            schematicName = this._deAliasedName;
+        }
         // read and set workspace defaults
         const wsSchematics = this._workspace.getSchematics();
         if (wsSchematics) {
             let key = collectionName;
-            if (wsSchematics[collectionName] && typeof wsSchematics[key] === 'object') {
+            if (wsSchematics[key] && typeof wsSchematics[key] === 'object') {
                 defaults = Object.assign({}, defaults, wsSchematics[key]);
             }
             key = collectionName + ':' + schematicName;
-            if (wsSchematics[collectionName] && typeof wsSchematics[key] === 'object') {
+            if (wsSchematics[key] && typeof wsSchematics[key] === 'object') {
                 defaults = Object.assign({}, defaults, wsSchematics[key]);
             }
         }
@@ -277,15 +288,14 @@ class SchematicCommand extends command_1.Command {
             projectName = this._workspace.listProjectNames()[0];
         }
         if (projectName) {
-            const project = this._workspace.getProject(projectName);
-            const prjSchematics = project.schematics;
+            const prjSchematics = this._workspace.getProjectSchematics(projectName);
             if (prjSchematics) {
                 let key = collectionName;
-                if (prjSchematics[collectionName] && typeof prjSchematics[key] === 'object') {
+                if (prjSchematics[key] && typeof prjSchematics[key] === 'object') {
                     defaults = Object.assign({}, defaults, prjSchematics[key]);
                 }
                 key = collectionName + ':' + schematicName;
-                if (prjSchematics[collectionName] && typeof prjSchematics[key] === 'object') {
+                if (prjSchematics[key] && typeof prjSchematics[key] === 'object') {
                     defaults = Object.assign({}, defaults, prjSchematics[key]);
                 }
             }

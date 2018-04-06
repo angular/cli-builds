@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const common_tags_1 = require("common-tags");
+const core_1 = require("@angular-devkit/core");
 const fs = require("fs");
 const path = require("path");
 const child_process = require("child_process");
@@ -63,7 +63,7 @@ class VersionCommand extends command_1.Command {
 /_/   \\_\\_| |_|\\__, |\\__,_|_|\\__,_|_|       \\____|_____|___|
                |___/
     `;
-        this.logger.info(common_tags_1.stripIndents `
+        this.logger.info(core_1.tags.stripIndents `
     ${chalk_1.default.red(asciiArt)}
     Angular CLI: ${ngCliVersion}
     Node: ${process.versions.node}

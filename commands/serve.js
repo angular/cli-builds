@@ -11,8 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
 const version_1 = require("../upgrade/version");
 const architect_command_1 = require("../models/architect-command");
-// Expose options unrelated to live-reload to other commands that need to run serve
-exports.baseServeCommandOptions = [];
 class ServeCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
@@ -27,7 +25,7 @@ class ServeCommand extends architect_command_1.ArchitectCommand {
     }
     validate(_options) {
         // Check Angular and TypeScript versions.
-        version_1.Version.assertAngularVersionIs2_3_1OrHigher(this.project.root);
+        version_1.Version.assertCompatibleAngularVersion(this.project.root);
         version_1.Version.assertTypescriptVersion(this.project.root);
         return true;
     }

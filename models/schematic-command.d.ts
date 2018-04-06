@@ -15,15 +15,17 @@ export interface GetOptionsOptions {
     collectionName: string;
     schematicName: string;
 }
-export interface GetHelpOutputOptions {
-    collectionName: string;
-    schematicName: string;
-    nonSchematicOptions: any[];
+export interface GetOptionsResult {
+    options: Option[];
+    arguments: Option[];
 }
 export declare abstract class SchematicCommand extends Command {
     readonly options: Option[];
+    readonly allowPrivateSchematics: boolean;
     private _host;
     private _workspace;
+    private _deAliasedName;
+    private _originalOptions;
     argStrategy: ArgumentStrategy;
     protected readonly coreOptions: Option[];
     readonly arguments: string[];
@@ -31,8 +33,7 @@ export declare abstract class SchematicCommand extends Command {
     protected setPathOptions(options: any, workingDir: string): any;
     protected runSchematic(options: RunSchematicOptions): Promise<{}>;
     protected removeCoreOptions(options: any): any;
-    protected getOptions(options: GetOptionsOptions): Promise<Option[] | null>;
-    protected getHelpOutput({schematicName, collectionName, nonSchematicOptions}: GetHelpOutputOptions): Promise<string[]>;
+    protected getOptions(options: GetOptionsOptions): Promise<GetOptionsResult>;
     private _loadWorkspace();
     private readDefaults(collectionName, schematicName, options);
 }

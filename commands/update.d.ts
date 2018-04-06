@@ -9,7 +9,12 @@ export default class UpdateCommand extends SchematicCommand {
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
-    readonly arguments: string[];
-    readonly options: Option[];
+    arguments: string[];
+    options: Option[];
+    readonly allowMissingWorkspace: boolean;
+    private collectionName;
+    private schematicName;
+    private initialized;
+    initialize(options: any): Promise<void>;
     run(options: UpdateOptions): Promise<{}>;
 }

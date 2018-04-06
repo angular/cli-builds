@@ -15,6 +15,7 @@ export declare enum ArgumentStrategy {
 }
 export declare abstract class Command {
     protected _rawArgs: string[];
+    allowMissingWorkspace: boolean;
     constructor(context: CommandContext, logger: logging.Logger);
     initializeRaw(args: string[]): Promise<any>;
     initialize(_options: any): Promise<void>;

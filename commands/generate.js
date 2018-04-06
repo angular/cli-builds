@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
 const chalk_1 = require("chalk");
-const config_1 = require("../models/config");
+const config_1 = require("../utilities/config");
 const schematics_1 = require("../utilities/schematics");
-const common_tags_1 = require("common-tags");
+const core_1 = require("@angular-devkit/core");
 const schematic_command_1 = require("../models/schematic-command");
 const { cyan } = chalk_1.default;
 class GenerateCommand extends schematic_command_1.SchematicCommand {
@@ -28,24 +28,27 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         this.initialized = false;
     }
     initialize(options) {
+        const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             if (this.initialized) {
                 return;
             }
+            _super("initialize").call(this, options);
             this.initialized = true;
             const [collectionName, schematicName] = this.parseSchematicInfo(options);
             if (!!schematicName) {
-                const availableOptions = yield this.getOptions({
+                const schematicOptions = yield this.getOptions({
                     schematicName,
                     collectionName,
                 });
-                this.options = this.options.concat(availableOptions || []);
+                this.options = this.options.concat(schematicOptions.options);
+                this.arguments = this.arguments.concat(schematicOptions.arguments.map(a => a.name));
             }
         });
     }
     validate(options) {
         if (!options._[0]) {
-            this.logger.error(common_tags_1.oneLine `
+            this.logger.error(core_1.tags.oneLine `
         The "ng generate" command requires a
         schematic name to be specified.
         For more details, use "ng help".`);
@@ -67,7 +70,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     parseSchematicInfo(options) {
-        let collectionName = config_1.CliConfig.getValue('defaults.schematics.collection');
+        let collectionName = config_1.getDefaultSchematicCollection();
         let schematicName = options._[0];
         if (schematicName) {
             if (schematicName.match(/:/)) {
@@ -77,8 +80,16 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         return [collectionName, schematicName];
     }
     printHelp(options) {
-        if (options.schematic) {
-            super.printHelp(options);
+        const schematicName = options._[0];
+        if (schematicName) {
+            const argDisplay = this.arguments && this.arguments.length > 0
+                ? ' ' + this.arguments.filter(a => a !== 'schematic').map(a => `<${a}>`).join(' ')
+                : '';
+            const optionsDisplay = this.options && this.options.length > 0
+                ? ' [options]'
+                : '';
+            this.logger.info(`usage: ng generate ${schematicName}${argDisplay}${optionsDisplay}`);
+            this.printHelpOptions(options);
         }
         else {
             this.printHelpUsage(this.name, this.arguments, this.options);

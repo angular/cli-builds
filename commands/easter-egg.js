@@ -10,6 +10,7 @@ class AwesomeCommand extends command_1.Command {
         super(...arguments);
         this.name = 'make-this-awesome';
         this.description = '';
+        this.hidden = true;
         this.arguments = [];
         this.options = [];
     }

@@ -22,6 +22,7 @@ var ArgumentStrategy;
 })(ArgumentStrategy = exports.ArgumentStrategy || (exports.ArgumentStrategy = {}));
 class Command {
     constructor(context, logger) {
+        this.allowMissingWorkspace = false;
         this.argStrategy = ArgumentStrategy.MapToOptions;
         this.hidden = false;
         this.unknown = false;
@@ -64,11 +65,12 @@ class Command {
             this.logger.info(`options:`);
             this.options
                 .filter(o => !o.hidden)
+                .sort((a, b) => a.name >= b.name ? 1 : -1)
                 .forEach(o => {
                 const aliases = o.aliases && o.aliases.length > 0
                     ? '(' + o.aliases.map(a => `-${a}`).join(' ') + ')'
                     : '';
-                this.logger.info(`  ${cyan(o.name)} ${aliases}`);
+                this.logger.info(`  ${cyan('--' + o.name)} ${aliases}`);
                 this.logger.info(`    ${o.description}`);
             });
         }

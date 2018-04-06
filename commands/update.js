@@ -14,38 +14,42 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.name = 'update';
-        this.description = 'Updates your application.';
+        this.description = 'Updates your application and its dependencies.';
         this.scope = command_1.CommandScope.inProject;
-        this.arguments = [];
+        this.arguments = ['packages'];
         this.options = [
-            ...this.coreOptions,
-            {
-                name: 'dry-run',
-                type: Boolean,
-                default: false,
-                aliases: ['d'],
-                description: 'Run through without making any changes.'
-            },
-            {
-                name: 'next',
-                type: Boolean,
-                default: false,
-                description: 'Install the next version, instead of the latest.'
-            }
+            // Remove the --force flag.
+            ...this.coreOptions.filter(option => option.name !== 'force'),
         ];
+        this.allowMissingWorkspace = true;
+        this.collectionName = '@schematics/update';
+        this.schematicName = 'update';
+        this.initialized = false;
+    }
+    initialize(options) {
+        const _super = name => super[name];
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.initialized) {
+                return;
+            }
+            _super("initialize").call(this, options);
+            this.initialized = true;
+            const schematicOptions = yield this.getOptions({
+                schematicName: this.schematicName,
+                collectionName: this.collectionName,
+            });
+            this.options = this.options.concat(schematicOptions.options);
+            this.arguments = this.arguments.concat(schematicOptions.arguments.map(a => a.name));
+        });
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const collectionName = '@schematics/package-update';
-            const schematicName = 'all';
             const schematicRunOptions = {
-                collectionName,
-                schematicName,
-                schematicOptions: {
-                    version: options.next ? 'next' : undefined
-                },
+                collectionName: this.collectionName,
+                schematicName: this.schematicName,
+                schematicOptions: options,
                 dryRun: options.dryRun,
-                force: options.force,
+                force: false,
                 workingDir: this.project.root,
             };
             return this.runSchematic(schematicRunOptions);

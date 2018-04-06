@@ -1,6 +1,5 @@
 import { CommandScope, Option } from '../models/command';
 import { ArchitectCommand } from '../models/architect-command';
-export declare const baseServeCommandOptions: any;
 export interface Options {
     project?: string;
     configuration?: string;

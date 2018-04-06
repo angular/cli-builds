@@ -12,7 +12,7 @@ export declare abstract class ArchitectCommand extends Command {
     readonly Options: Option[];
     readonly arguments: string[];
     target: string | undefined;
-    initialize(options: any): Promise<any>;
+    initialize(options: any): Promise<void>;
     validate(options: any): boolean;
     protected mapArchitectOptions(schema: any): void;
     protected prodOption: Option;

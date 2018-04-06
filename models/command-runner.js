@@ -9,9 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const common_tags_1 = require("common-tags");
+const core_1 = require("@angular-devkit/core");
 const strings_1 = require("@angular-devkit/core/src/utils/strings");
+const find_up_1 = require("../utilities/find-up");
 const yargsParser = require("yargs-parser");
+const fs = require("fs");
+const path_1 = require("path");
+const SilentError = require('silent-error');
 /**
  * Run a command.
  * @param commandMap Map of available commands.
@@ -43,7 +47,7 @@ function runCommand(commandMap, args, logger, context) {
             Cmd = findCommand(commandMap, commandName);
         }
         if (!Cmd) {
-            logger.error(common_tags_1.oneLine `The specified command (${commandName}) is invalid.
+            logger.error(core_1.tags.oneLine `The specified command (${commandName}) is invalid.
     For a list of available options, run \`ng help\`.`);
             throw '';
         }
@@ -60,6 +64,9 @@ function runCommand(commandMap, args, logger, context) {
         }
         else {
             verifyCommandInScope(command, executionScope);
+            if (!command.allowMissingWorkspace) {
+                verifyWorkspace(command, executionScope, context.project.root);
+            }
             delete options.h;
             delete options.help;
             return yield validateAndRunCommand(command, options);
@@ -164,8 +171,42 @@ function verifyCommandInScope(command, scope = command_1.CommandScope.everywhere
             else {
                 errorMessage = `This command can not be run inside of a CLI project.`;
             }
-            throw new Error(errorMessage);
+            throw new SilentError(errorMessage);
         }
+    }
+}
+function verifyWorkspace(command, executionScope, root) {
+    if (command.scope === command_1.CommandScope.everywhere) {
+        return;
+    }
+    if (executionScope === command_1.CommandScope.inProject) {
+        if (fs.existsSync(path_1.join(root, 'angular.json'))) {
+            return;
+        }
+        if (fs.existsSync(path_1.join(root, '.angular.json'))) {
+            return;
+        }
+        // Check if there's an old config file meaning that the project has not been updated
+        const oldConfigFileNames = [
+            core_1.normalize('.angular-cli.json'),
+            core_1.normalize('angular-cli.json'),
+        ];
+        const oldConfigFilePath = (root && find_up_1.findUp(oldConfigFileNames, root, true))
+            || find_up_1.findUp(oldConfigFileNames, process.cwd(), true)
+            || find_up_1.findUp(oldConfigFileNames, __dirname, true);
+        // If an old configuration file is found, throw an exception.
+        if (oldConfigFilePath) {
+            throw new SilentError(core_1.tags.stripIndent `
+        An old project has been detected, which needs to be updated to Angular CLI 6.
+
+        Please run the following commands to update this project.
+
+          ng update @angular/cli --migrate-only --from=1.7.1
+          npm i
+      `);
+        }
+        // If no configuration file is found (old or new), throw an exception.
+        throw new SilentError('Invalid project: missing workspace file.');
     }
 }
 // Execute a command's `printHelp`.
@@ -179,7 +220,7 @@ function validateAndRunCommand(command, options) {
     return __awaiter(this, void 0, void 0, function* () {
         const isValid = yield command.validate(options);
         if (isValid !== undefined && !isValid) {
-            throw new Error(`Validation error. Invalid command`);
+            throw new SilentError(`Validation error. Invalid command`);
         }
         return yield command.run(options);
     });

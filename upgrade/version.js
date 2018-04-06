@@ -2,22 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = require("semver");
 const chalk_1 = require("chalk");
-const common_tags_1 = require("common-tags");
-const fs_1 = require("fs");
+const core_1 = require("@angular-devkit/core");
 const path = require("path");
-const config_1 = require("../models/config");
-const find_up_1 = require("../utilities/find-up");
+const config_1 = require("../utilities/config");
 const require_project_module_1 = require("../utilities/require-project-module");
 const resolve = require('resolve');
 const { bold, red, yellow } = chalk_1.default;
-function _hasOldCliBuildFile() {
-    return fs_1.existsSync(find_up_1.findUp('angular-cli-build.js', process.cwd()))
-        || fs_1.existsSync(find_up_1.findUp('angular-cli-build.ts', process.cwd()))
-        || fs_1.existsSync(find_up_1.findUp('ember-cli-build.js', process.cwd()))
-        || fs_1.existsSync(find_up_1.findUp('angular-cli-build.js', __dirname))
-        || fs_1.existsSync(find_up_1.findUp('angular-cli-build.ts', __dirname))
-        || fs_1.existsSync(find_up_1.findUp('ember-cli-build.js', __dirname));
-}
 class Version {
     constructor(_version = null) {
         this._version = _version;
@@ -51,91 +41,74 @@ class Version {
                 try {
                     return new Version(packageJson.version);
                 }
-                catch (e) {
+                catch (_a) {
                     return new Version(null);
                 }
             }
         }
-        catch (e) {
-            // Fallback to reading config.
-        }
-        const configPath = config_1.CliConfig.configFilePath();
-        if (configPath === null) {
-            return new Version(null);
-        }
-        const configJson = fs_1.readFileSync(configPath, 'utf8');
-        try {
-            const json = JSON.parse(configJson);
-            return new Version(json.project);
-        }
-        catch (e) {
+        catch (_b) {
             return new Version(null);
         }
     }
-    static assertAngularVersionIs2_3_1OrHigher(projectRoot) {
-        let pkgJson;
+    static assertCompatibleAngularVersion(projectRoot) {
+        let angularPkgJson;
+        let rxjsPkgJson;
         try {
-            pkgJson = require_project_module_1.requireProjectModule(projectRoot, '@angular/core/package.json');
+            angularPkgJson = require_project_module_1.requireProjectModule(projectRoot, '@angular/core/package.json');
+            rxjsPkgJson = require_project_module_1.requireProjectModule(projectRoot, 'rxjs/package.json');
         }
-        catch (_) {
-            console.error(bold(red(common_tags_1.stripIndents `
-        You seem to not be depending on "@angular/core". This is an error.
+        catch (_a) {
+            console.error(bold(red(core_1.tags.stripIndents `
+        You seem to not be depending on "@angular/core" and/or "rxjs". This is an error.
       `)));
             process.exit(2);
         }
-        // Just check @angular/core.
-        if (pkgJson && pkgJson['version']) {
-            const v = new Version(pkgJson['version']);
-            if (v.isLocal()) {
-                console.warn(yellow('Using a local version of angular. Proceeding with care...'));
-            }
-            else {
-                // Check if major is not 0, so that we stay compatible with local compiled versions
-                // of angular.
-                if (!v.isGreaterThanOrEqualTo(new semver_1.SemVer('2.3.1')) && v.major != 0) {
-                    console.error(bold(red(common_tags_1.stripIndents `
-            This version of CLI is only compatible with angular version 2.3.1 or better. Please
-            upgrade your angular version, e.g. by running:
-
-            npm install @angular/core@latest
-          ` + '\n')));
-                    process.exit(3);
-                }
-            }
-        }
-        else {
-            console.error(bold(red(common_tags_1.stripIndents `
-        You seem to not be depending on "@angular/core". This is an error.
+        if (!(angularPkgJson && angularPkgJson['version'] && rxjsPkgJson && rxjsPkgJson['version'])) {
+            console.error(bold(red(core_1.tags.stripIndents `
+        Cannot determine versions of "@angular/core" and/or "rxjs".
+        This likely means your local installation is broken. Please reinstall your packages.
       `)));
             process.exit(2);
         }
-    }
-    static assertPostWebpackVersion() {
-        if (this.isPreWebpack()) {
-            console.error(bold(red('\n' + common_tags_1.stripIndents `
-        It seems like you're using a project generated using an old version of the Angular CLI.
-        The latest CLI now uses webpack and has a lot of improvements including a simpler
-        workflow, a faster build, and smaller bundles.
-
-        To get more info, including a step-by-step guide to upgrade the CLI, follow this link:
-        https://github.com/angular/angular-cli/wiki/Upgrading-from-Beta.10-to-Beta.14
-      ` + '\n')));
-            process.exit(1);
+        let angularVersion = new Version(angularPkgJson['version']);
+        let rxjsVersion = new Version(rxjsPkgJson['version']);
+        if (angularVersion.isLocal()) {
+            console.warn(yellow('Using a local version of angular. Proceeding with care...'));
+            return;
         }
-        else {
-            // Verify that there's no build file.
-            if (_hasOldCliBuildFile()) {
-                console.error(bold(yellow('\n' + common_tags_1.stripIndents `
-          It seems like you're using the newest version of the Angular CLI that uses webpack.
-          This version does not require an angular-cli-build file, but your project has one.
-          It will be ignored.
+        if (!angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.0.0'))) {
+            console.error(bold(red(core_1.tags.stripIndents `
+          This version of CLI is only compatible with Angular version 5.0.0 or higher.
+
+          Please visit the link below to find instructions on how to update Angular.
+          https://angular-update-guide.firebaseapp.com/
         ` + '\n')));
-            }
+            process.exit(3);
+        }
+        else if (angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-rc.0'))
+            && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.6.0-forward-compat.0'))
+            && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
+            console.error(bold(red(core_1.tags.stripIndents `
+          This project uses version ${rxjsVersion} of RxJs, which is not supported by Angular v6.
+          The official RxJs version that is supported is 5.6.0-forward-compat.0 and greater.
+
+          Please visit the link below to find instructions on how to update RxJs.
+          https://docs.google.com/document/d/12nlLt71VLKb-z3YaSGzUfx6mJbc34nsMXtByPUN35cg/edit#
+        ` + '\n')));
+            process.exit(3);
+        }
+        else if (angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-rc.0'))
+            && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
+            console.warn(bold(red(core_1.tags.stripIndents `
+          This project uses a temporary compatibility version of RxJs (${rxjsVersion}.
+
+          Please visit the link below to find instructions on how to update RxJs.
+          https://docs.google.com/document/d/12nlLt71VLKb-z3YaSGzUfx6mJbc34nsMXtByPUN35cg/edit#
+        ` + '\n')));
         }
     }
     static assertTypescriptVersion(projectRoot) {
-        const config = config_1.CliConfig.fromProject() || config_1.CliConfig.fromGlobal();
-        if (!config.get('warnings.typescriptMismatch')) {
+        if (!config_1.isWarningEnabled('typescriptMismatch')) {
             return;
         }
         let compilerVersion, tsVersion;
@@ -143,8 +116,8 @@ class Version {
             compilerVersion = require_project_module_1.requireProjectModule(projectRoot, '@angular/compiler-cli').VERSION.full;
             tsVersion = require_project_module_1.requireProjectModule(projectRoot, 'typescript').version;
         }
-        catch (_) {
-            console.error(bold(red(common_tags_1.stripIndents `
+        catch (_a) {
+            console.error(bold(red(core_1.tags.stripIndents `
         Versions of @angular/compiler-cli and typescript could not be determined.
         The most common reason for this is a broken npm install.
 
@@ -156,16 +129,16 @@ class Version {
         }
         const versionCombos = [
             { compiler: '>=2.3.1 <3.0.0', typescript: '>=2.0.2 <2.3.0' },
-            { compiler: '>=4.0.0 <5.0.0', typescript: '>=2.1.0 <2.4.0' },
-            { compiler: '>=5.0.0 <5.1.0', typescript: '>=2.4.2 <2.5.0' },
-            { compiler: '>=5.1.0 <5.2.0', typescript: '>=2.4.2 <2.6.0' },
-            { compiler: '>=5.2.0 <6.0.0', typescript: '>=2.4.2 <2.7.0' },
+            { compiler: '>=4.0.0-beta.0 <5.0.0', typescript: '>=2.1.0 <2.4.0' },
+            { compiler: '>=5.0.0-beta.0 <5.1.0', typescript: '>=2.4.2 <2.5.0' },
+            { compiler: '>=5.1.0-beta.0 <5.2.0', typescript: '>=2.4.2 <2.6.0' },
+            { compiler: '>=5.2.0-beta.0 <6.0.0', typescript: '>=2.4.2 <2.7.0' },
             { compiler: '>=6.0.0-beta.0 <7.0.0', typescript: '>=2.7.0 <2.8.0' },
         ];
         const currentCombo = versionCombos.find((combo) => semver_1.satisfies(compilerVersion, combo.compiler));
         if (currentCombo && !semver_1.satisfies(tsVersion, currentCombo.typescript)) {
             // First line of warning looks weird being split in two, disable tslint for it.
-            console.log((yellow('\n' + common_tags_1.stripIndent `
+            console.log((yellow('\n' + core_1.tags.stripIndent `
         @angular/compiler-cli@${compilerVersion} requires typescript@'${currentCombo.typescript}' but ${tsVersion} was found instead.
         Using this version can result in undefined behaviour and difficult to debug problems.
 
@@ -176,28 +149,6 @@ class Version {
         To disable this warning run "ng set warnings.typescriptMismatch=false".
       ` + '\n')));
         }
-    }
-    static isPreWebpack() {
-        // CliConfig is a bit stricter with the schema, so we need to be a little looser with it.
-        const version = Version.fromProject();
-        if (version && version.isKnown()) {
-            if (version.major == 0) {
-                return true;
-            }
-            else if (version.major > 1 || version.minor != 0) {
-                return false;
-            }
-            else if (version.isBeta() && !version.toString().match(/webpack/)) {
-                const betaVersion = version.extra;
-                if (parseInt(betaVersion) < 12) {
-                    return true;
-                }
-            }
-        }
-        else {
-            return _hasOldCliBuildFile();
-        }
-        return false;
     }
 }
 exports.Version = Version;

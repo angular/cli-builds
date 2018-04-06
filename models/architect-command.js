@@ -11,10 +11,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("@angular-devkit/core/node");
 const architect_1 = require("@angular-devkit/architect");
 const command_1 = require("./command");
-const from_1 = require("rxjs/observable/from");
+const rxjs_1 = require("rxjs");
+const rxjs_2 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
-const of_1 = require("rxjs/observable/of");
 const stringUtils = require('ember-cli-string-utils');
 class ArchitectCommand extends command_1.Command {
     constructor() {
@@ -66,15 +66,16 @@ class ArchitectCommand extends command_1.Command {
                     else {
                         // Multiple targets can have different, incompatible options.
                         // We only lookup options for single targets.
-                        return of_1.of(null);
+                        return rxjs_1.of(null);
                     }
                 }
                 else {
                     throw new Error('Cannot determine project or target for Architect command.');
                 }
                 const builderConfig = this._architect.getBuilderConfiguration(targetSpec);
-                return this._architect.getBuilderDescription(builderConfig).pipe(operators_1.tap((builderDesc) => this.mapArchitectOptions(builderDesc.schema)));
-            })).toPromise();
+                return this._architect.getBuilderDescription(builderConfig).pipe(operators_1.tap(builderDesc => { this.mapArchitectOptions(builderDesc.schema); }));
+            })).toPromise()
+                .then(() => { });
         });
     }
     validate(options) {
@@ -132,10 +133,10 @@ class ArchitectCommand extends command_1.Command {
     }
     runArchitectTarget(targetSpec) {
         return __awaiter(this, void 0, void 0, function* () {
-            const runSingleTarget = (targetSpec) => this._architect.run(this._architect.getBuilderConfiguration(targetSpec), { logger: this._logger }).pipe(operators_1.map(buildEvent => buildEvent.success ? 0 : 1));
+            const runSingleTarget = (targetSpec) => this._architect.run(this._architect.getBuilderConfiguration(targetSpec), { logger: this._logger }).pipe(operators_1.map((buildEvent) => buildEvent.success ? 0 : 1));
             if (!targetSpec.project && this.target) {
                 // This runs each target sequentially. Running them in parallel would jumble the log messages.
-                return from_1.from(this.getAllProjectsForTargetName(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
+                return rxjs_2.from(this.getAllProjectsForTargetName(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
             }
             else {
                 return runSingleTarget(targetSpec).toPromise();
@@ -147,7 +148,9 @@ class ArchitectCommand extends command_1.Command {
     }
     _loadWorkspaceAndArchitect() {
         const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
-        return workspaceLoader.loadWorkspace().pipe(operators_1.tap(workspace => this._workspace = workspace), operators_1.concatMap(workspace => new architect_1.Architect(workspace).loadArchitect()), operators_1.tap(architect => this._architect = architect));
+        return workspaceLoader.loadWorkspace().pipe(operators_1.tap((workspace) => this._workspace = workspace), operators_1.concatMap((workspace) => {
+            return new architect_1.Architect(workspace).loadArchitect();
+        }), operators_1.tap((architect) => this._architect = architect));
     }
 }
 exports.ArchitectCommand = ArchitectCommand;

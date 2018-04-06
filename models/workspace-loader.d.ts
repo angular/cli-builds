@@ -1,5 +1,5 @@
 import { experimental, virtualFs } from '@angular-devkit/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 export declare class WorkspaceLoader {
     private _host;
     private _workspaceCacheMap;

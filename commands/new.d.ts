@@ -5,6 +5,8 @@ export default class NewCommand extends SchematicCommand {
     readonly description: string;
     static aliases: string[];
     scope: CommandScope;
+    readonly allowMissingWorkspace: boolean;
+    arguments: string[];
     options: Option[];
     private initialized;
     initialize(options: any): Promise<void>;
