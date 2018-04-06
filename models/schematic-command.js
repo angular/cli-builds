@@ -168,8 +168,7 @@ class SchematicCommand extends command_1.Command {
     getOptions(options) {
         // Make a copy.
         this._originalOptions = [...this.options];
-        // TODO: get default collectionName
-        const collectionName = options.collectionName || '@schematics/angular';
+        const collectionName = options.collectionName || config_1.getDefaultSchematicCollection();
         const collection = schematics_2.getCollection(collectionName);
         const schematic = schematics_2.getSchematic(collection, options.schematicName);
         this._deAliasedName = schematic.description.name;
