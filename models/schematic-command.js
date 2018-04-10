@@ -170,7 +170,7 @@ class SchematicCommand extends command_1.Command {
         this._originalOptions = [...this.options];
         const collectionName = options.collectionName || config_1.getDefaultSchematicCollection();
         const collection = schematics_2.getCollection(collectionName);
-        const schematic = schematics_2.getSchematic(collection, options.schematicName);
+        const schematic = schematics_2.getSchematic(collection, options.schematicName, this.allowPrivateSchematics);
         this._deAliasedName = schematic.description.name;
         if (!schematic.description.schemaJson) {
             return Promise.resolve({
