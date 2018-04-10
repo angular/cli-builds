@@ -147,6 +147,9 @@ class SchematicCommand extends command_1.Command {
                     if (nothingDone) {
                         this.logger.info('Nothing to be done.');
                     }
+                    if (dryRun) {
+                        this.logger.warn(`\nNOTE: Run with "dry run" no changes were made.`);
+                    }
                     resolve();
                 },
             });
