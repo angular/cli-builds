@@ -47,9 +47,51 @@ function runCommand(commandMap, args, logger, context) {
             Cmd = findCommand(commandMap, commandName);
         }
         if (!Cmd) {
-            logger.error(core_1.tags.oneLine `The specified command (${commandName}) is invalid.
-    For a list of available options, run \`ng help\`.`);
-            throw '';
+            function levenshtein(a, b) {
+                if (a.length === 0) {
+                    return b.length;
+                }
+                if (b.length === 0) {
+                    return a.length;
+                }
+                if (a.length > b.length) {
+                    let tmp = a;
+                    a = b;
+                    b = tmp;
+                }
+                const row = Array(a.length);
+                for (let i = 0; i <= a.length; i++) {
+                    row[i] = i;
+                }
+                let result;
+                for (let i = 1; i <= b.length; i++) {
+                    result = i;
+                    for (let j = 1; j <= a.length; j++) {
+                        let tmp = row[j - 1];
+                        row[j - 1] = result;
+                        result = b[i - 1] === a[j - 1]
+                            ? tmp
+                            : Math.min(tmp + 1, Math.min(result + 1, row[j] + 1));
+                    }
+                }
+                return result;
+            }
+            const commandsDistance = {};
+            const allCommands = listAllCommandNames(commandMap).sort((a, b) => {
+                if (!(a in commandsDistance)) {
+                    commandsDistance[a] = levenshtein(a, commandName);
+                }
+                if (!(b in commandsDistance)) {
+                    commandsDistance[b] = levenshtein(b, commandName);
+                }
+                return commandsDistance[a] - commandsDistance[b];
+            });
+            throw new SilentError(core_1.tags.stripIndent `
+        The specified command ("${commandName}") is invalid. For a list of available options,
+        run "ng help".
+
+        Did you mean "${allCommands[0]}"?
+    `);
         }
         const command = new Cmd(context, logger);
         args = yield command.initializeRaw(args);
@@ -157,6 +199,15 @@ function findCommand(map, name) {
         return null;
     }
     return Cmd;
+}
+function listAllCommandNames(map) {
+    return Object.keys(map).concat(Object.keys(map)
+        .reduce((acc, key) => {
+        if (!map[key].aliases) {
+            return acc;
+        }
+        return acc.concat(map[key].aliases);
+    }, []));
 }
 function verifyCommandInScope(command, scope = command_1.CommandScope.everywhere) {
     if (!command) {
