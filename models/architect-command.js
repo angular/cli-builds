@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
 const architect_1 = require("@angular-devkit/architect");
 const command_1 = require("./command");
@@ -15,7 +16,6 @@ const rxjs_1 = require("rxjs");
 const rxjs_2 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
-const stringUtils = require('ember-cli-string-utils');
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -96,7 +96,7 @@ class ArchitectCommand extends command_1.Command {
         const properties = schema.properties;
         const keys = Object.keys(properties);
         keys
-            .map(key => (Object.assign({}, properties[key], { name: stringUtils.dasherize(key) })))
+            .map(key => (Object.assign({}, properties[key], { name: core_1.strings.dasherize(key) })))
             .map(opt => {
             let type;
             const schematicType = opt.type;
