@@ -44,15 +44,14 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const schematicRunOptions = {
+            return this.runSchematic({
                 collectionName: this.collectionName,
                 schematicName: this.schematicName,
                 schematicOptions: options,
                 dryRun: options.dryRun,
                 force: false,
-                workingDir: this.project.root,
-            };
-            return this.runSchematic(schematicRunOptions);
+                showNothingDone: false,
+            });
         });
     }
 }

@@ -10,6 +10,7 @@ export interface RunSchematicOptions {
     debug?: boolean;
     dryRun: boolean;
     force: boolean;
+    showNothingDone?: boolean;
 }
 export interface GetOptionsOptions {
     collectionName: string;

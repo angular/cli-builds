@@ -144,7 +144,8 @@ class SchematicCommand extends command_1.Command {
                 complete: () => {
                     // Output the logging queue, no error happened.
                     loggingQueue.forEach(log => this.logger.info(log));
-                    if (nothingDone) {
+                    const showNothingDone = !(options.showNothingDone === false);
+                    if (nothingDone && showNothingDone) {
                         this.logger.info('Nothing to be done.');
                     }
                     if (dryRun) {
