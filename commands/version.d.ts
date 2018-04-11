@@ -6,6 +6,5 @@ export default class VersionCommand extends Command {
     readonly arguments: string[];
     readonly options: Option[];
     run(_options: any): void;
-    private getDependencyVersions(pkg, prefix);
-    private getVersion(moduleName);
+    private getVersion(moduleName, projectNodeModules, cliNodeModules);
 }
