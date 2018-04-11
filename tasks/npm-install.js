@@ -11,15 +11,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("@angular-devkit/core/node");
 const chalk_1 = require("chalk");
 const child_process_1 = require("child_process");
+const SilentError = require('silent-error');
 function default_1(packageName, logger, packageManager, projectRoot, save) {
     return __awaiter(this, void 0, void 0, function* () {
         if (packageManager === 'default') {
             packageManager = 'npm';
         }
         logger.info(chalk_1.default.green(`Installing packages for tooling via ${packageManager}.`));
-        const installArgs = ['install'];
-        if (packageManager === 'npm') {
-            installArgs.push('--quiet');
+        const installArgs = [];
+        switch (packageManager) {
+            case 'cnpm':
+            case 'npm':
+                installArgs.push('install', '--quiet');
+                break;
+            case 'yarn':
+                installArgs.push('add');
+                break;
+            default:
+                throw new SilentError(`Invalid package manager: ${JSON.stringify(packageManager)}.`);
         }
         if (packageName) {
             try {
