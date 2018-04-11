@@ -30,7 +30,7 @@ class Xi18nCommand extends architect_command_1.ArchitectCommand {
                 target: this.target,
                 configuration: options.configuration,
                 overrides
-            });
+            }, options);
         });
     }
 }

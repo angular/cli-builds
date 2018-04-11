@@ -9,5 +9,5 @@ export default class AddCommand extends SchematicCommand {
     options: Option[];
     private _parseSchematicOptions(collectionName);
     validate(options: any): boolean;
-    run(options: any): Promise<void>;
+    run(options: any): Promise<number | void>;
 }

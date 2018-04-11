@@ -4,7 +4,7 @@ export interface GenericTargetTargetSpecifier {
     target: string;
     configuration?: string;
 }
-export declare abstract class ArchitectCommand extends Command {
+export declare abstract class ArchitectCommand<T = any> extends Command<T> {
     private _host;
     private _architect;
     private _workspace;
@@ -17,7 +17,7 @@ export declare abstract class ArchitectCommand extends Command {
     protected mapArchitectOptions(schema: any): void;
     protected prodOption: Option;
     protected configurationOption: Option;
-    protected runArchitectTarget(targetSpec: TargetSpecifier): Promise<number>;
+    protected runArchitectTarget(targetSpec: TargetSpecifier, commandOptions: T): Promise<number>;
     private getAllProjectsForTargetName(targetName);
     private _loadWorkspaceAndArchitect();
 }

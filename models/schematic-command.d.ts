@@ -32,7 +32,7 @@ export declare abstract class SchematicCommand extends Command {
     readonly arguments: string[];
     initialize(_options: any): Promise<void>;
     protected setPathOptions(options: any, workingDir: string): any;
-    protected runSchematic(options: RunSchematicOptions): Promise<{}>;
+    protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected removeCoreOptions(options: any): any;
     protected getOptions(options: GetOptionsOptions): Promise<GetOptionsResult>;
     private _loadWorkspace();

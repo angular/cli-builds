@@ -32,7 +32,7 @@ class RunCommand extends architect_command_1.ArchitectCommand {
                     target,
                     configuration,
                     overrides
-                });
+                }, options);
             }
             else {
                 throw new Error('Invalid architect target.');

@@ -86,12 +86,13 @@ function runCommand(commandMap, args, logger, context) {
                 }
                 return commandsDistance[a] - commandsDistance[b];
             });
-            throw new SilentError(core_1.tags.stripIndent `
+            logger.error(core_1.tags.stripIndent `
         The specified command ("${commandName}") is invalid. For a list of available options,
         run "ng help".
 
         Did you mean "${allCommands[0]}"?
     `);
+            return 1;
         }
         const command = new Cmd(context, logger);
         args = yield command.initializeRaw(args);

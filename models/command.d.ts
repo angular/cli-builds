@@ -13,17 +13,17 @@ export declare enum ArgumentStrategy {
     MapToOptions = 0,
     Nothing = 1,
 }
-export declare abstract class Command {
+export declare abstract class Command<T = any> {
     protected _rawArgs: string[];
     allowMissingWorkspace: boolean;
     constructor(context: CommandContext, logger: logging.Logger);
     initializeRaw(args: string[]): Promise<any>;
     initialize(_options: any): Promise<void>;
-    validate(_options: any): boolean | Promise<boolean>;
-    printHelp(_options: any): void;
+    validate(_options: T): boolean | Promise<boolean>;
+    printHelp(_options: T): void;
     protected printHelpUsage(name: string, args: string[], options: Option[]): void;
     protected printHelpOptions(options: Option[]): void;
-    abstract run(options: any): any | Promise<any>;
+    abstract run(options: T): number | void | Promise<number | void>;
     readonly abstract name: string;
     readonly abstract description: string;
     readonly abstract arguments: string[];
@@ -34,15 +34,9 @@ export declare abstract class Command {
     scope: CommandScope;
     protected readonly logger: logging.Logger;
     protected readonly project: any;
-    protected readonly ui: Ui;
 }
 export interface CommandContext {
-    ui: Ui;
     project: any;
-}
-export interface Ui {
-    writeLine: (message: string) => void;
-    errorLog: (message: string) => void;
 }
 export declare abstract class Option {
     readonly abstract name: string;

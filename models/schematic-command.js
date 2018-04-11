@@ -117,7 +117,7 @@ class SchematicCommand extends command_1.Command {
                     break;
             }
         });
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             workflow.execute({
                 collection: collectionName,
                 schematic: schematicName,
@@ -139,7 +139,7 @@ class SchematicCommand extends command_1.Command {
                     else {
                         this.logger.fatal(err.message);
                     }
-                    reject(1);
+                    resolve(1);
                 },
                 complete: () => {
                     // Output the logging queue, no error happened.

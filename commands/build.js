@@ -44,7 +44,7 @@ class BuildCommand extends architect_command_1.ArchitectCommand {
                 target: this.target,
                 configuration,
                 overrides
-            });
+            }, options);
         });
     }
 }

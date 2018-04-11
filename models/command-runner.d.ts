@@ -10,5 +10,5 @@ export interface CommandMap {
  * @param logger The logger to use.
  * @param context Execution context.
  */
-export declare function runCommand(commandMap: CommandMap, args: string[], logger: logging.Logger, context: CommandContext): Promise<any>;
+export declare function runCommand(commandMap: CommandMap, args: string[], logger: logging.Logger, context: CommandContext): Promise<number | void>;
 export declare function parseOptions<T = any>(args: string[], cmdOpts: Option[], commandArguments: string[], argStrategy: ArgumentStrategy): T;

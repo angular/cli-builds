@@ -69,7 +69,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 dryRun: false,
                 force: false,
             };
-            yield this.runSchematic(runOptions);
+            return yield this.runSchematic(runOptions);
         });
     }
 }

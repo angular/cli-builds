@@ -131,15 +131,41 @@ class ArchitectCommand extends command_1.Command {
             .filter(x => x)
             .forEach(option => this.options.push(option));
     }
-    runArchitectTarget(targetSpec) {
+    runArchitectTarget(targetSpec, commandOptions) {
         return __awaiter(this, void 0, void 0, function* () {
             const runSingleTarget = (targetSpec) => this._architect.run(this._architect.getBuilderConfiguration(targetSpec), { logger: this._logger }).pipe(operators_1.map((buildEvent) => buildEvent.success ? 0 : 1));
-            if (!targetSpec.project && this.target) {
-                // This runs each target sequentially. Running them in parallel would jumble the log messages.
-                return rxjs_2.from(this.getAllProjectsForTargetName(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
+            try {
+                if (!targetSpec.project && this.target) {
+                    // This runs each target sequentially.
+                    // Running them in parallel would jumble the log messages.
+                    return yield rxjs_2.from(this.getAllProjectsForTargetName(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
+                }
+                else {
+                    return yield runSingleTarget(targetSpec).toPromise();
+                }
             }
-            else {
-                return runSingleTarget(targetSpec).toPromise();
+            catch (e) {
+                if (e instanceof core_1.schema.SchemaValidationException) {
+                    const newErrors = [];
+                    e.errors.forEach(schemaError => {
+                        if (schemaError.keyword === 'additionalProperties') {
+                            const unknownProperty = schemaError.params.additionalProperty;
+                            if (unknownProperty in commandOptions) {
+                                const dashes = unknownProperty.length === 1 ? '-' : '--';
+                                this.logger.fatal(`Unknown option: '${dashes}${unknownProperty}'`);
+                                return 1;
+                            }
+                        }
+                        newErrors.push(schemaError);
+                    });
+                    if (newErrors.length > 0) {
+                        this.logger.error(new core_1.schema.SchemaValidationException(newErrors).message);
+                        return 1;
+                    }
+                }
+                else {
+                    throw e;
+                }
             }
         });
     }

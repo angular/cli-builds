@@ -30,7 +30,6 @@ class Command {
         this.logger = logger;
         if (context) {
             this.project = context.project;
-            this.ui = context.ui;
         }
     }
     initializeRaw(args) {

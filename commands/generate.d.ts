@@ -10,7 +10,7 @@ export default class GenerateCommand extends SchematicCommand {
     private initialized;
     initialize(options: any): Promise<void>;
     validate(options: any): boolean | Promise<boolean>;
-    run(options: any): Promise<{}>;
+    run(options: any): Promise<number | void>;
     private parseSchematicInfo(options);
     printHelp(options: any): void;
 }

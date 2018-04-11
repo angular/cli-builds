@@ -10,7 +10,7 @@ export default class NewCommand extends SchematicCommand {
     options: Option[];
     private initialized;
     initialize(options: any): Promise<void>;
-    run(options: any): Promise<{}>;
+    run(options: any): Promise<number | void>;
     private parseCollectionName(options);
     private removeLocalOptions(options);
 }
