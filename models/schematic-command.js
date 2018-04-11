@@ -64,7 +64,8 @@ class SchematicCommand extends command_1.Command {
         const { collectionName, schematicName, debug, force, dryRun } = options;
         let schematicOptions = this.removeCoreOptions(options.schematicOptions);
         let nothingDone = true;
-        const loggingQueue = [];
+        let loggingQueue = [];
+        let error = false;
         const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.project.root));
         const workflow = new tools_1.NodeWorkflow(fsHost, {
             force,
@@ -96,6 +97,7 @@ class SchematicCommand extends command_1.Command {
             const eventPath = event.path.startsWith('/') ? event.path.substr(1) : event.path;
             switch (event.kind) {
                 case 'error':
+                    error = true;
                     const desc = event.description == 'alreadyExist' ? 'already exists' : 'does not exist.';
                     this.logger.warn(`ERROR! ${eventPath} ${desc}.`);
                     break;
@@ -115,6 +117,16 @@ class SchematicCommand extends command_1.Command {
                 case 'rename':
                     loggingQueue.push(`${core_1.terminal.blue('RENAME')} ${eventPath} => ${event.to}`);
                     break;
+            }
+        });
+        workflow.lifeCycle.subscribe(event => {
+            if (event.kind == 'end' || event.kind == 'workflow-end') {
+                if (!error) {
+                    // Output the logging queue, no error happened.
+                    loggingQueue.forEach(log => this.logger.info(log));
+                }
+                loggingQueue = [];
+                error = false;
             }
         });
         return new Promise((resolve) => {
@@ -142,8 +154,6 @@ class SchematicCommand extends command_1.Command {
                     resolve(1);
                 },
                 complete: () => {
-                    // Output the logging queue, no error happened.
-                    loggingQueue.forEach(log => this.logger.info(log));
                     const showNothingDone = !(options.showNothingDone === false);
                     if (nothingDone && showNothingDone) {
                         this.logger.info('Nothing to be done.');
