@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.0-rc.3-ce0de40",
+  "version": "6.0.0-rc.3-73075b7",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -12,6 +12,9 @@
     "angular-cli",
     "Angular CLI"
   ],
+  "scripts": {
+    "postinstall": "node ./bin/ng-update-message.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/angular/angular-cli.git"
