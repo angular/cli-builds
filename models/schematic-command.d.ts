@@ -36,5 +36,6 @@ export declare abstract class SchematicCommand extends Command {
     protected removeCoreOptions(options: any): any;
     protected getOptions(options: GetOptionsOptions): Promise<GetOptionsResult>;
     private _loadWorkspace();
+    private _cleanDefaults<T, K>(defaults, undefinedOptions);
     private readDefaults(collectionName, schematicName, options);
 }

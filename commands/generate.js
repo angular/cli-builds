@@ -73,7 +73,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         let collectionName = config_1.getDefaultSchematicCollection();
         let schematicName = options._[0];
         if (schematicName) {
-            if (schematicName.match(/:/)) {
+            if (schematicName.includes(':')) {
                 [collectionName, schematicName] = schematicName.split(':', 2);
             }
         }

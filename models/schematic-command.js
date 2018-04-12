@@ -15,6 +15,7 @@ const tools_1 = require("@angular-devkit/schematics/tools");
 const schematics_1 = require("@angular-devkit/schematics");
 const config_1 = require("../utilities/config");
 const schematics_2 = require("../utilities/schematics");
+const config_2 = require("../utilities/config");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
 class SchematicCommand extends command_1.Command {
@@ -275,54 +276,26 @@ class SchematicCommand extends command_1.Command {
             }
         }
     }
+    _cleanDefaults(defaults, undefinedOptions) {
+        Object.keys(defaults)
+            .filter(key => !undefinedOptions.includes(key))
+            .forEach(key => {
+            delete defaults[key];
+        });
+        return defaults;
+    }
     readDefaults(collectionName, schematicName, options) {
-        let defaults = {};
-        if (!this._workspace) {
-            return {};
-        }
         if (this._deAliasedName) {
             schematicName = this._deAliasedName;
         }
-        // read and set workspace defaults
-        const wsSchematics = this._workspace.getSchematics();
-        if (wsSchematics) {
-            let key = collectionName;
-            if (wsSchematics[key] && typeof wsSchematics[key] === 'object') {
-                defaults = Object.assign({}, defaults, wsSchematics[key]);
-            }
-            key = collectionName + ':' + schematicName;
-            if (wsSchematics[key] && typeof wsSchematics[key] === 'object') {
-                defaults = Object.assign({}, defaults, wsSchematics[key]);
-            }
-        }
-        // read and set project defaults
-        let projectName = options.project;
-        if (!projectName) {
-            projectName = this._workspace.listProjectNames()[0];
-        }
-        if (projectName) {
-            const prjSchematics = this._workspace.getProjectSchematics(projectName);
-            if (prjSchematics) {
-                let key = collectionName;
-                if (prjSchematics[key] && typeof prjSchematics[key] === 'object') {
-                    defaults = Object.assign({}, defaults, prjSchematics[key]);
-                }
-                key = collectionName + ':' + schematicName;
-                if (prjSchematics[key] && typeof prjSchematics[key] === 'object') {
-                    defaults = Object.assign({}, defaults, prjSchematics[key]);
-                }
-            }
-        }
+        const projectName = options.project;
+        const defaults = config_2.getSchematicDefaults(collectionName, schematicName, projectName);
         // Get list of all undefined options.
         const undefinedOptions = this.options
             .filter(o => options[o.name] === undefined)
             .map(o => o.name);
         // Delete any default that is not undefined.
-        Object.keys(defaults)
-            .filter(key => !undefinedOptions.indexOf(key))
-            .forEach(key => {
-            delete defaults[key];
-        });
+        this._cleanDefaults(defaults, undefinedOptions);
         return defaults;
     }
 }

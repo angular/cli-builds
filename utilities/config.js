@@ -97,9 +97,35 @@ function validateWorkspace(json) {
     return true;
 }
 exports.validateWorkspace = validateWorkspace;
-function getProjectByCwd(_workspace) {
-    // const cwd = process.cwd();
-    // TOOD: Implement project location logic
+function getProjectByCwd(workspace) {
+    if (!workspace) {
+        workspace = getWorkspace('local');
+        if (!workspace) {
+            return null;
+        }
+    }
+    const projectNames = workspace.listProjectNames();
+    if (projectNames.length === 1) {
+        return projectNames[0];
+    }
+    const cwd = core_1.normalize(process.cwd());
+    const isInside = (base, potential) => {
+        const absoluteBase = core_1.resolve(workspace.root, base);
+        const absolutePotential = core_1.resolve(workspace.root, potential);
+        const relativePotential = core_1.relative(absoluteBase, absolutePotential);
+        if (!relativePotential.startsWith('..') && !core_1.isAbsolute(relativePotential)) {
+            return true;
+        }
+        return false;
+    };
+    const projects = workspace.listProjectNames()
+        .map(name => [workspace.getProject(name).root, name])
+        .sort((a, b) => isInside(a[0], b[0]) ? 1 : 0);
+    for (const project of projects) {
+        if (isInside(project[0], cwd)) {
+            return project[1];
+        }
+    }
     return null;
 }
 exports.getProjectByCwd = getProjectByCwd;
@@ -140,7 +166,7 @@ function getDefaultSchematicCollection() {
                 return value;
             }
         }
-        else if (workspace.getCli()) {
+        if (workspace.getCli()) {
             const value = workspace.getCli()['defaultCollection'];
             if (typeof value == 'string') {
                 return value;
@@ -159,16 +185,25 @@ function getDefaultSchematicCollection() {
 exports.getDefaultSchematicCollection = getDefaultSchematicCollection;
 function getSchematicDefaults(collection, schematic, project) {
     let result = {};
+    const fullName = `${collection}:${schematic}`;
     let workspace = getWorkspace('global');
     if (workspace && workspace.getSchematics()) {
+        const schematicObject = workspace.getSchematics()[fullName];
+        if (schematicObject) {
+            result = Object.assign({}, result, schematicObject);
+        }
         const collectionObject = workspace.getSchematics()[collection];
         if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
-            result = collectionObject[schematic] || {};
+            result = Object.assign({}, result, collectionObject[schematic]);
         }
     }
     workspace = getWorkspace('local');
     if (workspace) {
         if (workspace.getSchematics()) {
+            const schematicObject = workspace.getSchematics()[fullName];
+            if (schematicObject) {
+                result = Object.assign({}, result, schematicObject);
+            }
             const collectionObject = workspace.getSchematics()[collection];
             if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
                 result = Object.assign({}, result, collectionObject[schematic]);
@@ -176,6 +211,10 @@ function getSchematicDefaults(collection, schematic, project) {
         }
         project = project || getProjectByCwd(workspace);
         if (project && workspace.getProjectSchematics(project)) {
+            const schematicObject = workspace.getProjectSchematics(project)[fullName];
+            if (schematicObject) {
+                result = Object.assign({}, result, schematicObject);
+            }
             const collectionObject = workspace.getProjectSchematics(project)[collection];
             if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
                 result = Object.assign({}, result, collectionObject[schematic]);
