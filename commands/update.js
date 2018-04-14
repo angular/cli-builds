@@ -1,60 +1,24 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
-const schematic_command_1 = require("../models/schematic-command");
-class UpdateCommand extends schematic_command_1.SchematicCommand {
-    constructor() {
-        super(...arguments);
-        this.name = 'update';
-        this.description = 'Updates your application and its dependencies.';
-        this.scope = command_1.CommandScope.inProject;
-        this.arguments = ['packages'];
-        this.options = [
-            // Remove the --force flag.
-            ...this.coreOptions.filter(option => option.name !== 'force'),
-        ];
-        this.allowMissingWorkspace = true;
-        this.collectionName = '@schematics/update';
-        this.schematicName = 'update';
-        this.initialized = false;
+const common_tags_1 = require("common-tags");
+const chalk = require('chalk');
+const Command = require('../ember-cli/lib/models/command');
+const UpdateCommand = Command.extend({
+    name: 'update',
+    description: 'Updates your application.',
+    works: 'everywhere',
+    availableOptions: [],
+    anonymousOptions: [],
+    run: function (_commandOptions) {
+        console.log(chalk.red(common_tags_1.stripIndent `
+      CLI 1.7 does not support an automatic v6 update. Manually install @angular/cli via your
+      package manager, then run the update migration schematic to finish the process.
+
+
+        npm install @angular/cli@^6.0.0
+        ng update @angular/cli --migrate-only --from=1
+    ` + '\n\n'));
     }
-    initialize(options) {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.initialized) {
-                return;
-            }
-            _super("initialize").call(this, options);
-            this.initialized = true;
-            const schematicOptions = yield this.getOptions({
-                schematicName: this.schematicName,
-                collectionName: this.collectionName,
-            });
-            this.options = this.options.concat(schematicOptions.options);
-            this.arguments = this.arguments.concat(schematicOptions.arguments.map(a => a.name));
-        });
-    }
-    run(options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.runSchematic({
-                collectionName: this.collectionName,
-                schematicName: this.schematicName,
-                schematicOptions: options,
-                dryRun: options.dryRun,
-                force: false,
-                showNothingDone: false,
-            });
-        });
-    }
-}
-UpdateCommand.aliases = [];
+});
 exports.default = UpdateCommand;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/update.js.map

@@ -3,11 +3,12 @@
 /**
 @module ember-cli
 */
+const denodeify = require('denodeify');
 const path = require('path');
 const findUp = require('../../../utilities/find-up').findUp;
-const { promisify } = require('util');
-let resolve = promisify(require('resolve'));
+let resolve = denodeify(require('resolve'));
 const fs = require('fs-extra');
+const _ = require('lodash');
 const nodeModulesPath = require('node-modules-path');
 
 let processCwd = process.cwd();
@@ -96,12 +97,9 @@ class Project {
     @return {String} Package name
    */
   name() {
-    if (!this.pkg.name) {
-      return null;
-    }
+    const getPackageBaseName = require('../utilities/get-package-base-name');
 
-    const packageParts = this.pkg.name.split('/');
-    return packageParts[(packageParts.length - 1)];
+    return getPackageBaseName(this.pkg.name);
   }
 
   /**
@@ -128,8 +126,7 @@ class Project {
 
     return this.addons.reduce((config, addon) => {
       if (addon.config) {
-        // No addon support
-        // _.merge(config, addon.config(env, config));
+        _.merge(config, addon.config(env, config));
       }
 
       return config;
@@ -208,7 +205,7 @@ class Project {
       devDependencies = {};
     }
 
-    return Object.assign({}, devDependencies, pkg['dependencies']);
+    return _.assign({}, devDependencies, pkg['dependencies']);
   }
 
   /**
@@ -239,6 +236,7 @@ class Project {
   static closest(pathName, _ui, _cli) {
     let ui = ensureUI(_ui);
 
+    ui.writeDeprecateLine('`Project.closest` is a private method that will be removed, please use `Project.closestSync` instead.');
 
     return closestPackageJSON(pathName).then(result => {
       if (result.pkg && result.pkg.name === 'ember-cli') {
@@ -343,6 +341,17 @@ function ensureInstrumentation(cli, ui) {
 
 function ensureUI(_ui) {
   let ui = _ui;
+
+  if (!ui) {
+    // TODO: one UI (lib/cli/index.js also has one for now...)
+    const UI = require('../ui');
+    ui = new UI({
+      inputStream: process.stdin,
+      outputStream: process.stdout,
+      ci: process.env.CI || (/^(dumb|emacs)$/).test(process.env.TERM),
+      writeLevel: (process.argv.indexOf('--silent') !== -1) ? 'ERROR' : undefined,
+    });
+  }
 
   return ui;
 }

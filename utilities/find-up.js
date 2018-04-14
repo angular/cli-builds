@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs_1 = require("fs");
-function findUp(names, from, stopOnPackageJson = false) {
+function findUp(names, from, stopOnNodeModules = false) {
     if (!Array.isArray(names)) {
         names = [names];
     }
@@ -15,9 +15,9 @@ function findUp(names, from, stopOnPackageJson = false) {
                 return p;
             }
         }
-        if (stopOnPackageJson) {
-            const packageJsonPth = path.join(currentDir, 'package.json');
-            if (fs_1.existsSync(packageJsonPth)) {
+        if (stopOnNodeModules) {
+            const nodeModuleP = path.join(currentDir, 'node_modules');
+            if (fs_1.existsSync(nodeModuleP)) {
                 return null;
             }
         }

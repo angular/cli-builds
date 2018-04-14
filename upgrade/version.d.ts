@@ -16,6 +16,8 @@ export declare class Version {
     readonly extra: string;
     toString(): string;
     static fromProject(): Version;
-    static assertCompatibleAngularVersion(projectRoot: string): void;
+    static assertAngularVersionIs2_3_1OrHigher(projectRoot: string): void;
+    static assertPostWebpackVersion(): void;
     static assertTypescriptVersion(projectRoot: string): void;
+    static isPreWebpack(): boolean;
 }

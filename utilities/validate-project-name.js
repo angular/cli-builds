@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@angular-devkit/core");
+const common_tags_1 = require("common-tags");
 const SilentError = require('silent-error');
 const projectNameRegexp = /^[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*$/;
 const unsupportedProjectNames = ['test', 'ember', 'ember-cli', 'vendor', 'app'];
@@ -18,12 +18,12 @@ function getRegExpFailPosition(str) {
 function validateProjectName(projectName) {
     const errorIndex = getRegExpFailPosition(projectName);
     if (errorIndex !== null) {
-        const firstMessage = core_1.tags.oneLine `
+        const firstMessage = common_tags_1.oneLine `
       Project name "${projectName}" is not valid. New project names must
       start with a letter, and must contain only alphanumeric characters or dashes.
       When adding a dash the segment after the dash must also start with a letter.
     `;
-        const msg = core_1.tags.stripIndent `
+        const msg = common_tags_1.stripIndent `
       ${firstMessage}
       ${projectName}
       ${Array(errorIndex + 1).join(' ') + '^'}
