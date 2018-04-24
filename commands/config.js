@@ -102,6 +102,31 @@ function setValueFromPath(root, path, newValue) {
         return undefined;
     }
 }
+function normalizeValue(value, path) {
+    const cliOptionType = validCliPaths.get(path);
+    if (cliOptionType) {
+        switch (cliOptionType) {
+            case 'boolean':
+                if (value.trim() === 'true') {
+                    return true;
+                }
+                else if (value.trim() === 'false') {
+                    return false;
+                }
+                break;
+            case 'number':
+                const numberValue = Number(value);
+                if (!Number.isNaN(numberValue)) {
+                    return numberValue;
+                }
+                break;
+            case 'string':
+                return value;
+        }
+        throw new Error(`Invalid value type; expected a ${cliOptionType}.`);
+    }
+    return core_1.parseJson(value, core_1.JsonParseMode.Loose);
+}
 class ConfigCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -155,13 +180,7 @@ class ConfigCommand extends command_1.Command {
         const [config, configPath] = config_1.getWorkspaceRaw(options.global ? 'global' : 'local');
         // TODO: Modify & save without destroying comments
         const configValue = config.value;
-        const value = core_1.parseJson(options.value, core_1.JsonParseMode.Loose);
-        const pathType = validCliPaths.get(options.jsonPath);
-        if (pathType) {
-            if (typeof value != pathType) {
-                throw new Error(`Invalid value type; expected a ${pathType}.`);
-            }
-        }
+        const value = normalizeValue(options.value, options.jsonPath);
         const result = setValueFromPath(configValue, options.jsonPath, value);
         if (result === undefined) {
             throw new SilentError('Value cannot be found.');

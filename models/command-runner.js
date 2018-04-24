@@ -107,9 +107,7 @@ function runCommand(commandMap, args, logger, context) {
         }
         else {
             verifyCommandInScope(command, executionScope);
-            if (!command.allowMissingWorkspace) {
-                verifyWorkspace(command, executionScope, context.project.root);
-            }
+            verifyWorkspace(command, executionScope, context.project.root, command.allowMissingWorkspace ? logger : null);
             delete options.h;
             delete options.help;
             return yield validateAndRunCommand(command, options);
@@ -235,7 +233,7 @@ function verifyCommandInScope(command, scope = command_1.CommandScope.everywhere
         }
     }
 }
-function verifyWorkspace(command, executionScope, root) {
+function verifyWorkspace(command, executionScope, root, logger = null) {
     if (command.scope === command_1.CommandScope.everywhere) {
         return;
     }
@@ -259,12 +257,19 @@ function verifyWorkspace(command, executionScope, root) {
             // ------------------------------------------------------------------------------------------
             // If changing this message, please update the same message in
             // `packages/@angular/cli/bin/ng-update-message.js`
-            throw new SilentError(core_1.tags.stripIndent `
+            const message = core_1.tags.stripIndent `
         The Angular CLI configuration format has been changed, and your existing configuration can
         be updated automatically by running the following command:
 
           ng update @angular/cli --migrate-only --from=1
-      `);
+      `;
+            if (!logger) {
+                throw new SilentError(message);
+            }
+            else {
+                logger.warn(message);
+                return;
+            }
         }
         // If no configuration file is found (old or new), throw an exception.
         throw new SilentError('Invalid project: missing workspace file.');

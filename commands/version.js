@@ -32,6 +32,7 @@ class VersionCommand extends command_1.Command {
             /^@schematics\/.*/,
             /^rxjs$/,
             /^typescript$/,
+            /^ng-packagr$/,
             /^webpack$/,
         ];
         const maybeNodeModules = find_up_1.findUp('node_modules', __dirname);

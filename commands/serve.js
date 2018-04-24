@@ -48,6 +48,6 @@ class ServeCommand extends architect_command_1.ArchitectCommand {
         });
     }
 }
-ServeCommand.aliases = ['server', 's'];
+ServeCommand.aliases = ['s'];
 exports.default = ServeCommand;
 //# sourceMappingURL=/home/travis/build/angular/angular-cli/commands/serve.js.map
