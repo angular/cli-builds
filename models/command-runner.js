@@ -135,12 +135,20 @@ function parseOptions(args, cmdOpts, commandArguments, argStrategy) {
         defaults[opt.name] = opt.default;
         return defaults;
     }, {});
+    const strings = cmdOpts
+        .filter(o => o.type === String)
+        .map(o => o.name);
+    const numbers = cmdOpts
+        .filter(o => o.type === Number)
+        .map(o => o.name);
     aliases.help = ['h'];
     booleans.push('help');
     const yargsOptions = {
         alias: aliases,
         boolean: booleans,
-        default: defaults
+        default: defaults,
+        string: strings,
+        number: numbers
     };
     const parsedOptions = parser(args, yargsOptions);
     // Remove aliases.
@@ -252,9 +260,9 @@ function verifyWorkspace(command, executionScope, root) {
             // If changing this message, please update the same message in
             // `packages/@angular/cli/bin/ng-update-message.js`
             throw new SilentError(core_1.tags.stripIndent `
-        An old CLI configuration has been detected, which needs to be updated to the latest version.
+        The Angular CLI configuration format has been changed, and your existing configuration can
+        be updated automatically by running the following command:
 
-        Please run the following command to update this workspace:
           ng update @angular/cli --migrate-only --from=1
       `);
         }

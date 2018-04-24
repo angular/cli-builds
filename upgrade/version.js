@@ -100,7 +100,7 @@ class Version {
         else if (angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-rc.0'))
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
             console.warn(bold(red(core_1.tags.stripIndents `
-          This project uses a temporary compatibility version of RxJs (${rxjsVersion}.
+          This project uses a temporary compatibility version of RxJs (${rxjsVersion}).
 
           Please visit the link below to find instructions on how to update RxJs.
           https://docs.google.com/document/d/12nlLt71VLKb-z3YaSGzUfx6mJbc34nsMXtByPUN35cg/edit#

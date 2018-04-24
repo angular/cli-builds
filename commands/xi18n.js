@@ -13,7 +13,7 @@ const architect_command_1 = require("../models/architect-command");
 class Xi18nCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
-        this.name = 'xi81n';
+        this.name = 'xi18n';
         this.target = 'extract-i18n';
         this.description = 'Extracts i18n messages from source code.';
         this.scope = command_1.CommandScope.inProject;
