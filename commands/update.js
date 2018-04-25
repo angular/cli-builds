@@ -44,10 +44,17 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
+            const schematicOptions = Object.assign({}, options);
+            if (schematicOptions._[0] == '@angular/cli'
+                && !schematicOptions.migrateOnly
+                && !schematicOptions.from) {
+                schematicOptions.migrateOnly = true;
+                schematicOptions.from = '1.0.0';
+            }
             return this.runSchematic({
                 collectionName: this.collectionName,
                 schematicName: this.schematicName,
-                schematicOptions: options,
+                schematicOptions,
                 dryRun: options.dryRun,
                 force: false,
                 showNothingDone: false,
