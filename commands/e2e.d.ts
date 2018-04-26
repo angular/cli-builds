@@ -11,6 +11,7 @@ export default class E2eCommand extends ArchitectCommand {
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
+    readonly multiTarget: true;
     readonly options: Option[];
     run(options: Options): Promise<number>;
 }

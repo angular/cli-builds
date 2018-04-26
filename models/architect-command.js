@@ -21,6 +21,8 @@ class ArchitectCommand extends command_1.Command {
         super(...arguments);
         this._host = new node_1.NodeJsSyncHost();
         this._logger = node_1.createConsoleLogger();
+        // If this command supports running multiple targets.
+        this.multiTarget = false;
         this.Options = [{
                 name: 'configuration',
                 description: 'The configuration',
@@ -55,7 +57,7 @@ class ArchitectCommand extends command_1.Command {
                     targetSpec = { project, target };
                 }
                 else if (this.target) {
-                    const projects = this.getAllProjectsForTargetName(this.target);
+                    const projects = this.getProjectNamesByTarget(this.target);
                     if (projects.length === 1) {
                         // If there is a single target, use it to parse overrides.
                         targetSpec = {
@@ -80,7 +82,7 @@ class ArchitectCommand extends command_1.Command {
     }
     validate(options) {
         if (!options.project && this.target) {
-            const projectNames = this.getAllProjectsForTargetName(this.target);
+            const projectNames = this.getProjectNamesByTarget(this.target);
             const overrides = Object.assign({}, options);
             delete overrides.project;
             delete overrides.configuration;
@@ -138,7 +140,7 @@ class ArchitectCommand extends command_1.Command {
                 if (!targetSpec.project && this.target) {
                     // This runs each target sequentially.
                     // Running them in parallel would jumble the log messages.
-                    return yield rxjs_2.from(this.getAllProjectsForTargetName(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
+                    return yield rxjs_2.from(this.getProjectNamesByTarget(this.target)).pipe(operators_1.concatMap(project => runSingleTarget(Object.assign({}, targetSpec, { project }))), operators_1.toArray()).toPromise().then(results => results.every(res => res === 0) ? 0 : 1);
                 }
                 else {
                     return yield runSingleTarget(targetSpec).toPromise();
@@ -169,8 +171,24 @@ class ArchitectCommand extends command_1.Command {
             }
         });
     }
-    getAllProjectsForTargetName(targetName) {
-        return this._workspace.listProjectNames().map(projectName => this._architect.listProjectTargets(projectName).includes(targetName) ? projectName : null).filter(x => !!x);
+    getProjectNamesByTarget(targetName) {
+        const allProjectsForTargetName = this._workspace.listProjectNames().map(projectName => this._architect.listProjectTargets(projectName).includes(targetName) ? projectName : null).filter(x => !!x);
+        if (this.multiTarget) {
+            // For multi target commands, we always list all projects that have the target.
+            return allProjectsForTargetName;
+        }
+        else {
+            // For single target commands, we try try the default project project first,
+            // then the full list if it has a single project, then error out.
+            const maybeDefaultProject = this._workspace.getDefaultProjectName();
+            if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
+                return [maybeDefaultProject];
+            }
+            if (allProjectsForTargetName.length === 1) {
+                return allProjectsForTargetName;
+            }
+            throw new Error(`Could not determine a single project for the '${targetName} target.`);
+        }
     }
     _loadWorkspaceAndArchitect() {
         const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
