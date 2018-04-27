@@ -1,0 +1,1 @@
+{"version":3,"file":"project.js","sourceRoot":"/home/travis/build/angular/angular-cli/","sources":["utilities/project.ts"],"names":[],"mappings":";;AAAA,uCAAmC;AAEnC;IACE,MAAM,mBAAmB,GAAG,CAAC,cAAc,EAAE,eAAe,CAAC,CAAC;IAE9D,OAAO,gBAAM,CAAC,mBAAmB,EAAE,OAAO,CAAC,GAAG,EAAE,CAAC,KAAK,IAAI,CAAC;AAC7D,CAAC;AAJD,sCAIC"}

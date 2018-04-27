@@ -12,6 +12,7 @@ const command_1 = require("../models/command");
 const core_1 = require("@angular-devkit/core");
 const strings_1 = require("@angular-devkit/core/src/utils/strings");
 const find_up_1 = require("../utilities/find-up");
+const project_1 = require("../utilities/project");
 const yargsParser = require("yargs-parser");
 const fs = require("fs");
 const path_1 = require("path");
@@ -33,7 +34,7 @@ function runCommand(commandMap, args, logger, context) {
         let commandName = rawOptions._[0];
         // remove the command name
         rawOptions._ = rawOptions._.slice(1);
-        const executionScope = context.project.isEmberCLIProject()
+        const executionScope = project_1.insideProject()
             ? command_1.CommandScope.inProject
             : command_1.CommandScope.outsideProject;
         let Cmd;
@@ -235,9 +236,9 @@ function verifyWorkspace(command, executionScope, root, logger = null) {
             core_1.normalize('.angular-cli.json'),
             core_1.normalize('angular-cli.json'),
         ];
-        const oldConfigFilePath = (root && find_up_1.findUp(oldConfigFileNames, root, true))
-            || find_up_1.findUp(oldConfigFileNames, process.cwd(), true)
-            || find_up_1.findUp(oldConfigFileNames, __dirname, true);
+        const oldConfigFilePath = (root && find_up_1.findUp(oldConfigFileNames, root))
+            || find_up_1.findUp(oldConfigFileNames, process.cwd())
+            || find_up_1.findUp(oldConfigFileNames, __dirname);
         // If an old configuration file is found, throw an exception.
         if (oldConfigFilePath) {
             // ------------------------------------------------------------------------------------------

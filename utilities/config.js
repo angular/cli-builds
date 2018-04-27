@@ -12,6 +12,7 @@ function getSchemaLocation() {
 }
 exports.workspaceSchemaPath = getSchemaLocation();
 const configNames = ['angular.json', '.angular.json'];
+const globalFileName = '.angular-config.json';
 function projectFilePath(projectPath) {
     // Find the configuration, either where specified, in the Angular CLI project
     // (if it's in node_modules) or from the current process.
@@ -24,11 +25,9 @@ function globalFilePath() {
     if (!home) {
         return null;
     }
-    for (const name of configNames) {
-        const p = path.join(home, name);
-        if (fs_1.existsSync(p)) {
-            return p;
-        }
+    const p = path.join(home, globalFileName);
+    if (fs_1.existsSync(p)) {
+        return p;
     }
     return null;
 }
@@ -61,7 +60,7 @@ function createGlobalSettings() {
     if (!home) {
         throw new Error('No home directory found.');
     }
-    const globalPath = path.join(home, configNames[1]);
+    const globalPath = path.join(home, globalFileName);
     fs_1.writeFileSync(globalPath, JSON.stringify({ version: 1 }));
     return globalPath;
 }

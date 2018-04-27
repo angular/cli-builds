@@ -15,7 +15,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
         super(...arguments);
         this.name = 'update';
         this.description = 'Updates your application and its dependencies.';
-        this.scope = command_1.CommandScope.inProject;
+        this.scope = command_1.CommandScope.everywhere;
         this.arguments = ['packages'];
         this.options = [
             // Remove the --force flag.
