@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
+const tools_1 = require("@angular-devkit/schematics/tools");
 const chalk_1 = require("chalk");
 const command_1 = require("../models/command");
 const command_runner_1 = require("../models/command-runner");
@@ -69,7 +71,18 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 dryRun: false,
                 force: false,
             };
-            return yield this.runSchematic(runOptions);
+            try {
+                return yield this.runSchematic(runOptions);
+            }
+            catch (e) {
+                if (e instanceof tools_1.NodePackageDoesNotSupportSchematics) {
+                    throw new SilentError(core_1.tags.oneLine `
+          The package that you are trying to add does not support schematics. You can try using
+          a different version of the package or contact the package author to add ng-add support.
+        `);
+                }
+                throw e;
+            }
         });
     }
 }

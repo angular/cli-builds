@@ -92,6 +92,12 @@ class SchematicCommand extends command_1.Command {
             }
         });
         delete schematicOptions._;
+        workflow.registry.addSmartDefaultProvider('projectName', (_schema) => {
+            if (this._workspace) {
+                return this._workspace.getDefaultProjectName();
+            }
+            return undefined;
+        });
         workflow.reporter.subscribe((event) => {
             nothingDone = false;
             // Strip leading slash to prevent confusion.
