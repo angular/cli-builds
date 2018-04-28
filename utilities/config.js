@@ -7,8 +7,7 @@ const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
 const find_up_1 = require("./find-up");
 function getSchemaLocation() {
-    const packagePath = require.resolve('@angular-devkit/core/package.json');
-    return path.join(path.dirname(packagePath), 'src/workspace/workspace-schema.json');
+    return path.join(__dirname, '../lib/config/schema.json');
 }
 exports.workspaceSchemaPath = getSchemaLocation();
 const configNames = ['angular.json', '.angular.json'];
@@ -39,13 +38,8 @@ function getWorkspace(level = 'local') {
     }
     let configPath = level === 'local' ? projectFilePath() : globalFilePath();
     if (!configPath) {
-        if (level === 'global') {
-            configPath = createGlobalSettings();
-        }
-        else {
-            cachedWorkspaces.set(level, null);
-            return null;
-        }
+        cachedWorkspaces.set(level, null);
+        return null;
     }
     const root = core_1.normalize(path.dirname(configPath));
     const file = core_1.normalize(path.basename(configPath));
@@ -64,6 +58,7 @@ function createGlobalSettings() {
     fs_1.writeFileSync(globalPath, JSON.stringify({ version: 1 }));
     return globalPath;
 }
+exports.createGlobalSettings = createGlobalSettings;
 function getWorkspaceRaw(level = 'local') {
     let configPath = level === 'local' ? projectFilePath() : globalFilePath();
     if (!configPath) {
@@ -97,7 +92,7 @@ function validateWorkspace(json) {
 }
 exports.validateWorkspace = validateWorkspace;
 function getPackageManager() {
-    let workspace = getWorkspace();
+    let workspace = getWorkspace('local');
     if (workspace) {
         const project = workspace.getProjectByPath(core_1.normalize(process.cwd()));
         if (project && workspace.getProjectCli(project)) {
@@ -106,7 +101,7 @@ function getPackageManager() {
                 return value;
             }
         }
-        else if (workspace.getCli()) {
+        if (workspace.getCli()) {
             const value = workspace.getCli()['packageManager'];
             if (typeof value == 'string') {
                 return value;
@@ -204,7 +199,7 @@ function isWarningEnabled(warning) {
                 }
             }
         }
-        else if (workspace.getCli()) {
+        if (workspace.getCli()) {
             const warnings = workspace.getCli()['warnings'];
             if (typeof warnings == 'object' && !Array.isArray(warnings)) {
                 const value = warnings[warning];

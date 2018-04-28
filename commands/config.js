@@ -145,11 +145,11 @@ class ConfigCommand extends command_1.Command {
     }
     run(options) {
         const level = options.global ? 'global' : 'local';
-        const config = config_1.getWorkspace(level);
-        if (!config) {
-            throw new SilentError('No config found.');
-        }
         if (options.value == undefined) {
+            const config = config_1.getWorkspace(level);
+            if (!config) {
+                throw new SilentError('No config found.');
+            }
             this.get(config._workspace, options);
         }
         else {
