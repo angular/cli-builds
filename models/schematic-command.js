@@ -94,7 +94,8 @@ class SchematicCommand extends command_1.Command {
         delete schematicOptions._;
         workflow.registry.addSmartDefaultProvider('projectName', (_schema) => {
             if (this._workspace) {
-                return this._workspace.getDefaultProjectName();
+                return this._workspace.getProjectByPath(core_1.normalize(process.cwd()))
+                    || this._workspace.getDefaultProjectName();
             }
             return undefined;
         });

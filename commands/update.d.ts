@@ -16,5 +16,6 @@ export default class UpdateCommand extends SchematicCommand {
     private schematicName;
     private initialized;
     initialize(options: any): Promise<void>;
+    validate(options: any): Promise<boolean>;
     run(options: UpdateOptions): Promise<number | void>;
 }

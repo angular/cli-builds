@@ -248,7 +248,7 @@ function verifyWorkspace(command, executionScope, root, logger = null) {
         The Angular CLI configuration format has been changed, and your existing configuration can
         be updated automatically by running the following command:
 
-          ng update @angular/cli --migrate-only --from=1
+          ng update @angular/cli
       `;
             if (!logger) {
                 throw new SilentError(message);
