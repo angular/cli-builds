@@ -1,8 +1,12 @@
 import { Command, Option } from '../models/command';
-export default class EjectCommand extends Command {
+export interface Options {
+    keyword: string;
+    search?: boolean;
+}
+export default class GetSetCommand extends Command {
     readonly name: string;
     readonly description: string;
     readonly arguments: string[];
     readonly options: Option[];
-    run(): void;
+    run(_options: Options): Promise<void>;
 }

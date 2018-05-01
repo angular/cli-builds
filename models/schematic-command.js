@@ -268,7 +268,7 @@ class SchematicCommand extends command_1.Command {
         }
         const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
         try {
-            workspaceLoader.loadWorkspace().pipe(operators_1.take(1))
+            workspaceLoader.loadWorkspace(this.project.root).pipe(operators_1.take(1))
                 .subscribe((workspace) => this._workspace = workspace, (err) => {
                 if (!this.allowMissingWorkspace) {
                     // Ignore missing workspace

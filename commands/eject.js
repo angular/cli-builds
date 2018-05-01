@@ -11,7 +11,7 @@ class EjectCommand extends command_1.Command {
         this.arguments = [];
         this.options = [];
     }
-    run(_options) {
+    run() {
         this.logger.info(core_1.tags.stripIndents `
       The 'eject' command has been temporarily disabled, as it is not yet compatible with the new
       angular.json format. The new configuration format provides further flexibility to modify the

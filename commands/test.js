@@ -17,6 +17,7 @@ class TestCommand extends architect_command_1.ArchitectCommand {
         this.target = 'test';
         this.description = 'Run unit tests in existing project.';
         this.scope = command_1.CommandScope.inProject;
+        this.multiTarget = true;
         this.options = [
             this.prodOption,
             this.configurationOption

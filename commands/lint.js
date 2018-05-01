@@ -17,6 +17,7 @@ class LintCommand extends architect_command_1.ArchitectCommand {
         this.target = 'lint';
         this.description = 'Lints code in existing project.';
         this.scope = command_1.CommandScope.inProject;
+        this.multiTarget = true;
         this.options = [
             this.configurationOption
         ];

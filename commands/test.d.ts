@@ -11,7 +11,7 @@ export default class TestCommand extends ArchitectCommand {
     readonly description: string;
     static aliases: string[];
     readonly scope: CommandScope;
-    readonly multiTarget: true;
+    readonly multiTarget: boolean;
     readonly options: Option[];
     run(options: Options): Promise<number>;
 }

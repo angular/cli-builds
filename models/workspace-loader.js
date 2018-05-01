@@ -20,8 +20,8 @@ class WorkspaceLoader {
     loadGlobalWorkspace() {
         return this._getGlobalWorkspaceFilePath().pipe(operators_1.concatMap(globalWorkspacePath => this._loadWorkspaceFromPath(globalWorkspacePath)));
     }
-    loadWorkspace() {
-        return this._getProjectWorkspaceFilePath().pipe(operators_1.concatMap(globalWorkspacePath => this._loadWorkspaceFromPath(globalWorkspacePath)));
+    loadWorkspace(projectPath) {
+        return this._getProjectWorkspaceFilePath(projectPath).pipe(operators_1.concatMap(globalWorkspacePath => this._loadWorkspaceFromPath(globalWorkspacePath)));
     }
     // TODO: do this with the host instead of fs.
     _getProjectWorkspaceFilePath(projectPath) {

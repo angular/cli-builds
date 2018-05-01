@@ -192,7 +192,7 @@ class ArchitectCommand extends command_1.Command {
     }
     _loadWorkspaceAndArchitect() {
         const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
-        return workspaceLoader.loadWorkspace().pipe(operators_1.tap((workspace) => this._workspace = workspace), operators_1.concatMap((workspace) => {
+        return workspaceLoader.loadWorkspace(this.project.root).pipe(operators_1.tap((workspace) => this._workspace = workspace), operators_1.concatMap((workspace) => {
             return new architect_1.Architect(workspace).loadArchitect();
         }), operators_1.tap((architect) => this._architect = architect));
     }

@@ -9,6 +9,7 @@ class E2eCommand extends architect_command_1.ArchitectCommand {
         this.target = 'e2e';
         this.description = 'Run e2e tests in existing project.';
         this.scope = command_1.CommandScope.inProject;
+        this.multiTarget = true;
         this.options = [
             this.prodOption,
             this.configurationOption
