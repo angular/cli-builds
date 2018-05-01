@@ -125,6 +125,50 @@ function getPackageManager() {
     return 'npm';
 }
 exports.getPackageManager = getPackageManager;
+function migrateLegacyGlobalConfig() {
+    const homeDir = os.homedir();
+    if (homeDir) {
+        const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
+        if (fs_1.existsSync(legacyGlobalConfigPath)) {
+            const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
+            const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
+            if (!legacy || typeof legacy != 'object' || Array.isArray(legacy)) {
+                return false;
+            }
+            const cli = {};
+            if (legacy.packageManager && typeof legacy.packageManager == 'string'
+                && legacy.packageManager !== 'default') {
+                cli['packageManager'] = legacy.packageManager;
+            }
+            if (legacy.defaults && typeof legacy.defaults == 'object' && !Array.isArray(legacy.defaults)
+                && legacy.defaults.schematics && typeof legacy.defaults.schematics == 'object'
+                && !Array.isArray(legacy.defaults.schematics)
+                && typeof legacy.defaults.schematics.collection == 'string') {
+                cli['defaultCollection'] = legacy.defaults.schematics.collection;
+            }
+            if (legacy.warnings && typeof legacy.warnings == 'object'
+                && !Array.isArray(legacy.warnings)) {
+                let warnings = {};
+                if (typeof legacy.warnings.versionMismatch == 'boolean') {
+                    warnings['versionMismatch'] = legacy.warnings.versionMismatch;
+                }
+                if (typeof legacy.warnings.typescriptMismatch == 'boolean') {
+                    warnings['typescriptMismatch'] = legacy.warnings.typescriptMismatch;
+                }
+                if (Object.getOwnPropertyNames(warnings).length > 0) {
+                    cli['warnings'] = warnings;
+                }
+            }
+            if (Object.getOwnPropertyNames(cli).length > 0) {
+                const globalPath = path.join(homeDir, globalFileName);
+                fs_1.writeFileSync(globalPath, JSON.stringify({ version: 1, cli }, null, 2));
+                return true;
+            }
+        }
+    }
+    return false;
+}
+exports.migrateLegacyGlobalConfig = migrateLegacyGlobalConfig;
 // Fallback, check for packageManager in config file in v1.* global config.
 function getLegacyPackageManager() {
     const homeDir = os.homedir();
@@ -132,14 +176,13 @@ function getLegacyPackageManager() {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
-            const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
-            if (ast.kind != 'object') {
+            const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
+            if (!legacy || typeof legacy != 'object' || Array.isArray(legacy)) {
                 return null;
             }
-            const cfg = ast;
-            if (cfg.value.packageManager && typeof cfg.value.packageManager === 'string' &&
-                cfg.value.packageManager !== 'default') {
-                return cfg.value.packageManager;
+            if (legacy.packageManager && typeof legacy.packageManager === 'string'
+                && legacy.packageManager !== 'default') {
+                return legacy.packageManager;
             }
         }
     }

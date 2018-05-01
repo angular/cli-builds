@@ -145,8 +145,20 @@ class ConfigCommand extends command_1.Command {
     }
     run(options) {
         const level = options.global ? 'global' : 'local';
+        let config = config_1.getWorkspace(level);
+        if (options.global && !config) {
+            try {
+                if (config_1.migrateLegacyGlobalConfig()) {
+                    config =
+                        config_1.getWorkspace(level);
+                    this.logger.info(core_1.tags.oneLine `
+            We found a global configuration that was used in Angular CLI 1.
+            It has been automatically migrated.`);
+                }
+            }
+            catch (_a) { }
+        }
         if (options.value == undefined) {
-            const config = config_1.getWorkspace(level);
             if (!config) {
                 throw new SilentError('No config found.');
             }
