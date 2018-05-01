@@ -1,13 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const semver_1 = require("semver");
-const chalk_1 = require("chalk");
 const core_1 = require("@angular-devkit/core");
 const path = require("path");
 const config_1 = require("../utilities/config");
 const require_project_module_1 = require("../utilities/require-project-module");
 const resolve = require('resolve');
-const { bold, red, yellow } = chalk_1.default;
 class Version {
     constructor(_version = null) {
         this._version = _version;
@@ -58,13 +56,13 @@ class Version {
             rxjsPkgJson = require_project_module_1.requireProjectModule(projectRoot, 'rxjs/package.json');
         }
         catch (_a) {
-            console.error(bold(red(core_1.tags.stripIndents `
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
         You seem to not be depending on "@angular/core" and/or "rxjs". This is an error.
       `)));
             process.exit(2);
         }
         if (!(angularPkgJson && angularPkgJson['version'] && rxjsPkgJson && rxjsPkgJson['version'])) {
-            console.error(bold(red(core_1.tags.stripIndents `
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
         Cannot determine versions of "@angular/core" and/or "rxjs".
         This likely means your local installation is broken. Please reinstall your packages.
       `)));
@@ -73,11 +71,11 @@ class Version {
         let angularVersion = new Version(angularPkgJson['version']);
         let rxjsVersion = new Version(rxjsPkgJson['version']);
         if (angularVersion.isLocal()) {
-            console.warn(yellow('Using a local version of angular. Proceeding with care...'));
+            console.warn(core_1.terminal.yellow('Using a local version of angular. Proceeding with care...'));
             return;
         }
         if (!angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.0.0'))) {
-            console.error(bold(red(core_1.tags.stripIndents `
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
           This version of CLI is only compatible with Angular version 5.0.0 or higher.
 
           Please visit the link below to find instructions on how to update Angular.
@@ -88,7 +86,7 @@ class Version {
         else if (angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-rc.0'))
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.6.0-forward-compat.0'))
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
-            console.error(bold(red(core_1.tags.stripIndents `
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
           This project uses version ${rxjsVersion} of RxJs, which is not supported by Angular v6.
           The official RxJs version that is supported is 5.6.0-forward-compat.0 and greater.
 
@@ -99,7 +97,7 @@ class Version {
         }
         else if (angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-rc.0'))
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
-            console.warn(bold(red(core_1.tags.stripIndents `
+            console.warn(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
           This project uses a temporary compatibility version of RxJs (${rxjsVersion}).
 
           Please visit the link below to find instructions on how to update RxJs.
@@ -117,7 +115,7 @@ class Version {
             tsVersion = require_project_module_1.requireProjectModule(projectRoot, 'typescript').version;
         }
         catch (_a) {
-            console.error(bold(red(core_1.tags.stripIndents `
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
         Versions of @angular/compiler-cli and typescript could not be determined.
         The most common reason for this is a broken npm install.
 
@@ -138,7 +136,7 @@ class Version {
         const currentCombo = versionCombos.find((combo) => semver_1.satisfies(compilerVersion, combo.compiler));
         if (currentCombo && !semver_1.satisfies(tsVersion, currentCombo.typescript)) {
             // First line of warning looks weird being split in two, disable tslint for it.
-            console.log((yellow('\n' + core_1.tags.stripIndent `
+            console.log((core_1.terminal.yellow('\n' + core_1.tags.stripIndent `
         @angular/compiler-cli@${compilerVersion} requires typescript@'${currentCombo.typescript}' but ${tsVersion} was found instead.
         Using this version can result in undefined behaviour and difficult to debug problems.
 

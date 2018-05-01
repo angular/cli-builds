@@ -9,12 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const chalk_1 = require("chalk");
 const config_1 = require("../utilities/config");
 const schematics_1 = require("../utilities/schematics");
 const core_1 = require("@angular-devkit/core");
 const schematic_command_1 = require("../models/schematic-command");
-const { cyan } = chalk_1.default;
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -102,7 +100,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
                 this.logger.info(`    ${schematicName}`);
             });
             this.logger.warn(`\nTo see help for a schematic run:`);
-            this.logger.info(cyan(`  ng generate <schematic> --help`));
+            this.logger.info(core_1.terminal.cyan(`  ng generate <schematic> --help`));
         }
     }
 }

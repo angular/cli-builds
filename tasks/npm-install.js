@@ -9,15 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("@angular-devkit/core/node");
-const chalk_1 = require("chalk");
 const child_process_1 = require("child_process");
+const core_1 = require("@angular-devkit/core");
 const SilentError = require('silent-error');
 function default_1(packageName, logger, packageManager, projectRoot, save) {
     return __awaiter(this, void 0, void 0, function* () {
         if (packageManager === 'default') {
             packageManager = 'npm';
         }
-        logger.info(chalk_1.default.green(`Installing packages for tooling via ${packageManager}.`));
+        logger.info(core_1.terminal.green(`Installing packages for tooling via ${packageManager}.`));
         const installArgs = [];
         switch (packageManager) {
             case 'cnpm':
@@ -57,12 +57,12 @@ function default_1(packageName, logger, packageManager, projectRoot, save) {
             child_process_1.spawn(packageManager, installArgs, installOptions)
                 .on('close', (code) => {
                 if (code === 0) {
-                    logger.info(chalk_1.default.green(`Installed packages for tooling via ${packageManager}.`));
+                    logger.info(core_1.terminal.green(`Installed packages for tooling via ${packageManager}.`));
                     resolve();
                 }
                 else {
                     const message = 'Package install failed, see above.';
-                    logger.info(chalk_1.default.red(message));
+                    logger.info(core_1.terminal.red(message));
                     reject(message);
                 }
             });

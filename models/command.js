@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const { cyan } = require('chalk');
+const core_1 = require("@angular-devkit/core");
 var CommandScope;
 (function (CommandScope) {
     CommandScope[CommandScope["everywhere"] = 0] = "everywhere";
@@ -69,7 +69,7 @@ class Command {
                 const aliases = o.aliases && o.aliases.length > 0
                     ? '(' + o.aliases.map(a => `-${a}`).join(' ') + ')'
                     : '';
-                this.logger.info(`  ${cyan('--' + o.name)} ${aliases}`);
+                this.logger.info(`  ${core_1.terminal.cyan('--' + o.name)} ${aliases}`);
                 this.logger.info(`    ${o.description}`);
             });
         }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const chalk_1 = require("chalk");
+const core_1 = require("@angular-devkit/core");
 function pickOne(of) {
     return of[Math.floor(Math.random() * of.length)];
 }
@@ -25,7 +25,7 @@ class AwesomeCommand extends command_1.Command {
             `I spy with my little eye a great developer!`,
             `Noop... already awesome.`
         ]);
-        this.logger.info(chalk_1.default.green(phrase));
+        this.logger.info(core_1.terminal.green(phrase));
     }
 }
 exports.default = AwesomeCommand;

@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
-const chalk_1 = require("chalk");
 const command_1 = require("../models/command");
 const command_runner_1 = require("../models/command-runner");
 const config_1 = require("../utilities/config");
@@ -41,7 +40,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         const collectionName = options._[0];
         if (!collectionName) {
             throw new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. `
-                + `${chalk_1.default.yellow('ng add [name] ')}. For more details, use "ng help".`);
+                + `${core_1.terminal.yellow('ng add [name] ')}. For more details, use "ng help".`);
         }
         return true;
     }
@@ -50,7 +49,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             const collectionName = options._[0];
             if (!collectionName) {
                 throw new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. `
-                    + `${chalk_1.default.yellow('ng add [name] ')}. For more details, use "ng help".`);
+                    + `${core_1.terminal.yellow('ng add [name] ')}. For more details, use "ng help".`);
             }
             const packageManager = config_1.getPackageManager();
             const npmInstall = require('../tasks/npm-install').default;
