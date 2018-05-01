@@ -115,9 +115,36 @@ function getPackageManager() {
             return value;
         }
     }
+    // Only check legacy if updated workspace is not found.
+    if (!workspace) {
+        const legacyPackageManager = getLegacyPackageManager();
+        if (legacyPackageManager !== null) {
+            return legacyPackageManager;
+        }
+    }
     return 'npm';
 }
 exports.getPackageManager = getPackageManager;
+// Fallback, check for packageManager in config file in v1.* global config.
+function getLegacyPackageManager() {
+    const homeDir = os.homedir();
+    if (homeDir) {
+        const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
+        if (fs_1.existsSync(legacyGlobalConfigPath)) {
+            const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
+            const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
+            if (ast.kind != 'object') {
+                return null;
+            }
+            const cfg = ast;
+            if (cfg.value.packageManager && typeof cfg.value.packageManager === 'string' &&
+                cfg.value.packageManager !== 'default') {
+                return cfg.value.packageManager;
+            }
+        }
+    }
+    return null;
+}
 function getDefaultSchematicCollection() {
     let workspace = getWorkspace('local');
     if (workspace) {
