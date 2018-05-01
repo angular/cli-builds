@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const core_1 = require("@angular-devkit/core");
+const chalk_1 = require("chalk");
+const { cyan } = chalk_1.default;
 class HelpCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -24,7 +25,7 @@ class HelpCommand extends command_1.Command {
         }));
         this.logger.info(`Available Commands:`);
         commands.forEach(cmd => {
-            this.logger.info(`  ${core_1.terminal.cyan(cmd.name)} ${cmd.description}`);
+            this.logger.info(`  ${cyan(cmd.name)} ${cmd.description}`);
         });
         this.logger.info(`\nFor more detailed help run "ng [command name] --help"`);
     }
