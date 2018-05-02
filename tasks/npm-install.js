@@ -12,7 +12,7 @@ const node_1 = require("@angular-devkit/core/node");
 const child_process_1 = require("child_process");
 const core_1 = require("@angular-devkit/core");
 const SilentError = require('silent-error');
-function default_1(packageName, logger, packageManager, projectRoot, save) {
+function default_1(packageName, logger, packageManager, projectRoot, save = true) {
     return __awaiter(this, void 0, void 0, function* () {
         if (packageManager === 'default') {
             packageManager = 'npm';
@@ -35,9 +35,7 @@ function default_1(packageName, logger, packageManager, projectRoot, save) {
                 // Verify if we need to install the package (it might already be there).
                 // If it's available and we shouldn't save, simply return. Nothing to be done.
                 node_1.resolve(packageName, { checkLocal: true, basedir: projectRoot });
-                if (!save) {
-                    return;
-                }
+                return;
             }
             catch (e) {
                 if (!(e instanceof node_1.ModuleNotFoundException)) {
