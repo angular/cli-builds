@@ -46,19 +46,23 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const collectionName = options._[0];
-            if (!collectionName) {
+            const firstArg = options._[0];
+            if (!firstArg) {
                 throw new SilentError(`The "ng ${this.name}" command requires a name argument to be specified eg. `
                     + `${core_1.terminal.yellow('ng add [name] ')}. For more details, use "ng help".`);
             }
             const packageManager = config_1.getPackageManager();
             const npmInstall = require('../tasks/npm-install').default;
-            const packageName = collectionName.startsWith('@')
-                ? collectionName.split('/', 2).join('/')
-                : collectionName.split('/', 1)[0];
+            const packageName = firstArg.startsWith('@')
+                ? firstArg.split('/', 2).join('/')
+                : firstArg.split('/', 1)[0];
+            // Remove the tag/version from the package name.
+            const collectionName = (packageName.startsWith('@')
+                ? packageName.split('@', 2).join('@')
+                : packageName.split('@', 1).join('@')) + firstArg.slice(packageName.length);
             // We don't actually add the package to package.json, that would be the work of the package
             // itself.
-            yield npmInstall(packageName, this.logger, packageManager, this.project.root, false);
+            yield npmInstall(packageName, this.logger, packageManager, this.project.root);
             // Reparse the options with the new schematic accessible.
             options = yield this._parseSchematicOptions(collectionName);
             const runOptions = {
