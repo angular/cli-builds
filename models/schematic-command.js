@@ -285,7 +285,7 @@ class SchematicCommand extends command_1.Command {
     }
     _cleanDefaults(defaults, undefinedOptions) {
         Object.keys(defaults)
-            .filter(key => !undefinedOptions.includes(key))
+            .filter(key => !undefinedOptions.map(core_1.strings.camelize).includes(key))
             .forEach(key => {
             delete defaults[key];
         });
