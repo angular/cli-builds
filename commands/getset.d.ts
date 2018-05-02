@@ -8,5 +8,6 @@ export default class GetSetCommand extends Command {
     readonly description: string;
     readonly arguments: string[];
     readonly options: Option[];
+    readonly hidden: boolean;
     run(_options: Options): Promise<void>;
 }

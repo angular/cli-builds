@@ -16,6 +16,7 @@ class GetSetCommand extends command_1.Command {
         this.description = 'Deprecated in favor of config command.';
         this.arguments = [];
         this.options = [];
+        this.hidden = true;
     }
     run(_options) {
         return __awaiter(this, void 0, void 0, function* () {
