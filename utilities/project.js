@@ -4,9 +4,9 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
+const core_1 = require("@angular-devkit/core");
 function insideProject() {
-    const possibleConfigFiles = ['angular.json', '.angular.json'];
-    return find_up_1.findUp(possibleConfigFiles, process.cwd()) !== null;
+    return getProjectDetails() !== null;
 }
 exports.insideProject = insideProject;
 function getProjectDetails() {
@@ -24,7 +24,7 @@ function getProjectDetails() {
     const configFileName = path.basename(configFilePath);
     const possibleDir = path.dirname(configFilePath);
     const homedir = os.homedir();
-    if (possibleDir === homedir) {
+    if (core_1.normalize(possibleDir) === core_1.normalize(homedir)) {
         const packageJsonPath = path.join(possibleDir, 'package.json');
         if (!fs.existsSync(packageJsonPath)) {
             // No package.json
