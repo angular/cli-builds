@@ -172,7 +172,7 @@ class ArchitectCommand extends command_1.Command {
             if (allProjectsForTargetName.length === 1) {
                 return allProjectsForTargetName;
             }
-            throw new Error(`Could not determine a single project for the '${targetName} target.`);
+            throw new Error(`Could not determine a single project for the '${targetName}' target.`);
         }
     }
     _loadWorkspaceAndArchitect() {
