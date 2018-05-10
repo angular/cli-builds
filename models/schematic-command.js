@@ -74,8 +74,7 @@ class SchematicCommand extends command_1.Command {
             packageManager: config_1.getPackageManager(),
             root: this.project.root,
         });
-        const cwd = process.env.PWD;
-        const workingDir = cwd.replace(this.project.root, '').replace(/\\/g, '/');
+        const workingDir = process.cwd().replace(this.project.root, '').replace(/\\/g, '/');
         const pathOptions = this.setPathOptions(schematicOptions, workingDir);
         schematicOptions = Object.assign({}, schematicOptions, pathOptions);
         const defaultOptions = this.readDefaults(collectionName, schematicName, schematicOptions);
