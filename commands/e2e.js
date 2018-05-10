@@ -16,19 +16,7 @@ class E2eCommand extends architect_command_1.ArchitectCommand {
         ];
     }
     run(options) {
-        let configuration = options.configuration;
-        if (!configuration && options.prod) {
-            configuration = 'production';
-        }
-        const overrides = Object.assign({}, options);
-        delete overrides.project;
-        delete overrides.prod;
-        return this.runArchitectTarget({
-            project: options.project,
-            target: this.target,
-            configuration,
-            overrides
-        }, options);
+        return this.runArchitectTarget(options);
     }
 }
 E2eCommand.aliases = ['e'];

@@ -1,6 +1,15 @@
-import { TargetSpecifier } from '@angular-devkit/architect';
+import { JsonObject } from '@angular-devkit/core';
 import { Command, Option } from './command';
-export declare abstract class ArchitectCommand<T = any> extends Command<T> {
+export interface ProjectAndConfigurationOptions {
+    project?: string;
+    configuration?: string;
+    prod: boolean;
+}
+export interface TargetOptions {
+    target?: string;
+}
+export declare type ArchitectCommandOptions = ProjectAndConfigurationOptions & TargetOptions & JsonObject;
+export declare abstract class ArchitectCommand extends Command<ArchitectCommandOptions> {
     private _host;
     private _architect;
     private _workspace;
@@ -9,12 +18,13 @@ export declare abstract class ArchitectCommand<T = any> extends Command<T> {
     readonly Options: Option[];
     readonly arguments: string[];
     target: string | undefined;
-    initialize(options: any): Promise<void>;
-    validate(options: any): boolean;
+    initialize(options: ArchitectCommandOptions): Promise<void>;
+    validate(options: ArchitectCommandOptions): boolean;
     protected mapArchitectOptions(schema: any): void;
     protected prodOption: Option;
     protected configurationOption: Option;
-    protected runArchitectTarget(targetSpec: TargetSpecifier, commandOptions: T): Promise<number>;
+    protected runArchitectTarget(options: ArchitectCommandOptions): Promise<number>;
     private getProjectNamesByTarget(targetName);
     private _loadWorkspaceAndArchitect();
+    private _makeTargetSpecifier(options);
 }

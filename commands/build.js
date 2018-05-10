@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const architect_command_1 = require("../models/architect-command");
 const command_1 = require("../models/command");
 const version_1 = require("../upgrade/version");
+const architect_command_1 = require("../models/architect-command");
 class BuildCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
@@ -31,20 +31,7 @@ class BuildCommand extends architect_command_1.ArchitectCommand {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            let configuration = options.configuration;
-            if (!configuration && options.prod) {
-                configuration = 'production';
-            }
-            const overrides = Object.assign({}, options);
-            delete overrides.project;
-            delete overrides.configuration;
-            delete overrides.prod;
-            return this.runArchitectTarget({
-                project: options.project,
-                target: this.target,
-                configuration,
-                overrides
-            }, options);
+            return this.runArchitectTarget(options);
         });
     }
 }

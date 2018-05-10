@@ -45,25 +45,12 @@ class ArchitectCommand extends command_1.Command {
     initialize(options) {
         return __awaiter(this, void 0, void 0, function* () {
             return this._loadWorkspaceAndArchitect().pipe(operators_1.concatMap(() => {
-                let targetSpec;
-                if (options.project) {
-                    targetSpec = {
-                        project: options.project,
-                        target: this.target
-                    };
-                }
-                else if (options.target) {
-                    const [project, target] = options.target.split(':');
-                    targetSpec = { project, target };
-                }
-                else if (this.target) {
+                const targetSpec = this._makeTargetSpecifier(options);
+                if (this.target && !targetSpec.project) {
                     const projects = this.getProjectNamesByTarget(this.target);
                     if (projects.length === 1) {
                         // If there is a single target, use it to parse overrides.
-                        targetSpec = {
-                            project: projects[0],
-                            target: this.target
-                        };
+                        targetSpec.project = projects[0];
                     }
                     else {
                         // Multiple targets can have different, incompatible options.
@@ -71,7 +58,7 @@ class ArchitectCommand extends command_1.Command {
                         return rxjs_1.of(null);
                     }
                 }
-                else {
+                if (!targetSpec.project || !targetSpec.target) {
                     throw new Error('Cannot determine project or target for Architect command.');
                 }
                 const builderConfig = this._architect.getBuilderConfiguration(targetSpec);
@@ -83,10 +70,7 @@ class ArchitectCommand extends command_1.Command {
     validate(options) {
         if (!options.project && this.target) {
             const projectNames = this.getProjectNamesByTarget(this.target);
-            const overrides = Object.assign({}, options);
-            delete overrides.project;
-            delete overrides.configuration;
-            delete overrides.prod;
+            const { overrides } = this._makeTargetSpecifier(options);
             if (projectNames.length > 1 && Object.keys(overrides).length > 0) {
                 throw new Error('Architect commands with multiple targets cannot specify overrides.'
                     + `'${this.target}' would be run on the following projects: ${projectNames.join()}`);
@@ -133,8 +117,9 @@ class ArchitectCommand extends command_1.Command {
             .filter(x => x)
             .forEach(option => this.options.push(option));
     }
-    runArchitectTarget(targetSpec, commandOptions) {
+    runArchitectTarget(options) {
         return __awaiter(this, void 0, void 0, function* () {
+            const targetSpec = this._makeTargetSpecifier(options);
             const runSingleTarget = (targetSpec) => this._architect.run(this._architect.getBuilderConfiguration(targetSpec), { logger: this._logger }).pipe(operators_1.map((buildEvent) => buildEvent.success ? 0 : 1));
             try {
                 if (!targetSpec.project && this.target) {
@@ -152,7 +137,7 @@ class ArchitectCommand extends command_1.Command {
                     e.errors.forEach(schemaError => {
                         if (schemaError.keyword === 'additionalProperties') {
                             const unknownProperty = schemaError.params.additionalProperty;
-                            if (unknownProperty in commandOptions) {
+                            if (unknownProperty in options) {
                                 const dashes = unknownProperty.length === 1 ? '-' : '--';
                                 this.logger.fatal(`Unknown option: '${dashes}${unknownProperty}'`);
                                 return 1;
@@ -195,6 +180,32 @@ class ArchitectCommand extends command_1.Command {
         return workspaceLoader.loadWorkspace(this.project.root).pipe(operators_1.tap((workspace) => this._workspace = workspace), operators_1.concatMap((workspace) => {
             return new architect_1.Architect(workspace).loadArchitect();
         }), operators_1.tap((architect) => this._architect = architect));
+    }
+    _makeTargetSpecifier(options) {
+        let project, target, configuration, overrides;
+        if (options.target) {
+            [project, target, configuration] = options.target.split(':');
+            overrides = Object.assign({}, options);
+            delete overrides.target;
+        }
+        else {
+            project = options.project;
+            target = this.target;
+            configuration = options.configuration;
+            if (!configuration && options.prod) {
+                configuration = 'production';
+            }
+            overrides = Object.assign({}, options);
+            delete overrides.configuration;
+            delete overrides.prod;
+            delete overrides.project;
+        }
+        return {
+            project,
+            configuration,
+            target,
+            overrides
+        };
     }
 }
 exports.ArchitectCommand = ArchitectCommand;

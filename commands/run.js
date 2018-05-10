@@ -24,15 +24,7 @@ class RunCommand extends architect_command_1.ArchitectCommand {
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.target) {
-                const [project, target, configuration] = options.target.split(':');
-                const overrides = Object.assign({}, options);
-                delete overrides.target;
-                return this.runArchitectTarget({
-                    project,
-                    target,
-                    configuration,
-                    overrides
-                }, options);
+                return this.runArchitectTarget(options);
             }
             else {
                 throw new Error('Invalid architect target.');

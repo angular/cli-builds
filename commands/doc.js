@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const opn_1 = require("opn");
+const opn = require('opn');
 class DocCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -38,7 +38,7 @@ class DocCommand extends command_1.Command {
             if (options.search) {
                 searchUrl = `https://www.google.com/search?q=site%3Aangular.io+${options.keyword}`;
             }
-            return opn_1.default(searchUrl, { wait: false });
+            return opn(searchUrl);
         });
     }
 }

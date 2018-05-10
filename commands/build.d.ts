@@ -1,10 +1,5 @@
-import { ArchitectCommand } from '../models/architect-command';
 import { Option, CommandScope } from '../models/command';
-export interface Options {
-    project?: string;
-    configuration?: string;
-    prod: boolean;
-}
+import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
 export default class BuildCommand extends ArchitectCommand {
     readonly name: string;
     readonly target: string;
@@ -12,6 +7,6 @@ export default class BuildCommand extends ArchitectCommand {
     static aliases: string[];
     scope: CommandScope;
     options: Option[];
-    validate(options: Options): boolean;
-    run(options: Options): Promise<number>;
+    validate(options: ArchitectCommandOptions): boolean;
+    run(options: ArchitectCommandOptions): Promise<number>;
 }

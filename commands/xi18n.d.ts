@@ -1,9 +1,5 @@
 import { CommandScope, Option } from '../models/command';
-import { ArchitectCommand } from '../models/architect-command';
-export interface Options {
-    project?: string;
-    configuration?: string;
-}
+import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
 export default class Xi18nCommand extends ArchitectCommand {
     readonly name: string;
     readonly target: string;
@@ -11,5 +7,5 @@ export default class Xi18nCommand extends ArchitectCommand {
     readonly scope: CommandScope;
     readonly multiTarget: true;
     readonly options: Option[];
-    run(options: Options): Promise<number>;
+    run(options: ArchitectCommandOptions): Promise<number>;
 }

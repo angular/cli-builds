@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.0-d173253",
+  "version": "6.0.0-c9a46eb",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -35,7 +35,7 @@
     "@angular-devkit/schematics": "0.6.0",
     "@schematics/angular": "0.6.0",
     "@schematics/update": "0.6.0",
-    "opn": "~5.1.0",
+    "opn": "~5.3.0",
     "resolve": "^1.1.7",
     "rxjs": "^6.0.0",
     "semver": "^5.1.0",

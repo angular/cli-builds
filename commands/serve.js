@@ -31,20 +31,7 @@ class ServeCommand extends architect_command_1.ArchitectCommand {
     }
     run(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            let configuration = options.configuration;
-            if (!configuration && options.prod) {
-                configuration = 'production';
-            }
-            const overrides = Object.assign({}, options);
-            delete overrides.project;
-            delete overrides.configuration;
-            delete overrides.prod;
-            return this.runArchitectTarget({
-                project: options.project,
-                target: this.target,
-                configuration,
-                overrides
-            }, options);
+            return this.runArchitectTarget(options);
         });
     }
 }
