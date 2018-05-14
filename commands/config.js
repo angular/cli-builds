@@ -4,7 +4,6 @@ const fs_1 = require("fs");
 const command_1 = require("../models/command");
 const config_1 = require("../utilities/config");
 const core_1 = require("@angular-devkit/core");
-const SilentError = require('silent-error');
 const validCliPaths = new Map([
     ['cli.warnings.versionMismatch', 'boolean'],
     ['cli.warnings.typescriptMismatch', 'boolean'],
@@ -160,18 +159,20 @@ class ConfigCommand extends command_1.Command {
         }
         if (options.value == undefined) {
             if (!config) {
-                throw new SilentError('No config found.');
+                this.logger.error('No config found.');
+                return 1;
             }
-            this.get(config._workspace, options);
+            return this.get(config._workspace, options);
         }
         else {
-            this.set(options);
+            return this.set(options);
         }
     }
     get(config, options) {
         const value = options.jsonPath ? getValueFromPath(config, options.jsonPath) : config;
         if (value === undefined) {
-            throw new SilentError('Value cannot be found.');
+            this.logger.error('Value cannot be found.');
+            return 1;
         }
         else if (typeof value == 'object') {
             this.logger.info(JSON.stringify(value, null, 2));
@@ -195,14 +196,15 @@ class ConfigCommand extends command_1.Command {
         const value = normalizeValue(options.value, options.jsonPath);
         const result = setValueFromPath(configValue, options.jsonPath, value);
         if (result === undefined) {
-            throw new SilentError('Value cannot be found.');
+            this.logger.error('Value cannot be found.');
+            return 1;
         }
         try {
             config_1.validateWorkspace(configValue);
         }
         catch (error) {
-            this.logger.error(error.message);
-            throw new SilentError();
+            this.logger.fatal(error.message);
+            return 1;
         }
         const output = JSON.stringify(configValue, null, 2);
         fs_1.writeFileSync(configPath, output);

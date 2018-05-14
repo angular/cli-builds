@@ -11,13 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("@angular-devkit/core/node");
 const child_process_1 = require("child_process");
 const core_1 = require("@angular-devkit/core");
-const SilentError = require('silent-error');
 function default_1(packageName, logger, packageManager, projectRoot, save = true) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (packageManager === 'default') {
-            packageManager = 'npm';
-        }
-        logger.info(core_1.terminal.green(`Installing packages for tooling via ${packageManager}.`));
         const installArgs = [];
         switch (packageManager) {
             case 'cnpm':
@@ -28,8 +23,11 @@ function default_1(packageName, logger, packageManager, projectRoot, save = true
                 installArgs.push('add');
                 break;
             default:
-                throw new SilentError(`Invalid package manager: ${JSON.stringify(packageManager)}.`);
+                packageManager = 'npm';
+                installArgs.push('install', '--quiet');
+                break;
         }
+        logger.info(core_1.terminal.green(`Installing packages for tooling via ${packageManager}.`));
         if (packageName) {
             try {
                 // Verify if we need to install the package (it might already be there).

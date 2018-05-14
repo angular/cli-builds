@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.1-c211ca6",
+  "version": "6.0.1-b8769d8",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -36,10 +36,8 @@
     "@schematics/angular": "0.6.1",
     "@schematics/update": "0.6.1",
     "opn": "~5.3.0",
-    "resolve": "^1.1.7",
     "rxjs": "^6.0.0",
     "semver": "^5.1.0",
-    "silent-error": "^1.0.0",
     "symbol-observable": "^1.2.0",
     "yargs-parser": "^10.0.0"
   },

@@ -5,7 +5,6 @@ const core_1 = require("@angular-devkit/core");
 const path = require("path");
 const config_1 = require("../utilities/config");
 const require_project_module_1 = require("../utilities/require-project-module");
-const resolve = require('resolve');
 class Version {
     constructor(_version = null) {
         this._version = _version;
@@ -26,28 +25,6 @@ class Version {
     get qualifier() { return this._semver ? this._semver.prerelease[0] : ''; }
     get extra() { return this._semver ? this._semver.prerelease[1] : ''; }
     toString() { return this._version; }
-    static fromProject() {
-        let packageJson = null;
-        try {
-            const angularCliPath = resolve.sync('@angular/cli', {
-                basedir: process.cwd(),
-                packageFilter: (pkg, _pkgFile) => {
-                    return packageJson = pkg;
-                }
-            });
-            if (angularCliPath && packageJson) {
-                try {
-                    return new Version(packageJson.version);
-                }
-                catch (_a) {
-                    return new Version(null);
-                }
-            }
-        }
-        catch (_b) {
-            return new Version(null);
-        }
-    }
     static assertCompatibleAngularVersion(projectRoot) {
         let angularPkgJson;
         let rxjsPkgJson;
