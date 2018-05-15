@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
 const fs_1 = require("fs");
+const path = require("path");
 function findUp(names, from) {
     if (!Array.isArray(names)) {
         names = [names];

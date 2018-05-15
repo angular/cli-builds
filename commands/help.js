@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const core_1 = require("@angular-devkit/core");
+const command_1 = require("../models/command");
 class HelpCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -20,7 +20,7 @@ class HelpCommand extends command_1.Command {
             .filter(cmd => !cmd.hidden && !cmd.unknown)
             .map(cmd => ({
             name: cmd.name,
-            description: cmd.description
+            description: cmd.description,
         }));
         this.logger.info(`Available Commands:`);
         commands.forEach(cmd => {

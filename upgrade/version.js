@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const semver_1 = require("semver");
 const core_1 = require("@angular-devkit/core");
 const path = require("path");
+const semver_1 = require("semver");
 const config_1 = require("../utilities/config");
 const require_project_module_1 = require("../utilities/require-project-module");
 class Version {
@@ -45,8 +45,8 @@ class Version {
       `)));
             process.exit(2);
         }
-        let angularVersion = new Version(angularPkgJson['version']);
-        let rxjsVersion = new Version(rxjsPkgJson['version']);
+        const angularVersion = new Version(angularPkgJson['version']);
+        const rxjsVersion = new Version(rxjsPkgJson['version']);
         if (angularVersion.isLocal()) {
             console.warn(core_1.terminal.yellow('Using a local version of angular. Proceeding with care...'));
             return;

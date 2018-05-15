@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
-const rxjs_1 = require("rxjs");
-const operators_1 = require("rxjs/operators");
 const fs = require("fs");
 const os_1 = require("os");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
 const find_up_1 = require("../utilities/find-up");
 // TODO: error out instead of returning null when workspace cannot be found.
 class WorkspaceLoader {

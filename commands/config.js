@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const fs_1 = require("fs");
 const command_1 = require("../models/command");
 const config_1 = require("../utilities/config");
-const core_1 = require("@angular-devkit/core");
 const validCliPaths = new Map([
     ['cli.warnings.versionMismatch', 'boolean'],
     ['cli.warnings.typescriptMismatch', 'boolean'],
@@ -138,8 +138,8 @@ class ConfigCommand extends command_1.Command {
                 type: Boolean,
                 'default': false,
                 aliases: ['g'],
-                description: 'Get/set the value in the global configuration (in your home directory).'
-            }
+                description: 'Get/set the value in the global configuration (in your home directory).',
+            },
         ];
     }
     run(options) {

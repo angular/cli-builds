@@ -22,8 +22,8 @@ class DocCommand extends command_1.Command {
                 aliases: ['s'],
                 type: Boolean,
                 default: false,
-                description: 'Search whole angular.io instead of just api.'
-            }
+                description: 'Search whole angular.io instead of just api.',
+            },
         ];
     }
     validate(options) {

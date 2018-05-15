@@ -12,8 +12,8 @@ const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const command_1 = require("../models/command");
 const command_runner_1 = require("../models/command-runner");
-const config_1 = require("../utilities/config");
 const schematic_command_1 = require("../models/schematic-command");
+const config_1 = require("../utilities/config");
 class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);

@@ -8,11 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const command_1 = require("../models/command");
+const schematic_command_1 = require("../models/schematic-command");
 const config_1 = require("../utilities/config");
 const schematics_1 = require("../utilities/schematics");
-const core_1 = require("@angular-devkit/core");
-const schematic_command_1 = require("../models/schematic-command");
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -21,7 +21,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         this.scope = command_1.CommandScope.inProject;
         this.arguments = ['schematic'];
         this.options = [
-            ...this.coreOptions
+            ...this.coreOptions,
         ];
         this.initialized = false;
     }

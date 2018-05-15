@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const config_1 = require("../utilities/config");
 const schematic_command_1 = require("../models/schematic-command");
+const config_1 = require("../utilities/config");
 class NewCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -26,14 +26,14 @@ class NewCommand extends schematic_command_1.SchematicCommand {
                 type: Boolean,
                 default: false,
                 aliases: ['v'],
-                description: 'Adds more details to output logging.'
+                description: 'Adds more details to output logging.',
             },
             {
                 name: 'collection',
                 type: String,
                 aliases: ['c'],
-                description: 'Schematics collection to use.'
-            }
+                description: 'Schematics collection to use.',
+            },
         ];
         this.initialized = false;
     }
@@ -47,7 +47,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         const schematicName = 'application';
         return this.getOptions({
             schematicName,
-            collectionName
+            collectionName,
         })
             .then((schematicOptions) => {
             this.options = this.options.concat(schematicOptions.options);
@@ -80,7 +80,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
                 schematicOptions: options,
                 debug: options.debug,
                 dryRun: options.dryRun,
-                force: options.force
+                force: options.force,
             });
         });
     }

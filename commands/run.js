@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const architect_command_1 = require("../models/architect-command");
+const command_1 = require("../models/command");
 class RunCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
@@ -18,7 +18,7 @@ class RunCommand extends architect_command_1.ArchitectCommand {
         this.scope = command_1.CommandScope.inProject;
         this.arguments = ['target'];
         this.options = [
-            this.configurationOption
+            this.configurationOption,
         ];
     }
     run(options) {

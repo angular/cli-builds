@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
-const command_1 = require("../models/command");
+const child_process = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const child_process = require("child_process");
+const command_1 = require("../models/command");
 const find_up_1 = require("../utilities/find-up");
 class VersionCommand extends command_1.Command {
     constructor() {
@@ -16,7 +16,7 @@ class VersionCommand extends command_1.Command {
     }
     run(_options) {
         let angularCoreVersion = '';
-        let angularSameAsCore = [];
+        const angularSameAsCore = [];
         const pkg = require(path.resolve(__dirname, '..', 'package.json'));
         let projPkg;
         try {

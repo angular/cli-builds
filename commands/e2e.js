@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const architect_command_1 = require("../models/architect-command");
+const command_1 = require("../models/command");
 class E2eCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
@@ -12,7 +12,7 @@ class E2eCommand extends architect_command_1.ArchitectCommand {
         this.multiTarget = true;
         this.options = [
             this.prodOption,
-            this.configurationOption
+            this.configurationOption,
         ];
     }
     run(options) {

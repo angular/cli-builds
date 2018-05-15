@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const core_1 = require("@angular-devkit/core");
+const command_1 = require("../models/command");
 function pickOne(of) {
     return of[Math.floor(Math.random() * of.length)];
 }
@@ -23,7 +23,7 @@ class AwesomeCommand extends command_1.Command {
             `Nothing to do; already awesome. Exiting.`,
             `Error 418: As Awesome As Can Get.`,
             `I spy with my little eye a great developer!`,
-            `Noop... already awesome.`
+            `Noop... already awesome.`,
         ]);
         this.logger.info(core_1.terminal.green(phrase));
     }

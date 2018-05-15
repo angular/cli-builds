@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
-const core_1 = require("@angular-devkit/core");
 function insideProject() {
     return getProjectDetails() !== null;
 }

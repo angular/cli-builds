@@ -1,5 +1,5 @@
-import { CommandScope, Option } from '../models/command';
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
+import { CommandScope, Option } from '../models/command';
 export default class RunCommand extends ArchitectCommand {
     readonly name: string;
     readonly description: string;

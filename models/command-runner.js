@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../models/command");
 const core_1 = require("@angular-devkit/core");
 const strings_1 = require("@angular-devkit/core/src/utils/strings");
+const command_1 = require("../models/command");
 const project_1 = require("../utilities/project");
 const yargsParser = require("yargs-parser");
 /**
@@ -164,7 +164,7 @@ function parseOptions(args, cmdOpts, commandArguments, argStrategy) {
         boolean: booleans,
         default: defaults,
         string: strings,
-        number: numbers
+        number: numbers,
     };
     const parsedOptions = parser(args, yargsOptions);
     // Remove aliases.

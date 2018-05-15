@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const architect_1 = require("@angular-devkit/architect");
 const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
-const architect_1 = require("@angular-devkit/architect");
-const command_1 = require("./command");
 const rxjs_1 = require("rxjs");
 const rxjs_2 = require("rxjs");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
+const command_1 = require("./command");
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -27,19 +27,19 @@ class ArchitectCommand extends command_1.Command {
                 name: 'configuration',
                 description: 'The configuration',
                 type: String,
-                aliases: ['c']
+                aliases: ['c'],
             }];
         this.arguments = ['project'];
         this.prodOption = {
             name: 'prod',
             description: 'Flag to set configuration to "prod".',
-            type: Boolean
+            type: Boolean,
         };
         this.configurationOption = {
             name: 'configuration',
             description: 'Specify the configuration to use.',
             type: String,
-            aliases: ['c']
+            aliases: ['c'],
         };
     }
     initialize(options) {
@@ -204,7 +204,7 @@ class ArchitectCommand extends command_1.Command {
             project,
             configuration,
             target,
-            overrides
+            overrides,
         };
     }
 }

@@ -1,5 +1,5 @@
-import { Option, CommandContext, CommandConstructor, ArgumentStrategy } from '../models/command';
 import { logging } from '@angular-devkit/core';
+import { ArgumentStrategy, CommandConstructor, CommandContext, Option } from '../models/command';
 export interface CommandMap {
     [key: string]: CommandConstructor;
 }

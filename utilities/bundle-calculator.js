@@ -82,7 +82,7 @@ class AnyScriptCalculator extends Calculator {
             const asset = this.compilation.assets[key];
             return {
                 size: asset.size(),
-                label: key
+                label: key,
             };
         });
     }
@@ -97,7 +97,7 @@ class AnyCalculator extends Calculator {
             const asset = this.compilation.assets[key];
             return {
                 size: asset.size(),
-                label: key
+                label: key,
             };
         });
     }

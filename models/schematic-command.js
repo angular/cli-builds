@@ -10,14 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
-const command_1 = require("./command");
-const tools_1 = require("@angular-devkit/schematics/tools");
 const schematics_1 = require("@angular-devkit/schematics");
-const config_1 = require("../utilities/config");
-const schematics_2 = require("../utilities/schematics");
-const config_2 = require("../utilities/config");
+const tools_1 = require("@angular-devkit/schematics/tools");
 const operators_1 = require("rxjs/operators");
 const workspace_loader_1 = require("../models/workspace-loader");
+const config_1 = require("../utilities/config");
+const config_2 = require("../utilities/config");
+const schematics_2 = require("../utilities/schematics");
+const command_1 = require("./command");
 class SchematicCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -31,14 +31,14 @@ class SchematicCommand extends command_1.Command {
                 type: Boolean,
                 default: false,
                 aliases: ['d'],
-                description: 'Run through without making any changes.'
+                description: 'Run through without making any changes.',
             },
             {
                 name: 'force',
                 type: Boolean,
                 default: false,
                 aliases: ['f'],
-                description: 'Forces overwriting of files.'
+                description: 'Forces overwriting of files.',
             }
         ];
         this.arguments = ['project'];
@@ -196,7 +196,7 @@ class SchematicCommand extends command_1.Command {
         if (!schematic.description.schemaJson) {
             return Promise.resolve({
                 options: [],
-                arguments: []
+                arguments: [],
             });
         }
         const properties = schematic.description.schemaJson.properties;
@@ -258,7 +258,7 @@ class SchematicCommand extends command_1.Command {
         });
         return Promise.resolve({
             options: schematicOptions,
-            arguments: schematicArguments
+            arguments: schematicArguments,
         });
     }
     _loadWorkspace() {

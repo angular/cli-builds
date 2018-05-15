@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
+const node_1 = require("@angular-devkit/core/node");
 const fs_1 = require("fs");
 const os = require("os");
 const path = require("path");
-const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const find_up_1 = require("./find-up");
 function getSchemaLocation() {
     return path.join(__dirname, '../lib/config/schema.json');
@@ -36,7 +36,7 @@ function getWorkspace(level = 'local') {
     if (cached != undefined) {
         return cached;
     }
-    let configPath = level === 'local' ? projectFilePath() : globalFilePath();
+    const configPath = level === 'local' ? projectFilePath() : globalFilePath();
     if (!configPath) {
         cachedWorkspaces.set(level, null);
         return null;
@@ -148,7 +148,7 @@ function migrateLegacyGlobalConfig() {
             }
             if (legacy.warnings && typeof legacy.warnings == 'object'
                 && !Array.isArray(legacy.warnings)) {
-                let warnings = {};
+                const warnings = {};
                 if (typeof legacy.warnings.versionMismatch == 'boolean') {
                     warnings['versionMismatch'] = legacy.warnings.versionMismatch;
                 }

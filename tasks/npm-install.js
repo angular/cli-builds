@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
 const child_process_1 = require("child_process");
-const core_1 = require("@angular-devkit/core");
 function default_1(packageName, logger, packageManager, projectRoot, save = true) {
     return __awaiter(this, void 0, void 0, function* () {
         const installArgs = [];
@@ -47,7 +47,7 @@ function default_1(packageName, logger, packageManager, projectRoot, save = true
         }
         const installOptions = {
             stdio: 'inherit',
-            shell: true
+            shell: true,
         };
         yield new Promise((resolve, reject) => {
             child_process_1.spawn(packageManager, installArgs, installOptions)
