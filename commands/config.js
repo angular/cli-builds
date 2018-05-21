@@ -124,7 +124,10 @@ function normalizeValue(value, path) {
         }
         throw new Error(`Invalid value type; expected a ${cliOptionType}.`);
     }
-    return core_1.parseJson(value, core_1.JsonParseMode.Loose);
+    if (typeof value === 'string') {
+        return core_1.parseJson(value, core_1.JsonParseMode.Loose);
+    }
+    return value;
 }
 class ConfigCommand extends command_1.Command {
     constructor() {
