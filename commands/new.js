@@ -35,6 +35,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
                 description: 'Schematics collection to use.',
             },
         ];
+        this.schematicName = 'ng-new';
         this.initialized = false;
     }
     initialize(options) {
@@ -44,9 +45,8 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         super.initialize(options);
         this.initialized = true;
         const collectionName = this.parseCollectionName(options);
-        const schematicName = 'application';
         return this.getOptions({
-            schematicName,
+            schematicName: this.schematicName,
             collectionName,
         })
             .then((schematicOptions) => {
@@ -76,7 +76,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
             options = this.removeLocalOptions(options);
             return this.runSchematic({
                 collectionName: collectionName,
-                schematicName: 'ng-new',
+                schematicName: this.schematicName,
                 schematicOptions: options,
                 debug: options.debug,
                 dryRun: options.dryRun,

@@ -8,6 +8,7 @@ export default class NewCommand extends SchematicCommand {
     readonly allowMissingWorkspace: boolean;
     arguments: string[];
     options: Option[];
+    private schematicName;
     private initialized;
     initialize(options: any): Promise<void>;
     run(options: any): Promise<number | void>;
