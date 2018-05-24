@@ -187,6 +187,10 @@ class ArchitectCommand extends command_1.Command {
             [project, target, configuration] = options.target.split(':');
             overrides = Object.assign({}, options);
             delete overrides.target;
+            if (overrides.configuration) {
+                configuration = overrides.configuration;
+                delete overrides.configuration;
+            }
         }
         else {
             project = options.project;

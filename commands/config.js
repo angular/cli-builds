@@ -125,7 +125,17 @@ function normalizeValue(value, path) {
         throw new Error(`Invalid value type; expected a ${cliOptionType}.`);
     }
     if (typeof value === 'string') {
-        return core_1.parseJson(value, core_1.JsonParseMode.Loose);
+        try {
+            return core_1.parseJson(value, core_1.JsonParseMode.Loose);
+        }
+        catch (e) {
+            if (e instanceof core_1.InvalidJsonCharacterException && !value.startsWith('{')) {
+                return value;
+            }
+            else {
+                throw e;
+            }
+        }
     }
     return value;
 }
