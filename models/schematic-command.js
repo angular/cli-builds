@@ -27,7 +27,7 @@ class SchematicCommand extends command_1.Command {
         this.argStrategy = command_1.ArgumentStrategy.Nothing;
         this.coreOptions = [
             {
-                name: 'dry-run',
+                name: 'dryRun',
                 type: Boolean,
                 default: false,
                 aliases: ['d'],
