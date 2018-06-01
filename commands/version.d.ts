@@ -5,6 +5,6 @@ export default class VersionCommand extends Command {
     static aliases: string[];
     readonly arguments: string[];
     readonly options: Option[];
-    run(_options: any): void;
+    run(): void;
     private getVersion(moduleName, projectNodeModules, cliNodeModules);
 }

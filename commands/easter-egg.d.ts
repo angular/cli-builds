@@ -5,5 +5,5 @@ export default class AwesomeCommand extends Command {
     readonly hidden: boolean;
     readonly arguments: string[];
     readonly options: Option[];
-    run(_options: any): void;
+    run(): void;
 }

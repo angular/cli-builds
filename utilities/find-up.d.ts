@@ -1,1 +1,1 @@
-export declare function findUp(names: string | string[], from: string): string;
+export declare function findUp(names: string | string[], from: string): string | null;

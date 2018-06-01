@@ -1,1 +1,0 @@
-{"version":3,"file":"error.js","sourceRoot":"/home/travis/build/angular/angular-cli/","sources":["models/error.ts"],"names":[],"mappings":";;AAAA,oBAA4B,SAAQ,KAAK;IACvC,YAAY,OAAgB;QAC1B,KAAK,EAAE,CAAC;QAER,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,OAAO,GAAG,OAAO,CAAC;SACxB;aAAM;YACL,IAAI,CAAC,OAAO,GAAU,IAAI,CAAC,WAAY,CAAC,IAAI,CAAC;SAC9C;IACH,CAAC;CACF;AAVD,wCAUC"}

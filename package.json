@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "6.0.1-7ed03dd",
+  "version": "6.1.0-beta.0",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -9,15 +9,15 @@
   },
   "keywords": [
     "angular",
+    "devkit",
+    "sdk",
+    "Angular DevKit",
     "angular-cli",
     "Angular CLI"
   ],
-  "scripts": {
-    "postinstall": "node ./bin/ng-update-message.js"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular/angular-cli.git"
+    "url": "https://github.com/angular/devkit.git"
   },
   "engines": {
     "node": ">= 8.9.0",
@@ -26,16 +26,16 @@
   "author": "Angular Authors",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/angular/angular-cli/issues"
+    "url": "https://github.com/angular/devkit/issues"
   },
-  "homepage": "https://github.com/angular/angular-cli",
+  "homepage": "https://github.com/angular/devkit",
   "dependencies": {
-    "@angular-devkit/architect": "0.6.1",
-    "@angular-devkit/core": "0.6.1",
-    "@angular-devkit/schematics": "0.6.1",
-    "@schematics/angular": "0.6.1",
-    "@schematics/update": "0.6.1",
-    "opn": "~5.3.0",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#bf44594",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#bf44594",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#bf44594",
+    "@schematics/angular": "github:angular/schematics-angular-builds#bf44594",
+    "@schematics/update": "github:angular/schematics-update-builds#bf44594",
+    "opn": "^5.3.0",
     "rxjs": "^6.0.0",
     "semver": "^5.1.0",
     "symbol-observable": "^1.2.0",

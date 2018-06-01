@@ -1,1 +1,4 @@
-export default function (options: any): Promise<number>;
+export default function (options: {
+    testing?: boolean;
+    cliArgs: string[];
+}): Promise<number>;

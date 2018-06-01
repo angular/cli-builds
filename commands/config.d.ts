@@ -9,7 +9,7 @@ export default class ConfigCommand extends Command {
     readonly description: string;
     readonly arguments: string[];
     readonly options: Option[];
-    run(options: ConfigOptions): number;
+    run(options: ConfigOptions): 1 | undefined;
     private get(config, options);
     private set(options);
 }
