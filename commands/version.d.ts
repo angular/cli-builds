@@ -1,5 +1,5 @@
 import { Command, Option } from '../models/command';
-export default class VersionCommand extends Command {
+export declare class VersionCommand extends Command {
     readonly name: string;
     readonly description: string;
     static aliases: string[];

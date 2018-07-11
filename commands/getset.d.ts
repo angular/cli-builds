@@ -10,7 +10,7 @@ export interface Options {
     keyword: string;
     search?: boolean;
 }
-export default class GetSetCommand extends Command {
+export declare class GetSetCommand extends Command {
     readonly name: string;
     readonly description: string;
     readonly arguments: string[];

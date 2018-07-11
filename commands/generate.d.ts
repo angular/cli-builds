@@ -1,10 +1,10 @@
 import { CommandScope, Option } from '../models/command';
 import { SchematicCommand } from '../models/schematic-command';
-export default class GenerateCommand extends SchematicCommand {
+export declare class GenerateCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     static aliases: string[];
-    readonly scope: CommandScope;
+    static scope: CommandScope;
     arguments: string[];
     options: Option[];
     private initialized;

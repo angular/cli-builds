@@ -7,12 +7,12 @@
  */
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
 import { CommandScope, Option } from '../models/command';
-export default class E2eCommand extends ArchitectCommand {
+export declare class E2eCommand extends ArchitectCommand {
     readonly name: string;
     readonly target: string;
     readonly description: string;
     static aliases: string[];
-    readonly scope: CommandScope;
+    static scope: CommandScope;
     readonly multiTarget: boolean;
     readonly options: Option[];
     run(options: ArchitectCommandOptions): Promise<number>;

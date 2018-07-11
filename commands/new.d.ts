@@ -7,11 +7,11 @@
  */
 import { CommandScope, Option } from '../models/command';
 import { SchematicCommand } from '../models/schematic-command';
-export default class NewCommand extends SchematicCommand {
+export declare class NewCommand extends SchematicCommand {
     readonly name: string;
     readonly description: string;
     static aliases: string[];
-    scope: CommandScope;
+    static scope: CommandScope;
     readonly allowMissingWorkspace: boolean;
     arguments: string[];
     options: Option[];

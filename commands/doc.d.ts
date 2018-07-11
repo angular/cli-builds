@@ -10,7 +10,7 @@ export interface Options {
     keyword: string;
     search?: boolean;
 }
-export default class DocCommand extends Command {
+export declare class DocCommand extends Command {
     readonly name: string;
     readonly description: string;
     static aliases: string[];

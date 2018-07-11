@@ -1,8 +1,9 @@
 import { Command, Option } from '../models/command';
-export default class EjectCommand extends Command {
+export declare class EjectCommand extends Command {
     readonly name: string;
     readonly description: string;
     readonly arguments: string[];
     readonly options: Option[];
+    static aliases: never[];
     run(): void;
 }

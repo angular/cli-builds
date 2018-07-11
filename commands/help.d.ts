@@ -1,5 +1,5 @@
 import { Command, Option } from '../models/command';
-export default class HelpCommand extends Command {
+export declare class HelpCommand extends Command {
     readonly name: string;
     readonly description: string;
     readonly arguments: string[];

@@ -8,8 +8,9 @@
 import { logging } from '@angular-devkit/core';
 export interface CommandConstructor {
     new (context: CommandContext, logger: logging.Logger): Command;
+    readonly name: string;
     aliases: string[];
-    scope: CommandScope.everywhere;
+    scope: CommandScope;
 }
 export declare enum CommandScope {
     everywhere = 0,
@@ -38,7 +39,8 @@ export declare abstract class Command<T = any> {
     argStrategy: ArgumentStrategy;
     hidden: boolean;
     unknown: boolean;
-    scope: CommandScope;
+    static scope: CommandScope;
+    static aliases: string[];
     protected readonly logger: logging.Logger;
     protected readonly project: any;
 }

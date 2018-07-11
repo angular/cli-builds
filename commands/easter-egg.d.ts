@@ -1,5 +1,5 @@
 import { Command, Option } from '../models/command';
-export default class AwesomeCommand extends Command {
+export declare class AwesomeCommand extends Command {
     readonly name: string;
     readonly description: string;
     readonly hidden: boolean;
