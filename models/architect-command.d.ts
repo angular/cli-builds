@@ -20,7 +20,7 @@ export declare abstract class ArchitectCommand extends Command<ArchitectCommandO
     target: string | undefined;
     initialize(options: ArchitectCommandOptions): Promise<void>;
     validate(options: ArchitectCommandOptions): boolean;
-    protected mapArchitectOptions(schema: any): void;
+    protected mapArchitectOptions(schema: JsonObject): void;
     protected prodOption: Option;
     protected configurationOption: Option;
     protected runArchitectTarget(options: ArchitectCommandOptions): Promise<number>;
