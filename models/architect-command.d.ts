@@ -24,7 +24,7 @@ export declare abstract class ArchitectCommand extends Command<ArchitectCommandO
     protected prodOption: Option;
     protected configurationOption: Option;
     protected runArchitectTarget(options: ArchitectCommandOptions): Promise<number>;
-    private getProjectNamesByTarget(targetName);
-    private _loadWorkspaceAndArchitect();
-    private _makeTargetSpecifier(options);
+    private getProjectNamesByTarget;
+    private _loadWorkspaceAndArchitect;
+    private _makeTargetSpecifier;
 }
