@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { logging } from '@angular-devkit/core';
+import { JsonValue, logging } from '@angular-devkit/core';
 export interface CommandConstructor {
     new (context: CommandContext, logger: logging.Logger): Command;
     readonly name: string;
@@ -25,36 +25,36 @@ export declare abstract class Command<T = any> {
     protected _rawArgs: string[];
     allowMissingWorkspace: boolean;
     constructor(context: CommandContext, logger: logging.Logger);
+    addOptions(options: Option[]): void;
     initializeRaw(args: string[]): Promise<any>;
     initialize(_options: any): Promise<void>;
     validate(_options: T): boolean | Promise<boolean>;
-    printHelp(_options: T): void;
-    protected printHelpUsage(name: string, args: string[], options: Option[]): void;
+    printHelp(commandName: string, description: string, options: any): void;
+    private _getArguments;
+    protected printHelpUsage(name: string, options: Option[]): void;
+    protected isArgument(option: Option): boolean;
     protected printHelpOptions(options: Option[]): void;
     abstract run(options: T): number | void | Promise<number | void>;
-    abstract readonly name: string;
-    abstract readonly description: string;
-    abstract readonly arguments: string[];
-    abstract readonly options: Option[];
-    argStrategy: ArgumentStrategy;
-    hidden: boolean;
-    unknown: boolean;
-    static scope: CommandScope;
-    static aliases: string[];
+    options: Option[];
+    additionalSchemas: string[];
     protected readonly logger: logging.Logger;
     protected readonly project: any;
 }
 export interface CommandContext {
     project: any;
 }
-export declare abstract class Option {
-    abstract readonly name: string;
-    abstract readonly description: string;
-    readonly default?: string | number | boolean;
-    readonly required?: boolean;
-    abstract readonly aliases?: string[];
-    abstract readonly type: any;
-    readonly format?: string;
-    readonly values?: any[];
-    readonly hidden?: boolean;
+export interface Option {
+    name: string;
+    description: string;
+    type: string;
+    default?: string | number | boolean;
+    required?: boolean;
+    aliases?: string[];
+    format?: string;
+    hidden?: boolean;
+    $default?: OptionSmartDefault;
+}
+export interface OptionSmartDefault {
+    $source: string;
+    [key: string]: JsonValue;
 }
