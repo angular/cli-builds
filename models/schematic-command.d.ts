@@ -42,7 +42,7 @@ export declare abstract class SchematicCommand extends Command {
     private _originalOptions;
     private _engineHost;
     private _engine;
-    private _workFlow;
+    private _workflow;
     argStrategy: ArgumentStrategy;
     constructor(context: CommandContext, logger: logging.Logger, engineHost?: FileSystemEngineHostBase);
     protected readonly coreOptions: Option[];
@@ -53,8 +53,8 @@ export declare abstract class SchematicCommand extends Command {
     protected getCollection(collectionName: string): Collection<any, any>;
     protected getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;
     protected setPathOptions(options: any, workingDir: string): any;
-    protected getWorkFlow(options: RunSchematicOptions): workflow.BaseWorkflow;
-    private _getWorkFlow;
+    protected getWorkflow(options: RunSchematicOptions): workflow.BaseWorkflow;
+    private _getWorkflow;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected removeCoreOptions(options: any): any;
     protected getOptions(options: GetOptionsOptions): Promise<GetOptionsResult>;
