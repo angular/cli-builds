@@ -5,10 +5,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { Path, logging } from '@angular-devkit/core';
+import { logging } from '@angular-devkit/core';
 import { CommandContext, Option } from '../models/command';
-export interface CommandMap {
-    [key: string]: Path;
+interface CommandMap {
+    [key: string]: string;
 }
 /**
  * Run a command.
@@ -18,3 +18,4 @@ export interface CommandMap {
  */
 export declare function runCommand(args: string[], logger: logging.Logger, context: CommandContext, commandMap?: CommandMap): Promise<number | void>;
 export declare function parseOptions(args: string[], optionsAndArguments: Option[]): any;
+export {};
