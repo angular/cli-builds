@@ -54,6 +54,7 @@ export declare abstract class SchematicCommand extends Command {
     protected setPathOptions(options: any, workingDir: string): any;
     protected getWorkflow(options: RunSchematicOptions): workflow.BaseWorkflow;
     private _getWorkflow;
+    protected getDefaultSchematicCollection(): string;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected removeCoreOptions(options: any): any;
     protected getOptions(options: GetOptionsOptions): Promise<Option[]>;
