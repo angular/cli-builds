@@ -13,4 +13,5 @@ export declare class GenerateCommand extends SchematicCommand {
     run(options: any): Promise<number | void>;
     private parseSchematicInfo;
     printHelp(_name: string, _description: string, options: any): void;
+    private removeLocalOptions;
 }

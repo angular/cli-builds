@@ -21,6 +21,7 @@ export interface RunSchematicOptions {
     dryRun: boolean;
     force: boolean;
     showNothingDone?: boolean;
+    interactive?: boolean;
 }
 export interface GetOptionsOptions {
     collectionName: string;
