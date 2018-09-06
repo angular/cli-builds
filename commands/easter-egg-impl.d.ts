@@ -7,5 +7,5 @@
  */
 import { Command } from '../models/command';
 export declare class AwesomeCommand extends Command {
-    run(): void;
+    run(): Promise<void>;
 }

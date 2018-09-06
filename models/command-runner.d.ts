@@ -6,16 +6,15 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { CommandContext, Option } from '../models/command';
-interface CommandMap {
+import { CommandWorkspace } from './interface';
+export interface CommandMapOptions {
     [key: string]: string;
 }
 /**
  * Run a command.
  * @param args Raw unparsed arguments.
  * @param logger The logger to use.
- * @param context Execution context.
+ * @param workspace Workspace information.
+ * @param commands The map of supported commands.
  */
-export declare function runCommand(args: string[], logger: logging.Logger, context: CommandContext, commandMap?: CommandMap): Promise<number | void>;
-export declare function parseOptions(args: string[], optionsAndArguments: Option[]): any;
-export {};
+export declare function runCommand(args: string[], logger: logging.Logger, workspace: CommandWorkspace, commands?: CommandMapOptions): Promise<number | void>;

@@ -6,10 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Command } from '../models/command';
-export interface Options {
-    keyword: string;
-    search?: boolean;
-}
-export declare class GetSetCommand extends Command {
-    run(_options: Options): Promise<void>;
+export declare class DeprecatedCommand extends Command {
+    run(): Promise<number>;
 }

@@ -8,6 +8,5 @@
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
 export declare class BuildCommand extends ArchitectCommand {
     readonly target: string;
-    validate(options: ArchitectCommandOptions): boolean;
     run(options: ArchitectCommandOptions): Promise<number>;
 }

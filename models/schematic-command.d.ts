@@ -6,60 +6,48 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { Collection, Engine, Schematic, workflow } from '@angular-devkit/schematics';
-import { FileSystemCollectionDesc, FileSystemEngineHostBase, FileSystemSchematicDesc } from '@angular-devkit/schematics/tools';
-import { ArgumentStrategy, Command, CommandContext, Option } from './command';
-export interface CoreSchematicOptions {
-    dryRun: boolean;
-    force: boolean;
+import { Engine, workflow } from '@angular-devkit/schematics';
+import { FileSystemCollection, FileSystemCollectionDesc, FileSystemEngineHostBase, FileSystemSchematic, FileSystemSchematicDesc } from '@angular-devkit/schematics/tools';
+import { BaseCommandOptions, Command } from './command';
+import { Arguments, CommandContext, CommandDescription, Option } from './interface';
+export interface BaseSchematicOptions extends BaseCommandOptions {
+    debug?: boolean;
+    dryRun?: boolean;
+    force?: boolean;
+    interactive?: boolean;
 }
 export interface RunSchematicOptions {
     collectionName: string;
     schematicName: string;
-    schematicOptions: any;
+    schematicOptions?: string[];
     debug?: boolean;
-    dryRun: boolean;
-    force: boolean;
+    dryRun?: boolean;
+    force?: boolean;
     showNothingDone?: boolean;
-    interactive?: boolean;
-}
-export interface GetOptionsOptions {
-    collectionName: string;
-    schematicName: string;
-}
-export interface GetOptionsResult {
-    options: Option[];
-    arguments: Option[];
 }
 export declare class UnknownCollectionError extends Error {
     constructor(collectionName: string);
 }
-export declare abstract class SchematicCommand extends Command {
-    readonly options: Option[];
+export declare abstract class SchematicCommand<T extends BaseSchematicOptions = BaseSchematicOptions> extends Command<T> {
+    private readonly _engineHost;
     readonly allowPrivateSchematics: boolean;
     private _host;
     private _workspace;
-    private _deAliasedName;
-    private _originalOptions;
-    private _engineHost;
-    private _engine;
-    private _workflow;
-    argStrategy: ArgumentStrategy;
-    constructor(context: CommandContext, logger: logging.Logger, engineHost?: FileSystemEngineHostBase);
-    protected readonly coreOptions: Option[];
-    initialize(_options: any): Promise<void>;
+    private readonly _engine;
+    protected _workflow: workflow.BaseWorkflow;
+    constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger, _engineHost?: FileSystemEngineHostBase);
+    initialize(options: T): Promise<void>;
+    printHelp(options: T): Promise<number>;
+    printHelpUsage(): Promise<void>;
     protected getEngineHost(): FileSystemEngineHostBase;
     protected getEngine(): Engine<FileSystemCollectionDesc, FileSystemSchematicDesc>;
-    protected getCollection(collectionName: string): Collection<any, any>;
-    protected getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;
-    protected setPathOptions(options: any, workingDir: string): any;
-    protected getWorkflow(options: RunSchematicOptions): workflow.BaseWorkflow;
-    private _getWorkflow;
+    protected getCollection(collectionName: string): FileSystemCollection;
+    protected getSchematic(collection: FileSystemCollection, schematicName: string, allowPrivate?: boolean): FileSystemSchematic;
+    protected setPathOptions(options: Option[], workingDir: string): {};
+    protected createWorkflow(options: BaseSchematicOptions): workflow.BaseWorkflow;
     protected getDefaultSchematicCollection(): string;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
-    protected removeCoreOptions(options: any): any;
-    protected getOptions(options: GetOptionsOptions): Promise<Option[]>;
+    protected parseFreeFormArguments(schematicOptions: string[]): Promise<Arguments>;
+    protected parseArguments(schematicOptions: string[], options: Option[] | null): Promise<Arguments>;
     private _loadWorkspace;
-    private _cleanDefaults;
-    private readDefaults;
 }

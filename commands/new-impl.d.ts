@@ -5,13 +5,14 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { SchematicCommand } from '../models/schematic-command';
+import { BaseSchematicOptions, SchematicCommand } from '../models/schematic-command';
+export interface NewCommandOptions extends BaseSchematicOptions {
+    skipGit?: boolean;
+    collection?: string;
+}
 export declare class NewCommand extends SchematicCommand {
     readonly allowMissingWorkspace: boolean;
     private schematicName;
-    private initialized;
-    initialize(options: any): Promise<void>;
-    run(options: any): Promise<number | void>;
+    run(options: NewCommandOptions): Promise<number | void>;
     private parseCollectionName;
-    private removeLocalOptions;
 }

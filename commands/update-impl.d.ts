@@ -1,28 +1,16 @@
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-import { CommandScope, Option } from '../models/command';
-import { CoreSchematicOptions, SchematicCommand } from '../models/schematic-command';
-export interface UpdateOptions extends CoreSchematicOptions {
+import { Arguments, Option } from '../models/interface';
+import { BaseSchematicOptions, SchematicCommand } from '../models/schematic-command';
+export interface UpdateOptions extends BaseSchematicOptions {
     next: boolean;
     schematic?: boolean;
+    dryRun: boolean;
+    force: boolean;
 }
-export declare class UpdateCommand extends SchematicCommand {
-    readonly name: string;
-    readonly description: string;
-    static aliases: string[];
-    static scope: CommandScope;
-    arguments: string[];
-    options: Option[];
+export declare class UpdateCommand<T extends UpdateOptions = UpdateOptions> extends SchematicCommand<T> {
     readonly allowMissingWorkspace: boolean;
     private collectionName;
     private schematicName;
-    private initialized;
-    initialize(options: any): Promise<void>;
-    validate(options: any): Promise<boolean>;
+    initialize(input: T): Promise<void>;
+    parseArguments(schematicOptions: string[], schema: Option[]): Promise<Arguments>;
     run(options: UpdateOptions): Promise<number | void>;
 }

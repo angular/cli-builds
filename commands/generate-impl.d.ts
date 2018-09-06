@@ -5,13 +5,13 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { SchematicCommand } from '../models/schematic-command';
-export declare class GenerateCommand extends SchematicCommand {
-    private initialized;
-    initialize(options: any): Promise<void>;
-    validate(options: any): boolean | Promise<boolean>;
-    run(options: any): Promise<number | void>;
+import { BaseSchematicOptions, SchematicCommand } from '../models/schematic-command';
+export interface GenerateCommandOptions extends BaseSchematicOptions {
+    schematic?: string;
+}
+export declare class GenerateCommand<T extends GenerateCommandOptions = GenerateCommandOptions> extends SchematicCommand<T> {
+    initialize(options: T): Promise<void>;
+    run(options: T): Promise<number | void>;
     private parseSchematicInfo;
-    printHelp(_name: string, _description: string, options: any): void;
-    private removeLocalOptions;
+    printHelp(options: T): Promise<number>;
 }

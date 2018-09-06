@@ -8,6 +8,6 @@
 import { Command } from '../models/command';
 export declare class VersionCommand extends Command {
     static aliases: string[];
-    run(): void;
+    run(): Promise<void>;
     private getVersion;
 }
