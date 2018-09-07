@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "7.0.0-beta.0",
+  "version": "7.0.0-beta.2",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -30,16 +30,16 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#351359b",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#351359b",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#351359b",
-    "@schematics/angular": "github:angular/schematics-angular-builds#351359b",
-    "@schematics/update": "github:angular/schematics-update-builds#351359b",
-    "inquirer": "^6.1.0",
-    "opn": "^5.3.0",
-    "rxjs": "~6.2.0",
-    "semver": "^5.1.0",
-    "symbol-observable": "^1.2.0"
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#b8b36ba",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#b8b36ba",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#b8b36ba",
+    "@schematics/angular": "github:angular/schematics-angular-builds#b8b36ba",
+    "@schematics/update": "github:angular/schematics-update-builds#b8b36ba",
+    "inquirer": "6.2.0",
+    "opn": "5.3.0",
+    "rxjs": "6.2.2",
+    "semver": "5.5.1",
+    "symbol-observable": "1.2.0"
   },
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json"
