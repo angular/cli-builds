@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @license
@@ -17,16 +9,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const command_1 = require("../models/command");
 class DeprecatedCommand extends command_1.Command {
-    run() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let message = 'The "${this.description.name}" command has been deprecated.';
-            if (this.description.name == 'get' || this.description.name == 'set') {
-                message = 'get/set have been deprecated in favor of the config command.';
-            }
-            this.logger.error(message);
-            return 0;
-        });
+    async run() {
+        let message = 'The "${this.description.name}" command has been deprecated.';
+        if (this.description.name == 'get' || this.description.name == 'set') {
+            message = 'get/set have been deprecated in favor of the config command.';
+        }
+        this.logger.error(message);
+        return 0;
     }
 }
 exports.DeprecatedCommand = DeprecatedCommand;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGVwcmVjYXRlZC1pbXBsLmpzIiwic291cmNlUm9vdCI6Ii4vIiwic291cmNlcyI6WyJwYWNrYWdlcy9hbmd1bGFyL2NsaS9jb21tYW5kcy9kZXByZWNhdGVkLWltcGwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUFBOzs7Ozs7R0FNRztBQUNILCtDQUE0QztBQUU1QyxNQUFhLGlCQUFrQixTQUFRLGlCQUFPO0lBQy9CLEdBQUc7O1lBQ2QsSUFBSSxPQUFPLEdBQUcsNkRBQTZELENBQUM7WUFDNUUsSUFBSSxJQUFJLENBQUMsV0FBVyxDQUFDLElBQUksSUFBSSxLQUFLLElBQUksSUFBSSxDQUFDLFdBQVcsQ0FBQyxJQUFJLElBQUksS0FBSyxFQUFFO2dCQUNwRSxPQUFPLEdBQUcsOERBQThELENBQUM7YUFDMUU7WUFFRCxJQUFJLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQztZQUUzQixPQUFPLENBQUMsQ0FBQztRQUNYLENBQUM7S0FBQTtDQUNGO0FBWEQsOENBV0MiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEBsaWNlbnNlXG4gKiBDb3B5cmlnaHQgR29vZ2xlIEluYy4gQWxsIFJpZ2h0cyBSZXNlcnZlZC5cbiAqXG4gKiBVc2Ugb2YgdGhpcyBzb3VyY2UgY29kZSBpcyBnb3Zlcm5lZCBieSBhbiBNSVQtc3R5bGUgbGljZW5zZSB0aGF0IGNhbiBiZVxuICogZm91bmQgaW4gdGhlIExJQ0VOU0UgZmlsZSBhdCBodHRwczovL2FuZ3VsYXIuaW8vbGljZW5zZVxuICovXG5pbXBvcnQgeyBDb21tYW5kIH0gZnJvbSAnLi4vbW9kZWxzL2NvbW1hbmQnO1xuXG5leHBvcnQgY2xhc3MgRGVwcmVjYXRlZENvbW1hbmQgZXh0ZW5kcyBDb21tYW5kIHtcbiAgcHVibGljIGFzeW5jIHJ1bigpIHtcbiAgICBsZXQgbWVzc2FnZSA9ICdUaGUgXCIke3RoaXMuZGVzY3JpcHRpb24ubmFtZX1cIiBjb21tYW5kIGhhcyBiZWVuIGRlcHJlY2F0ZWQuJztcbiAgICBpZiAodGhpcy5kZXNjcmlwdGlvbi5uYW1lID09ICdnZXQnIHx8IHRoaXMuZGVzY3JpcHRpb24ubmFtZSA9PSAnc2V0Jykge1xuICAgICAgbWVzc2FnZSA9ICdnZXQvc2V0IGhhdmUgYmVlbiBkZXByZWNhdGVkIGluIGZhdm9yIG9mIHRoZSBjb25maWcgY29tbWFuZC4nO1xuICAgIH1cblxuICAgIHRoaXMubG9nZ2VyLmVycm9yKG1lc3NhZ2UpO1xuXG4gICAgcmV0dXJuIDA7XG4gIH1cbn1cbiJdfQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGVwcmVjYXRlZC1pbXBsLmpzIiwic291cmNlUm9vdCI6Ii4vIiwic291cmNlcyI6WyJwYWNrYWdlcy9hbmd1bGFyL2NsaS9jb21tYW5kcy9kZXByZWNhdGVkLWltcGwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQTs7Ozs7O0dBTUc7QUFDSCwrQ0FBNEM7QUFFNUMsTUFBYSxpQkFBa0IsU0FBUSxpQkFBTztJQUNyQyxLQUFLLENBQUMsR0FBRztRQUNkLElBQUksT0FBTyxHQUFHLDZEQUE2RCxDQUFDO1FBQzVFLElBQUksSUFBSSxDQUFDLFdBQVcsQ0FBQyxJQUFJLElBQUksS0FBSyxJQUFJLElBQUksQ0FBQyxXQUFXLENBQUMsSUFBSSxJQUFJLEtBQUssRUFBRTtZQUNwRSxPQUFPLEdBQUcsOERBQThELENBQUM7U0FDMUU7UUFFRCxJQUFJLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUUzQixPQUFPLENBQUMsQ0FBQztJQUNYLENBQUM7Q0FDRjtBQVhELDhDQVdDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBAbGljZW5zZVxuICogQ29weXJpZ2h0IEdvb2dsZSBJbmMuIEFsbCBSaWdodHMgUmVzZXJ2ZWQuXG4gKlxuICogVXNlIG9mIHRoaXMgc291cmNlIGNvZGUgaXMgZ292ZXJuZWQgYnkgYW4gTUlULXN0eWxlIGxpY2Vuc2UgdGhhdCBjYW4gYmVcbiAqIGZvdW5kIGluIHRoZSBMSUNFTlNFIGZpbGUgYXQgaHR0cHM6Ly9hbmd1bGFyLmlvL2xpY2Vuc2VcbiAqL1xuaW1wb3J0IHsgQ29tbWFuZCB9IGZyb20gJy4uL21vZGVscy9jb21tYW5kJztcblxuZXhwb3J0IGNsYXNzIERlcHJlY2F0ZWRDb21tYW5kIGV4dGVuZHMgQ29tbWFuZCB7XG4gIHB1YmxpYyBhc3luYyBydW4oKSB7XG4gICAgbGV0IG1lc3NhZ2UgPSAnVGhlIFwiJHt0aGlzLmRlc2NyaXB0aW9uLm5hbWV9XCIgY29tbWFuZCBoYXMgYmVlbiBkZXByZWNhdGVkLic7XG4gICAgaWYgKHRoaXMuZGVzY3JpcHRpb24ubmFtZSA9PSAnZ2V0JyB8fCB0aGlzLmRlc2NyaXB0aW9uLm5hbWUgPT0gJ3NldCcpIHtcbiAgICAgIG1lc3NhZ2UgPSAnZ2V0L3NldCBoYXZlIGJlZW4gZGVwcmVjYXRlZCBpbiBmYXZvciBvZiB0aGUgY29uZmlnIGNvbW1hbmQuJztcbiAgICB9XG5cbiAgICB0aGlzLmxvZ2dlci5lcnJvcihtZXNzYWdlKTtcblxuICAgIHJldHVybiAwO1xuICB9XG59XG4iXX0=
