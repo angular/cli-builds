@@ -10,25 +10,22 @@ import { Engine, workflow } from '@angular-devkit/schematics';
 import { FileSystemCollection, FileSystemCollectionDesc, FileSystemEngineHostBase, FileSystemSchematic, FileSystemSchematicDesc } from '@angular-devkit/schematics/tools';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments, CommandContext, CommandDescription, Option } from './interface';
-export interface BaseSchematicOptions extends BaseCommandOptions {
+export interface BaseSchematicSchema {
     debug?: boolean;
     dryRun?: boolean;
     force?: boolean;
     interactive?: boolean;
 }
-export interface RunSchematicOptions {
+export interface RunSchematicOptions extends BaseSchematicSchema {
     collectionName: string;
     schematicName: string;
     schematicOptions?: string[];
-    debug?: boolean;
-    dryRun?: boolean;
-    force?: boolean;
     showNothingDone?: boolean;
 }
 export declare class UnknownCollectionError extends Error {
     constructor(collectionName: string);
 }
-export declare abstract class SchematicCommand<T extends BaseSchematicOptions = BaseSchematicOptions> extends Command<T> {
+export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & BaseCommandOptions)> extends Command<T> {
     private readonly _engineHost;
     readonly allowPrivateSchematics: boolean;
     private _host;
@@ -36,15 +33,15 @@ export declare abstract class SchematicCommand<T extends BaseSchematicOptions = 
     private readonly _engine;
     protected _workflow: workflow.BaseWorkflow;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger, _engineHost?: FileSystemEngineHostBase);
-    initialize(options: T): Promise<void>;
-    printHelp(options: T): Promise<number>;
+    initialize(options: T & Arguments): Promise<void>;
+    printHelp(options: T & Arguments): Promise<number>;
     printHelpUsage(): Promise<void>;
     protected getEngineHost(): FileSystemEngineHostBase;
     protected getEngine(): Engine<FileSystemCollectionDesc, FileSystemSchematicDesc>;
     protected getCollection(collectionName: string): FileSystemCollection;
     protected getSchematic(collection: FileSystemCollection, schematicName: string, allowPrivate?: boolean): FileSystemSchematic;
     protected setPathOptions(options: Option[], workingDir: string): {};
-    protected createWorkflow(options: BaseSchematicOptions): workflow.BaseWorkflow;
+    protected createWorkflow(options: BaseSchematicSchema): workflow.BaseWorkflow;
     protected getDefaultSchematicCollection(): string;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected parseFreeFormArguments(schematicOptions: string[]): Promise<Arguments>;

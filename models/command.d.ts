@@ -7,7 +7,7 @@
  */
 import { logging } from '@angular-devkit/core';
 import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandWorkspace, Option } from './interface';
-export interface BaseCommandOptions extends Arguments {
+export interface BaseCommandOptions {
     help?: boolean;
     helpJson?: boolean;
 }
@@ -19,9 +19,9 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     protected static commandMap: CommandDescriptionMap;
     static setCommandMap(map: CommandDescriptionMap): void;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
-    initialize(options: T): Promise<void>;
-    printHelp(options: T): Promise<number>;
-    printJsonHelp(_options: T): Promise<number>;
+    initialize(options: T & Arguments): Promise<void>;
+    printHelp(options: T & Arguments): Promise<number>;
+    printJsonHelp(_options: T & Arguments): Promise<number>;
     protected printHelpUsage(): Promise<void>;
     protected printHelpOptions(options?: Option[]): Promise<void>;
     validateScope(): Promise<void>;

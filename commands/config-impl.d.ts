@@ -5,14 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { BaseCommandOptions, Command } from '../models/command';
-export interface ConfigOptions extends BaseCommandOptions {
-    jsonPath: string;
-    value?: string;
-    global?: boolean;
-}
-export declare class ConfigCommand<T extends ConfigOptions = ConfigOptions> extends Command<T> {
-    run(options: T): Promise<1 | undefined>;
+import { Command } from '../models/command';
+import { Arguments } from '../models/interface';
+import { Schema as ConfigCommandSchema } from './config';
+export declare class ConfigCommand extends Command<ConfigCommandSchema> {
+    run(options: ConfigCommandSchema & Arguments): Promise<1 | undefined>;
     private get;
     private set;
 }

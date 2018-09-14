@@ -6,8 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
-export declare class ServeCommand extends ArchitectCommand {
+import { Arguments } from '../models/interface';
+import { Schema as ServeCommandSchema } from './serve';
+export declare class ServeCommand extends ArchitectCommand<ServeCommandSchema> {
     readonly target: string;
-    validate(_options: ArchitectCommandOptions): boolean;
-    run(options: ArchitectCommandOptions): Promise<number>;
+    validate(_options: ArchitectCommandOptions & Arguments): boolean;
+    run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

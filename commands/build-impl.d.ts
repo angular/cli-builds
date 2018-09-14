@@ -6,7 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
-export declare class BuildCommand extends ArchitectCommand {
+import { Arguments } from '../models/interface';
+import { Schema as BuildCommandSchema } from './build';
+export declare class BuildCommand extends ArchitectCommand<BuildCommandSchema> {
     readonly target: string;
-    run(options: ArchitectCommandOptions): Promise<number>;
+    run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

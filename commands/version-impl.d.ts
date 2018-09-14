@@ -6,7 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Command } from '../models/command';
-export declare class VersionCommand extends Command {
+import { Schema as VersionCommandSchema } from './version';
+export declare class VersionCommand extends Command<VersionCommandSchema> {
     static aliases: string[];
     run(): Promise<void>;
     private getVersion;

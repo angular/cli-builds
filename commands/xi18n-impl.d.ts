@@ -5,9 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
-export declare class Xi18nCommand extends ArchitectCommand {
+import { ArchitectCommand } from '../models/architect-command';
+import { Arguments } from '../models/interface';
+import { Schema as Xi18nCommandSchema } from './xi18n';
+export declare class Xi18nCommand extends ArchitectCommand<Xi18nCommandSchema> {
     readonly target: string;
     readonly multiTarget: true;
-    run(options: ArchitectCommandOptions): Promise<number>;
+    run(options: Xi18nCommandSchema & Arguments): Promise<number>;
 }

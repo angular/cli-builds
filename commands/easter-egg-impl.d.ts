@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Command } from '../models/command';
-export declare class AwesomeCommand extends Command {
+import { Schema as AwesomeCommandSchema } from './easter-egg';
+export declare class AwesomeCommand extends Command<AwesomeCommandSchema> {
     run(): Promise<void>;
 }

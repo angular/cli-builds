@@ -1,4 +1,5 @@
 import { Command } from '../models/command';
-export declare class HelpCommand extends Command {
+import { Schema as HelpCommandSchema } from './help';
+export declare class HelpCommand extends Command<HelpCommandSchema> {
     run(): Promise<void>;
 }

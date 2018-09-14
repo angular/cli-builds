@@ -6,6 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
-export declare class RunCommand extends ArchitectCommand {
-    run(options: ArchitectCommandOptions): Promise<number>;
+import { Arguments } from '../models/interface';
+import { Schema as RunCommandSchema } from './run';
+export declare class RunCommand extends ArchitectCommand<RunCommandSchema> {
+    run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

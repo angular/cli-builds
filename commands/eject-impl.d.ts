@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Command } from '../models/command';
-export declare class EjectCommand extends Command {
+import { Schema as EjectCommandSchema } from './eject';
+export declare class EjectCommand extends Command<EjectCommandSchema> {
     run(): Promise<number>;
 }

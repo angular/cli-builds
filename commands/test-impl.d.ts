@@ -6,8 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-command';
-export declare class TestCommand extends ArchitectCommand {
+import { Arguments } from '../models/interface';
+import { Schema as TestCommandSchema } from './test';
+export declare class TestCommand extends ArchitectCommand<TestCommandSchema> {
     readonly target: string;
     readonly multiTarget: boolean;
-    run(options: ArchitectCommandOptions): Promise<number>;
+    run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Command } from '../models/command';
-export declare class DeprecatedCommand extends Command {
+import { Schema as DeprecatedCommandSchema } from './deprecated';
+export declare class DeprecatedCommand extends Command<DeprecatedCommandSchema> {
     run(): Promise<number>;
 }

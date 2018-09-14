@@ -6,11 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Arguments } from '../models/interface';
-import { BaseSchematicOptions, SchematicCommand } from '../models/schematic-command';
-export interface AddCommandOptions extends BaseSchematicOptions {
-    collection: string;
-}
-export declare class AddCommand<T extends AddCommandOptions = AddCommandOptions> extends SchematicCommand<T> {
+import { SchematicCommand } from '../models/schematic-command';
+import { Schema as AddCommandSchema } from './add';
+export declare class AddCommand extends SchematicCommand<AddCommandSchema> {
     readonly allowPrivateSchematics: boolean;
-    run(options: AddCommandOptions & Arguments): Promise<number | void>;
+    run(options: AddCommandSchema & Arguments): Promise<number | void>;
 }
