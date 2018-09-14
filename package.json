@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "7.0.0-beta.2",
+  "version": "7.0.0-beta.3",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -19,10 +19,6 @@
     "type": "git",
     "url": "https://github.com/angular/angular-cli.git"
   },
-  "engines": {
-    "node": ">=10.9.0 <11.0.0",
-    "yarn": ">=1.9.0 <2.0.0"
-  },
   "author": "Angular Authors",
   "license": "MIT",
   "bugs": {
@@ -30,11 +26,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#c63b4d8",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#c63b4d8",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#c63b4d8",
-    "@schematics/angular": "github:angular/schematics-angular-builds#c63b4d8",
-    "@schematics/update": "github:angular/schematics-update-builds#c63b4d8",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#b6793bd",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#b6793bd",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#b6793bd",
+    "@schematics/angular": "github:angular/schematics-angular-builds#b6793bd",
+    "@schematics/update": "github:angular/schematics-update-builds#b6793bd",
     "inquirer": "6.2.0",
     "opn": "5.3.0",
     "rxjs": "6.2.2",
@@ -43,5 +39,9 @@
   },
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.5.1"
   }
 }
