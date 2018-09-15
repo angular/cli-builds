@@ -10,7 +10,7 @@ import { SchematicCommand } from '../models/schematic-command';
 import { Schema as NewCommandSchema } from './new';
 export declare class NewCommand extends SchematicCommand<NewCommandSchema> {
     readonly allowMissingWorkspace: boolean;
-    private schematicName;
+    schematicName: string;
     run(options: NewCommandSchema & Arguments): Promise<number | void>;
     private parseCollectionName;
 }

@@ -32,6 +32,8 @@ export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & 
     private _workspace;
     private readonly _engine;
     protected _workflow: workflow.BaseWorkflow;
+    protected collectionName: string;
+    protected schematicName?: string;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger, _engineHost?: FileSystemEngineHostBase);
     initialize(options: T & Arguments): Promise<void>;
     printHelp(options: T & Arguments): Promise<number>;
