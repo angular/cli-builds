@@ -1,10 +1,14 @@
 export interface Schema {
     /**
-     * Shows a help message.
+     * Shows a help message. You can pass the format as a value.
      */
-    help?: boolean;
-    /**
-     * Shows the metadata associated with each flags, in JSON format.
-     */
-    helpJson?: boolean;
+    help?: HelpUnion;
+}
+/**
+ * Shows a help message. You can pass the format as a value.
+ */
+export declare type HelpUnion = boolean | HelpEnum;
+export declare enum HelpEnum {
+    HelpJSON = "JSON",
+    JSON = "json"
 }

@@ -7,13 +7,9 @@ export interface Schema {
      */
     global?: boolean;
     /**
-     * Shows a help message.
+     * Shows a help message. You can pass the format as a value.
      */
-    help?: boolean;
-    /**
-     * Shows the metadata associated with each flags, in JSON format.
-     */
-    helpJson?: boolean;
+    help?: HelpUnion;
     /**
      * The path to the value to get/set.
      */
@@ -22,6 +18,14 @@ export interface Schema {
      * The new value to be set.
      */
     value?: Value;
+}
+/**
+ * Shows a help message. You can pass the format as a value.
+ */
+export declare type HelpUnion = boolean | HelpEnum;
+export declare enum HelpEnum {
+    HelpJSON = "JSON",
+    JSON = "json"
 }
 /**
  * The new value to be set.

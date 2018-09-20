@@ -1,4 +1,19 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ *
+ */
+import { BaseException } from '@angular-devkit/core';
 import { Arguments, Option } from './interface';
+export declare class ParseArgumentException extends BaseException {
+    readonly comments: string[];
+    readonly parsed: Arguments;
+    readonly ignored: string[];
+    constructor(comments: string[], parsed: Arguments, ignored: string[]);
+}
 /**
  * Parse the arguments in a consistent way, but without having any option definition. This tries
  * to assess what the user wants in a free form. For example, using `--name=false` will set the

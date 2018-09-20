@@ -30,12 +30,9 @@
       "type": "object",
       "properties": {
         "help": {
-          "type": "boolean",
-          "description": "Shows a help message."
-        },
-        "helpJson": {
-          "type": "boolean",
-          "description": "Shows the metadata associated with each flags, in JSON format."
+          "enum": [true, false, "json", "JSON"],
+          "description": "Shows a help message. You can pass the format as a value.",
+          "default": false
         }
       }
     },

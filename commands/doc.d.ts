@@ -3,13 +3,9 @@
  */
 export interface Schema {
     /**
-     * Shows a help message.
+     * Shows a help message. You can pass the format as a value.
      */
-    help?: boolean;
-    /**
-     * Shows the metadata associated with each flags, in JSON format.
-     */
-    helpJson?: boolean;
+    help?: HelpUnion;
     /**
      * The query to search upon.
      */
@@ -18,4 +14,12 @@ export interface Schema {
      * Search whole angular.io instead of just api.
      */
     search?: boolean;
+}
+/**
+ * Shows a help message. You can pass the format as a value.
+ */
+export declare type HelpUnion = boolean | HelpEnum;
+export declare enum HelpEnum {
+    HelpJSON = "JSON",
+    JSON = "json"
 }
