@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandWorkspace, Option, SubCommandDescription } from './interface';
+import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, CommandWorkspace, Option, SubCommandDescription } from './interface';
 export interface BaseCommandOptions {
     help?: boolean | string;
 }
@@ -24,7 +24,7 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     protected printHelpUsage(): Promise<void>;
     protected printHelpSubcommand(subcommand: SubCommandDescription): Promise<void>;
     protected printHelpOptions(options?: Option[]): Promise<void>;
-    validateScope(): Promise<void>;
+    validateScope(scope?: CommandScope): Promise<void>;
     abstract run(options: T & Arguments): Promise<number | void>;
     validateAndRun(options: T & Arguments): Promise<number | void>;
 }
