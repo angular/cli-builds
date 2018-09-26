@@ -131,7 +131,8 @@ export declare enum ChangeDetection {
 export declare enum ViewEncapsulation {
     Emulated = "Emulated",
     Native = "Native",
-    None = "None"
+    None = "None",
+    ShadowDOM = "ShadowDom"
 }
 export interface SchematicsAngularDirective {
     /**
