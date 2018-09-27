@@ -15,6 +15,7 @@ export interface BaseSchematicSchema {
     dryRun?: boolean;
     force?: boolean;
     interactive?: boolean;
+    defaults?: boolean;
 }
 export interface RunSchematicOptions extends BaseSchematicSchema {
     collectionName: string;

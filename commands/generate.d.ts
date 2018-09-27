@@ -3,6 +3,10 @@
  */
 export interface Schema {
     /**
+     * Disables interactive inputs (i.e., prompts) for options with a default.
+     */
+    defaults?: boolean;
+    /**
      * Run through without making any changes.
      */
     dryRun?: boolean;
