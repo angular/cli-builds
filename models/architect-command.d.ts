@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { Architect } from '@angular-devkit/architect';
+import { Architect, TargetSpecifier } from '@angular-devkit/architect';
 import { experimental, json } from '@angular-devkit/core';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments } from './interface';
@@ -25,6 +25,7 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     target: string | undefined;
     initialize(options: ArchitectCommandOptions & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
+    protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<0 | 1>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;
     private getProjectNamesByTarget;
     private _loadWorkspaceAndArchitect;
