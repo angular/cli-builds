@@ -10,8 +10,8 @@ import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-c
 import { Arguments } from '../models/interface';
 import { Schema as LintCommandSchema } from './lint';
 export declare class LintCommand extends ArchitectCommand<LintCommandSchema> {
-    readonly target: string;
-    readonly multiTarget: boolean;
+    readonly target = "lint";
+    readonly multiTarget = true;
     protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<0 | 1>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

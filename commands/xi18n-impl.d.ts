@@ -9,7 +9,7 @@ import { ArchitectCommand } from '../models/architect-command';
 import { Arguments } from '../models/interface';
 import { Schema as Xi18nCommandSchema } from './xi18n';
 export declare class Xi18nCommand extends ArchitectCommand<Xi18nCommandSchema> {
-    readonly target: string;
+    readonly target = "extract-i18n";
     readonly multiTarget: true;
     run(options: Xi18nCommandSchema & Arguments): Promise<number>;
 }

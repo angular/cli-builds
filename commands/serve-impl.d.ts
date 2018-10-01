@@ -9,7 +9,7 @@ import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-c
 import { Arguments } from '../models/interface';
 import { Schema as ServeCommandSchema } from './serve';
 export declare class ServeCommand extends ArchitectCommand<ServeCommandSchema> {
-    readonly target: string;
+    readonly target = "serve";
     validate(_options: ArchitectCommandOptions & Arguments): boolean;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

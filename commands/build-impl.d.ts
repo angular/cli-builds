@@ -9,6 +9,6 @@ import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-c
 import { Arguments } from '../models/interface';
 import { Schema as BuildCommandSchema } from './build';
 export declare class BuildCommand extends ArchitectCommand<BuildCommandSchema> {
-    readonly target: string;
+    readonly target = "build";
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }

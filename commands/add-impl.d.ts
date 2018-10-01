@@ -9,6 +9,6 @@ import { Arguments } from '../models/interface';
 import { SchematicCommand } from '../models/schematic-command';
 import { Schema as AddCommandSchema } from './add';
 export declare class AddCommand extends SchematicCommand<AddCommandSchema> {
-    readonly allowPrivateSchematics: boolean;
+    readonly allowPrivateSchematics = true;
     run(options: AddCommandSchema & Arguments): Promise<number | void>;
 }

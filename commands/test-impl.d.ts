@@ -9,7 +9,7 @@ import { ArchitectCommand, ArchitectCommandOptions } from '../models/architect-c
 import { Arguments } from '../models/interface';
 import { Schema as TestCommandSchema } from './test';
 export declare class TestCommand extends ArchitectCommand<TestCommandSchema> {
-    readonly target: string;
-    readonly multiTarget: boolean;
+    readonly target = "test";
+    readonly multiTarget = true;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }
