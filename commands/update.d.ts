@@ -6,10 +6,6 @@ export interface Schema {
      * Shows a help message. You can pass the format as a value.
      */
     help?: HelpUnion;
-    /**
-     * The names of package(s) to update
-     */
-    packages?: string[];
 }
 /**
  * Shows a help message. You can pass the format as a value.
