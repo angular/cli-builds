@@ -3,10 +3,6 @@
  */
 export interface Schema {
     /**
-     * Run through without making any changes.
-     */
-    dryRun?: boolean;
-    /**
      * Shows a help message. You can pass the format as a value.
      */
     help?: HelpUnion;
