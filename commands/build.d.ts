@@ -1,9 +1,11 @@
 /**
- * Builds your app and places it into the output path (dist/ by default).
+ * Compiles an Angular app into an output directory named dist/ at the given output path.
+ * Must be executed from within a workspace directory.
  */
 export interface Schema {
     /**
-     * Specify the configuration to use.
+     * A named configuration environment, as specified in the `configurations` section of
+     * `angular.json`.
      */
     configuration?: string;
     /**
@@ -11,11 +13,13 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * Flag to set configuration to 'production'.
+     * When true, sets the build configuration to the production environment.
+     * All builds make use of bundling and limited tree-shaking, A production build also runs
+     * limited dead code elimination using UglifyJS.
      */
     prod?: boolean;
     /**
-     * The name of the project to build.
+     * The name of the project to build. Can be an app or a library.
      */
     project?: string;
 }
