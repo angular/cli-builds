@@ -1,26 +1,27 @@
 /**
- * Get/set configuration values.
+ * Retrieves or sets Angular configuration values.
  */
 export interface Schema {
     /**
-     * Get/set the value in the global configuration (in your home directory).
+     * When true, accesses the global configuration in the caller's home directory.
      */
     global?: boolean;
     /**
-     * Shows a help message. You can pass the format as a value.
+     * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
     /**
-     * The path to the value to get/set.
+     * The configuration key to set or query, in JSON path format. For example:
+     * "a[3].foo.bar[2]". If no new value is provided, returns the current value of this key.
      */
     jsonPath?: string;
     /**
-     * The new value to be set.
+     * If provided, a new value for the given configuration key.
      */
     value?: Value;
 }
 /**
- * Shows a help message. You can pass the format as a value.
+ * Shows a help message for this command in the console.
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {
@@ -28,6 +29,6 @@ export declare enum HelpEnum {
     JSON = "json"
 }
 /**
- * The new value to be set.
+ * If provided, a new value for the given configuration key.
  */
 export declare type Value = boolean | number | string;

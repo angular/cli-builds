@@ -1,14 +1,14 @@
 /**
- * Runs the end-to-end tests.
+ * Builds and serves an Angular app, and runs end-to-end tests using Protractor.
  */
 export interface Schema {
     /**
-     * A named configuration environment, as specified in the `configurations` section of
-     * `angular.json`.
+     * A named configuration environment, as specified in the "configurations" section of
+     * angular.json.
      */
     configuration?: string;
     /**
-     * Shows a help message. You can pass the format as a value.
+     * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
     /**
@@ -23,7 +23,7 @@ export interface Schema {
     project?: string;
 }
 /**
- * Shows a help message. You can pass the format as a value.
+ * Shows a help message for this command in the console.
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {

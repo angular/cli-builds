@@ -1,5 +1,5 @@
 /**
- * Lints code in existing project.
+ * Runs the TSLint tool on Angular app code in the given project folder.
  */
 export interface Schema {
     /**
@@ -7,7 +7,7 @@ export interface Schema {
      */
     configuration?: string;
     /**
-     * Shows a help message. You can pass the format as a value.
+     * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
     /**
@@ -16,7 +16,7 @@ export interface Schema {
     project?: string;
 }
 /**
- * Shows a help message. You can pass the format as a value.
+ * Shows a help message for this command in the console.
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {

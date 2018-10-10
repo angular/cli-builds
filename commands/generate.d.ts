@@ -3,23 +3,23 @@
  */
 export interface Schema {
     /**
-     * Disables interactive inputs (i.e., prompts) for options with a default.
+     * When true, disables interactive input prompts for options with a default.
      */
     defaults?: boolean;
     /**
-     * Run through without making any changes.
+     * When true, run through and report activity without writing out results.
      */
     dryRun?: boolean;
     /**
-     * Forces overwriting of files.
+     * When true, force overwriting of existing files.
      */
     force?: boolean;
     /**
-     * Shows a help message. You can pass the format as a value.
+     * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
     /**
-     * Disables interactive inputs (i.e., prompts).
+     * When false, disables interactive input prompts.
      */
     interactive?: boolean;
     /**
@@ -28,7 +28,7 @@ export interface Schema {
     schematic?: string;
 }
 /**
- * Shows a help message. You can pass the format as a value.
+ * Shows a help message for this command in the console.
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {
