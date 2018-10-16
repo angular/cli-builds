@@ -1,5 +1,5 @@
 /**
- * Builds and serves an Angular app, and runs end-to-end tests using Protractor.
+ * Builds and serves an Angular app, then runs end-to-end tests using Protractor.
  */
 export interface Schema {
     /**

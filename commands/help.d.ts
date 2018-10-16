@@ -1,7 +1,5 @@
 /**
- * Lists available commands and their short descriptions in the console.
- * &nbsp &nbsp For help with individual commands, use the "--help" or "-h" option with the
- * command.
+ * Lists available commands and their short descriptions.
  */
 export interface Schema {
     /**

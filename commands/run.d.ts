@@ -1,5 +1,5 @@
 /**
- * Runs Architect targets.
+ * Runs a custom target defined in your project.
  */
 export interface Schema {
     /**

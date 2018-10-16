@@ -1,5 +1,5 @@
 /**
- * Updates your application and its dependencies.
+ * Updates your application and its dependencies. See https://update.angular.io/
  */
 export interface Schema {
     /**

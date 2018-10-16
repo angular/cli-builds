@@ -1,5 +1,5 @@
 /**
- * Add support for a library to your project.
+ * Adds support for an external library to your project.
  */
 export interface Schema {
     /**

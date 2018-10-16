@@ -1,5 +1,5 @@
 /**
- * Runs the TSLint tool on Angular app code in the given project folder.
+ * Runs linting tools on Angular app code in a given project folder.
  */
 export interface Schema {
     /**

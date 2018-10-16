@@ -1,5 +1,5 @@
 /**
- * Run unit tests in existing project.
+ * Runs unit tests in a project.
  */
 export interface Schema {
     /**

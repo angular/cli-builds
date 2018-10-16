@@ -1,6 +1,5 @@
 /**
- * Temporarily disabled. Ejects your app and output the proper webpack configuration and
- * scripts.
+ * Deprecated, will be removed in Angular 8.0.
  */
 export interface Schema {
     /**

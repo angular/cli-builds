@@ -1,5 +1,5 @@
 /**
- * Creates a new directory and a new Angular app.
+ * Creates a new workspace and an initial Angular app.
  */
 export interface Schema {
     /**
