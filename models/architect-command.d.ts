@@ -25,7 +25,7 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     target: string | undefined;
     initialize(options: ArchitectCommandOptions & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
-    protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<0 | 1>;
+    protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<1 | 0>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;
     private getProjectNamesByTarget;
     private _loadWorkspaceAndArchitect;

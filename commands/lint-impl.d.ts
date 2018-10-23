@@ -12,6 +12,6 @@ import { Schema as LintCommandSchema } from './lint';
 export declare class LintCommand extends ArchitectCommand<LintCommandSchema> {
     readonly target = "lint";
     readonly multiTarget = true;
-    protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<0 | 1>;
+    protected runSingleTarget(targetSpec: TargetSpecifier, options: string[]): Promise<1 | 0>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
 }
