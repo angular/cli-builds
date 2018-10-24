@@ -78,7 +78,7 @@ export interface SchematicsAngularComponent {
      */
     export?: boolean;
     /**
-     * Flag to indicate if a dir is created.
+     * Flag to indicate if a directory is created.
      */
     flat?: boolean;
     /**
@@ -140,7 +140,7 @@ export interface SchematicsAngularDirective {
      */
     export?: boolean;
     /**
-     * Flag to indicate if a dir is created.
+     * Flag to indicate if a directory is created.
      */
     flat?: boolean;
     /**
@@ -170,7 +170,7 @@ export interface SchematicsAngularModule {
      */
     commonModule?: boolean;
     /**
-     * Flag to indicate if a dir is created.
+     * Flag to indicate if a directory is created.
      */
     flat?: boolean;
     /**
@@ -203,7 +203,7 @@ export interface SchematicsAngularPipe {
      */
     export?: boolean;
     /**
-     * Flag to indicate if a dir is created.
+     * Flag to indicate if a directory is created.
      */
     flat?: boolean;
     /**
@@ -221,7 +221,7 @@ export interface SchematicsAngularPipe {
 }
 export interface SchematicsAngularService {
     /**
-     * Flag to indicate if a dir is created.
+     * Flag to indicate if a directory is created.
      */
     flat?: boolean;
     /**
