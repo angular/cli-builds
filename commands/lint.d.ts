@@ -3,7 +3,7 @@
  */
 export interface Schema {
     /**
-     * Specify the configuration to use.
+     * The linting configuration to use.
      */
     configuration?: string;
     /**
