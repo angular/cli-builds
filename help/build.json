@@ -1,1 +1,391 @@
-{"name":"build","description":"Compiles an Angular app into an output directory named dist/ at the given output path. Must be executed from within a workspace directory.","longDescription":"Resources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nUses the Webpack build tool, with environment and build options specified in the CLI configuration file.\n","options":[{"name":"project","description":"The name of the project to build. Can be an app or a library.","type":"string","required":false,"aliases":[],"hidden":false,"positional":0},{"name":"configuration","description":"A named configuration environment, as specified in the \"configurations\" section of angular.json.","type":"string","required":false,"aliases":["c"],"hidden":false},{"name":"prod","description":"When true, sets the build configuration to the production environment.\nAll builds make use of bundling and limited tree-shaking, A production build also runs limited dead code elimination using UglifyJS.","type":"boolean","required":false,"aliases":[],"hidden":false},{"name":"help","description":"Shows a help message for this command in the console.","type":"boolean","types":["boolean","string"],"default":false,"enum":[true,false,"json","JSON"],"required":false,"aliases":[],"hidden":false},{"name":"extractCss","description":"Extract css from global styles into css files instead of js ones.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"main","description":"The full path for the main entry point to the app, relative to the current workspace.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"tsConfig","description":"The full path for the TypeScript configuration file, relative to the current workspace.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"optimization","description":"When true, uses optimization for the app build.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"outputPath","description":"The full path for the new output directory, relative to the current workspace.\n\nBy default, writes output to a folder named dist/ in the current project.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"aot","description":"Build using Ahead of Time compilation.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"sourceMap","description":"Output sourcemaps.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"vendorSourceMap","description":"Resolve vendor packages sourcemaps.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"evalSourceMap","description":"Output in-file eval sourcemaps.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"vendorChunk","description":"Use a separate bundle containing only vendor libraries.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"commonChunk","description":"Use a separate bundle containing code used across multiple bundles.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"baseHref","description":"Base url for the application being built.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"deployUrl","description":"URL where files will be deployed.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"verbose","description":"Adds more details to output logging.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"progress","description":"Log progress to the console while building.","type":"boolean","required":false,"aliases":[],"hidden":false},{"name":"i18nFile","description":"Localization file to use for i18n.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"i18nFormat","description":"Format of the localization file specified with --i18n-file.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"i18nLocale","description":"Locale to use for i18n.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"i18nMissingTranslation","description":"How to handle missing translations for i18n.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"polyfills","description":"The full path for the polyfills file, relative to the current workspace.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"watch","description":"Run build when files change.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"outputHashing","description":"Define the output filename cache-busting hashing mode.","type":"string","default":"none","enum":["none","all","media","bundles"],"required":false,"aliases":[],"hidden":false},{"name":"poll","description":"Enable and define the file watching poll time period in milliseconds.","type":"number","required":false,"aliases":[],"hidden":false},{"name":"deleteOutputPath","description":"Delete the output path before building.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"preserveSymlinks","description":"Do not use the real path when resolving modules.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"extractLicenses","description":"Extract all licenses in a separate file.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"showCircularDependencies","description":"Show circular dependency warnings on builds.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"buildOptimizer","description":"Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"namedChunks","description":"Use file name for lazy loaded chunks.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"subresourceIntegrity","description":"Enables the use of subresource integrity validation.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"serviceWorker","description":"Generates a service worker config for production builds.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"ngswConfigPath","description":"Path to ngsw-config.json.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"skipAppShell","description":"Flag to prevent building an app shell.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"index","description":"The name of the index HTML file.","type":"string","required":false,"aliases":[],"hidden":false},{"name":"statsJson","description":"Generates a 'stats.json' file which can be analyzed using tools such as: 'webpack-bundle-analyzer' or https: //webpack.github.io/analyse.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false},{"name":"forkTypeChecker","description":"Run the TypeScript type checker in a forked process.","type":"boolean","default":true,"required":false,"aliases":[],"hidden":false},{"name":"lazyModules","description":"List of additional NgModule files that will be lazy loaded. Lazy router modules will be discovered automatically.","type":"array","required":false,"aliases":[],"hidden":false},{"name":"profile","description":"Output profile events for Chrome profiler.","type":"boolean","default":false,"required":false,"aliases":[],"hidden":false}],"aliases":["b"],"scope":"in","hidden":false}
+{
+  "name": "build",
+  "description": "Compiles an Angular app into an output directory named dist/ at the given output path. Must be executed from within a workspace directory.",
+  "longDescription": "Resources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nUses the Webpack build tool, with environment and build options specified in the CLI configuration file.\n",
+  "options": [
+    {
+      "name": "project",
+      "description": "The name of the project to build. Can be an app or a library.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
+    },
+    {
+      "name": "configuration",
+      "description": "A named configuration environment, as specified in the \"configurations\" section of angular.json.",
+      "type": "string",
+      "required": false,
+      "aliases": [
+        "c"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "prod",
+      "description": "When true, sets the build configuration to the production environment.\nAll builds make use of bundling and limited tree-shaking, A production build also runs limited dead code elimination using UglifyJS.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "extractCss",
+      "description": "Extract css from global styles into css files instead of js ones.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "main",
+      "description": "The full path for the main entry point to the app, relative to the current workspace.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "tsConfig",
+      "description": "The full path for the TypeScript configuration file, relative to the current workspace.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "optimization",
+      "description": "When true, uses optimization for the app build.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "outputPath",
+      "description": "The full path for the new output directory, relative to the current workspace.\n\nBy default, writes output to a folder named dist/ in the current project.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "aot",
+      "description": "Build using Ahead of Time compilation.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "sourceMap",
+      "description": "Output sourcemaps.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "vendorSourceMap",
+      "description": "Resolve vendor packages sourcemaps.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "evalSourceMap",
+      "description": "Output in-file eval sourcemaps.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "vendorChunk",
+      "description": "Use a separate bundle containing only vendor libraries.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "commonChunk",
+      "description": "Use a separate bundle containing code used across multiple bundles.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "baseHref",
+      "description": "Base url for the application being built.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "deployUrl",
+      "description": "URL where files will be deployed.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "verbose",
+      "description": "Adds more details to output logging.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "progress",
+      "description": "Log progress to the console while building.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "i18nFile",
+      "description": "Localization file to use for i18n.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "i18nFormat",
+      "description": "Format of the localization file specified with --i18n-file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "i18nLocale",
+      "description": "Locale to use for i18n.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "i18nMissingTranslation",
+      "description": "How to handle missing translations for i18n.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "watch",
+      "description": "Run build when files change.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "outputHashing",
+      "description": "Define the output filename cache-busting hashing mode.",
+      "type": "string",
+      "default": "none",
+      "enum": [
+        "none",
+        "all",
+        "media",
+        "bundles"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "poll",
+      "description": "Enable and define the file watching poll time period in milliseconds.",
+      "type": "number",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "deleteOutputPath",
+      "description": "Delete the output path before building.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "preserveSymlinks",
+      "description": "Do not use the real path when resolving modules.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "extractLicenses",
+      "description": "Extract all licenses in a separate file.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "showCircularDependencies",
+      "description": "Show circular dependency warnings on builds.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "buildOptimizer",
+      "description": "Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "namedChunks",
+      "description": "Use file name for lazy loaded chunks.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "subresourceIntegrity",
+      "description": "Enables the use of subresource integrity validation.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "serviceWorker",
+      "description": "Generates a service worker config for production builds.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "ngswConfigPath",
+      "description": "Path to ngsw-config.json.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "skipAppShell",
+      "description": "Flag to prevent building an app shell.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "index",
+      "description": "The name of the index HTML file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "statsJson",
+      "description": "Generates a 'stats.json' file which can be analyzed using tools such as: 'webpack-bundle-analyzer' or https: //webpack.github.io/analyse.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "forkTypeChecker",
+      "description": "Run the TypeScript type checker in a forked process.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "lazyModules",
+      "description": "List of additional NgModule files that will be lazy loaded. Lazy router modules will be discovered automatically.",
+      "type": "array",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "profile",
+      "description": "Output profile events for Chrome profiler.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    }
+  ],
+  "aliases": [
+    "b"
+  ],
+  "scope": "in",
+  "hidden": false
+}
