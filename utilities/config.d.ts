@@ -12,7 +12,7 @@ export declare function createGlobalSettings(): string;
 export declare function getWorkspaceRaw(level?: 'local' | 'global'): [JsonAstObject | null, string | null];
 export declare function validateWorkspace(json: JsonObject): boolean;
 export declare function getProjectByCwd(workspace: experimental.workspace.Workspace): string | null;
-export declare function getPackageManager(): string;
+export declare function getConfiguredPackageManager(): string | null;
 export declare function migrateLegacyGlobalConfig(): boolean;
 export declare function getSchematicDefaults(collection: string, schematic: string, project?: string | null): {};
 export declare function isWarningEnabled(warning: string): boolean;
