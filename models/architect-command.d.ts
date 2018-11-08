@@ -19,7 +19,6 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     private _host;
     protected _architect: Architect;
     protected _workspace: experimental.workspace.Workspace;
-    protected _logger: import("../../../angular_devkit/core/src/logger/logger").Logger;
     protected _registry: json.schema.SchemaRegistry;
     protected multiTarget: boolean;
     target: string | undefined;
