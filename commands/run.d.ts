@@ -1,9 +1,11 @@
 /**
- * Runs a custom target defined in your project.
+ * Runs an Architect target with an optional custom builder configuration defined in your
+ * project.
  */
 export interface Schema {
     /**
-     * Specify the configuration to use.
+     * A named builder configuration, defined in the "configurations" section of angular.json.
+     * The builder uses the named configuration to run the given target.
      */
     configuration?: string;
     /**
@@ -11,7 +13,7 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * The target to run.
+     * The Architect target to run.
      */
     target?: string;
 }

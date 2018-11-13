@@ -7,11 +7,11 @@ export interface Schema {
      */
     defaults?: boolean;
     /**
-     * When true, run through and report activity without writing out results.
+     * When true, runs through and reports activity without writing out results.
      */
     dryRun?: boolean;
     /**
-     * When true, force overwriting of existing files.
+     * When true, forces overwriting of existing files.
      */
     force?: boolean;
     /**

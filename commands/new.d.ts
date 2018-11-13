@@ -3,7 +3,7 @@
  */
 export interface Schema {
     /**
-     * Schematics collection to use.
+     * A collection of schematics to use in generating the initial app.
      */
     collection?: string;
     /**
@@ -11,11 +11,11 @@ export interface Schema {
      */
     defaults?: boolean;
     /**
-     * When true, run through and report activity without writing out results.
+     * When true, runs through and reports activity without writing out results.
      */
     dryRun?: boolean;
     /**
-     * When true, force overwriting of existing files.
+     * When true, forces overwriting of existing files.
      */
     force?: boolean;
     /**
@@ -27,7 +27,7 @@ export interface Schema {
      */
     interactive?: boolean;
     /**
-     * Adds more details to output logging.
+     * When true, adds more details to output logging.
      */
     verbose?: boolean;
 }

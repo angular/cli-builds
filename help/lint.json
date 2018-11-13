@@ -1,7 +1,7 @@
 {
   "name": "lint",
   "description": "Runs linting tools on Angular app code in a given project folder.",
-  "longDescription": "Takes the name of the project, as specified in the  `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, uses the configured `defaultProject` of the workspace.",
+  "longDescription": "Takes the name of the project, as specified in the  `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, uses the configured `defaultProject` of the workspace.\n\nThe default linting tool is [TSLint](https://palantir.github.io/tslint/), and the default configuration is specified in the project's `tslint.json` file.",
   "options": [
     {
       "name": "project",
@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "Specify the configuration to use.",
+      "description": "The linting configuration to use.",
       "type": "string",
       "required": false,
       "aliases": [

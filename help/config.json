@@ -1,6 +1,6 @@
 {
   "name": "config",
-  "description": "Retrieves or sets Angular configuration values.",
+  "description": "Retrieves or sets Angular configuration values in the angular.json file for the workspace.",
   "options": [
     {
       "name": "jsonPath",

@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "A named configuration environment, as specified in the \"configurations\" section of angular.json.",
+      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
       "type": "string",
       "required": false,
       "aliases": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "prod",
-      "description": "When true, sets the build configuration to the production environment.\nAll builds make use of bundling and limited tree-shaking, A production build also runs limited dead code elimination using UglifyJS.",
+      "description": "When true, sets the build configuration to the production target.\nAll builds make use of bundling and limited tree-shaking. A production build also runs limited dead code elimination.",
       "type": "boolean",
       "required": false,
       "aliases": [],

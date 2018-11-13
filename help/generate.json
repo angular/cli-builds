@@ -13,7 +13,7 @@
       "subcommands": {
         "appShell": {
           "name": "appShell",
-          "description": "",
+          "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
             {
               "name": "main",
@@ -27,7 +27,7 @@
             },
             {
               "name": "clientProject",
-              "description": "Name of related client app.",
+              "description": "The name of the related client app.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -44,7 +44,7 @@
             },
             {
               "name": "name",
-              "description": "Name of the universal app",
+              "description": "The HTML selector of the Universal app",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -53,7 +53,7 @@
             },
             {
               "name": "appId",
-              "description": "The appId to use withServerTransition.",
+              "description": "The app ID to use in withServerTransition().",
               "type": "string",
               "default": "serverApp",
               "required": false,
@@ -83,7 +83,7 @@
             },
             {
               "name": "index",
-              "description": "Name of the index file",
+              "description": "The name of the index file",
               "type": "string",
               "default": "index.html",
               "required": false,
@@ -93,7 +93,7 @@
             },
             {
               "name": "universalProject",
-              "description": "Name of related universal app.",
+              "description": "The name of related Universal app.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -175,11 +175,11 @@
         },
         "application": {
           "name": "application",
-          "description": "",
+          "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
           "options": [
             {
               "name": "routing",
-              "description": "Generates a routing module.",
+              "description": "When true, creates a routing NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -188,7 +188,7 @@
             },
             {
               "name": "projectRoot",
-              "description": "The root directory of the new application.",
+              "description": "The root directory of the new app.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -196,7 +196,7 @@
             },
             {
               "name": "experimentalIvy",
-              "description": "EXPERIMENTAL: Specifies whether to create a new application which uses the Ivy rendering engine.",
+              "description": "EXPERIMENTAL: True to create a new app that uses the Ivy rendering engine.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -205,7 +205,7 @@
             },
             {
               "name": "inlineStyle",
-              "description": "Specifies if the style will be in the ts file.",
+              "description": "When true, includes styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -216,7 +216,7 @@
             },
             {
               "name": "inlineTemplate",
-              "description": "Specifies if the template will be in the ts file.",
+              "description": "When true, includes template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -227,7 +227,7 @@
             },
             {
               "name": "viewEncapsulation",
-              "description": "Specifies the view encapsulation strategy.",
+              "description": "The view encapsulation strategy to use in the new app.",
               "type": "string",
               "enum": [
                 "Emulated",
@@ -241,7 +241,7 @@
             },
             {
               "name": "name",
-              "description": "The name of the application.",
+              "description": "The name of the new app.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -250,7 +250,7 @@
             },
             {
               "name": "prefix",
-              "description": "The prefix to apply to generated selectors.",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
               "default": "app",
               "required": false,
@@ -262,7 +262,7 @@
             },
             {
               "name": "style",
-              "description": "The file extension to be used for style files.",
+              "description": "The file extension to use for style files.",
               "type": "string",
               "default": "css",
               "required": false,
@@ -271,7 +271,7 @@
             },
             {
               "name": "skipTests",
-              "description": "Skip creating spec files.",
+              "description": "When true, does not create \"spec.ts\" test files for the app.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -282,7 +282,7 @@
             },
             {
               "name": "skipPackageJson",
-              "description": "Do not add dependencies to package.json.",
+              "description": "When true, does not add dependencies to the \"package.json\" file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -291,7 +291,7 @@
             },
             {
               "name": "minimal",
-              "description": "Create a barebones project without any testing frameworks",
+              "description": "When true, creates a bare-bones project without any testing frameworks.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -312,11 +312,11 @@
         },
         "class": {
           "name": "class",
-          "description": "",
+          "description": "Creates a new generic class definition in the given or default project.",
           "options": [
             {
               "name": "name",
-              "description": "The name of the class.",
+              "description": "The name of the new class.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -325,7 +325,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the class.",
+              "description": "The path at which to create the class, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -342,7 +342,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true, generates a \"spec.ts\" test file for the new class.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -351,7 +351,7 @@
             },
             {
               "name": "type",
-              "description": "Specifies the type of class.",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
               "type": "string",
               "default": "",
               "required": false,
@@ -363,11 +363,11 @@
         },
         "component": {
           "name": "component",
-          "description": "",
+          "description": "Creates a new generic component definition in the given or default project.",
           "options": [
             {
               "name": "styleext",
-              "description": "The file extension to be used for style files.",
+              "description": "The file extension to use for style files.",
               "type": "string",
               "default": "css",
               "required": false,
@@ -376,7 +376,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the component.",
+              "description": "The path at which to create the component file, relative to the current workspace. Default is a folder with the same name as the component in the project root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -394,7 +394,7 @@
             },
             {
               "name": "inlineStyle",
-              "description": "Specifies if the style will be in the ts file.",
+              "description": "When true, includes styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -405,7 +405,7 @@
             },
             {
               "name": "inlineTemplate",
-              "description": "Specifies if the template will be in the ts file.",
+              "description": "When true, includes template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -416,7 +416,7 @@
             },
             {
               "name": "viewEncapsulation",
-              "description": "Specifies the view encapsulation strategy.",
+              "description": "The view encapsulation strategy to use in the new component.",
               "type": "string",
               "enum": [
                 "Emulated",
@@ -432,7 +432,7 @@
             },
             {
               "name": "changeDetection",
-              "description": "Specifies the change detection strategy.",
+              "description": "The change detection strategy to use in the new component.",
               "type": "string",
               "default": "Default",
               "enum": [
@@ -447,7 +447,7 @@
             },
             {
               "name": "prefix",
-              "description": "The prefix to apply to generated selectors.",
+              "description": "The prefix to apply to the generated component selector.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -465,7 +465,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true (the default), generates a  \"spec.ts\" test file for the new component.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -474,7 +474,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true, creates the new files at the top level of the current project.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -483,7 +483,7 @@
             },
             {
               "name": "skipImport",
-              "description": "Flag to skip the module import.",
+              "description": "When true, does not import this component into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -492,7 +492,7 @@
             },
             {
               "name": "selector",
-              "description": "The selector to use for the component.",
+              "description": "The HTML selector to use for this component.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -501,7 +501,7 @@
             },
             {
               "name": "module",
-              "description": "Allows specification of the declaring module.",
+              "description": "The declaring NgModule.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -511,7 +511,7 @@
             },
             {
               "name": "export",
-              "description": "Specifies if declaring module exports the component.",
+              "description": "When true, the declaring NgModule exports this component.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -520,7 +520,7 @@
             },
             {
               "name": "entryComponent",
-              "description": "Specifies if the component is an entry component of declaring module.",
+              "description": "When true, the new component is the entry component of the declaring NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -529,7 +529,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the component.",
+              "description": "When true, applies lint fixes after generating the component.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -541,11 +541,11 @@
         },
         "directive": {
           "name": "directive",
-          "description": "",
+          "description": "Creates a new generic directive definition in the given or default project.",
           "options": [
             {
               "name": "skipImport",
-              "description": "Flag to skip the module import.",
+              "description": "When true, does not import this directive into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -554,7 +554,7 @@
             },
             {
               "name": "name",
-              "description": "The name of the directive.",
+              "description": "The name of the new directive.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -571,7 +571,7 @@
             },
             {
               "name": "prefix",
-              "description": "The prefix to apply to generated selectors.",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -581,7 +581,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true (the default), generates a  \"spec.ts\" test file for the new directive.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -590,7 +590,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the interface.",
+              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -599,7 +599,7 @@
             },
             {
               "name": "selector",
-              "description": "The selector to use for the directive.",
+              "description": "The HTML selector to use for this directive.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -608,7 +608,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -617,7 +617,7 @@
             },
             {
               "name": "module",
-              "description": "Allows specification of the declaring module.",
+              "description": "The declaring NgModule.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -627,7 +627,7 @@
             },
             {
               "name": "export",
-              "description": "Specifies if declaring module exports the directive.",
+              "description": "When true, the declaring NgModule exports this directive.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -636,7 +636,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the directive.",
+              "description": "When true, applies lint fixes after generating the directive.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -648,7 +648,7 @@
         },
         "enum": {
           "name": "enum",
-          "description": "",
+          "description": "Generates a new, generic enum definition for the given or default project.",
           "options": [
             {
               "name": "name",
@@ -661,7 +661,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the enum.",
+              "description": "The path at which to create the enum definition, relative to the current workspace.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -670,7 +670,7 @@
             },
             {
               "name": "project",
-              "description": "The name of the project.",
+              "description": "The name of the project in which to create the enum. Default is the configured default project for the workspace.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -678,7 +678,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the enum.",
+              "description": "When true, applies lint fixes after generating the enum.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -690,11 +690,11 @@
         },
         "guard": {
           "name": "guard",
-          "description": "",
+          "description": "Generates a new, generic route guard definition in the given or default project.",
           "options": [
             {
               "name": "name",
-              "description": "The name of the guard.",
+              "description": "The name of the new route guard.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -703,7 +703,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true (the default), generates a  \"spec.ts\" test file for the new guard.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -712,7 +712,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -721,7 +721,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the interface.",
+              "description": "The path at which to create the interface that defines the guard, relative to the current workspace.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -738,7 +738,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the guard.",
+              "description": "When true, applies lint fixes after generating the guard.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -750,7 +750,7 @@
         },
         "interface": {
           "name": "interface",
-          "description": "",
+          "description": "Creates a new generic interface definition in the given or default project.",
           "options": [
             {
               "name": "name",
@@ -763,7 +763,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the interface.",
+              "description": "The path at which to create the interface, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -780,7 +780,7 @@
             },
             {
               "name": "prefix",
-              "description": "Specifies the prefix to use.",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
               "default": "",
               "required": false,
@@ -789,7 +789,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the directive.",
+              "description": "When true, applies lint fixes after generating the interface.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -798,7 +798,7 @@
             },
             {
               "name": "type",
-              "description": "Specifies the type of interface.",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -810,7 +810,7 @@
         },
         "library": {
           "name": "library",
-          "description": "",
+          "description": "Creates a new generic library project in the current workspace.",
           "options": [
             {
               "name": "name",
@@ -823,7 +823,7 @@
             },
             {
               "name": "entryFile",
-              "description": "The path to create the library's public API file.",
+              "description": "The path at which to create the library's public API file, relative to the workspace root.",
               "type": "string",
               "default": "public_api",
               "required": false,
@@ -833,7 +833,7 @@
             },
             {
               "name": "prefix",
-              "description": "The prefix to apply to generated selectors.",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
               "default": "lib",
               "required": false,
@@ -845,7 +845,7 @@
             },
             {
               "name": "skipPackageJson",
-              "description": "Do not add dependencies to package.json.",
+              "description": "When true, does not add dependencies to the \"package.json\" file. ",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -854,7 +854,7 @@
             },
             {
               "name": "skipInstall",
-              "description": "Skip installing dependency packages.",
+              "description": "When true, does not install dependency packages.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -863,7 +863,7 @@
             },
             {
               "name": "skipTsConfig",
-              "description": "Do not update tsconfig.json for development experience.",
+              "description": "When true, does not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -875,11 +875,11 @@
         },
         "module": {
           "name": "module",
-          "description": "",
+          "description": "Creates a new generic NgModule definition in the given or default project.",
           "options": [
             {
               "name": "name",
-              "description": "The name of the module.",
+              "description": "The name of the NgModule.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -888,7 +888,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the module.",
+              "description": "The path at which to create the NgModule, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -905,7 +905,7 @@
             },
             {
               "name": "routing",
-              "description": "Generates a routing module.",
+              "description": "When true, creates a routing module.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -914,7 +914,7 @@
             },
             {
               "name": "routingScope",
-              "description": "The scope for the generated routing.",
+              "description": "The scope for the new routing module.",
               "type": "string",
               "default": "Child",
               "enum": [
@@ -927,7 +927,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true, creates the new files at the top level of the current project root. ",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -936,7 +936,7 @@
             },
             {
               "name": "commonModule",
-              "description": "Flag to control whether the CommonModule is imported.",
+              "description": "When true, the new NgModule imports \"CommonModule\". ",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -945,7 +945,7 @@
             },
             {
               "name": "module",
-              "description": "Allows specification of the declaring module.",
+              "description": "The declaring NgModule.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -958,7 +958,7 @@
         },
         "pipe": {
           "name": "pipe",
-          "description": "",
+          "description": "Creates a new generic pipe definition in the given or default project.",
           "options": [
             {
               "name": "name",
@@ -971,7 +971,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the pipe.",
+              "description": "The path at which to create the pipe, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -988,7 +988,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true (the default) creates files at the top level of the project.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -997,7 +997,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true (the default), generates a  \"spec.ts\" test file for the new pipe.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -1006,7 +1006,7 @@
             },
             {
               "name": "skipImport",
-              "description": "Allows for skipping the module import.",
+              "description": "When true, does not import this pipe into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1015,7 +1015,7 @@
             },
             {
               "name": "module",
-              "description": "Allows specification of the declaring module.",
+              "description": "The declaring NgModule.",
               "type": "string",
               "required": false,
               "aliases": [
@@ -1025,7 +1025,7 @@
             },
             {
               "name": "export",
-              "description": "Specifies if declaring module exports the pipe.",
+              "description": "When true, the declaring NgModule exports this pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1034,7 +1034,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the pipe.",
+              "description": "When true, applies lint fixes after generating the pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1046,7 +1046,7 @@
         },
         "service": {
           "name": "service",
-          "description": "",
+          "description": "Creates a new, generic service definition in the given or default project.",
           "options": [
             {
               "name": "name",
@@ -1059,7 +1059,7 @@
             },
             {
               "name": "path",
-              "description": "The path to create the service.",
+              "description": "The path at which to create the service, relative to the workspace root.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -1076,7 +1076,7 @@
             },
             {
               "name": "flat",
-              "description": "Flag to indicate if a directory is created.",
+              "description": "When true (the default), creates files at the top level of the project.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -1085,7 +1085,7 @@
             },
             {
               "name": "spec",
-              "description": "Specifies if a spec file is generated.",
+              "description": "When true (the default), generates a  \"spec.ts\" test file for the new service.",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -1094,7 +1094,7 @@
             },
             {
               "name": "lintFix",
-              "description": "Specifies whether to apply lint fixes after generating the pipe.",
+              "description": "When true, applies lint fixes after generating the pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1106,7 +1106,7 @@
         },
         "serviceWorker": {
           "name": "serviceWorker",
-          "description": "",
+          "description": "Pass this schematic to the \"run\" command to create a service worker",
           "options": [
             {
               "name": "project",
@@ -1139,11 +1139,11 @@
         },
         "universal": {
           "name": "universal",
-          "description": "",
+          "description": "Pass this schematic to the \"run\" command to set up server-side rendering for an app.",
           "options": [
             {
               "name": "clientProject",
-              "description": "Name of related client app.",
+              "description": "The name of the related client app. Required in place of \"project\".",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -1151,7 +1151,7 @@
             },
             {
               "name": "appId",
-              "description": "The appId to use withServerTransition.",
+              "description": "The app identifier to use for transition.",
               "type": "string",
               "default": "serverApp",
               "required": false,
@@ -1199,7 +1199,7 @@
             },
             {
               "name": "appDir",
-              "description": "The name of the application directory.",
+              "description": "The name of the application folder.",
               "type": "string",
               "default": "app",
               "required": false,
@@ -1209,7 +1209,7 @@
             },
             {
               "name": "rootModuleFileName",
-              "description": "The name of the root module file",
+              "description": "The name of the root NgModule file.",
               "type": "string",
               "default": "app.server.module.ts",
               "required": false,
@@ -1219,7 +1219,7 @@
             },
             {
               "name": "rootModuleClassName",
-              "description": "The name of the root module class.",
+              "description": "The name of the root NgModule class.",
               "type": "string",
               "default": "AppServerModule",
               "required": false,
@@ -1228,7 +1228,7 @@
             },
             {
               "name": "skipInstall",
-              "description": "Skip installing dependency packages.",
+              "description": "When true, does not install packages for dependencies.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1261,7 +1261,7 @@
     },
     {
       "name": "dryRun",
-      "description": "When true, run through and report activity without writing out results.",
+      "description": "When true, runs through and reports activity without writing out results.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -1272,7 +1272,7 @@
     },
     {
       "name": "force",
-      "description": "When true, force overwriting of existing files.",
+      "description": "When true, forces overwriting of existing files.",
       "type": "boolean",
       "default": false,
       "required": false,

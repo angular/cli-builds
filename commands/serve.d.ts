@@ -3,8 +3,8 @@
  */
 export interface Schema {
     /**
-     * A named configuration environment, as specified in the "configurations" section of
-     * angular.json.
+     * A named build target, as specified in the "configurations" section of angular.json.
+     * Each named target is accompanied by a configuration of option defaults for that target.
      */
     configuration?: string;
     /**
@@ -12,9 +12,9 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * When true, sets the build configuration to the production environment.
-     * All builds make use of bundling and limited tree-shaking, A production build also runs
-     * limited dead code elimination using UglifyJS.
+     * When true, sets the build configuration to the production target.
+     * All builds make use of bundling and limited tree-shaking. A production build also runs
+     * limited dead code elimination.
      */
     prod?: boolean;
     /**

@@ -1,5 +1,5 @@
 /**
- * Retrieves or sets Angular configuration values.
+ * Retrieves or sets Angular configuration values in the angular.json file for the workspace.
  */
 export interface Schema {
     /**

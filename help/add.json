@@ -14,7 +14,7 @@
     },
     {
       "name": "dryRun",
-      "description": "When true, run through and report activity without writing out results.",
+      "description": "When true, runs through and reports activity without writing out results.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -25,7 +25,7 @@
     },
     {
       "name": "force",
-      "description": "When true, force overwriting of existing files.",
+      "description": "When true, forces overwriting of existing files.",
       "type": "boolean",
       "default": false,
       "required": false,
