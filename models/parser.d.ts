@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  *
  */
-import { BaseException } from '@angular-devkit/core';
+import { BaseException, logging } from '@angular-devkit/core';
 import { Arguments, Option } from './interface';
 export declare class ParseArgumentException extends BaseException {
     readonly comments: string[];
@@ -34,6 +34,7 @@ export declare function parseFreeFormArguments(args: string[]): Arguments;
  *
  * @param args The argument array to parse.
  * @param options List of supported options. {@see Option}.
+ * @param logger Logger to use to warn users.
  * @returns An object that contains a property per option.
  */
-export declare function parseArguments(args: string[], options: Option[] | null): Arguments;
+export declare function parseArguments(args: string[], options: Option[] | null, logger?: logging.Logger): Arguments;
