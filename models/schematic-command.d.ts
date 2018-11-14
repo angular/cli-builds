@@ -20,6 +20,9 @@ export interface BaseSchematicSchema {
 export interface RunSchematicOptions extends BaseSchematicSchema {
     collectionName: string;
     schematicName: string;
+    additionalOptions?: {
+        [key: string]: {};
+    };
     schematicOptions?: string[];
     showNothingDone?: boolean;
 }
