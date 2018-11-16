@@ -113,7 +113,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": true
     },
     {
       "name": "tsConfig",

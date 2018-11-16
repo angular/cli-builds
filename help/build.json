@@ -50,10 +50,9 @@
       "hidden": false
     },
     {
-      "name": "extractCss",
-      "description": "Extract css from global styles into css files instead of js ones.",
-      "type": "boolean",
-      "default": false,
+      "name": "i18nMissingTranslation",
+      "description": "How to handle missing translations for i18n.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -87,6 +86,15 @@
       "name": "outputPath",
       "description": "The full path for the new output directory, relative to the current workspace.\n\nBy default, writes output to a folder named dist/ in the current project.",
       "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "resourcesOutputPath",
+      "description": "The path where style resources will be placed, relative to outputPath.",
+      "type": "string",
+      "default": "",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -203,17 +211,18 @@
       "hidden": false
     },
     {
-      "name": "i18nMissingTranslation",
-      "description": "How to handle missing translations for i18n.",
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
       "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
-      "type": "string",
+      "name": "extractCss",
+      "description": "Extract css from global styles into css files instead of js ones.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -337,7 +346,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": true
     },
     {
       "name": "index",
