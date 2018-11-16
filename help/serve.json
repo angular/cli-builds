@@ -236,8 +236,7 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": true
+      "hidden": false
     },
     {
       "name": "vendorChunk",
