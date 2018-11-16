@@ -1,7 +1,7 @@
 {
   "name": "update",
   "description": "Updates your application and its dependencies. See https://update.angular.io/",
-  "longDescription": "Before running this command, see the interactive [Angular Update Guide](https://update.angular.io/).",
+  "longDescription": "Perform a basic update to v7 of the core framework and CLI by running the following command.\n\n```\nng update @angular/cli @angular/core‌\n```\n\nFor detailed information and guidance on updating your application, see the interactive [Angular Update Guide](https://update.angular.io/).\n",
   "options": [
     {
       "name": "help",
