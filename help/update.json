@@ -91,6 +91,14 @@
       "hidden": false
     },
     {
+      "name": "verbose",
+      "description": "Display additional details during the update process.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
       "name": "packageManager",
       "description": "The preferred package manager configuration files to use for registry settings.",
       "type": "string",
