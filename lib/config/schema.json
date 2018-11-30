@@ -1201,7 +1201,7 @@
             "watch": {
               "type": "boolean",
               "description": "Run build when files change.",
-              "default": true
+              "default": false
             },
             "poll": {
               "type": "number",
