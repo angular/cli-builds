@@ -75,9 +75,8 @@
     },
     {
       "name": "optimization",
-      "description": "When true, uses optimization for the app build.",
+      "description": "Enables optimization of the build output.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
