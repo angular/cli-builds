@@ -22,6 +22,6 @@ export interface Schema {
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {
-    HelpJSON = "JSON",
-    JSON = "json"
+    HelpJson = "JSON",
+    Json = "json"
 }

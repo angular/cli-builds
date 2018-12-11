@@ -25,8 +25,8 @@ export interface Schema {
  */
 export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {
-    HelpJSON = "JSON",
-    JSON = "json"
+    HelpJson = "JSON",
+    Json = "json"
 }
 /**
  * If provided, a new value for the given configuration key.

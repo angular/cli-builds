@@ -1,6 +1,6 @@
 export interface Schema {
     $schema?: string;
-    cli?: CLIOptions;
+    cli?: CliOptions;
     /**
      * Default project name used in commands.
      */
@@ -13,7 +13,7 @@ export interface Schema {
     schematics?: SchematicOptions;
     version: number;
 }
-export interface CLIOptions {
+export interface CliOptions {
     /**
      * The default schematics collection to use.
      */
@@ -59,6 +59,10 @@ export interface SchematicOptions {
     "@schematics/angular:service"?: SchematicsAngularService;
 }
 export interface SchematicsAngularClass {
+    /**
+     * When true, does not create test files.
+     */
+    skipTests?: boolean;
     /**
      * Specifies if a spec file is generated.
      */
@@ -110,6 +114,10 @@ export interface SchematicsAngularComponent {
      */
     spec?: boolean;
     /**
+     * The file extension to use for style files.
+     */
+    style?: string;
+    /**
      * The file extension to be used for style files.
      */
     styleext?: string;
@@ -132,7 +140,7 @@ export declare enum ViewEncapsulation {
     Emulated = "Emulated",
     Native = "Native",
     None = "None",
-    ShadowDOM = "ShadowDom"
+    ShadowDom = "ShadowDom"
 }
 export interface SchematicsAngularDirective {
     /**
@@ -160,6 +168,10 @@ export interface SchematicsAngularDirective {
      */
     skipImport?: boolean;
     /**
+     * When true, does not create test files.
+     */
+    skipTests?: boolean;
+    /**
      * Specifies if a spec file is generated.
      */
     spec?: boolean;
@@ -185,10 +197,6 @@ export interface SchematicsAngularModule {
      * The scope for the generated routing.
      */
     routingScope?: RoutingScope;
-    /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
 }
 /**
  * The scope for the generated routing.
@@ -215,6 +223,10 @@ export interface SchematicsAngularPipe {
      */
     skipImport?: boolean;
     /**
+     * When true, does not create test files.
+     */
+    skipTests?: boolean;
+    /**
      * Specifies if a spec file is generated.
      */
     spec?: boolean;
@@ -224,6 +236,10 @@ export interface SchematicsAngularService {
      * Flag to indicate if a directory is created.
      */
     flat?: boolean;
+    /**
+     * When true, does not create test files.
+     */
+    skipTests?: boolean;
     /**
      * Specifies if a spec file is generated.
      */
