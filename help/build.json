@@ -50,14 +50,6 @@
       "hidden": false
     },
     {
-      "name": "buildEventLog",
-      "description": "(experimental) Output file path for Build Event Protocol events",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "i18nMissingTranslation",
       "description": "How to handle missing translations for i18n.",
       "type": "string",
