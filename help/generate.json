@@ -178,12 +178,15 @@
           "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
           "options": [
             {
-              "name": "routing",
-              "description": "When true, creates a routing NgModule.",
-              "type": "boolean",
-              "default": false,
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
+              "type": "string",
+              "default": "app",
               "required": false,
-              "aliases": [],
+              "aliases": [
+                "p"
+              ],
+              "format": "html-selector",
               "hidden": false
             },
             {
@@ -240,6 +243,15 @@
               "hidden": false
             },
             {
+              "name": "routing",
+              "description": "When true, creates a routing NgModule.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
               "name": "name",
               "description": "The name of the new app.",
               "type": "string",
@@ -247,18 +259,6 @@
               "aliases": [],
               "hidden": false,
               "positional": 0
-            },
-            {
-              "name": "prefix",
-              "description": "A prefix to apply to generated selectors.",
-              "type": "string",
-              "default": "app",
-              "required": false,
-              "aliases": [
-                "p"
-              ],
-              "format": "html-selector",
-              "hidden": false
             },
             {
               "name": "style",
@@ -301,6 +301,15 @@
             {
               "name": "skipInstall",
               "description": "Skip installing dependency packages.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the application.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -364,6 +373,15 @@
               "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
               "type": "string",
               "default": "",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the class.",
+              "type": "boolean",
+              "default": false,
               "required": false,
               "aliases": [],
               "hidden": false
@@ -919,6 +937,15 @@
               "required": false,
               "aliases": [],
               "hidden": false
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the library.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
             }
           ],
           "aliases": []
@@ -1001,6 +1028,15 @@
               "aliases": [
                 "m"
               ],
+              "hidden": false
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the module.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
               "hidden": false
             }
           ],
