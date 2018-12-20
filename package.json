@@ -26,14 +26,14 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#80823ac",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#80823ac",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#80823ac",
-    "@schematics/angular": "github:angular/schematics-angular-builds#80823ac",
-    "@schematics/update": "github:angular/schematics-update-builds#80823ac",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#ce42a4c",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#ce42a4c",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#ce42a4c",
+    "@schematics/angular": "github:angular/schematics-angular-builds#ce42a4c",
+    "@schematics/update": "github:angular/schematics-update-builds#ce42a4c",
     "inquirer": "6.2.1",
     "opn": "5.4.0",
-    "semver": "5.5.1",
+    "semver": "5.6.0",
     "symbol-observable": "1.2.0"
   },
   "ng-update": {
