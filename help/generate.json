@@ -812,6 +812,14 @@
               "required": false,
               "aliases": [],
               "hidden": false
+            },
+            {
+              "name": "implements",
+              "description": "Specifies which interfaces to implement.",
+              "type": "array",
+              "required": false,
+              "aliases": [],
+              "hidden": false
             }
           ],
           "aliases": []
