@@ -58,9 +58,10 @@
       "hidden": false
     },
     {
-      "name": "i18nMissingTranslation",
-      "description": "How to handle missing translations for i18n.",
-      "type": "string",
+      "name": "extractCss",
+      "description": "Extract css from global styles into css files instead of js ones.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -220,18 +221,17 @@
       "hidden": false
     },
     {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
+      "name": "i18nMissingTranslation",
+      "description": "How to handle missing translations for i18n.",
       "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "extractCss",
-      "description": "Extract css from global styles into css files instead of js ones.",
-      "type": "boolean",
-      "default": false,
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -395,6 +395,15 @@
     {
       "name": "profile",
       "description": "Output profile events for Chrome profiler.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "es5BrowserSupport",
+      "description": "Enables conditionally loaded ES2015 polyfills.",
       "type": "boolean",
       "default": false,
       "required": false,
