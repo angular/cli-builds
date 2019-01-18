@@ -114,9 +114,9 @@ export interface SchematicsAngularComponent {
      */
     spec?: boolean;
     /**
-     * The file extension to use for style files.
+     * The file extension or preprocessor to use for style files.
      */
-    style?: string;
+    style?: Style;
     /**
      * The file extension to be used for style files.
      */
@@ -132,6 +132,16 @@ export interface SchematicsAngularComponent {
 export declare enum ChangeDetection {
     Default = "Default",
     OnPush = "OnPush"
+}
+/**
+ * The file extension or preprocessor to use for style files.
+ */
+export declare enum Style {
+    Css = "css",
+    Less = "less",
+    Sass = "sass",
+    Scss = "scss",
+    Styl = "styl"
 }
 /**
  * Specifies the view encapsulation strategy.

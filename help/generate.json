@@ -262,9 +262,16 @@
             },
             {
               "name": "style",
-              "description": "The file extension to use for style files.",
+              "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
               "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less",
+                "styl"
+              ],
               "required": false,
               "aliases": [],
               "hidden": false
@@ -395,9 +402,16 @@
           "options": [
             {
               "name": "style",
-              "description": "The file extension to use for style files.",
+              "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
               "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less",
+                "styl"
+              ],
               "required": false,
               "aliases": [],
               "hidden": false
