@@ -1,7 +1,7 @@
 {
   "name": "new",
   "description": "Creates a new workspace and an initial Angular app.",
-  "longDescription": "Creates and initializes a new Angular app that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n* The new workspace folder is given the specified project name, and contains configuration files at the top level. \n\n* The new app files are placed in the `src/` subfolder. A corresponding end-to-end test app is placed in the `e2e/` subfolder.\n\n* The new app's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.",
+  "longDescription": "Creates and initializes a new Angular app that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n* The new workspace folder is given the specified project name, and contains configuration files at the top level.\n\n* By default, the files for a new initial app (with the same name as the workspace) are placed in the `src/` subfolder. A corresponding end-to-end test app is placed in the `e2e/` subfolder.\n\n* The new app's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.\n\n* Subsequent apps that you generate in the workspace reside in the `projects/` subfolder.\n\nIf you plan to have multiple apps in the workspace, you can create an empty workspace by setting the `--createApplication` option to false.\nYou can then use `ng generate application` to create an initial app.\nThis allows a workspace name different from the initial app name, and ensures that all apps reside in the `/projects` subfolder, matching the structure of the configuration file.",
   "options": [
     {
       "name": "collection",
@@ -232,7 +232,7 @@
     },
     {
       "name": "createApplication",
-      "description": "When true (the default), creates a new initial app project in the new workspace.",
+      "description": "When true (the default), creates a new initial app project in the src folder of the new workspace. When false, creates an empty workspace with no initial app. You can then use the generate application command so that all apps are created in the projects folder.",
       "type": "boolean",
       "default": true,
       "required": false,
@@ -241,7 +241,7 @@
     },
     {
       "name": "minimal",
-      "description": "When true, creates a project without any testing frameworks and should be used for learning purposes only.",
+      "description": "When true, creates a project without any testing frameworks. (Use for learning purposes only.)",
       "type": "boolean",
       "default": false,
       "required": false,

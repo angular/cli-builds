@@ -298,7 +298,7 @@
             },
             {
               "name": "minimal",
-              "description": "When true, creates a bare-bones project without any testing frameworks and should be used for learning purposes.",
+              "description": "When true, creates a bare-bones project without any testing frameworks. (Use for learning purposes only.)",
               "type": "boolean",
               "default": false,
               "required": false,
