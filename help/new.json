@@ -234,7 +234,7 @@
     },
     {
       "name": "minimal",
-      "description": "When true, creates a project without any testing frameworks.",
+      "description": "When true, creates a project without any testing frameworks. (Use for learning purposes only.)",
       "type": "boolean",
       "default": false,
       "required": false,
