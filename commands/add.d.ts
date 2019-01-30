@@ -11,14 +11,6 @@ export interface Schema {
      */
     defaults?: boolean;
     /**
-     * When true, runs through and reports activity without writing out results.
-     */
-    dryRun?: boolean;
-    /**
-     * When true, forces overwriting of existing files.
-     */
-    force?: boolean;
-    /**
      * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
