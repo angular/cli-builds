@@ -13,28 +13,6 @@
       "positional": 0
     },
     {
-      "name": "dryRun",
-      "description": "When true, runs through and reports activity without writing out results.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [
-        "d"
-      ],
-      "hidden": false
-    },
-    {
-      "name": "force",
-      "description": "When true, forces overwriting of existing files.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [
-        "f"
-      ],
-      "hidden": false
-    },
-    {
       "name": "interactive",
       "description": "When false, disables interactive input prompts.",
       "type": "boolean",
