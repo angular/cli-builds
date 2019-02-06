@@ -32,6 +32,7 @@ export declare class UnknownCollectionError extends Error {
 export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & BaseCommandOptions)> extends Command<T> {
     private readonly _engineHost;
     readonly allowPrivateSchematics: boolean;
+    readonly allowAdditionalArgs: boolean;
     private _host;
     private _workspace;
     private readonly _engine;
