@@ -122,7 +122,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use \"baseUrl\" in the Protractor config file instead."
     }
   ],
   "aliases": [
