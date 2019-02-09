@@ -33,6 +33,7 @@ export interface CliOptions {
 export declare enum PackageManager {
     Cnpm = "cnpm",
     Npm = "npm",
+    Pnpm = "pnpm",
     Yarn = "yarn"
 }
 /**
