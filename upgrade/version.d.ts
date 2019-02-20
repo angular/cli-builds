@@ -23,5 +23,4 @@ export declare class Version {
     readonly extra: string;
     toString(): string | null;
     static assertCompatibleAngularVersion(projectRoot: string): void;
-    static assertTypescriptVersion(projectRoot: string): void;
 }
