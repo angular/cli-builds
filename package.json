@@ -26,11 +26,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#392f525",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#392f525",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#392f525",
-    "@schematics/angular": "github:angular/schematics-angular-builds#392f525",
-    "@schematics/update": "github:angular/schematics-update-builds#392f525",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#5714f18",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#5714f18",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#5714f18",
+    "@schematics/angular": "github:angular/schematics-angular-builds#5714f18",
+    "@schematics/update": "github:angular/schematics-update-builds#5714f18",
     "@yarnpkg/lockfile": "1.1.0",
     "ini": "1.3.5",
     "inquirer": "6.2.2",
@@ -46,5 +46,10 @@
   "engines": {
     "node": ">= 8.9.0",
     "npm": ">= 5.5.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "node ./bin/devkit-admin hooks/pre-push"
+    }
   }
 }
