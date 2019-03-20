@@ -1,0 +1,58 @@
+{
+  "name": "analytics",
+  "description": "Configures usage metric gathering for the Angular CLI. See http://angular.io/MORE_INFO_HERE",
+  "options": [
+    {
+      "name": "settingOrProject",
+      "description": ".",
+      "type": "string",
+      "enum": [
+        "on",
+        "off",
+        "ci",
+        "project",
+        "prompt"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
+    },
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "projectSetting",
+      "description": ".",
+      "type": "string",
+      "enum": [
+        "on",
+        "off",
+        "prompt"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 1
+    }
+  ],
+  "aliases": [],
+  "scope": "all",
+  "hidden": false
+}

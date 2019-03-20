@@ -11,6 +11,7 @@ import { Schema as GenerateCommandSchema } from './generate';
 export declare class GenerateCommand extends SchematicCommand<GenerateCommandSchema> {
     initialize(options: GenerateCommandSchema & Arguments): Promise<void>;
     run(options: GenerateCommandSchema & Arguments): Promise<number | void>;
+    reportAnalytics(paths: string[], options: GenerateCommandSchema & Arguments): Promise<void>;
     private parseSchematicInfo;
     printHelp(options: GenerateCommandSchema & Arguments): Promise<number>;
 }

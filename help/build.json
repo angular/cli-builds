@@ -88,7 +88,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 16
     },
     {
       "name": "outputPath",
@@ -114,7 +115,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 13
     },
     {
       "name": "sourceMap",

@@ -52,7 +52,8 @@
       "aliases": [
         "d"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 1
     },
     {
       "name": "force",
@@ -63,7 +64,8 @@
       "aliases": [
         "f"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 2
     },
     {
       "name": "interactive",
@@ -71,7 +73,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 3
     },
     {
       "name": "defaults",
@@ -90,7 +93,8 @@
       "aliases": [
         "t"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 10
     },
     {
       "name": "directory",
@@ -116,7 +120,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 4
     },
     {
       "name": "skipGit",
@@ -156,7 +161,8 @@
       "aliases": [
         "s"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 9
     },
     {
       "name": "name",
@@ -180,7 +186,8 @@
       ],
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 11
     },
     {
       "name": "routing",
@@ -189,7 +196,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 17
     },
     {
       "name": "prefix",
@@ -217,7 +225,8 @@
       ],
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 5
     },
     {
       "name": "skipTests",
@@ -228,7 +237,8 @@
       "aliases": [
         "S"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 12
     },
     {
       "name": "createApplication",
@@ -246,7 +256,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 14
     }
   ],
   "aliases": [

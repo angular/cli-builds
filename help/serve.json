@@ -211,7 +211,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 16
     },
     {
       "name": "aot",
@@ -219,7 +220,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 13
     },
     {
       "name": "sourceMap",

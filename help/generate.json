@@ -204,7 +204,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 8
             },
             {
               "name": "inlineStyle",
@@ -215,7 +216,8 @@
               "aliases": [
                 "s"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 9
             },
             {
               "name": "inlineTemplate",
@@ -226,7 +228,8 @@
               "aliases": [
                 "t"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 10
             },
             {
               "name": "viewEncapsulation",
@@ -240,7 +243,8 @@
               ],
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 11
             },
             {
               "name": "routing",
@@ -274,7 +278,8 @@
               ],
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 5
             },
             {
               "name": "skipTests",
@@ -285,7 +290,8 @@
               "aliases": [
                 "S"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "skipPackageJson",
@@ -294,7 +300,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 13
             },
             {
               "name": "minimal",
@@ -303,7 +310,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 14
             },
             {
               "name": "skipInstall",
@@ -312,7 +320,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 4
             },
             {
               "name": "lintFix",
@@ -321,7 +330,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -373,7 +383,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "type",
@@ -391,7 +402,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -414,7 +426,8 @@
               ],
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 5
             },
             {
               "name": "path",
@@ -443,7 +456,8 @@
               "aliases": [
                 "s"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 9
             },
             {
               "name": "inlineTemplate",
@@ -454,7 +468,8 @@
               "aliases": [
                 "t"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 10
             },
             {
               "name": "viewEncapsulation",
@@ -470,7 +485,8 @@
               "aliases": [
                 "v"
               ],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 11
             },
             {
               "name": "changeDetection",
@@ -532,7 +548,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "flat",
@@ -550,7 +567,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 18
             },
             {
               "name": "selector",
@@ -578,7 +596,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 19
             },
             {
               "name": "entryComponent",
@@ -587,7 +606,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 20
             },
             {
               "name": "lintFix",
@@ -596,7 +616,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -612,7 +633,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 18
             },
             {
               "name": "name",
@@ -658,7 +680,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "path",
@@ -704,7 +727,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 19
             },
             {
               "name": "lintFix",
@@ -713,7 +737,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -755,7 +780,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -790,7 +816,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "flat",
@@ -825,7 +852,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             },
             {
               "name": "implements",
@@ -884,7 +912,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             },
             {
               "name": "type",
@@ -940,7 +969,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 13
             },
             {
               "name": "skipInstall",
@@ -949,7 +979,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 4
             },
             {
               "name": "skipTsConfig",
@@ -967,7 +998,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1009,7 +1041,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 17
             },
             {
               "name": "routingScope",
@@ -1059,7 +1092,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1120,7 +1154,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "skipImport",
@@ -1129,7 +1164,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 18
             },
             {
               "name": "module",
@@ -1148,7 +1184,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 19
             },
             {
               "name": "lintFix",
@@ -1157,7 +1194,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1218,7 +1256,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 12
             },
             {
               "name": "lintFix",
@@ -1227,7 +1266,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1361,7 +1401,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 4
             }
           ],
           "aliases": []
@@ -1396,7 +1437,8 @@
       "aliases": [
         "d"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 1
     },
     {
       "name": "force",
@@ -1407,7 +1449,8 @@
       "aliases": [
         "f"
       ],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 2
     },
     {
       "name": "interactive",
@@ -1415,7 +1458,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "userAnalytics": 3
     },
     {
       "name": "defaults",
