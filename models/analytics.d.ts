@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics } from '@angular-devkit/core';
-import { TimingOptions } from '../../../angular_devkit/core/src/analytics';
 /**
  * This is the ultimate safelist for checking if a package name is safe to report to analytics.
  */
@@ -39,7 +38,7 @@ export declare class UniversalAnalytics implements analytics.Analytics {
     event(ec: string, ea: string, options?: analytics.EventOptions): void;
     screenview(cd: string, an: string, options?: analytics.ScreenviewOptions): void;
     pageview(dp: string, options?: analytics.PageviewOptions): void;
-    timing(utc: string, utv: string, utt: string | number, options?: TimingOptions): void;
+    timing(utc: string, utv: string, utt: string | number, options?: analytics.TimingOptions): void;
     flush(): Promise<void>;
 }
 /**
