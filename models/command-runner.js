@@ -17,22 +17,24 @@ const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser = require("./parser");
 const analyticsDebug = debug('ng:analytics:commands');
+/**
+ * Create the analytics instance.
+ * @private
+ */
 async function _createAnalytics() {
     const config = analytics_1.getGlobalAnalytics();
-    switch (config) {
-        case undefined:
-        case false:
-            analyticsDebug('Analytics disabled. Ignoring all analytics.');
-            return new core_1.analytics.NoopAnalytics();
-        case true:
-            analyticsDebug('Analytics enabled, anonymous user.');
-            return new analytics_1.UniversalAnalytics('UA-8594346-29', '');
-        case 'ci':
-            analyticsDebug('Logging analytics as CI.');
-            return new analytics_1.UniversalAnalytics('UA-8594346-29', 'ci');
-        default:
-            analyticsDebug('Analytics enabled. User ID: %j', config);
-            return new analytics_1.UniversalAnalytics('UA-8594346-29', config);
+    const maybeSharedAnalytics = analytics_1.getSharedAnalytics();
+    if (config && maybeSharedAnalytics) {
+        return new core_1.analytics.MultiAnalytics([config, maybeSharedAnalytics]);
+    }
+    else if (config) {
+        return config;
+    }
+    else if (maybeSharedAnalytics) {
+        return maybeSharedAnalytics;
+    }
+    else {
+        return new core_1.analytics.NoopAnalytics();
     }
 }
 /**

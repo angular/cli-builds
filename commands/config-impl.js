@@ -9,16 +9,61 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
 const fs_1 = require("fs");
+const uuid_1 = require("uuid");
 const command_1 = require("../models/command");
 const interface_1 = require("../models/interface");
 const config_1 = require("../utilities/config");
+function _validateBoolean(value) {
+    if (('' + value).trim() === 'true') {
+        return true;
+    }
+    else if (('' + value).trim() === 'false') {
+        return false;
+    }
+    else {
+        throw new Error(`Invalid value type; expected Boolean, received ${JSON.stringify(value)}.`);
+    }
+}
+function _validateNumber(value) {
+    const numberValue = Number(value);
+    if (!Number.isFinite(numberValue)) {
+        return numberValue;
+    }
+    throw new Error(`Invalid value type; expected Number, received ${JSON.stringify(value)}.`);
+}
+function _validateString(value) {
+    return value;
+}
+function _validateAnalytics(value) {
+    if (value === '') {
+        // Disable analytics.
+        return null;
+    }
+    else {
+        return value;
+    }
+}
+function _validateAnalyticsSharingUuid(value) {
+    if (value == '') {
+        return uuid_1.v4();
+    }
+    else {
+        return value;
+    }
+}
+function _validateAnalyticsSharingTracking(value) {
+    if (!value.match(/^GA-\d+-\d+$/)) {
+        throw new Error(`Invalid GA property ID: ${JSON.stringify(value)}.`);
+    }
+    return value;
+}
 const validCliPaths = new Map([
-    ['cli.warnings.versionMismatch', 'boolean'],
-    ['cli.defaultCollection', 'string'],
-    ['cli.packageManager', 'string'],
-    ['cli.analytics', 'string'],
-    ['cli.analyticsSharing.tracking', 'string'],
-    ['cli.analyticsSharing.uuid', 'string'],
+    ['cli.warnings.versionMismatch', _validateBoolean],
+    ['cli.defaultCollection', _validateString],
+    ['cli.packageManager', _validateString],
+    ['cli.analytics', _validateAnalytics],
+    ['cli.analyticsSharing.tracking', _validateAnalyticsSharingTracking],
+    ['cli.analyticsSharing.uuid', _validateAnalyticsSharingUuid],
 ]);
 /**
  * Splits a JSON path string into fragments. Fragments can be used to get the value referenced
@@ -117,25 +162,7 @@ function setValueFromPath(root, path, newValue) {
 function normalizeValue(value, path) {
     const cliOptionType = validCliPaths.get(path);
     if (cliOptionType) {
-        switch (cliOptionType) {
-            case 'boolean':
-                if (('' + value).trim() === 'true') {
-                    return true;
-                }
-                else if (('' + value).trim() === 'false') {
-                    return false;
-                }
-                break;
-            case 'number':
-                const numberValue = Number(value);
-                if (!Number.isFinite(numberValue)) {
-                    return numberValue;
-                }
-                break;
-            case 'string':
-                return value;
-        }
-        throw new Error(`Invalid value type; expected a ${cliOptionType}.`);
+        return cliOptionType('' + value);
     }
     if (typeof value === 'string') {
         try {

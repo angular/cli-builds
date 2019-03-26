@@ -61,10 +61,14 @@ export declare function promptGlobalAnalytics(force?: boolean): Promise<boolean>
  */
 export declare function promptProjectAnalytics(force?: boolean): Promise<boolean>;
 /**
- * Get the global analytics setting for the user. This returns a string for UID, false if the user
- * opted out of analytics, true if the user wants to stay anonymous (no client id), and undefined
- * if the user has not been prompted yet.
+ * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
+ * or undefined if analytics are disabled.
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-export declare function getGlobalAnalytics(): string | boolean | undefined;
+export declare function getGlobalAnalytics(): UniversalAnalytics | undefined;
+/**
+ * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
+ * or undefined if no sharing.
+ */
+export declare function getSharedAnalytics(): UniversalAnalytics | undefined;
