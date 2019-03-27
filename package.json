@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "8.0.0-beta.9+5.eaf6de0",
+  "version": "8.0.0-beta.9+7.a516f8a",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#eaf6de0",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#eaf6de0",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#eaf6de0",
-    "@schematics/angular": "github:angular/schematics-angular-builds#eaf6de0",
-    "@schematics/update": "github:angular/schematics-update-builds#eaf6de0",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#a516f8a",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#a516f8a",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#a516f8a",
+    "@schematics/angular": "github:angular/schematics-angular-builds#a516f8a",
+    "@schematics/update": "github:angular/schematics-update-builds#a516f8a",
     "@yarnpkg/lockfile": "1.1.0",
     "debug": "^4.1.1",
     "ini": "1.3.5",
@@ -40,7 +40,7 @@
     "npm-package-arg": "6.1.0",
     "opn": "5.4.0",
     "pacote": "9.5.0",
-    "semver": "5.6.0",
+    "semver": "6.0.0",
     "symbol-observable": "1.2.0",
     "universal-analytics": "^0.4.20",
     "uuid": "^3.3.2"
