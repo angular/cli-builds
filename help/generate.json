@@ -300,8 +300,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 13
+              "hidden": false
             },
             {
               "name": "minimal",
@@ -320,8 +319,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 4
+              "hidden": false
             },
             {
               "name": "lintFix",
@@ -606,8 +604,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 20
+              "hidden": false
             },
             {
               "name": "lintFix",
@@ -969,8 +966,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 13
+              "hidden": false
             },
             {
               "name": "skipInstall",
@@ -979,8 +975,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 4
+              "hidden": false
             },
             {
               "name": "skipTsConfig",
@@ -1401,8 +1396,7 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 4
+              "hidden": false
             }
           ],
           "aliases": []
@@ -1437,8 +1431,7 @@
       "aliases": [
         "d"
       ],
-      "hidden": false,
-      "userAnalytics": 1
+      "hidden": false
     },
     {
       "name": "force",
@@ -1449,8 +1442,7 @@
       "aliases": [
         "f"
       ],
-      "hidden": false,
-      "userAnalytics": 2
+      "hidden": false
     },
     {
       "name": "interactive",
@@ -1458,8 +1450,7 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 3
+      "hidden": false
     },
     {
       "name": "defaults",

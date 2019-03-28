@@ -42,15 +42,6 @@ function isPackageNameSafeForAnalytics(name) {
 }
 exports.isPackageNameSafeForAnalytics = isPackageNameSafeForAnalytics;
 /**
-* MAKE SURE TO KEEP THIS IN SYNC WITH THE TABLE AND CONTENT IN `/docs/design/analytics.md`.
-* WE LIST THOSE DIMENSIONS (AND MORE).
-*/
-var AnalyticsDimensions;
-(function (AnalyticsDimensions) {
-    AnalyticsDimensions[AnalyticsDimensions["NgAddCollection"] = 6] = "NgAddCollection";
-    AnalyticsDimensions[AnalyticsDimensions["NgBuildBuildEventLog"] = 7] = "NgBuildBuildEventLog";
-})(AnalyticsDimensions = exports.AnalyticsDimensions || (exports.AnalyticsDimensions = {}));
-/**
  * Attempt to get the Windows Language Code string.
  * @private
  */
@@ -215,6 +206,8 @@ class UniversalAnalytics {
      */
     constructor(trackingId, uid) {
         this._dirty = false;
+        this._metrics = [];
+        this._dimensions = [];
         this._ua = ua(trackingId, uid, {
             enableBatching: true,
             batchSize: 5,
@@ -230,10 +223,10 @@ class UniversalAnalytics {
         // We also use a custom metrics, but
         this._ua.set('aid', _getNodeVersion());
         // We set custom metrics for values we care about.
-        this._ua.set('cm1', _getCpuCount());
-        this._ua.set('cm2', _getCpuSpeed());
-        this._ua.set('cm3', _getRamSize());
-        this._ua.set('cm4', _getNumericNodeVersion());
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuCount] = _getCpuCount();
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuSpeed] = _getCpuSpeed();
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.RamInMegabytes] = _getRamSize();
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.NodeVersion] = _getNumericNodeVersion();
     }
     /**
      * Creates the dimension and metrics variables to pass to universal-analytics.
@@ -241,7 +234,9 @@ class UniversalAnalytics {
      */
     _customVariables(options) {
         const additionals = {};
+        this._dimensions.forEach((v, i) => additionals['cd' + i] = v);
         (options.dimensions || []).forEach((v, i) => additionals['cd' + i] = v);
+        this._metrics.forEach((v, i) => additionals['cm' + i] = v);
         (options.metrics || []).forEach((v, i) => additionals['cm' + i] = v);
         return additionals;
     }

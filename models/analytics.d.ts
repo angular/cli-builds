@@ -12,19 +12,13 @@ import { analytics } from '@angular-devkit/core';
 export declare const analyticsPackageSafelist: (string | RegExp)[];
 export declare function isPackageNameSafeForAnalytics(name: string): boolean;
 /**
-* MAKE SURE TO KEEP THIS IN SYNC WITH THE TABLE AND CONTENT IN `/docs/design/analytics.md`.
-* WE LIST THOSE DIMENSIONS (AND MORE).
-*/
-export declare enum AnalyticsDimensions {
-    NgAddCollection = 6,
-    NgBuildBuildEventLog = 7
-}
-/**
  * Implementation of the Analytics interface for using `universal-analytics` package.
  */
 export declare class UniversalAnalytics implements analytics.Analytics {
     private _ua;
     private _dirty;
+    private _metrics;
+    private _dimensions;
     /**
      * @param trackingId The Google Analytics ID.
      * @param uid A User ID.

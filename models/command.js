@@ -132,8 +132,12 @@ class Command {
             return this.printJsonHelp(options);
         }
         else {
+            const startTime = +new Date();
             await this.reportAnalytics([this.description.name], options);
-            return await this.run(options);
+            const result = await this.run(options);
+            const endTime = +new Date();
+            this.analytics.timing(this.description.name, 'duration', endTime - startTime);
+            return result;
         }
     }
 }

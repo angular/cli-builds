@@ -110,10 +110,10 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         const collection = options.collection;
         // Add the collection if it's safe listed.
         if (collection && analytics_1.isPackageNameSafeForAnalytics(collection)) {
-            dimensions[analytics_1.AnalyticsDimensions.NgAddCollection] = collection;
+            dimensions[core_1.analytics.NgCliAnalyticsDimensions.NgAddCollection] = collection;
         }
         else {
-            delete dimensions[analytics_1.AnalyticsDimensions.NgAddCollection];
+            delete dimensions[core_1.analytics.NgCliAnalyticsDimensions.NgAddCollection];
         }
         return super.reportAnalytics(paths, options, dimensions, metrics);
     }

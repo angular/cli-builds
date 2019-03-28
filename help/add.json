@@ -18,8 +18,7 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 3
+      "hidden": false
     },
     {
       "name": "defaults",
