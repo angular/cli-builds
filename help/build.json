@@ -58,8 +58,8 @@
       "hidden": false
     },
     {
-      "name": "watch",
-      "description": "Run build when files change.",
+      "name": "extractCss",
+      "description": "Extract css from global styles into css files instead of js ones.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -231,18 +231,18 @@
       "hidden": false
     },
     {
-      "name": "extractCss",
-      "description": "Extract css from global styles into css files instead of js ones.",
-      "type": "boolean",
-      "default": false,
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
-      "type": "string",
+      "name": "watch",
+      "description": "Run build when files change.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -422,15 +422,6 @@
       "aliases": [],
       "hidden": false,
       "deprecated": true
-    },
-    {
-      "name": "experimentalImportFactories",
-      "description": "**EXPERIMENTAL** Transform import statements for lazy routes to import factories when using View Engine. Should only be used when switching back and forth between View Engine and Ivy. See https://angular.io/guide/ivy for usage information.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
     }
   ],
   "aliases": [
