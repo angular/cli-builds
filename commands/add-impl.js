@@ -8,7 +8,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * found in the LICENSE file at https://angular.io/license
  */
 const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const path_1 = require("path");
 const semver_1 = require("semver");
@@ -119,15 +118,11 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     isPackageInstalled(name) {
         try {
-            node_1.resolve(name, {
-                checkLocal: true,
-                basedir: this.workspace.root,
-                resolvePackageJson: true,
-            });
+            require.resolve(path_1.join(name, 'package.json'), { paths: [this.workspace.root] });
             return true;
         }
         catch (e) {
-            if (!(e instanceof node_1.ModuleNotFoundException)) {
+            if (e.code !== 'MODULE_NOT_FOUND') {
                 throw e;
             }
         }
@@ -160,7 +155,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     async findProjectVersion(name) {
         let installedPackage;
         try {
-            installedPackage = node_1.resolve(name, { checkLocal: true, basedir: this.workspace.root, resolvePackageJson: true });
+            installedPackage = require.resolve(path_1.join(name, 'package.json'), { paths: [this.workspace.root] });
         }
         catch (_a) { }
         if (installedPackage) {

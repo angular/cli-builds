@@ -8,7 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const path = require("path");
 const semver_1 = require("semver");
 class Version {
@@ -35,13 +34,9 @@ class Version {
         let angularPkgJson;
         let rxjsPkgJson;
         try {
-            const resolveOptions = {
-                basedir: projectRoot,
-                checkGlobal: false,
-                checkLocal: true,
-            };
-            const angularPackagePath = node_1.resolve('@angular/core/package.json', resolveOptions);
-            const rxjsPackagePath = node_1.resolve('rxjs/package.json', resolveOptions);
+            const resolveOptions = { paths: [projectRoot] };
+            const angularPackagePath = require.resolve('@angular/core/package.json', resolveOptions);
+            const rxjsPackagePath = require.resolve('rxjs/package.json', resolveOptions);
             angularPkgJson = require(angularPackagePath);
             rxjsPkgJson = require(rxjsPackagePath);
         }
