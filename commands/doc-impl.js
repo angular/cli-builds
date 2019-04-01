@@ -8,7 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../models/command");
-const opn = require('opn');
+const open = require('open');
 class DocCommand extends command_1.Command {
     async run(options) {
         if (!options.keyword) {
@@ -19,9 +19,9 @@ class DocCommand extends command_1.Command {
         if (options.search) {
             searchUrl = `https://www.google.com/search?q=site%3Aangular.io+${options.keyword}`;
         }
-        // We should wrap `opn` in a new Promise because `opn` is already resolved
+        // We should wrap `open` in a new Promise because `open` is already resolved
         await new Promise(() => {
-            opn(searchUrl, {
+            open(searchUrl, {
                 wait: false,
             });
         });
