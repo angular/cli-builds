@@ -326,7 +326,7 @@ async function promptGlobalAnalytics(force = false) {
         if (answers.analytics) {
             console.log('');
             console.log(core_1.tags.stripIndent `
-        Thank you for sharing anonymous usage data. Would you change your mind, the following
+        Thank you for sharing anonymous usage data. If you change your mind, the following
         command will disable this feature entirely:
 
             ${core_1.terminal.yellow('ng analytics off')}
