@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "8.0.0-beta.11+9.2061ede",
+  "version": "8.0.0-beta.11+10.e17a97b",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#2061ede",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#2061ede",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#2061ede",
-    "@schematics/angular": "github:angular/schematics-angular-builds#2061ede",
-    "@schematics/update": "github:angular/schematics-update-builds#2061ede",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#e17a97b",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#e17a97b",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#e17a97b",
+    "@schematics/angular": "github:angular/schematics-angular-builds#e17a97b",
+    "@schematics/update": "github:angular/schematics-update-builds#e17a97b",
     "@yarnpkg/lockfile": "1.1.0",
     "debug": "^4.1.1",
     "ini": "1.3.5",
