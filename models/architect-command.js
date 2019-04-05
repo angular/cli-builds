@@ -31,7 +31,7 @@ class ArchitectCommand extends command_1.Command {
         const workspace = await workspaceLoader.loadWorkspace(this.workspace.root);
         this._workspace = workspace;
         this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);
-        this._architect = new architect_1.index2.Architect(this._architectHost, this._registry);
+        this._architect = new architect_1.Architect(this._architectHost, this._registry);
         if (!this.target) {
             if (options.help) {
                 // This is a special case where we just return.
