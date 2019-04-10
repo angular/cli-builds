@@ -3,7 +3,7 @@
  */
 export interface Schema {
     /**
-     * (experimental) Output file path for Build Event Protocol events
+     * **EXPERIMENTAL** Output file path for Build Event Protocol events
      */
     buildEventLog?: string;
     /**

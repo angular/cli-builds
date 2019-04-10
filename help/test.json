@@ -182,6 +182,14 @@
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "webWorkerTsConfig",
+      "description": "TypeScript configuration for Web Worker modules.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [

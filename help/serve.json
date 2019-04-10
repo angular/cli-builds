@@ -50,7 +50,7 @@
     },
     {
       "name": "buildEventLog",
-      "description": "(experimental) Output file path for Build Event Protocol events",
+      "description": "**EXPERIMENTAL** Output file path for Build Event Protocol events",
       "type": "string",
       "required": false,
       "aliases": [],
