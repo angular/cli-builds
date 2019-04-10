@@ -199,7 +199,7 @@
             },
             {
               "name": "enableIvy",
-              "description": "EXPERIMENTAL: True to create a new app that uses the Ivy rendering engine.",
+              "description": "**EXPERIMENTAL** True to create a new app that uses the Ivy rendering engine.",
               "type": "boolean",
               "default": false,
               "required": false,
