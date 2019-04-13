@@ -15,7 +15,7 @@ function ensureNpmrc(logger, usingYarn, verbose) {
         catch (_a) { }
         if (usingYarn) {
             try {
-                npmrc = Object.assign({}, npmrc, readOptions(logger, true, verbose));
+                npmrc = { ...npmrc, ...readOptions(logger, true, verbose) };
             }
             catch (_b) { }
         }
@@ -56,7 +56,10 @@ function readOptions(logger, yarn = false, showPotentials = false) {
                 logger.info(`Trying '${location}'...found.`);
             }
             const data = fs_1.readFileSync(location, 'utf8');
-            options = Object.assign({}, options, (yarn ? lockfile.parse(data) : ini.parse(data)));
+            options = {
+                ...options,
+                ...(yarn ? lockfile.parse(data) : ini.parse(data)),
+            };
             if (options.cafile) {
                 const cafile = path.resolve(path.dirname(location), options.cafile);
                 delete options.cafile;
@@ -80,12 +83,28 @@ function readOptions(logger, yarn = false, showPotentials = false) {
 }
 function normalizeManifest(rawManifest) {
     // TODO: Fully normalize and sanitize
-    return Object.assign({ dependencies: {}, devDependencies: {}, peerDependencies: {}, optionalDependencies: {} }, rawManifest);
+    return {
+        dependencies: {},
+        devDependencies: {},
+        peerDependencies: {},
+        optionalDependencies: {},
+        // tslint:disable-next-line:no-any
+        ...rawManifest,
+    };
 }
 async function fetchPackageMetadata(name, logger, options) {
-    const { usingYarn, verbose, registry } = Object.assign({ registry: undefined, usingYarn: false, verbose: false }, options);
+    const { usingYarn, verbose, registry } = {
+        registry: undefined,
+        usingYarn: false,
+        verbose: false,
+        ...options,
+    };
     ensureNpmrc(logger, usingYarn, verbose);
-    const response = await pacote.packument(name, Object.assign({ 'full-metadata': true }, npmrc, (registry ? { registry } : {})));
+    const response = await pacote.packument(name, {
+        'full-metadata': true,
+        ...npmrc,
+        ...(registry ? { registry } : {}),
+    });
     // Normalize the response
     const metadata = {
         name: response.name,
@@ -112,9 +131,18 @@ async function fetchPackageMetadata(name, logger, options) {
 }
 exports.fetchPackageMetadata = fetchPackageMetadata;
 async function fetchPackageManifest(name, logger, options) {
-    const { usingYarn, verbose, registry } = Object.assign({ registry: undefined, usingYarn: false, verbose: false }, options);
+    const { usingYarn, verbose, registry } = {
+        registry: undefined,
+        usingYarn: false,
+        verbose: false,
+        ...options,
+    };
     ensureNpmrc(logger, usingYarn, verbose);
-    const response = await pacote.manifest(name, Object.assign({ 'full-metadata': true }, npmrc, (registry ? { registry } : {})));
+    const response = await pacote.manifest(name, {
+        'full-metadata': true,
+        ...npmrc,
+        ...(registry ? { registry } : {}),
+    });
     return normalizeManifest(response);
 }
 exports.fetchPackageManifest = fetchPackageManifest;

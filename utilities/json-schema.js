@@ -72,9 +72,14 @@ async function parseJsonSchemaToSubCommandDescription(name, jsonPath, registry, 
         }
     }
     const description = '' + (schema.description === undefined ? '' : schema.description);
-    return Object.assign({ name,
-        description }, (longDescription ? { longDescription } : {}), (usageNotes ? { usageNotes } : {}), { options,
-        aliases });
+    return {
+        name,
+        description,
+        ...(longDescription ? { longDescription } : {}),
+        ...(usageNotes ? { usageNotes } : {}),
+        options,
+        aliases,
+    };
 }
 exports.parseJsonSchemaToSubCommandDescription = parseJsonSchemaToSubCommandDescription;
 async function parseJsonSchemaToCommandDescription(name, jsonPath, registry, schema) {
@@ -90,9 +95,12 @@ async function parseJsonSchemaToCommandDescription(name, jsonPath, registry, sch
     }
     const scope = _getEnumFromValue(schema.$scope, interface_1.CommandScope, interface_1.CommandScope.Default);
     const hidden = !!schema.$hidden;
-    return Object.assign({}, subcommand, { scope,
+    return {
+        ...subcommand,
+        scope,
         hidden,
-        impl });
+        impl,
+    };
 }
 exports.parseJsonSchemaToCommandDescription = parseJsonSchemaToCommandDescription;
 async function parseJsonSchemaToOptions(registry, schema) {
@@ -196,8 +204,20 @@ async function parseJsonSchemaToOptions(registry, schema) {
             ? xDeprecated : undefined;
         const xUserAnalytics = current['x-user-analytics'];
         const userAnalytics = typeof xUserAnalytics == 'number' ? xUserAnalytics : undefined;
-        const option = Object.assign({ name, description: '' + (current.description === undefined ? '' : current.description) }, types.length == 1 ? { type } : { type, types }, defaultValue !== undefined ? { default: defaultValue } : {}, enumValues && enumValues.length > 0 ? { enum: enumValues } : {}, { required,
-            aliases }, format !== undefined ? { format } : {}, { hidden }, userAnalytics ? { userAnalytics } : {}, deprecated !== undefined ? { deprecated } : {}, positional !== undefined ? { positional } : {});
+        const option = {
+            name,
+            description: '' + (current.description === undefined ? '' : current.description),
+            ...types.length == 1 ? { type } : { type, types },
+            ...defaultValue !== undefined ? { default: defaultValue } : {},
+            ...enumValues && enumValues.length > 0 ? { enum: enumValues } : {},
+            required,
+            aliases,
+            ...format !== undefined ? { format } : {},
+            hidden,
+            ...userAnalytics ? { userAnalytics } : {},
+            ...deprecated !== undefined ? { deprecated } : {},
+            ...positional !== undefined ? { positional } : {},
+        };
         options.push(option);
     }
     const flattenedSchema = await registry.flatten(schema).toPromise();

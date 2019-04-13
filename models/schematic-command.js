@@ -166,10 +166,16 @@ class SchematicCommand extends command_1.Command {
             // is safelisted, it would move to the right analytics (even if their own isn't).
             const collectionName = context.schematic.collection.description.name;
             if (analytics_1.isPackageNameSafeForAnalytics(collectionName)) {
-                return Object.assign({}, context, { analytics: this.analytics });
+                return {
+                    ...context,
+                    analytics: this.analytics,
+                };
             }
             else {
-                return Object.assign({}, context, { analytics: new core_1.analytics.NoopAnalytics() });
+                return {
+                    ...context,
+                    analytics: new core_1.analytics.NoopAnalytics(),
+                };
             }
         });
         workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
@@ -352,11 +358,15 @@ class SchematicCommand extends command_1.Command {
             return 1;
         }
         const pathOptions = o ? this.setPathOptions(o, workingDir) : {};
-        let input = Object.assign(pathOptions, args);
+        let input = { ...pathOptions, ...args };
         // Read the default values from the workspace.
         const projectName = input.project !== undefined ? '' + input.project : null;
         const defaults = config_1.getSchematicDefaults(collectionName, schematicName, projectName);
-        input = Object.assign({}, defaults, input, options.additionalOptions);
+        input = {
+            ...defaults,
+            ...input,
+            ...options.additionalOptions,
+        };
         workflow.reporter.subscribe((event) => {
             nothingDone = false;
             // Strip leading slash to prevent confusion.

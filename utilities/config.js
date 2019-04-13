@@ -211,11 +211,11 @@ function getSchematicDefaults(collection, schematic, project) {
     if (workspace && workspace.getSchematics()) {
         const schematicObject = workspace.getSchematics()[fullName];
         if (schematicObject) {
-            result = Object.assign({}, result, schematicObject);
+            result = { ...result, ...schematicObject };
         }
         const collectionObject = workspace.getSchematics()[collection];
         if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
-            result = Object.assign({}, result, collectionObject[schematic]);
+            result = { ...result, ...collectionObject[schematic] };
         }
     }
     workspace = getWorkspace('local');
@@ -223,22 +223,22 @@ function getSchematicDefaults(collection, schematic, project) {
         if (workspace.getSchematics()) {
             const schematicObject = workspace.getSchematics()[fullName];
             if (schematicObject) {
-                result = Object.assign({}, result, schematicObject);
+                result = { ...result, ...schematicObject };
             }
             const collectionObject = workspace.getSchematics()[collection];
             if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
-                result = Object.assign({}, result, collectionObject[schematic]);
+                result = { ...result, ...collectionObject[schematic] };
             }
         }
         project = project || getProjectByCwd(workspace);
         if (project && workspace.getProjectSchematics(project)) {
             const schematicObject = workspace.getProjectSchematics(project)[fullName];
             if (schematicObject) {
-                result = Object.assign({}, result, schematicObject);
+                result = { ...result, ...schematicObject };
             }
             const collectionObject = workspace.getProjectSchematics(project)[collection];
             if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
-                result = Object.assign({}, result, collectionObject[schematic]);
+                result = { ...result, ...collectionObject[schematic] };
             }
         }
     }

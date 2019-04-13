@@ -44,7 +44,9 @@ export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & 
     protected getEngine(): FileSystemEngine;
     protected getCollection(collectionName: string): FileSystemCollection;
     protected getSchematic(collection: FileSystemCollection, schematicName: string, allowPrivate?: boolean): FileSystemSchematic;
-    protected setPathOptions(options: Option[], workingDir: string): {};
+    protected setPathOptions(options: Option[], workingDir: string): {
+        [name: string]: string;
+    };
     protected createWorkflow(options: BaseSchematicSchema): workflow.BaseWorkflow;
     protected getDefaultSchematicCollection(): string;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;

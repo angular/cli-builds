@@ -245,28 +245,28 @@ class UniversalAnalytics {
         analyticsLogDebug('event ec=%j, ea=%j, %j', ec, ea, vars);
         const { label: el, value: ev } = options;
         this._dirty = true;
-        this._ua.event(Object.assign({ ec, ea, el, ev }, vars));
+        this._ua.event({ ec, ea, el, ev, ...vars });
     }
     screenview(cd, an, options = {}) {
         const vars = this._customVariables(options);
         analyticsLogDebug('screenview cd=%j, an=%j, %j', cd, an, vars);
         const { appVersion: av, appId: aid, appInstallerId: aiid } = options;
         this._dirty = true;
-        this._ua.screenview(Object.assign({ cd, an, av, aid, aiid }, vars));
+        this._ua.screenview({ cd, an, av, aid, aiid, ...vars });
     }
     pageview(dp, options = {}) {
         const vars = this._customVariables(options);
         analyticsLogDebug('pageview dp=%j, %j', dp, vars);
         const { hostname: dh, title: dt } = options;
         this._dirty = true;
-        this._ua.pageview(Object.assign({ dp, dh, dt }, vars));
+        this._ua.pageview({ dp, dh, dt, ...vars });
     }
     timing(utc, utv, utt, options = {}) {
         const vars = this._customVariables(options);
         analyticsLogDebug('timing utc=%j, utv=%j, utl=%j, %j', utc, utv, utt, vars);
         const { label: utl } = options;
         this._dirty = true;
-        this._ua.timing(Object.assign({ utc, utv, utt, utl }, vars));
+        this._ua.timing({ utc, utv, utt, utl, ...vars });
     }
     flush() {
         if (!this._dirty) {

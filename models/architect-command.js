@@ -203,7 +203,7 @@ class ArchitectCommand extends command_1.Command {
                 // Running them in parallel would jumble the log messages.
                 let result = 0;
                 for (const project of this.getProjectNamesByTarget(this.target)) {
-                    result |= await this.runSingleTarget(Object.assign({}, targetSpec, { project }), extra, options);
+                    result |= await this.runSingleTarget({ ...targetSpec, project }, extra, options);
                 }
                 return result;
             }
