@@ -24,6 +24,12 @@ class Version {
     isGreaterThanOrEqualTo(other) {
         return this._semver !== null && this._semver.compare(other) >= 0;
     }
+    satisfies(other) {
+        // This comparison includes pre-releases (like betas and rcs), and considers them to be
+        // before the release proper.
+        // e.g. '9.0.0-beta.1' will satisfy '>=7.0.0 <9.0.0', but '9.0.0' will not.
+        return this._semver !== null && semver_1.satisfies(this._semver, other, { includePrerelease: true });
+    }
     get major() { return this._semver ? this._semver.major : 0; }
     get minor() { return this._semver ? this._semver.minor : 0; }
     get patch() { return this._semver ? this._semver.patch : 0; }
@@ -31,10 +37,11 @@ class Version {
     get extra() { return this._semver ? this._semver.prerelease[1] : ''; }
     toString() { return this._version; }
     static assertCompatibleAngularVersion(projectRoot) {
+        let angularCliPkgJson;
         let angularPkgJson;
         let rxjsPkgJson;
+        const resolveOptions = { paths: [projectRoot] };
         try {
-            const resolveOptions = { paths: [projectRoot] };
             const angularPackagePath = require.resolve('@angular/core/package.json', resolveOptions);
             const rxjsPackagePath = require.resolve('rxjs/package.json', resolveOptions);
             angularPkgJson = require(angularPackagePath);
@@ -53,15 +60,35 @@ class Version {
       `)));
             process.exit(2);
         }
+        try {
+            const angularCliPkgPath = require.resolve('@angular/cli/package.json', resolveOptions);
+            angularCliPkgJson = require(angularCliPkgPath);
+            if (!(angularCliPkgJson && angularCliPkgJson['version'])) {
+                throw new Error();
+            }
+        }
+        catch (error) {
+            console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
+        Cannot determine versions of "@angular/cli".
+        This likely means your local installation is broken. Please reinstall your packages.
+      `)));
+            process.exit(2);
+        }
+        const cliMajor = new Version(angularCliPkgJson['version']).major;
+        // e.g. CLI 8.0 supports '>=8.0.0 <9.0.0', including pre-releases (betas, rcs, snapshots)
+        // of both 8 and 9.
+        const supportedAngularSemver = `^${cliMajor}.0.0-beta || ` +
+            `>=${cliMajor}.0.0 <${cliMajor + 1}.0.0`;
         const angularVersion = new Version(angularPkgJson['version']);
         const rxjsVersion = new Version(rxjsPkgJson['version']);
         if (angularVersion.isLocal()) {
             console.error(core_1.terminal.yellow('Using a local version of angular. Proceeding with care...'));
             return;
         }
-        if (!angularVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.0.0'))) {
+        if (!angularVersion.satisfies(supportedAngularSemver)) {
             console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
-          This version of CLI is only compatible with Angular version 5.0.0 or higher.
+          This version of CLI is only compatible with Angular versions ${supportedAngularSemver},
+          but Angular version ${angularVersion} was found instead.
 
           Please visit the link below to find instructions on how to update Angular.
           https://angular-update-guide.firebaseapp.com/
@@ -72,7 +99,7 @@ class Version {
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('5.6.0-forward-compat.0'))
             && !rxjsVersion.isGreaterThanOrEqualTo(new semver_1.SemVer('6.0.0-beta.0'))) {
             console.error(core_1.terminal.bold(core_1.terminal.red(core_1.tags.stripIndents `
-          This project uses version ${rxjsVersion} of RxJs, which is not supported by Angular v6.
+          This project uses version ${rxjsVersion} of RxJs, which is not supported by Angular v6+.
           The official RxJs version that is supported is 5.6.0-forward-compat.0 and greater.
 
           Please visit the link below to find instructions on how to update RxJs.

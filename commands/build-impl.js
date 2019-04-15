@@ -9,15 +9,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const core_1 = require("@angular-devkit/core");
 const architect_command_1 = require("../models/architect-command");
-const version_1 = require("../upgrade/version");
 class BuildCommand extends architect_command_1.ArchitectCommand {
     constructor() {
         super(...arguments);
         this.target = 'build';
     }
     async run(options) {
-        // Check Angular version.
-        version_1.Version.assertCompatibleAngularVersion(this.workspace.root);
         return this.runArchitectTarget(options);
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {

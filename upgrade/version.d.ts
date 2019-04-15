@@ -16,6 +16,7 @@ export declare class Version {
     isKnown(): boolean;
     isLocal(): boolean | "" | null;
     isGreaterThanOrEqualTo(other: SemVer): boolean;
+    satisfies(other: string): boolean;
     readonly major: number;
     readonly minor: number;
     readonly patch: number;
