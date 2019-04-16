@@ -8,7 +8,7 @@ var HelpEnum;
     HelpEnum["Json"] = "json";
 })(HelpEnum = exports.HelpEnum || (exports.HelpEnum = {}));
 /**
- * .
+ * Sets the default analytics enablement status for the project.
  */
 var ProjectSetting;
 (function (ProjectSetting) {
@@ -17,7 +17,8 @@ var ProjectSetting;
     ProjectSetting["Prompt"] = "prompt";
 })(ProjectSetting = exports.ProjectSetting || (exports.ProjectSetting = {}));
 /**
- * .
+ * Directly enables or disables all usage analytics for the user, or prompts the user to set
+ * the status interactively, or sets the default status for the project.
  */
 var SettingOrProject;
 (function (SettingOrProject) {

@@ -1,6 +1,6 @@
 /**
- * Configures usage metric gathering for the Angular CLI. See
- * http://angular.io/MORE_INFO_HERE
+ * Configures the gathering of Angular CLI usage metrics. See
+ * https://next.angular.io/cli/usage-analytics-gathering.
  */
 export interface Schema {
     /**
@@ -8,11 +8,12 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * .
+     * Sets the default analytics enablement status for the project.
      */
     projectSetting?: ProjectSetting;
     /**
-     * .
+     * Directly enables or disables all usage analytics for the user, or prompts the user to set
+     * the status interactively, or sets the default status for the project.
      */
     settingOrProject: SettingOrProject;
 }
@@ -25,7 +26,7 @@ export declare enum HelpEnum {
     Json = "json"
 }
 /**
- * .
+ * Sets the default analytics enablement status for the project.
  */
 export declare enum ProjectSetting {
     Off = "off",
@@ -33,7 +34,8 @@ export declare enum ProjectSetting {
     Prompt = "prompt"
 }
 /**
- * .
+ * Directly enables or disables all usage analytics for the user, or prompts the user to set
+ * the status interactively, or sets the default status for the project.
  */
 export declare enum SettingOrProject {
     Ci = "ci",
