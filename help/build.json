@@ -408,10 +408,10 @@
       "name": "es5BrowserSupport",
       "description": "Enables conditionally loaded ES2015 polyfills.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "This will be determined from the list of supported browsers specified in the 'browserslist' file."
     },
     {
       "name": "rebaseRootRelativeCssUrls",
