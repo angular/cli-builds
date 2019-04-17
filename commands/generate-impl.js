@@ -23,6 +23,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         schematicNames.sort();
         for (const name of schematicNames) {
             const schematic = this.getSchematic(collection, name, true);
+            this.longSchematicName = schematic.description.name;
             let subcommand;
             if (schematic.description.schemaJson) {
                 subcommand = await json_schema_1.parseJsonSchemaToSubCommandDescription(name, schematic.description.path, this._workflow.registry, schematic.description.schemaJson);
@@ -62,7 +63,8 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         if (!schematicName || !collectionName) {
             return;
         }
-        return super.reportAnalytics(['generate', collectionName.replace(/\//g, '_'), schematicName.replace(/\//g, '_')], options);
+        const escapedSchematicName = (this.longSchematicName || schematicName).replace(/\//g, '_');
+        return super.reportAnalytics(['generate', collectionName.replace(/\//g, '_'), escapedSchematicName], options);
     }
     parseSchematicInfo(options) {
         let collectionName = this.getDefaultSchematicCollection();
