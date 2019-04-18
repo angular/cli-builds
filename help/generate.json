@@ -1403,7 +1403,7 @@
         },
         "webWorker": {
           "name": "webWorker",
-          "description": "Pass this schematic to the \"run\" command to create a Web Worker",
+          "description": "Creates a new generic web worker definition in the given or default project.",
           "options": [
             {
               "name": "path",
@@ -1424,7 +1424,7 @@
             },
             {
               "name": "target",
-              "description": "The target to apply service worker to.",
+              "description": "The target to apply web worker to.",
               "type": "string",
               "default": "build",
               "required": false,
