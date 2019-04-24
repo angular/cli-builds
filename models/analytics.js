@@ -383,6 +383,20 @@ async function promptProjectAnalytics(force = false) {
     return false;
 }
 exports.promptProjectAnalytics = promptProjectAnalytics;
+function hasGlobalAnalyticsConfiguration() {
+    try {
+        const globalWorkspace = config_1.getWorkspace('global');
+        const analyticsConfig = globalWorkspace
+            && globalWorkspace.getCli()
+            && globalWorkspace.getCli()['analytics'];
+        if (analyticsConfig !== undefined) {
+            return true;
+        }
+    }
+    catch (_a) { }
+    return false;
+}
+exports.hasGlobalAnalyticsConfiguration = hasGlobalAnalyticsConfiguration;
 /**
  * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
  * or undefined if analytics are disabled.

@@ -54,6 +54,7 @@ export declare function promptGlobalAnalytics(force?: boolean): Promise<boolean>
  * @return Whether or not the user was shown a prompt.
  */
 export declare function promptProjectAnalytics(force?: boolean): Promise<boolean>;
+export declare function hasGlobalAnalyticsConfiguration(): boolean;
 /**
  * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
  * or undefined if analytics are disabled.
