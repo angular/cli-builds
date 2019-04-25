@@ -11,7 +11,6 @@ const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
 const node_2 = require("@angular-devkit/core/node");
-const version_1 = require("../upgrade/version");
 const bep_1 = require("../utilities/bep");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
@@ -196,8 +195,6 @@ class ArchitectCommand extends command_1.Command {
         }
     }
     async runArchitectTarget(options) {
-        // Check Angular version.
-        version_1.Version.assertCompatibleAngularVersion(this.workspace.root);
         const extra = options['--'] || [];
         try {
             const targetSpec = this._makeTargetSpecifier(options);
