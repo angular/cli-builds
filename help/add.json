@@ -13,6 +13,14 @@
       "positional": 0
     },
     {
+      "name": "registry",
+      "description": "The NPM registry to use.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
       "name": "interactive",
       "description": "When false, disables interactive input prompts.",
       "type": "boolean",

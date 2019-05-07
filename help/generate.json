@@ -1256,7 +1256,7 @@
             },
             {
               "name": "lintFix",
-              "description": "When true, applies lint fixes after generating the pipe.",
+              "description": "When true, applies lint fixes after generating the service.",
               "type": "boolean",
               "default": false,
               "required": false,
