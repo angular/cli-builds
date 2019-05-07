@@ -1,7 +1,7 @@
 {
   "name": "update",
   "description": "Updates your application and its dependencies. See https://update.angular.io/",
-  "longDescription": "Perform a basic update to v7 of the core framework and CLI by running the following command.\n\n```\nng update @angular/cli @angular/core\n```\n\nFor detailed information and guidance on updating your application, see the interactive [Angular Update Guide](https://update.angular.io/).\n",
+  "longDescription": "Perform a basic update to the current stable release of the core framework and CLI by running the following command.\n\n```\nng update @angular/cli @angular/core\n```\n\nTo update to the next beta or pre-release version, use the `--next=true` option.\n\nFor detailed information and guidance on updating your application, see the interactive [Angular Update Guide](https://update.angular.io/).\n",
   "options": [
     {
       "name": "help",
@@ -24,7 +24,7 @@
     },
     {
       "name": "packages",
-      "description": "The names of package(s) to update.",
+      "description": "The package or packages to update.",
       "type": "array",
       "required": false,
       "aliases": [],
@@ -32,7 +32,7 @@
     },
     {
       "name": "force",
-      "description": "If false, will error out if installed packages are incompatible with the update.",
+      "description": "When false (the default), reports an error if installed packages are incompatible with the update.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -41,7 +41,7 @@
     },
     {
       "name": "all",
-      "description": "Whether to update all packages in package.json.",
+      "description": "When true, update all packages in `package.json`.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -50,7 +50,7 @@
     },
     {
       "name": "next",
-      "description": "Use the largest version, including beta and RCs.",
+      "description": "Update to the latest version, including beta and RCs.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -59,7 +59,7 @@
     },
     {
       "name": "migrateOnly",
-      "description": "Only perform a migration, does not update the installed version.",
+      "description": "Perform a migration, but do not update the installed version.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -68,7 +68,7 @@
     },
     {
       "name": "from",
-      "description": "Version from which to migrate from. Only available with a single package being updated, and only on migration only.",
+      "description": "When using `--migrateOnly` for a single package, the version of that package from which to migrate.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -76,7 +76,7 @@
     },
     {
       "name": "to",
-      "description": "Version up to which to apply migrations. Only available with a single package being updated, and only on migrations only. Requires from to be specified. Default to the installed version detected.",
+      "description": "When using `--migrateOnly` for a single package, the version of that package to which to migrate.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -84,7 +84,7 @@
     },
     {
       "name": "registry",
-      "description": "The NPM registry to use.",
+      "description": "The npm registry to use.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -92,7 +92,7 @@
     },
     {
       "name": "verbose",
-      "description": "Display additional details during the update process.",
+      "description": "When true, display additional details during the update process.",
       "type": "boolean",
       "required": false,
       "aliases": [],
