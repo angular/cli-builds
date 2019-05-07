@@ -49,7 +49,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             // plus special cases for packages that did not have peer deps setup
             let packageMetadata;
             try {
-                packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, { registry: options.registry, usingYarn });
+                packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, { usingYarn });
             }
             catch (e) {
                 this.logger.error('Unable to fetch package metadata: ' + e.message);
@@ -91,7 +91,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         let collectionName = packageIdentifier.name;
         if (!packageIdentifier.registry) {
             try {
-                const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, { registry: options.registry, usingYarn });
+                const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, { usingYarn });
                 collectionName = manifest.name;
                 if (await this.hasMismatchedPeer(manifest)) {
                     console.warn('Package has unmet peer dependencies. Adding the package may not succeed.');

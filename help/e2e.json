@@ -111,6 +111,7 @@
       "name": "host",
       "description": "Host to listen on.",
       "type": "string",
+      "default": "localhost",
       "required": false,
       "aliases": [],
       "hidden": false
