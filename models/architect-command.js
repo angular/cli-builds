@@ -176,7 +176,9 @@ class ArchitectCommand extends command_1.Command {
         const builderDesc = await this._architectHost.resolveBuilder(builderConf);
         const targetOptionArray = await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema);
         const overrides = parser_1.parseArguments(targetOptions, targetOptionArray, this.logger);
-        if (overrides['--']) {
+        const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object'
+            && builderDesc.optionSchema.additionalProperties;
+        if (overrides['--'] && !allowAdditionalProperties) {
             (overrides['--'] || []).forEach(additional => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
             });
