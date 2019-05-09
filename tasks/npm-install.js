@@ -15,14 +15,14 @@ async function default_1(packageName, logger, packageManager, projectRoot, save 
         case 'cnpm':
         case 'pnpm':
         case 'npm':
-            installArgs.push('install', '--silent');
+            installArgs.push('install');
             break;
         case 'yarn':
             installArgs.push('add');
             break;
         default:
             packageManager = 'npm';
-            installArgs.push('install', '--quiet');
+            installArgs.push('install');
             break;
     }
     logger.info(core_1.terminal.green(`Installing packages for tooling via ${packageManager}.`));
@@ -32,6 +32,7 @@ async function default_1(packageName, logger, packageManager, projectRoot, save 
     if (!save) {
         installArgs.push('--no-save');
     }
+    installArgs.push('--quiet');
     await new Promise((resolve, reject) => {
         child_process_1.spawn(packageManager, installArgs, { stdio: 'inherit', shell: true })
             .on('close', (code) => {
@@ -40,9 +41,7 @@ async function default_1(packageName, logger, packageManager, projectRoot, save 
                 resolve();
             }
             else {
-                const message = 'Package install failed, see above.';
-                logger.info(core_1.terminal.red(message));
-                reject(message);
+                reject('Package install failed, see above.');
             }
         });
     });
