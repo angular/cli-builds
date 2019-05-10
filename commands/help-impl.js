@@ -12,8 +12,7 @@ const command_1 = require("../models/command");
 class HelpCommand extends command_1.Command {
     async run() {
         this.logger.info(`Available Commands:`);
-        for (const name of Object.keys(command_1.Command.commandMap)) {
-            const cmd = command_1.Command.commandMap[name];
+        for (const cmd of Object.values(await command_1.Command.commandMap())) {
             if (cmd.hidden) {
                 continue;
             }

@@ -16,8 +16,8 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     allowMissingWorkspace: boolean;
     workspace: CommandWorkspace;
     analytics: analytics.Analytics;
-    protected static commandMap: CommandDescriptionMap;
-    static setCommandMap(map: CommandDescriptionMap): void;
+    protected static commandMap: () => Promise<CommandDescriptionMap>;
+    static setCommandMap(map: () => Promise<CommandDescriptionMap>): void;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
     initialize(options: T & Arguments): Promise<void>;
     printHelp(options: T & Arguments): Promise<number>;

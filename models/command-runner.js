@@ -11,12 +11,33 @@ const core_1 = require("@angular-devkit/core");
 const debug = require("debug");
 const fs_1 = require("fs");
 const path_1 = require("path");
-const find_up_1 = require("../utilities/find-up");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser = require("./parser");
 const analyticsDebug = debug('ng:analytics:commands');
+// NOTE: Update commands.json if changing this.  It's still deep imported in one CI validation
+const standardCommands = {
+    'add': '../commands/add.json',
+    'analytics': '../commands/analytics.json',
+    'build': '../commands/build.json',
+    'config': '../commands/config.json',
+    'doc': '../commands/doc.json',
+    'e2e': '../commands/e2e.json',
+    'make-this-awesome': '../commands/easter-egg.json',
+    'generate': '../commands/generate.json',
+    'get': '../commands/deprecated.json',
+    'set': '../commands/deprecated.json',
+    'help': '../commands/help.json',
+    'lint': '../commands/lint.json',
+    'new': '../commands/new.json',
+    'run': '../commands/run.json',
+    'serve': '../commands/serve.json',
+    'test': '../commands/test.json',
+    'update': '../commands/update.json',
+    'version': '../commands/version.json',
+    'xi18n': '../commands/xi18n.json',
+};
 /**
  * Create the analytics instance.
  * @private
@@ -37,6 +58,15 @@ async function _createAnalytics() {
         return new core_1.analytics.NoopAnalytics();
     }
 }
+async function loadCommandDescription(name, path, registry) {
+    const schemaPath = path_1.resolve(__dirname, path);
+    const schemaContent = fs_1.readFileSync(schemaPath, 'utf-8');
+    const schema = core_1.json.parseJson(schemaContent, core_1.JsonParseMode.Loose, { path: schemaPath });
+    if (!core_1.isJsonObject(schema)) {
+        throw new Error('Invalid command JSON loaded from ' + JSON.stringify(schemaPath));
+    }
+    return json_schema_1.parseJsonSchemaToCommandDescription(name, schemaPath, registry, schema);
+}
 /**
  * Run a command.
  * @param args Raw unparsed arguments.
@@ -45,26 +75,7 @@ async function _createAnalytics() {
  * @param commands The map of supported commands.
  * @param options Additional options.
  */
-async function runCommand(args, logger, workspace, commands, options = {}) {
-    if (commands === undefined) {
-        const commandMapPath = find_up_1.findUp('commands.json', __dirname);
-        if (commandMapPath === null) {
-            throw new Error('Unable to find command map.');
-        }
-        const cliDir = path_1.dirname(commandMapPath);
-        const commandsText = fs_1.readFileSync(commandMapPath).toString('utf-8');
-        const commandJson = core_1.json.parseJson(commandsText, core_1.JsonParseMode.Loose, { path: commandMapPath });
-        if (!core_1.isJsonObject(commandJson)) {
-            throw Error('Invalid command.json');
-        }
-        commands = {};
-        for (const commandName of Object.keys(commandJson)) {
-            const commandValue = commandJson[commandName];
-            if (typeof commandValue == 'string') {
-                commands[commandName] = path_1.resolve(cliDir, commandValue);
-            }
-        }
-    }
+async function runCommand(args, logger, workspace, commands = standardCommands, options = {}) {
     // This registry is exclusively used for flattening schemas, and not for validating.
     const registry = new core_1.schema.CoreSchemaRegistry([]);
     registry.registerUriHandler((uri) => {
@@ -76,78 +87,68 @@ async function runCommand(args, logger, workspace, commands, options = {}) {
             return null;
         }
     });
-    // Normalize the commandMap
-    const commandMap = {};
-    for (const name of Object.keys(commands)) {
-        const schemaPath = commands[name];
-        const schemaContent = fs_1.readFileSync(schemaPath, 'utf-8');
-        const schema = core_1.json.parseJson(schemaContent, core_1.JsonParseMode.Loose, { path: schemaPath });
-        if (!core_1.isJsonObject(schema)) {
-            throw new Error('Invalid command JSON loaded from ' + JSON.stringify(schemaPath));
-        }
-        commandMap[name] =
-            await json_schema_1.parseJsonSchemaToCommandDescription(name, schemaPath, registry, schema);
-    }
     let commandName = undefined;
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
-        if (arg in commandMap) {
-            commandName = arg;
-            args.splice(i, 1);
-            break;
-        }
-        else if (!arg.startsWith('-')) {
+        if (!arg.startsWith('-')) {
             commandName = arg;
             args.splice(i, 1);
             break;
         }
     }
+    let description = null;
     // if no commands were found, use `help`.
-    if (commandName === undefined) {
+    if (!commandName) {
         if (args.length === 1 && args[0] === '--version') {
             commandName = 'version';
         }
         else {
             commandName = 'help';
         }
-    }
-    let description = null;
-    if (commandName !== undefined) {
-        if (commandMap[commandName]) {
-            description = commandMap[commandName];
+        if (!(commandName in commands)) {
+            logger.error(core_1.tags.stripIndent `
+          The "${commandName}" command seems to be disabled.
+          This is an issue with the CLI itself. If you see this comment, please report it and
+          provide your repository.
+        `);
+            return 1;
         }
-        else {
-            Object.keys(commandMap).forEach(name => {
-                const commandDescription = commandMap[name];
-                const aliases = commandDescription.aliases;
-                let found = false;
-                if (aliases) {
-                    if (aliases.some(alias => alias === commandName)) {
-                        found = true;
-                    }
+    }
+    if (commandName in commands) {
+        description = await loadCommandDescription(commandName, commands[commandName], registry);
+    }
+    else {
+        const commandNames = Object.keys(commands);
+        // Optimize loading for common aliases
+        if (commandName.length === 1) {
+            commandNames.sort((a, b) => {
+                const aMatch = a[0] === commandName;
+                const bMatch = b[0] === commandName;
+                if (aMatch && !bMatch) {
+                    return -1;
                 }
-                if (found) {
-                    if (description) {
-                        throw new Error('Found multiple commands with the same alias.');
-                    }
-                    commandName = name;
-                    description = commandDescription;
+                else if (!aMatch && bMatch) {
+                    return 1;
+                }
+                else {
+                    return 0;
                 }
             });
         }
-    }
-    if (!commandName) {
-        logger.error(core_1.tags.stripIndent `
-        We could not find a command from the arguments and the help command seems to be disabled.
-        This is an issue with the CLI itself. If you see this comment, please report it and
-        provide your repository.
-      `);
-        return 1;
+        for (const name of commandNames) {
+            const aliasDesc = await loadCommandDescription(name, commands[name], registry);
+            const aliases = aliasDesc.aliases;
+            if (aliases && aliases.some(alias => alias === commandName)) {
+                commandName = name;
+                description = aliasDesc;
+                break;
+            }
+        }
     }
     if (!description) {
         const commandsDistance = {};
         const name = commandName;
-        const allCommands = Object.keys(commandMap).sort((a, b) => {
+        const allCommands = Object.keys(commands).sort((a, b) => {
             if (!(a in commandsDistance)) {
                 commandsDistance[a] = core_1.strings.levenshtein(a, name);
             }
@@ -166,7 +167,13 @@ async function runCommand(args, logger, workspace, commands, options = {}) {
     }
     try {
         const parsedOptions = parser.parseArguments(args, description.options, logger);
-        command_1.Command.setCommandMap(commandMap);
+        command_1.Command.setCommandMap(async () => {
+            const map = {};
+            for (const [name, path] of Object.entries(commands)) {
+                map[name] = await loadCommandDescription(name, path, registry);
+            }
+            return map;
+        });
         const analytics = options.analytics || await _createAnalytics();
         const context = { workspace, analytics };
         const command = new description.impl(context, description, logger);
