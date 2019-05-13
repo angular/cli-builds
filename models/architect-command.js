@@ -190,7 +190,10 @@ class ArchitectCommand extends command_1.Command {
             return this.runBepTarget(this.description.name, target, overrides, commandOptions.buildEventLog);
         }
         else {
-            const run = await this._architect.scheduleTarget(target, overrides, { logger: this.logger });
+            const run = await this._architect.scheduleTarget(target, overrides, {
+                logger: this.logger,
+                analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
+            });
             const result = await run.output.toPromise();
             await run.stop();
             return result.success ? 0 : 1;
