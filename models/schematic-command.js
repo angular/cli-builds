@@ -172,35 +172,10 @@ class SchematicCommand extends command_1.Command {
                 };
             }
             else {
-                return {
-                    ...context,
-                    analytics: new core_1.analytics.NoopAnalytics(),
-                };
+                return context;
             }
         });
         workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
-        // This needs to be the last transform as it reports the flags to analytics (if enabled).
-        workflow.engineHost.registerOptionsTransform(async (schematic, options, context) => {
-            const analytics = context && context.analytics;
-            if (!schematic.schemaJson || !context || !analytics) {
-                return options;
-            }
-            const collectionName = context.schematic.collection.description.name;
-            const schematicName = context.schematic.description.name;
-            if (!analytics_1.isPackageNameSafeForAnalytics(collectionName)) {
-                return options;
-            }
-            const args = await json_schema_1.parseJsonSchemaToOptions(this._workflow.registry, schematic.schemaJson);
-            const dimensions = [];
-            for (const option of args) {
-                const ua = option.userAnalytics;
-                if (option.name in options && ua) {
-                    dimensions[ua] = options[option.name];
-                }
-            }
-            analytics.event('schematics', collectionName + ':' + schematicName, { dimensions });
-            return options;
-        });
         if (options.defaults) {
             workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
         }
