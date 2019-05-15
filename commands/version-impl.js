@@ -26,6 +26,7 @@ class VersionCommand extends command_1.Command {
         const patterns = [
             /^@angular\/.*/,
             /^@angular-devkit\/.*/,
+            /^@bazel\/.*/,
             /^@ngtools\/.*/,
             /^@nguniversal\/.*/,
             /^@schematics\/.*/,
