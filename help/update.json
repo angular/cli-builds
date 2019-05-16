@@ -24,7 +24,7 @@
     },
     {
       "name": "packages",
-      "description": "The package or packages to update.",
+      "description": "The names of package(s) to update.",
       "type": "array",
       "required": false,
       "aliases": [],
@@ -32,7 +32,7 @@
     },
     {
       "name": "force",
-      "description": "When false (the default), reports an error if installed packages are incompatible with the update.",
+      "description": "If false, will error out if installed packages are incompatible with the update.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -41,7 +41,7 @@
     },
     {
       "name": "all",
-      "description": "When true, update all packages in `package.json`.",
+      "description": "Whether to update all packages in package.json.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -50,7 +50,7 @@
     },
     {
       "name": "next",
-      "description": "Update to the latest version, including beta and RCs.",
+      "description": "Use the largest version, including beta and RCs.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -59,16 +59,15 @@
     },
     {
       "name": "migrateOnly",
-      "description": "Perform a migration, but do not update the installed version.",
+      "description": "Only perform a migration, does not update the installed version.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
       "name": "from",
-      "description": "When using `--migrateOnly` for a single package, the version of that package from which to migrate.",
+      "description": "Version from which to migrate from. Only available with a single package being updated, and only on migration only.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -76,37 +75,8 @@
     },
     {
       "name": "to",
-      "description": "When using `--migrateOnly` for a single package, the version of that package to which to migrate.",
+      "description": "Version up to which to apply migrations. Only available with a single package being updated, and only on migrations only. Requires from to be specified. Default to the installed version detected.",
       "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "registry",
-      "description": "The npm registry to use.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "verbose",
-      "description": "When true, display additional details during the update process.",
-      "type": "boolean",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "packageManager",
-      "description": "The preferred package manager configuration files to use for registry settings.",
-      "type": "string",
-      "default": "npm",
-      "enum": [
-        "npm",
-        "yarn"
-      ],
       "required": false,
       "aliases": [],
       "hidden": false
