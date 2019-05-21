@@ -4,7 +4,7 @@
   "options": [
     {
       "name": "project",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "The name of the project to build. Can be an app or a library.",
       "type": "string",
       "required": false,
       "aliases": [],
