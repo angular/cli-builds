@@ -25,7 +25,7 @@ export interface Schema {
      */
     prod?: boolean;
     /**
-     * The name of the project to build. Can be an app or a library.
+     * The name of the project to build. Can be an application or a library.
      */
     project?: string;
 }
