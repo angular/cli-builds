@@ -17,6 +17,7 @@ const workspace_loader_1 = require("../models/workspace-loader");
 const config_1 = require("../utilities/config");
 const json_schema_1 = require("../utilities/json-schema");
 const package_manager_1 = require("../utilities/package-manager");
+const tty_1 = require("../utilities/tty");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser_1 = require("./parser");
@@ -202,7 +203,7 @@ class SchematicCommand extends command_1.Command {
             }
             return undefined;
         });
-        if (options.interactive !== false && process.stdout.isTTY) {
+        if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions.map(definition => {
                     const question = {
