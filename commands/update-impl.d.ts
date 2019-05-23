@@ -5,4 +5,5 @@ export declare class UpdateCommand extends SchematicCommand<UpdateCommandSchema>
     readonly allowMissingWorkspace = true;
     parseArguments(_schematicOptions: string[], _schema: Option[]): Promise<Arguments>;
     run(options: UpdateCommandSchema & Arguments): Promise<number | void>;
+    checkCleanGit(): boolean;
 }

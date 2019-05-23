@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+const child_process_1 = require("child_process");
 const path = require("path");
 const semver = require("semver");
 const schematic_command_1 = require("../models/schematic-command");
@@ -64,6 +65,12 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
         else if (!options.migrateOnly && (options.from || options.to)) {
             this.logger.error('Can only use "from" or "to" options with "migrate-only" option.');
             return 1;
+        }
+        // If not asking for status then check for a clean git repository.
+        // This allows the user to easily reset any changes from the update.
+        if ((packages.length !== 0 || options.all) && !this.checkCleanGit()) {
+            this.logger.error('Repository is not clean.  Please commit or stash any changes before updating.');
+            return 2;
         }
         const packageManager = package_manager_1.getPackageManager(this.workspace.root);
         this.logger.info(`Using package manager: '${packageManager}'`);
@@ -219,6 +226,15 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 packages: requests.map(p => p.toString()),
             },
         });
+    }
+    checkCleanGit() {
+        try {
+            const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
+            return result.trim().length === 0;
+        }
+        catch (_a) {
+            return true;
+        }
     }
 }
 exports.UpdateCommand = UpdateCommand;
