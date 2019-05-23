@@ -16,6 +16,7 @@ const os = require("os");
 const ua = require("universal-analytics");
 const uuid_1 = require("uuid");
 const config_1 = require("../utilities/config");
+const tty_1 = require("../utilities/tty");
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
 const analyticsLogDebug = debug('ng:analytics:log'); // Actual logs of events.
 const BYTES_PER_MEGABYTES = 1024 * 1024;
@@ -309,7 +310,7 @@ exports.setAnalyticsConfig = setAnalyticsConfig;
  */
 async function promptGlobalAnalytics(force = false) {
     analyticsDebug('prompting global analytics.');
-    if (force || (process.stdout.isTTY && process.stdin.isTTY)) {
+    if (force || tty_1.isTTY()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -353,7 +354,7 @@ async function promptProjectAnalytics(force = false) {
     if (!config || !configPath) {
         throw new Error(`Could not find a local workspace. Are you in a project?`);
     }
-    if (force || (process.stdout.isTTY && process.stdin.isTTY)) {
+    if (force || tty_1.isTTY()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -389,7 +390,7 @@ function hasGlobalAnalyticsConfiguration() {
         const analyticsConfig = globalWorkspace
             && globalWorkspace.getCli()
             && globalWorkspace.getCli()['analytics'];
-        if (analyticsConfig !== undefined) {
+        if (analyticsConfig !== null && analyticsConfig !== undefined) {
             return true;
         }
     }
