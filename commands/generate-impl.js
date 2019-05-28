@@ -7,16 +7,15 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:no-global-tslint-disable no-any
 const core_1 = require("@angular-devkit/core");
 const schematic_command_1 = require("../models/schematic-command");
 const json_schema_1 = require("../utilities/json-schema");
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     async initialize(options) {
+        await super.initialize(options);
         // Fill up the schematics property of the command description.
         const [collectionName, schematicName] = this.parseSchematicInfo(options);
-        this.collectionName = collectionName;
-        this.schematicName = schematicName;
-        await super.initialize(options);
         const collection = this.getCollection(collectionName);
         const subcommands = {};
         const schematicNames = schematicName ? [schematicName] : collection.listSchematicNames();
@@ -46,12 +45,13 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     async run(options) {
-        if (!this.schematicName || !this.collectionName) {
+        const [collectionName, schematicName] = this.parseSchematicInfo(options);
+        if (!schematicName || !collectionName) {
             return this.printHelp(options);
         }
         return this.runSchematic({
-            collectionName: this.collectionName,
-            schematicName: this.schematicName,
+            collectionName,
+            schematicName,
             schematicOptions: options['--'] || [],
             debug: !!options.debug || false,
             dryRun: !!options.dryRun || false,

@@ -35,7 +35,6 @@ export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & 
     private _host;
     private _workspace;
     protected _workflow: NodeWorkflow;
-    private readonly defaultCollectionName;
     protected collectionName: string;
     protected schematicName?: string;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);

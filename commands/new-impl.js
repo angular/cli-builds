@@ -14,22 +14,20 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         this.allowMissingWorkspace = true;
         this.schematicName = 'ng-new';
     }
-    async initialize(options) {
+    async run(options) {
+        let collectionName;
         if (options.collection) {
-            this.collectionName = options.collection;
+            collectionName = options.collection;
         }
         else {
-            this.collectionName = this.parseCollectionName(options);
+            collectionName = this.parseCollectionName(options);
         }
-        return super.initialize(options);
-    }
-    async run(options) {
         // Register the version of the CLI in the registry.
         const packageJson = require('../package.json');
         const version = packageJson.version;
         this._workflow.registry.addSmartDefaultProvider('ng-cli-version', () => version);
         return this.runSchematic({
-            collectionName: this.collectionName,
+            collectionName: collectionName,
             schematicName: this.schematicName,
             schematicOptions: options['--'] || [],
             debug: !!options.debug,
