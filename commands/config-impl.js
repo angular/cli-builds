@@ -70,7 +70,7 @@ const validCliPaths = new Map([
  * by the path. For example, a path of "a[3].foo.bar[2]" would give you a fragment array of
  * ["a", 3, "foo", "bar", 2].
  * @param path The JSON string to parse.
- * @returns {string[]} The fragments for the string.
+ * @returns {(string|number)[]} The fragments for the string.
  * @private
  */
 function parseJsonPath(path) {
@@ -87,11 +87,14 @@ function parseJsonPath(path) {
         }
         result.push(match[1]);
         if (match[2]) {
-            const indices = match[2].slice(1, -1).split('][');
+            const indices = match[2]
+                .slice(1, -1)
+                .split('][')
+                .map(x => /^\d$/.test(x) ? +x : x.replace(/\"|\'/g, ''));
             result.push(...indices);
         }
     }
-    return result.filter(fragment => !!fragment);
+    return result.filter(fragment => fragment != null);
 }
 function getValueFromPath(root, path) {
     const fragments = parseJsonPath(path);

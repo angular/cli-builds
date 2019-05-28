@@ -33,7 +33,8 @@ class SchematicCommand extends command_1.Command {
         this.allowPrivateSchematics = false;
         this.allowAdditionalArgs = false;
         this._host = new node_1.NodeJsSyncHost();
-        this.collectionName = '@schematics/angular';
+        this.defaultCollectionName = '@schematics/angular';
+        this.collectionName = this.defaultCollectionName;
     }
     async initialize(options) {
         await this._loadWorkspace();
@@ -268,7 +269,7 @@ class SchematicCommand extends command_1.Command {
                 return value;
             }
         }
-        return this.collectionName;
+        return this.defaultCollectionName;
     }
     async runSchematic(options) {
         const { schematicOptions, debug, dryRun } = options;
@@ -285,7 +286,7 @@ class SchematicCommand extends command_1.Command {
         collectionName = schematic.collection.description.name;
         schematicName = schematic.description.name;
         // TODO: Remove warning check when 'targets' is default
-        if (collectionName !== this.collectionName) {
+        if (collectionName !== this.defaultCollectionName) {
             const [ast, configPath] = config_1.getWorkspaceRaw('local');
             if (ast) {
                 const projectsKeyValue = ast.properties.find(p => p.key.value === 'projects');
