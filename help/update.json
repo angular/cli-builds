@@ -80,6 +80,14 @@
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "allowDirty",
+      "description": "Whether to allow updating when the repository contains modified or untracked files.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [],
