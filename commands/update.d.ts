@@ -7,6 +7,10 @@ export interface Schema {
      */
     all?: boolean;
     /**
+     * Whether to allow updating when the repository contains modified or untracked files.
+     */
+    allowDirty?: boolean;
+    /**
      * If false, will error out if installed packages are incompatible with the update.
      */
     force?: boolean;
