@@ -210,23 +210,21 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 this.logger.info(`Package '${pkg.name}' is already at '${pkg.fetchSpec}'.`);
                 continue;
             }
-            requests.push({ identifier: pkg, node });
+            requests.push(pkg);
         }
         if (requests.length === 0) {
             return 0;
         }
-        const packagesToUpdate = [];
         this.logger.info('Fetching dependency metadata from registry...');
-        for (const { identifier: requestIdentifier, node } of requests) {
-            const packageName = requestIdentifier.name;
+        for (const requestIdentifier of requests) {
             let metadata;
             try {
                 // Metadata requests are internally cached; multiple requests for same name
                 // does not result in additional network traffic
-                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger);
+                metadata = await package_metadata_1.fetchPackageMetadata(requestIdentifier.name, this.logger);
             }
             catch (e) {
-                this.logger.error(`Error fetching metadata for '${packageName}': ` + e.message);
+                this.logger.error(`Error fetching metadata for '${requestIdentifier.name}': ` + e.message);
                 return 1;
             }
             // Try to find a package version based on the user requested package specifier
@@ -248,15 +246,6 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 this.logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if ((typeof node === 'string' && manifest.version === node) ||
-                (typeof node === 'object' && manifest.version === node.package.version)) {
-                this.logger.info(`Package '${packageName}' is already up to date.`);
-                continue;
-            }
-            packagesToUpdate.push(requestIdentifier.toString());
-        }
-        if (packagesToUpdate.length === 0) {
-            return 0;
         }
         return this.runSchematic({
             collectionName: '@schematics/update',
@@ -266,7 +255,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
             additionalOptions: {
                 force: options.force || false,
                 packageManager,
-                packages: packagesToUpdate,
+                packages: requests.map(p => p.toString()),
             },
         });
     }
