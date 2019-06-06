@@ -12,6 +12,7 @@ function isTTY() {
     if (force !== undefined) {
         return !(force === '0' || force.toUpperCase() === 'FALSE');
     }
-    return !!process.stdout.isTTY && !!process.stdin.isTTY && !('CI' in process.env);
+    const ci = process.env['CI'];
+    return !!process.stdout.isTTY && (!ci || ci === '0' || ci.toUpperCase() === 'FALSE');
 }
 exports.isTTY = isTTY;
