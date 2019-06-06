@@ -15,6 +15,10 @@ export interface Schema {
 }
 export interface CliOptions {
     /**
+     * Share anonymous usage data with the Angular Team at Google.
+     */
+    analytics?: boolean;
+    /**
      * The default schematics collection to use.
      */
     defaultCollection?: string;
