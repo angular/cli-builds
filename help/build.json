@@ -58,17 +58,16 @@
       "hidden": false
     },
     {
-      "name": "watch",
-      "description": "Run build when files change.",
-      "type": "boolean",
-      "default": false,
+      "name": "main",
+      "description": "The full path for the main entry point to the app, relative to the current workspace.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "main",
-      "description": "The full path for the main entry point to the app, relative to the current workspace.",
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -240,9 +239,10 @@
       "hidden": false
     },
     {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
-      "type": "string",
+      "name": "watch",
+      "description": "Run build when files change.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
