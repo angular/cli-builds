@@ -82,24 +82,22 @@
       "hidden": false
     },
     {
-      "name": "inlineTemplate",
-      "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [
-        "t"
-      ],
-      "hidden": false,
-      "userAnalytics": 10
-    },
-    {
       "name": "directory",
       "description": "The directory name to create the workspace in.",
       "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "name",
+      "description": "The name of the new workspace and initial project.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "format": "html-selector",
+      "hidden": false,
+      "positional": 0
     },
     {
       "name": "enableIvy",
@@ -161,14 +159,16 @@
       "userAnalytics": 9
     },
     {
-      "name": "name",
-      "description": "The name of the new workspace and initial project.",
-      "type": "string",
+      "name": "inlineTemplate",
+      "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
+      "type": "boolean",
+      "default": false,
       "required": false,
-      "aliases": [],
-      "format": "html-selector",
+      "aliases": [
+        "t"
+      ],
       "hidden": false,
-      "positional": 0
+      "userAnalytics": 10
     },
     {
       "name": "viewEncapsulation",

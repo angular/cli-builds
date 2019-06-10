@@ -50,16 +50,16 @@
       "hidden": false
     },
     {
-      "name": "progress",
-      "description": "Log progress to the console while building.",
-      "type": "boolean",
+      "name": "main",
+      "description": "The name of the main entry-point file.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "main",
-      "description": "The name of the main entry-point file.",
+      "name": "tsConfig",
+      "description": "The name of the TypeScript configuration file.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -118,9 +118,9 @@
       "deprecated": true
     },
     {
-      "name": "tsConfig",
-      "description": "The name of the TypeScript configuration file.",
-      "type": "string",
+      "name": "progress",
+      "description": "Log progress to the console while building.",
+      "type": "boolean",
       "required": false,
       "aliases": [],
       "hidden": false

@@ -16,18 +16,16 @@
           "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
             {
-              "name": "main",
-              "description": "The name of the main entry-point file.",
+              "name": "clientProject",
+              "description": "The name of the related client app.",
               "type": "string",
-              "default": "main.server.ts",
               "required": false,
               "aliases": [],
-              "format": "path",
               "hidden": false
             },
             {
-              "name": "clientProject",
-              "description": "The name of the related client app.",
+              "name": "universalProject",
+              "description": "The name of related Universal app.",
               "type": "string",
               "required": false,
               "aliases": [],
@@ -92,11 +90,13 @@
               "hidden": false
             },
             {
-              "name": "universalProject",
-              "description": "The name of related Universal app.",
+              "name": "main",
+              "description": "The name of the main entry-point file.",
               "type": "string",
+              "default": "main.server.ts",
               "required": false,
               "aliases": [],
+              "format": "path",
               "hidden": false
             },
             {
@@ -178,24 +178,21 @@
           "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
           "options": [
             {
-              "name": "prefix",
-              "description": "A prefix to apply to generated selectors.",
-              "type": "string",
-              "default": "app",
-              "required": false,
-              "aliases": [
-                "p"
-              ],
-              "format": "html-selector",
-              "hidden": false
-            },
-            {
               "name": "projectRoot",
               "description": "The root directory of the new app.",
               "type": "string",
               "required": false,
               "aliases": [],
               "hidden": true
+            },
+            {
+              "name": "name",
+              "description": "The name of the new app.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
             },
             {
               "name": "enableIvy",
@@ -256,13 +253,16 @@
               "hidden": false
             },
             {
-              "name": "name",
-              "description": "The name of the new app.",
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
+              "default": "app",
               "required": false,
-              "aliases": [],
-              "hidden": false,
-              "positional": 0
+              "aliases": [
+                "p"
+              ],
+              "format": "html-selector",
+              "hidden": false
             },
             {
               "name": "style",
@@ -411,23 +411,6 @@
           "description": "Creates a new generic component definition in the given or default project.",
           "options": [
             {
-              "name": "style",
-              "description": "The file extension or preprocessor to use for style files.",
-              "type": "string",
-              "default": "css",
-              "enum": [
-                "css",
-                "scss",
-                "sass",
-                "less",
-                "styl"
-              ],
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 5
-            },
-            {
               "name": "path",
               "description": "The path at which to create the component file, relative to the current workspace. Default is a folder with the same name as the component in the project root.",
               "type": "string",
@@ -435,6 +418,14 @@
               "aliases": [],
               "format": "path",
               "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
             },
             {
               "name": "name",
@@ -522,12 +513,21 @@
               "deprecated": "Use \"style\" instead."
             },
             {
-              "name": "project",
-              "description": "The name of the project.",
+              "name": "style",
+              "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
+              "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less",
+                "styl"
+              ],
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 5
             },
             {
               "name": "spec",
@@ -624,16 +624,6 @@
           "description": "Creates a new generic directive definition in the given or default project.",
           "options": [
             {
-              "name": "skipImport",
-              "description": "When true, does not import this directive into the owning NgModule.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 18
-            },
-            {
               "name": "name",
               "description": "The name of the new directive.",
               "type": "string",
@@ -641,6 +631,15 @@
               "aliases": [],
               "hidden": false,
               "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
             },
             {
               "name": "project",
@@ -681,13 +680,14 @@
               "userAnalytics": 12
             },
             {
-              "name": "path",
-              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
-              "type": "string",
+              "name": "skipImport",
+              "description": "When true, does not import this directive into the owning NgModule.",
+              "type": "boolean",
+              "default": false,
               "required": false,
               "aliases": [],
-              "format": "path",
-              "hidden": true
+              "hidden": false,
+              "userAnalytics": 18
             },
             {
               "name": "selector",
