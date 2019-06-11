@@ -12,7 +12,6 @@ const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
 const schematic_command_1 = require("../models/schematic-command");
-const find_up_1 = require("../utilities/find-up");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
@@ -79,14 +78,15 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
         const packageManager = package_manager_1.getPackageManager(this.workspace.root);
         this.logger.info(`Using package manager: '${packageManager}'`);
         // Special handling for Angular CLI 1.x migrations
-        if (options.migrateOnly === undefined && options.from === undefined) {
-            if (!options.all && packages.length === 1 && packages[0].name === '@angular/cli') {
-                const oldConfigFilePath = find_up_1.findUp(oldConfigFileNames, process.cwd());
-                if (oldConfigFilePath) {
-                    options.migrateOnly = true;
-                    options.from = '1.0.0';
-                }
-            }
+        if (options.migrateOnly === undefined &&
+            options.from === undefined &&
+            !options.all &&
+            packages.length === 1 &&
+            packages[0].name === '@angular/cli' &&
+            this.workspace.configFile &&
+            oldConfigFileNames.includes(this.workspace.configFile)) {
+            options.migrateOnly = true;
+            options.from = '1.0.0';
         }
         this.logger.info('Collecting installed dependencies...');
         const packageTree = await package_tree_1.readPackageTree(this.workspace.root);
