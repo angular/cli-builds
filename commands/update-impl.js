@@ -273,11 +273,19 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     checkCleanGit() {
         try {
             const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
-            return result.trim().length === 0;
+            if (result.trim().length === 0) {
+                return true;
+            }
+            // Only files inside the workspace root are relevant
+            for (const entry of result.split('\n')) {
+                const relativeEntry = path.relative(path.resolve(this.workspace.root), path.resolve(entry.slice(3).trim()));
+                if (!relativeEntry.startsWith('..') && !path.isAbsolute(relativeEntry)) {
+                    return false;
+                }
+            }
         }
-        catch (_a) {
-            return true;
-        }
+        catch (_a) { }
+        return true;
     }
 }
 exports.UpdateCommand = UpdateCommand;
