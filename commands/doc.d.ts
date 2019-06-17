@@ -16,6 +16,10 @@ export interface Schema {
      * documentation.
      */
     search?: boolean;
+    /**
+     * Contains the version of Angular to use for the documentation.
+     */
+    version?: any;
 }
 /**
  * Shows a help message for this command in the console.
