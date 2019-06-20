@@ -194,12 +194,9 @@ class ArchitectCommand extends command_1.Command {
                 logger: this.logger,
                 analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
             });
-            const { error, success } = await run.output.toPromise();
+            const result = await run.output.toPromise();
             await run.stop();
-            if (error) {
-                this.logger.error(error);
-            }
-            return success ? 0 : 1;
+            return result.success ? 0 : 1;
         }
     }
     async runArchitectTarget(options) {
