@@ -578,15 +578,6 @@
               "hidden": false
             },
             {
-              "name": "skipSelector",
-              "description": "Specifies if the component should have a selector or not.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
               "name": "module",
               "description": "The declaring NgModule.",
               "type": "string",
