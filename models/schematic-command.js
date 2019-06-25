@@ -14,6 +14,7 @@ const tools_1 = require("@angular-devkit/schematics/tools");
 const inquirer = require("inquirer");
 const systemPath = require("path");
 const workspace_loader_1 = require("../models/workspace-loader");
+const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const json_schema_1 = require("../utilities/json-schema");
 const package_manager_1 = require("../utilities/package-manager");
@@ -104,9 +105,7 @@ class SchematicCommand extends command_1.Command {
             const [collectionName, schematicName] = schematicNames[0].split(/:/)[0];
             // Display <collectionName:schematicName> if this is not the default collectionName,
             // otherwise just show the schematicName.
-            const displayName = collectionName == this.getDefaultSchematicCollection()
-                ? schematicName
-                : schematicNames[0];
+            const displayName = collectionName == this.getDefaultSchematicCollection() ? schematicName : schematicNames[0];
             const schematicOptions = subCommandOption.subcommands[schematicNames[0]].options;
             const schematicArgs = schematicOptions.filter(x => x.positional !== undefined);
             const argDisplay = schematicArgs.length > 0
@@ -187,8 +186,8 @@ class SchematicCommand extends command_1.Command {
         workflow.registry.addSmartDefaultProvider('projectName', () => {
             if (this._workspace) {
                 try {
-                    return this._workspace.getProjectByPath(core_1.normalize(process.cwd()))
-                        || this._workspace.getDefaultProjectName();
+                    return (this._workspace.getProjectByPath(core_1.normalize(process.cwd())) ||
+                        this._workspace.getDefaultProjectName());
                 }
                 catch (e) {
                     if (e instanceof core_1.experimental.workspace.AmbiguousProjectPathException) {
@@ -222,17 +221,19 @@ class SchematicCommand extends command_1.Command {
                             break;
                         case 'list':
                             question.type = !!definition.multiselect ? 'checkbox' : 'list';
-                            question.choices = definition.items && definition.items.map(item => {
-                                if (typeof item == 'string') {
-                                    return item;
-                                }
-                                else {
-                                    return {
-                                        name: item.label,
-                                        value: item.value,
-                                    };
-                                }
-                            });
+                            question.choices =
+                                definition.items &&
+                                    definition.items.map(item => {
+                                        if (typeof item == 'string') {
+                                            return item;
+                                        }
+                                        else {
+                                            return {
+                                                name: item.label,
+                                                value: item.value,
+                                            };
+                                        }
+                                    });
                             break;
                         default:
                             question.type = definition.type;
@@ -243,7 +244,7 @@ class SchematicCommand extends command_1.Command {
                 return inquirer.prompt(questions);
             });
         }
-        return this._workflow = workflow;
+        return (this._workflow = workflow);
     }
     getDefaultSchematicCollection() {
         let workspace = config_1.getWorkspace('local');
@@ -356,19 +357,19 @@ class SchematicCommand extends command_1.Command {
                     break;
                 case 'update':
                     loggingQueue.push(core_1.tags.oneLine `
-            ${core_1.terminal.white('UPDATE')} ${eventPath} (${event.content.length} bytes)
+            ${color_1.colors.white('UPDATE')} ${eventPath} (${event.content.length} bytes)
           `);
                     break;
                 case 'create':
                     loggingQueue.push(core_1.tags.oneLine `
-            ${core_1.terminal.green('CREATE')} ${eventPath} (${event.content.length} bytes)
+            ${color_1.colors.green('CREATE')} ${eventPath} (${event.content.length} bytes)
           `);
                     break;
                 case 'delete':
-                    loggingQueue.push(`${core_1.terminal.yellow('DELETE')} ${eventPath}`);
+                    loggingQueue.push(`${color_1.colors.yellow('DELETE')} ${eventPath}`);
                     break;
                 case 'rename':
-                    loggingQueue.push(`${core_1.terminal.blue('RENAME')} ${eventPath} => ${event.to}`);
+                    loggingQueue.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${event.to}`);
                     break;
             }
         });
@@ -382,8 +383,9 @@ class SchematicCommand extends command_1.Command {
                 error = false;
             }
         });
-        return new Promise((resolve) => {
-            workflow.execute({
+        return new Promise(resolve => {
+            workflow
+                .execute({
                 collection: collectionName,
                 schematic: schematicName,
                 options: input,

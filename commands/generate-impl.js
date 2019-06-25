@@ -1,14 +1,7 @@
 "use strict";
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@angular-devkit/core");
 const schematic_command_1 = require("../models/schematic-command");
+const color_1 = require("../utilities/color");
 const json_schema_1 = require("../utilities/json-schema");
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     async initialize(options) {
@@ -83,7 +76,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         const subcommand = this.description.options.filter(x => x.subcommands)[0];
         if (Object.keys((subcommand && subcommand.subcommands) || {}).length == 1) {
             this.logger.info(`\nTo see help for a schematic run:`);
-            this.logger.info(core_1.terminal.cyan(`  ng generate <schematic> --help`));
+            this.logger.info(color_1.colors.cyan(`  ng generate <schematic> --help`));
         }
         return 0;
     }

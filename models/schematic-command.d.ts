@@ -29,7 +29,7 @@ export interface RunSchematicOptions extends BaseSchematicSchema {
 export declare class UnknownCollectionError extends Error {
     constructor(collectionName: string);
 }
-export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & BaseCommandOptions)> extends Command<T> {
+export declare abstract class SchematicCommand<T extends BaseSchematicSchema & BaseCommandOptions> extends Command<T> {
     readonly allowPrivateSchematics: boolean;
     readonly allowAdditionalArgs: boolean;
     private _host;

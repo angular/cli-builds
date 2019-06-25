@@ -28,8 +28,7 @@
       "type": "string",
       "types": [
         "string",
-        "number",
-        "boolean"
+        "number"
       ],
       "required": false,
       "aliases": [],

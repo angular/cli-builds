@@ -19,7 +19,7 @@ export interface Schema {
     /**
      * Contains the version of Angular to use for the documentation.
      */
-    version?: any;
+    version?: VersionUnion;
 }
 /**
  * Shows a help message for this command in the console.
@@ -28,4 +28,11 @@ export declare type HelpUnion = boolean | HelpEnum;
 export declare enum HelpEnum {
     HelpJson = "JSON",
     Json = "json"
+}
+/**
+ * Contains the version of Angular to use for the documentation.
+ */
+export declare type VersionUnion = number | VersionEnum;
+export declare enum VersionEnum {
+    Next = "next"
 }

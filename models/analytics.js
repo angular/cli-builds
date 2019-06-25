@@ -15,6 +15,7 @@ const inquirer = require("inquirer");
 const os = require("os");
 const ua = require("universal-analytics");
 const uuid_1 = require("uuid");
+const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
@@ -53,7 +54,10 @@ function _getWindowsLanguageCode() {
     try {
         // This is true on Windows XP, 7, 8 and 10 AFAIK. Would return empty string or fail if it
         // doesn't work.
-        return child_process.execSync('wmic.exe os get locale').toString().trim();
+        return child_process
+            .execSync('wmic.exe os get locale')
+            .toString()
+            .trim();
     }
     catch (_) { }
     return undefined;
@@ -64,11 +68,11 @@ function _getWindowsLanguageCode() {
  */
 function _getLanguage() {
     // Note: Windows does not expose the configured language by default.
-    return process.env.LANG // Default Unix env variable.
-        || process.env.LC_CTYPE // For C libraries. Sometimes the above isn't set.
-        || process.env.LANGSPEC // For Windows, sometimes this will be set (not always).
-        || _getWindowsLanguageCode()
-        || '??'; // ¯\_(ツ)_/¯
+    return (process.env.LANG || // Default Unix env variable.
+        process.env.LC_CTYPE || // For C libraries. Sometimes the above isn't set.
+        process.env.LANGSPEC || // For Windows, sometimes this will be set (not always).
+        _getWindowsLanguageCode() ||
+        '??'); // ¯\_(ツ)_/¯
 }
 /**
  * Return the number of CPUs.
@@ -104,8 +108,8 @@ function _getNodeVersion() {
     // We use any here because p.release is a new Node construct in Node 10 (and our typings are the
     // minimal version of Node we support).
     const p = process; // tslint:disable-line:no-any
-    const name = typeof p.release == 'object' && typeof p.release.name == 'string' && p.release.name
-        || process.argv0;
+    const name = (typeof p.release == 'object' && typeof p.release.name == 'string' && p.release.name) ||
+        process.argv0;
     return name + ' ' + process.version;
 }
 /**
@@ -115,7 +119,7 @@ function _getNodeVersion() {
 function _getNumericNodeVersion() {
     const p = process.version;
     const m = p.match(/\d+\.\d+/);
-    return m && m[0] && parseFloat(m[0]) || 0;
+    return (m && m[0] && parseFloat(m[0])) || 0;
 }
 // These are just approximations of UA strings. We just try to fool Google Analytics to give us the
 // data we want.
@@ -235,10 +239,10 @@ class UniversalAnalytics {
      */
     _customVariables(options) {
         const additionals = {};
-        this._dimensions.forEach((v, i) => additionals['cd' + i] = v);
-        (options.dimensions || []).forEach((v, i) => additionals['cd' + i] = v);
-        this._metrics.forEach((v, i) => additionals['cm' + i] = v);
-        (options.metrics || []).forEach((v, i) => additionals['cm' + i] = v);
+        this._dimensions.forEach((v, i) => (additionals['cd' + i] = v));
+        (options.dimensions || []).forEach((v, i) => (additionals['cd' + i] = v));
+        this._metrics.forEach((v, i) => (additionals['cm' + i] = v));
+        (options.metrics || []).forEach((v, i) => (additionals['cm' + i] = v));
         return additionals;
     }
     event(ec, ea, options = {}) {
@@ -330,7 +334,7 @@ async function promptGlobalAnalytics(force = false) {
         Thank you for sharing anonymous usage data. If you change your mind, the following
         command will disable this feature entirely:
 
-            ${core_1.terminal.yellow('ng analytics off')}
+            ${color_1.colors.yellow('ng analytics off')}
       `);
             console.log('');
         }
@@ -375,7 +379,7 @@ async function promptProjectAnalytics(force = false) {
         Thank you for sharing anonymous usage data. Would you change your mind, the following
         command will disable this feature entirely:
 
-            ${core_1.terminal.yellow('ng analytics project off')}
+            ${color_1.colors.yellow('ng analytics project off')}
       `);
             console.log('');
         }
@@ -387,9 +391,7 @@ exports.promptProjectAnalytics = promptProjectAnalytics;
 function hasGlobalAnalyticsConfiguration() {
     try {
         const globalWorkspace = config_1.getWorkspace('global');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analytics'];
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         if (analyticsConfig !== null && analyticsConfig !== undefined) {
             return true;
         }
@@ -420,9 +422,7 @@ function getGlobalAnalytics() {
     // If anything happens we just keep the NOOP analytics.
     try {
         const globalWorkspace = config_1.getWorkspace('global');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analytics'];
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         analyticsDebug('Client Analytics config found: %j', analyticsConfig);
         if (analyticsConfig === false) {
             analyticsDebug('Analytics disabled. Ignoring all analytics.');
@@ -472,9 +472,7 @@ function getSharedAnalytics() {
     // If anything happens we just keep the NOOP analytics.
     try {
         const globalWorkspace = config_1.getWorkspace('global');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analyticsSharing'];
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analyticsSharing'];
         if (!analyticsConfig || !analyticsConfig.tracking || !analyticsConfig.uuid) {
             return undefined;
         }

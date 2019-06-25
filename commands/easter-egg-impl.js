@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -6,9 +7,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@angular-devkit/core");
 const command_1 = require("../models/command");
+const color_1 = require("../utilities/color");
 function pickOne(of) {
     return of[Math.floor(Math.random() * of.length)];
 }
@@ -24,7 +24,7 @@ class AwesomeCommand extends command_1.Command {
             `I spy with my little eye a great developer!`,
             `Noop... already awesome.`,
         ]);
-        this.logger.info(core_1.terminal.green(phrase));
+        this.logger.info(color_1.colors.green(phrase));
     }
 }
 exports.AwesomeCommand = AwesomeCommand;

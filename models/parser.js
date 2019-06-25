@@ -12,7 +12,7 @@ const core_1 = require("@angular-devkit/core");
 const interface_1 = require("./interface");
 class ParseArgumentException extends core_1.BaseException {
     constructor(comments, parsed, ignored) {
-        super(`One or more errors occured while parsing arguments:\n  ${comments.join('\n  ')}`);
+        super(`One or more errors occurred while parsing arguments:\n  ${comments.join('\n  ')}`);
         this.comments = comments;
         this.parsed = parsed;
         this.ignored = ignored;

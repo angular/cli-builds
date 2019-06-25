@@ -14,6 +14,7 @@ const semver_1 = require("semver");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
 const npm_install_1 = require("../tasks/npm-install");
+const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const npa = require('npm-package-arg');
@@ -26,8 +27,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     async run(options) {
         if (!options.collection) {
-            this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. `
-                + `${core_1.terminal.yellow('ng add [name] ')}. For more details, use "ng help".`);
+            this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. ` +
+                `${color_1.colors.yellow('ng add [name] ')}. For more details, use "ng help".`);
             return 1;
         }
         let packageIdentifier;
@@ -49,7 +50,10 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             // plus special cases for packages that did not have peer deps setup
             let packageMetadata;
             try {
-                packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, { registry: options.registry, usingYarn });
+                packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, {
+                    registry: options.registry,
+                    usingYarn,
+                });
             }
             catch (e) {
                 this.logger.error('Unable to fetch package metadata: ' + e.message);
@@ -61,17 +65,16 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     const version = await this.findProjectVersion('@angular/cli');
                     // tslint:disable-next-line:no-any
                     const semverOptions = { includePrerelease: true };
-                    if (version
-                        && ((semver_1.validRange(version) && semver_1.intersects(version, '7', semverOptions))
-                            || (semver_1.valid(version) && semver_1.satisfies(version, '7', semverOptions)))) {
+                    if (version &&
+                        ((semver_1.validRange(version) && semver_1.intersects(version, '7', semverOptions)) ||
+                            (semver_1.valid(version) && semver_1.satisfies(version, '7', semverOptions)))) {
                         packageIdentifier = npa.resolve('@angular/pwa', '0.12');
                     }
                 }
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
-                const versionManifests = Array.from(packageMetadata.versions.values())
-                    .filter(value => !semver_1.prerelease(value.version));
+                const versionManifests = Array.from(packageMetadata.versions.values()).filter(value => !semver_1.prerelease(value.version));
                 versionManifests.sort((a, b) => semver_1.rcompare(a.version, b.version, true));
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
@@ -81,7 +84,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     }
                 }
                 if (!newIdentifier) {
-                    this.logger.warn('Unable to find compatible package.  Using \'latest\'.');
+                    this.logger.warn("Unable to find compatible package.  Using 'latest'.");
                 }
                 else {
                     packageIdentifier = newIdentifier;
@@ -91,7 +94,10 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         let collectionName = packageIdentifier.name;
         if (!packageIdentifier.registry) {
             try {
-                const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, { registry: options.registry, usingYarn });
+                const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
+                    registry: options.registry,
+                    usingYarn,
+                });
                 collectionName = manifest.name;
                 if (await this.hasMismatchedPeer(manifest)) {
                     console.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
@@ -155,7 +161,9 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     async findProjectVersion(name) {
         let installedPackage;
         try {
-            installedPackage = require.resolve(path_1.join(name, 'package.json'), { paths: [this.workspace.root] });
+            installedPackage = require.resolve(path_1.join(name, 'package.json'), {
+                paths: [this.workspace.root],
+            });
         }
         catch (_a) { }
         if (installedPackage) {
@@ -196,8 +204,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     }
                     // tslint:disable-next-line:no-any
                     const options = { includePrerelease: true };
-                    if (!semver_1.intersects(version, peerIdentifier.rawSpec, options)
-                        && !semver_1.satisfies(version, peerIdentifier.rawSpec, options)) {
+                    if (!semver_1.intersects(version, peerIdentifier.rawSpec, options) &&
+                        !semver_1.satisfies(version, peerIdentifier.rawSpec, options)) {
                         return true;
                     }
                 }

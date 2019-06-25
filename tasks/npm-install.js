@@ -7,8 +7,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@angular-devkit/core");
 const child_process_1 = require("child_process");
+const color_1 = require("../utilities/color");
 async function default_1(packageName, logger, packageManager, projectRoot, save = true) {
     const installArgs = [];
     switch (packageManager) {
@@ -25,7 +25,7 @@ async function default_1(packageName, logger, packageManager, projectRoot, save 
             installArgs.push('install');
             break;
     }
-    logger.info(core_1.terminal.green(`Installing packages for tooling via ${packageManager}.`));
+    logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     if (packageName) {
         installArgs.push(packageName);
     }
@@ -34,10 +34,9 @@ async function default_1(packageName, logger, packageManager, projectRoot, save 
     }
     installArgs.push('--quiet');
     await new Promise((resolve, reject) => {
-        child_process_1.spawn(packageManager, installArgs, { stdio: 'inherit', shell: true })
-            .on('close', (code) => {
+        child_process_1.spawn(packageManager, installArgs, { stdio: 'inherit', shell: true }).on('close', (code) => {
             if (code === 0) {
-                logger.info(core_1.terminal.green(`Installed packages for tooling via ${packageManager}.`));
+                logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
                 resolve();
             }
             else {
