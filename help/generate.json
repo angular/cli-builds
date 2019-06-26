@@ -1062,6 +1062,14 @@
               "hidden": false
             },
             {
+              "name": "route",
+              "description": "Creates lazy loaded routing module. Requires --module option.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
               "name": "flat",
               "description": "When true, creates the new files at the top level of the current project root. ",
               "type": "boolean",
