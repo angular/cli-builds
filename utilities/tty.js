@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -7,12 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+function _isTruthy(value) {
+    // Returns true if value is a string that is anything but 0 or false.
+    return value !== undefined && value !== '0' && value.toUpperCase() !== 'FALSE';
+}
 function isTTY() {
+    // If we force TTY, we always return true.
     const force = process.env['NG_FORCE_TTY'];
     if (force !== undefined) {
-        return !(force === '0' || force.toUpperCase() === 'FALSE');
+        return _isTruthy(force);
     }
-    const ci = process.env['CI'];
-    return !!process.stdout.isTTY && (!ci || ci === '0' || ci.toUpperCase() === 'FALSE');
+    return !!process.stdout.isTTY && !_isTruthy(process.env['CI']);
 }
 exports.isTTY = isTTY;

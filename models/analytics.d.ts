@@ -6,6 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics } from '@angular-devkit/core';
+export declare const AnalyticsProperties: {
+    AngularCliProd: string;
+    AngularCliStaging: string;
+    readonly AngularCliDefault: string;
+};
 /**
  * This is the ultimate safelist for checking if a package name is safe to report to analytics.
  */
