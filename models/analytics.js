@@ -18,6 +18,7 @@ const uuid_1 = require("uuid");
 const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
+// tslint:disable: no-console
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
 const analyticsLogDebug = debug('ng:analytics:log'); // Actual logs of events.
 const BYTES_PER_GIGABYTES = 1024 * 1024 * 1024;

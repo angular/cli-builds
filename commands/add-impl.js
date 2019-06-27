@@ -100,7 +100,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 });
                 collectionName = manifest.name;
                 if (await this.hasMismatchedPeer(manifest)) {
-                    console.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
+                    this.logger.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
                 }
             }
             catch (e) {
