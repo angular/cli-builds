@@ -17,7 +17,8 @@ export interface Schema {
      */
     search?: boolean;
     /**
-     * Contains the version of Angular to use for the documentation.
+     * Contains the version of Angular to use for the documentation. If not provided, the
+     * command uses your current Angular core version.
      */
     version?: VersionUnion;
 }
@@ -30,7 +31,8 @@ export declare enum HelpEnum {
     Json = "json"
 }
 /**
- * Contains the version of Angular to use for the documentation.
+ * Contains the version of Angular to use for the documentation. If not provided, the
+ * command uses your current Angular core version.
  */
 export declare type VersionUnion = number | VersionEnum;
 export declare enum VersionEnum {

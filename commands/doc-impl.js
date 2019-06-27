@@ -30,6 +30,16 @@ class DocCommand extends command_1.Command {
                 return 0;
             }
         }
+        else {
+            // we try to get the current Angular version of the project
+            // and use it if we can find it
+            try {
+                /* tslint:disable-next-line:no-implicit-dependencies */
+                const currentNgVersion = require('@angular/core').VERSION.major;
+                domain = `v${currentNgVersion}.angular.io`;
+            }
+            catch (e) { }
+        }
         let searchUrl = `https://${domain}/api?query=${options.keyword}`;
         if (options.search) {
             searchUrl = `https://www.google.com/search?q=site%3A${domain}+${options.keyword}`;
