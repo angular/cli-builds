@@ -430,6 +430,20 @@
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "crossOrigin",
+      "description": "Define the crossorigin attribute setting of elements that provide CORS support.",
+      "type": "string",
+      "default": "none",
+      "enum": [
+        "none",
+        "anonymous",
+        "use-credentials"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [
