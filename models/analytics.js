@@ -19,7 +19,7 @@ const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
 const analyticsLogDebug = debug('ng:analytics:log'); // Actual logs of events.
-const BYTES_PER_MEGABYTES = 1024 * 1024;
+const BYTES_PER_GIGABYTES = 1024 * 1024 * 1024;
 /**
  * This is the ultimate safelist for checking if a package name is safe to report to analytics.
  */
@@ -93,8 +93,8 @@ function _getCpuSpeed() {
  * @private
  */
 function _getRamSize() {
-    // Report in megabytes. Otherwise it's too much noise.
-    return Math.floor(os.totalmem() / BYTES_PER_MEGABYTES);
+    // Report in gigabytes (or closest). Otherwise it's too much noise.
+    return Math.round(os.totalmem() / BYTES_PER_GIGABYTES);
 }
 /**
  * Get the Node name and version. This returns a string like "Node 10.11", or "io.js 3.5".
@@ -226,7 +226,7 @@ class UniversalAnalytics {
         // We set custom metrics for values we care about.
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuCount] = _getCpuCount();
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuSpeed] = _getCpuSpeed();
-        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.RamInMegabytes] = _getRamSize();
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.RamInGigabytes] = _getRamSize();
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.NodeVersion] = _getNumericNodeVersion();
     }
     /**
