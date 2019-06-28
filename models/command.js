@@ -115,7 +115,7 @@ class Command {
                 dimensions[ua] = v;
             }
         }
-        this.analytics.pageview('/command/' + paths.join('/'), { dimensions });
+        this.analytics.pageview('/command/' + paths.join('/'), { dimensions, metrics });
     }
     async validateAndRun(options) {
         if (!(options.help === true || options.help === 'json' || options.help === 'JSON')) {
