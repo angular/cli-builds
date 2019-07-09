@@ -53,6 +53,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, {
                     registry: options.registry,
                     usingYarn,
+                    verbose: options.verbose,
                 });
             }
             catch (e) {
@@ -96,6 +97,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             try {
                 const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
                     registry: options.registry,
+                    verbose: options.verbose,
                     usingYarn,
                 });
                 collectionName = manifest.name;
@@ -137,10 +139,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     async executeSchematic(collectionName, options = []) {
         const runOptions = {
             schematicOptions: options,
-            workingDir: this.workspace.root,
             collectionName,
             schematicName: 'ng-add',
-            allowPrivate: true,
             dryRun: false,
             force: false,
         };
