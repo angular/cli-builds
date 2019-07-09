@@ -102,7 +102,6 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 additionalOptions: {
                     force: options.force || false,
                     next: options.next || false,
-                    verbose: options.verbose || false,
                     packageManager,
                     packages: options.all ? Object.keys(rootDependencies) : [],
                 },
@@ -192,7 +191,6 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                     package: packageName,
                     collection: migrations,
                     from: options.from,
-                    verbose: options.verbose || false,
                     to: options.to || packageNode.package.version,
                 },
             });
@@ -225,7 +223,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
             try {
                 // Metadata requests are internally cached; multiple requests for same name
                 // does not result in additional network traffic
-                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger, { verbose: options.verbose });
+                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger);
             }
             catch (e) {
                 this.logger.error(`Error fetching metadata for '${packageName}': ` + e.message);
@@ -266,7 +264,6 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
             dryRun: !!options.dryRun,
             showNothingDone: false,
             additionalOptions: {
-                verbose: options.verbose || false,
                 force: options.force || false,
                 packageManager,
                 packages: packagesToUpdate,

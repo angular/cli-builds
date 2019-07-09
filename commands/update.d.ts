@@ -41,10 +41,6 @@ export interface Schema {
      * installed version detected.
      */
     to?: string;
-    /**
-     * Display additional details about internal operations during execution.
-     */
-    verbose?: boolean;
 }
 /**
  * Shows a help message for this command in the console.

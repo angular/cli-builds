@@ -88,15 +88,6 @@
       "required": false,
       "aliases": [],
       "hidden": false
-    },
-    {
-      "name": "verbose",
-      "description": "Display additional details about internal operations during execution.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
     }
   ],
   "aliases": [],
