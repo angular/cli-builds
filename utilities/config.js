@@ -51,7 +51,14 @@ function getWorkspace(level = 'local') {
     const root = core_1.normalize(path.dirname(configPath));
     const file = core_1.normalize(path.basename(configPath));
     const workspace = new core_1.experimental.workspace.Workspace(root, new node_1.NodeJsSyncHost());
-    workspace.loadWorkspaceFromHost(file).subscribe();
+    let error;
+    workspace.loadWorkspaceFromHost(file).subscribe({
+        error: e => error = e,
+    });
+    if (error) {
+        throw new Error(`Workspace config file cannot le loaded: ${configPath}`
+            + `\n${error instanceof Error ? error.message : error}`);
+    }
     cachedWorkspaces.set(level, workspace);
     return workspace;
 }
@@ -81,7 +88,7 @@ function getWorkspaceRaw(level = 'local') {
         .subscribe(data => content = core_1.virtualFs.fileBufferToString(data));
     const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
     if (ast.kind != 'object') {
-        throw new Error('Invalid JSON');
+        throw new Error(`Invalid JSON file: ${configPath}`);
     }
     return [ast, configPath];
 }
