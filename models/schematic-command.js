@@ -13,7 +13,6 @@ const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const inquirer = require("inquirer");
 const systemPath = require("path");
-const workspace_loader_1 = require("../models/workspace-loader");
 const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const json_schema_1 = require("../utilities/json-schema");
@@ -185,20 +184,22 @@ class SchematicCommand extends command_1.Command {
         }
         workflow.registry.addSmartDefaultProvider('projectName', () => {
             if (this._workspace) {
-                try {
-                    return (this._workspace.getProjectByPath(core_1.normalize(process.cwd())) ||
-                        this._workspace.getDefaultProjectName());
+                const projectNames = getProjectsByPath(this._workspace, process.cwd(), this.workspace.root);
+                if (projectNames.length === 1) {
+                    return projectNames[0];
                 }
-                catch (e) {
-                    if (e instanceof core_1.experimental.workspace.AmbiguousProjectPathException) {
+                else {
+                    if (projectNames.length > 1) {
                         this.logger.warn(core_1.tags.oneLine `
               Two or more projects are using identical roots.
               Unable to determine project using current working directory.
               Using default workspace project instead.
             `);
-                        return this._workspace.getDefaultProjectName();
                     }
-                    throw e;
+                    const defaultProjectName = this._workspace.extensions['defaultProject'];
+                    if (typeof defaultProjectName === 'string' && defaultProjectName) {
+                        return defaultProjectName;
+                    }
                 }
             }
             return undefined;
@@ -431,9 +432,9 @@ class SchematicCommand extends command_1.Command {
         if (this._workspace) {
             return;
         }
-        const workspaceLoader = new workspace_loader_1.WorkspaceLoader(this._host);
         try {
-            this._workspace = await workspaceLoader.loadWorkspace(this.workspace.root);
+            const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(this._host));
+            this._workspace = workspace;
         }
         catch (err) {
             if (!this.allowMissingWorkspace) {
@@ -444,3 +445,32 @@ class SchematicCommand extends command_1.Command {
     }
 }
 exports.SchematicCommand = SchematicCommand;
+function getProjectsByPath(workspace, path, root) {
+    if (workspace.projects.size === 1) {
+        return Array.from(workspace.projects.keys());
+    }
+    const isInside = (base, potential) => {
+        const absoluteBase = systemPath.resolve(root, base);
+        const absolutePotential = systemPath.resolve(root, potential);
+        const relativePotential = systemPath.relative(absoluteBase, absolutePotential);
+        if (!relativePotential.startsWith('..') && !systemPath.isAbsolute(relativePotential)) {
+            return true;
+        }
+        return false;
+    };
+    const projects = Array.from(workspace.projects.entries())
+        .map(([name, project]) => [systemPath.resolve(root, project.root), name])
+        .filter(tuple => isInside(tuple[0], path))
+        // Sort tuples by depth, with the deeper ones first. Since the first member is a path and
+        // we filtered all invalid paths, the longest will be the deepest (and in case of equality
+        // the sort is stable and the first declared project will win).
+        .sort((a, b) => b[0].length - a[0].length);
+    if (projects.length === 1) {
+        return [projects[0][1]];
+    }
+    else if (projects.length > 1) {
+        const firstPath = projects[0][0];
+        return projects.filter(v => v[0] === firstPath).map(v => v[1]);
+    }
+    return [];
+}
