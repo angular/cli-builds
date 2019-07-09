@@ -362,7 +362,7 @@
     },
     {
       "name": "index",
-      "description": "The name of the index HTML file.",
+      "description": "Configures the generation of the application's HTML index.",
       "type": "string",
       "required": false,
       "aliases": [],
