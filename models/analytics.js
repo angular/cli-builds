@@ -357,6 +357,10 @@ async function promptGlobalAnalytics(force = false) {
             ${color_1.colors.yellow('ng analytics off')}
       `);
             console.log('');
+            // Send back a ping with the user `optin`.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optin');
+            ua.pageview('/telemetry/optin');
+            await ua.flush();
         }
         else {
             // Send back a ping with the user `optout`. This is the only thing we send.
@@ -408,6 +412,10 @@ async function promptProjectAnalytics(force = false) {
             ${color_1.colors.yellow('ng analytics project off')}
       `);
             console.log('');
+            // Send back a ping with the user `optin`.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optin');
+            ua.pageview('/telemetry/project/optin');
+            await ua.flush();
         }
         else {
             // Send back a ping with the user `optout`. This is the only thing we send.
