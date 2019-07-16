@@ -160,6 +160,7 @@ class SchematicCommand extends command_1.Command {
             dryRun,
             packageManager: package_manager_1.getPackageManager(this.workspace.root),
             root: core_1.normalize(this.workspace.root),
+            registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
         });
         workflow.engineHost.registerContextTransform(context => {
             // This is run by ALL schematics, so if someone uses `externalSchematics(...)` which
@@ -175,14 +176,7 @@ class SchematicCommand extends command_1.Command {
                 return context;
             }
         });
-        workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
-        if (options.defaults) {
-            workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
-        else {
-            workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
-        workflow.registry.addSmartDefaultProvider('projectName', () => {
+        const getProjectName = () => {
             if (this._workspace) {
                 const projectNames = getProjectsByPath(this._workspace, process.cwd(), this.workspace.root);
                 if (projectNames.length === 1) {
@@ -203,7 +197,19 @@ class SchematicCommand extends command_1.Command {
                 }
             }
             return undefined;
-        });
+        };
+        workflow.engineHost.registerOptionsTransform((schematic, current) => ({
+            ...config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName()),
+            ...current,
+        }));
+        if (options.defaults) {
+            workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
+        }
+        else {
+            workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
+        }
+        workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
+        workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions.map(definition => {
