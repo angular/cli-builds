@@ -16,6 +16,7 @@ const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser_1 = require("./parser");
+const workspace_loader_1 = require("./workspace-loader");
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -26,7 +27,8 @@ class ArchitectCommand extends command_1.Command {
         await super.initialize(options);
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
-        const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(new node_2.NodeJsSyncHost()));
+        const workspaceLoader = new workspace_loader_1.WorkspaceLoader(new node_2.NodeJsSyncHost());
+        const workspace = await workspaceLoader.loadWorkspace(this.workspace.root);
         this._workspace = workspace;
         this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);
         this._architect = new architect_1.Architect(this._architectHost, this._registry);
@@ -44,8 +46,8 @@ class ArchitectCommand extends command_1.Command {
         const commandLeftovers = options['--'];
         let projectName = options.project;
         const targetProjectNames = [];
-        for (const [name, project] of this._workspace.projects) {
-            if (project.targets.has(this.target)) {
+        for (const name of this._workspace.listProjectNames()) {
+            if (this._workspace.getProjectTargets(name)[this.target]) {
                 targetProjectNames.push(name);
             }
         }
@@ -110,7 +112,7 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (!projectName && !this.multiTarget) {
-            const defaultProjectName = this._workspace.extensions['defaultProject'];
+            const defaultProjectName = this._workspace.getDefaultProjectName();
             if (targetProjectNames.length === 1) {
                 projectName = targetProjectNames[0];
             }
@@ -150,9 +152,7 @@ class ArchitectCommand extends command_1.Command {
         bep.writeBuildStarted(command);
         let last = 1;
         let rebuild = false;
-        const run = await this._architect.scheduleTarget(configuration, overrides, {
-            logger: this.logger,
-        });
+        const run = await this._architect.scheduleTarget(configuration, overrides, { logger: this.logger });
         await run.output.forEach(event => {
             last = event.success ? 0 : 1;
             if (rebuild) {
@@ -176,7 +176,8 @@ class ArchitectCommand extends command_1.Command {
         const builderDesc = await this._architectHost.resolveBuilder(builderConf);
         const targetOptionArray = await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema);
         const overrides = parser_1.parseArguments(targetOptions, targetOptionArray, this.logger);
-        const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object' && builderDesc.optionSchema.additionalProperties;
+        const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object'
+            && builderDesc.optionSchema.additionalProperties;
         if (overrides['--'] && !allowAdditionalProperties) {
             (overrides['--'] || []).forEach(additional => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
@@ -243,12 +244,7 @@ class ArchitectCommand extends command_1.Command {
         }
     }
     getProjectNamesByTarget(targetName) {
-        const allProjectsForTargetName = [];
-        for (const [name, project] of this._workspace.projects) {
-            if (project.targets.has(targetName)) {
-                allProjectsForTargetName.push(name);
-            }
-        }
+        const allProjectsForTargetName = this._workspace.listProjectNames().map(projectName => this._workspace.getProjectTargets(projectName)[targetName] ? projectName : null).filter(x => !!x);
         if (this.multiTarget) {
             // For multi target commands, we always list all projects that have the target.
             return allProjectsForTargetName;
@@ -256,7 +252,7 @@ class ArchitectCommand extends command_1.Command {
         else {
             // For single target commands, we try the default project first,
             // then the full list if it has a single project, then error out.
-            const maybeDefaultProject = this._workspace.extensions['defaultProject'];
+            const maybeDefaultProject = this._workspace.getDefaultProjectName();
             if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
                 return [maybeDefaultProject];
             }
