@@ -231,9 +231,7 @@ function parseFreeFormArguments(args) {
             leftovers.push(arg);
         }
     }
-    if (leftovers.length) {
-        parsedOptions['--'] = leftovers;
-    }
+    parsedOptions['--'] = leftovers;
     return parsedOptions;
 }
 exports.parseFreeFormArguments = parseFreeFormArguments;
