@@ -56,7 +56,7 @@ function getWorkspace(level = 'local') {
         error: e => error = e,
     });
     if (error) {
-        throw new Error(`Workspace config file cannot le loaded: ${configPath}`
+        throw new Error(`Workspace config file cannot be loaded: ${configPath}`
             + `\n${error instanceof Error ? error.message : error}`);
     }
     cachedWorkspaces.set(level, workspace);
