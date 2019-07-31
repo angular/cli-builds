@@ -50,10 +50,11 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (targetProjectNames.length === 0) {
-            throw new Error(`No projects support the '${this.target}' target.`);
+            throw new Error(this.missingTargetError || `No projects support the '${this.target}' target.`);
         }
         if (projectName && !targetProjectNames.includes(projectName)) {
-            throw new Error(`Project '${projectName}' does not support the '${this.target}' target.`);
+            throw new Error(this.missingTargetError ||
+                `Project '${projectName}' does not support the '${this.target}' target.`);
         }
         if (!projectName && commandLeftovers && commandLeftovers.length > 0) {
             const builderNames = new Set();
@@ -122,7 +123,7 @@ class ArchitectCommand extends command_1.Command {
                 return;
             }
             else {
-                throw new Error('Cannot determine project or target for command.');
+                throw new Error(this.missingTargetError || 'Cannot determine project or target for command.');
             }
         }
         options.project = projectName;

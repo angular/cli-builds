@@ -1,0 +1,40 @@
+{
+  "name": "deploy",
+  "description": "Invokes the deploy builder for a specified project. If no project is specified, the CLI will invoke the deploy builder for the default project in the workspace.",
+  "longDescription": "The `ng deploy` command is a shortcut for:\n\n```\nng run [PROJECT_NAME]:deploy\n```\n\nIt takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\n\nWhen a project name is not supplied, the CLI will execute the `deploy` builder for the default project.\n",
+  "options": [
+    {
+      "name": "project",
+      "description": "The name of the project to deploy.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
+    },
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    }
+  ],
+  "aliases": [
+    "d"
+  ],
+  "scope": "in",
+  "hidden": false
+}

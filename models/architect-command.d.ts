@@ -23,6 +23,7 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     protected _registry: json.schema.SchemaRegistry;
     protected multiTarget: boolean;
     target: string | undefined;
+    missingTargetError: string | undefined;
     initialize(options: T & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
     protected runBepTarget<T>(command: string, configuration: Target, overrides: json.JsonObject, buildEventLog: string): Promise<number>;
