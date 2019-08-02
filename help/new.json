@@ -189,7 +189,6 @@
       "name": "routing",
       "description": "When true, generates a routing module for the initial project.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false,
@@ -211,7 +210,6 @@
       "name": "style",
       "description": "The file extension or preprocessor to use for style files.",
       "type": "string",
-      "default": "css",
       "enum": [
         "css",
         "scss",
