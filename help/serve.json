@@ -130,7 +130,6 @@
       "name": "verbose",
       "description": "Adds more details to output logging.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -227,7 +226,6 @@
       "name": "sourceMap",
       "description": "Output sourcemaps.",
       "type": "boolean",
-      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -236,7 +234,6 @@
       "name": "vendorSourceMap",
       "description": "Resolve vendor packages sourcemaps.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false,
