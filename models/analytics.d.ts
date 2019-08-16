@@ -59,16 +59,16 @@ export declare function promptGlobalAnalytics(force?: boolean): Promise<boolean>
  * @return Whether or not the user was shown a prompt.
  */
 export declare function promptProjectAnalytics(force?: boolean): Promise<boolean>;
-export declare function hasGlobalAnalyticsConfiguration(): boolean;
+export declare function hasGlobalAnalyticsConfiguration(): Promise<boolean>;
 /**
  * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
  * or undefined if analytics are disabled.
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-export declare function getGlobalAnalytics(): UniversalAnalytics | undefined;
+export declare function getGlobalAnalytics(): Promise<UniversalAnalytics | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
  */
-export declare function getSharedAnalytics(): UniversalAnalytics | undefined;
+export declare function getSharedAnalytics(): Promise<UniversalAnalytics | undefined>;

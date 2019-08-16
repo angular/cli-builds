@@ -48,8 +48,8 @@ export declare abstract class SchematicCommand<T extends BaseSchematicSchema & B
     protected setPathOptions(options: Option[], workingDir: string): {
         [name: string]: string;
     };
-    protected createWorkflow(options: BaseSchematicSchema): workflow.BaseWorkflow;
-    protected getDefaultSchematicCollection(): string;
+    protected createWorkflow(options: BaseSchematicSchema): Promise<workflow.BaseWorkflow>;
+    protected getDefaultSchematicCollection(): Promise<string>;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected parseFreeFormArguments(schematicOptions: string[]): Promise<Arguments>;
     protected parseArguments(schematicOptions: string[], options: Option[] | null): Promise<Arguments>;

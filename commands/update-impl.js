@@ -75,7 +75,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 return 2;
             }
         }
-        const packageManager = package_manager_1.getPackageManager(this.workspace.root);
+        const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
         this.logger.info(`Using package manager: '${packageManager}'`);
         // Special handling for Angular CLI 1.x migrations
         if (options.migrateOnly === undefined &&

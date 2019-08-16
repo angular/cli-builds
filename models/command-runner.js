@@ -44,8 +44,8 @@ const standardCommands = {
  * @private
  */
 async function _createAnalytics() {
-    const config = analytics_1.getGlobalAnalytics();
-    const maybeSharedAnalytics = analytics_1.getSharedAnalytics();
+    const config = await analytics_1.getGlobalAnalytics();
+    const maybeSharedAnalytics = await analytics_1.getSharedAnalytics();
     if (config && maybeSharedAnalytics) {
         return new core_1.analytics.MultiAnalytics([config, maybeSharedAnalytics]);
     }

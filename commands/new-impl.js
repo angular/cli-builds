@@ -19,7 +19,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
             this.collectionName = options.collection;
         }
         else {
-            this.collectionName = this.parseCollectionName(options);
+            this.collectionName = await this.parseCollectionName(options);
         }
         return super.initialize(options);
     }
@@ -37,7 +37,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
             force: !!options.force,
         });
     }
-    parseCollectionName(options) {
+    async parseCollectionName(options) {
         return options.collection || this.getDefaultSchematicCollection();
     }
 }

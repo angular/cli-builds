@@ -94,7 +94,7 @@ class Command {
                 }
                 break;
             case interface_1.CommandScope.InProject:
-                if (!this.workspace.configFile || config_1.getWorkspace('local') === null) {
+                if (!this.workspace.configFile || (await config_1.getWorkspace('local')) === null) {
                     this.logger.fatal(core_1.tags.oneLine `
             The ${this.description.name} command requires to be run in an Angular project, but a
             project definition could not be found.

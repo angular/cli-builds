@@ -38,7 +38,7 @@ class SchematicCommand extends command_1.Command {
     }
     async initialize(options) {
         await this._loadWorkspace();
-        this.createWorkflow(options);
+        await this.createWorkflow(options);
         if (this.schematicName) {
             // Set the options.
             const collection = this.getCollection(this.collectionName);
@@ -77,7 +77,7 @@ class SchematicCommand extends command_1.Command {
                 }
                 namesPerCollection[collectionName].push(schematicName);
             });
-            const defaultCollection = this.getDefaultSchematicCollection();
+            const defaultCollection = await this.getDefaultSchematicCollection();
             Object.keys(namesPerCollection).forEach(collectionName => {
                 const isDefault = defaultCollection == collectionName;
                 this.logger.info(`  Collection "${collectionName}"${isDefault ? ' (default)' : ''}:`);
@@ -104,7 +104,9 @@ class SchematicCommand extends command_1.Command {
             const [collectionName, schematicName] = schematicNames[0].split(/:/)[0];
             // Display <collectionName:schematicName> if this is not the default collectionName,
             // otherwise just show the schematicName.
-            const displayName = collectionName == this.getDefaultSchematicCollection() ? schematicName : schematicNames[0];
+            const displayName = collectionName == (await this.getDefaultSchematicCollection())
+                ? schematicName
+                : schematicNames[0];
             const schematicOptions = subCommandOption.subcommands[schematicNames[0]].options;
             const schematicArgs = schematicOptions.filter(x => x.positional !== undefined);
             const argDisplay = schematicArgs.length > 0
@@ -149,7 +151,7 @@ class SchematicCommand extends command_1.Command {
     /*
      * Runtime hook to allow specifying customized workflow
      */
-    createWorkflow(options) {
+    async createWorkflow(options) {
         if (this._workflow) {
             return this._workflow;
         }
@@ -158,7 +160,7 @@ class SchematicCommand extends command_1.Command {
         const workflow = new tools_1.NodeWorkflow(fsHost, {
             force,
             dryRun,
-            packageManager: package_manager_1.getPackageManager(this.workspace.root),
+            packageManager: await package_manager_1.getPackageManager(this.workspace.root),
             root: core_1.normalize(this.workspace.root),
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
         });
@@ -198,10 +200,11 @@ class SchematicCommand extends command_1.Command {
             }
             return undefined;
         };
-        workflow.engineHost.registerOptionsTransform((schematic, current) => ({
-            ...config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName()),
+        const defaultOptionTransform = async (schematic, current) => ({
+            ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName())),
             ...current,
-        }));
+        });
+        workflow.engineHost.registerOptionsTransform(defaultOptionTransform);
         if (options.defaults) {
             workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
         }
@@ -253,8 +256,8 @@ class SchematicCommand extends command_1.Command {
         }
         return (this._workflow = workflow);
     }
-    getDefaultSchematicCollection() {
-        let workspace = config_1.getWorkspace('local');
+    async getDefaultSchematicCollection() {
+        let workspace = await config_1.getWorkspace('local');
         if (workspace) {
             const project = config_1.getProjectByCwd(workspace);
             if (project && workspace.getProjectCli(project)) {
@@ -270,7 +273,7 @@ class SchematicCommand extends command_1.Command {
                 }
             }
         }
-        workspace = config_1.getWorkspace('global');
+        workspace = await config_1.getWorkspace('global');
         if (workspace && workspace.getCli()) {
             const value = workspace.getCli()['defaultCollection'];
             if (typeof value == 'string') {
@@ -346,7 +349,7 @@ class SchematicCommand extends command_1.Command {
         let input = { ...pathOptions, ...args };
         // Read the default values from the workspace.
         const projectName = input.project !== undefined ? '' + input.project : null;
-        const defaults = config_1.getSchematicDefaults(collectionName, schematicName, projectName);
+        const defaults = await config_1.getSchematicDefaults(collectionName, schematicName, projectName);
         input = {
             ...defaults,
             ...input,

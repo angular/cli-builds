@@ -6,7 +6,7 @@ const json_schema_1 = require("../utilities/json-schema");
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     async initialize(options) {
         // Fill up the schematics property of the command description.
-        const [collectionName, schematicName] = this.parseSchematicInfo(options);
+        const [collectionName, schematicName] = await this.parseSchematicInfo(options);
         this.collectionName = collectionName;
         this.schematicName = schematicName;
         await super.initialize(options);
@@ -25,7 +25,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
             else {
                 continue;
             }
-            if (this.getDefaultSchematicCollection() == collectionName) {
+            if ((await this.getDefaultSchematicCollection()) == collectionName) {
                 subcommands[name] = subcommand;
             }
             else {
@@ -52,15 +52,15 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     async reportAnalytics(paths, options) {
-        const [collectionName, schematicName] = this.parseSchematicInfo(options);
+        const [collectionName, schematicName] = await this.parseSchematicInfo(options);
         if (!schematicName || !collectionName) {
             return;
         }
         const escapedSchematicName = (this.longSchematicName || schematicName).replace(/\//g, '_');
         return super.reportAnalytics(['generate', collectionName.replace(/\//g, '_'), escapedSchematicName], options);
     }
-    parseSchematicInfo(options) {
-        let collectionName = this.getDefaultSchematicCollection();
+    async parseSchematicInfo(options) {
+        let collectionName = await this.getDefaultSchematicCollection();
         let schematicName = options.schematic;
         if (schematicName) {
             if (schematicName.includes(':')) {

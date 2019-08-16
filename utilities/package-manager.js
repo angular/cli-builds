@@ -28,8 +28,8 @@ function supportsNpm() {
     return supports('npm');
 }
 exports.supportsNpm = supportsNpm;
-function getPackageManager(root) {
-    let packageManager = config_1.getConfiguredPackageManager();
+async function getPackageManager(root) {
+    let packageManager = await config_1.getConfiguredPackageManager();
     if (packageManager) {
         return packageManager;
     }

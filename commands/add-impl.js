@@ -23,7 +23,6 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         super(...arguments);
         this.allowPrivateSchematics = true;
         this.allowAdditionalArgs = true;
-        this.packageManager = package_manager_1.getPackageManager(this.workspace.root);
     }
     async run(options) {
         if (!options.collection) {
@@ -44,7 +43,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             this.logger.info('Skipping installation: Package already installed');
             return this.executeSchematic(packageIdentifier.name, options['--']);
         }
-        const usingYarn = this.packageManager === 'yarn';
+        const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
+        const usingYarn = packageManager === 'yarn';
         if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version
             // plus special cases for packages that did not have peer deps setup
@@ -110,7 +110,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 return 1;
             }
         }
-        await npm_install_1.default(packageIdentifier.raw, this.logger, this.packageManager, this.workspace.root);
+        await npm_install_1.default(packageIdentifier.raw, this.logger, packageManager, this.workspace.root);
         return this.executeSchematic(collectionName, options['--']);
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {
