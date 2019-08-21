@@ -29,7 +29,8 @@
               "type": "string",
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "route",
