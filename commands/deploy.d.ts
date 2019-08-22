@@ -1,6 +1,6 @@
 /**
- * Invokes the deploy builder for a specified project. If no project is specified, the CLI
- * will invoke the deploy builder for the default project in the workspace.
+ * Invokes the deploy builder for a specified project or for the default project in the
+ * workspace.
  */
 export interface Schema {
     /**
