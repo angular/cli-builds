@@ -36,6 +36,10 @@ export interface Schema {
      */
     packages?: string[];
     /**
+     * Do not create source control commits for updates and migrations.
+     */
+    skipCommits?: boolean;
+    /**
      * Version up to which to apply migrations. Only available with a single package being
      * updated, and only on migrations only. Requires from to be specified. Default to the
      * installed version detected.
