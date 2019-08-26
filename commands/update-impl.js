@@ -7,136 +7,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
-const schematics_1 = require("@angular-devkit/schematics");
-const tools_1 = require("@angular-devkit/schematics/tools");
 const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
-const command_1 = require("../models/command");
-const color_1 = require("../utilities/color");
+const schematic_command_1 = require("../models/schematic-command");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
-class UpdateCommand extends command_1.Command {
+class UpdateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.allowMissingWorkspace = true;
     }
-    async initialize() {
-        this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
-            packageManager: await package_manager_1.getPackageManager(this.workspace.root),
-            root: core_1.normalize(this.workspace.root),
-        });
-        this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
-    }
-    async executeSchematic(collection, schematic, options = {}) {
-        let error = false;
-        const logs = [];
-        const files = new Set();
-        const reporterSubscription = this.workflow.reporter.subscribe(event => {
-            // Strip leading slash to prevent confusion.
-            const eventPath = event.path.startsWith('/') ? event.path.substr(1) : event.path;
-            switch (event.kind) {
-                case 'error':
-                    error = true;
-                    const desc = event.description == 'alreadyExist' ? 'already exists' : 'does not exist.';
-                    this.logger.error(`ERROR! ${eventPath} ${desc}.`);
-                    break;
-                case 'update':
-                    logs.push(`${color_1.colors.whiteBright('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
-                    files.add(eventPath);
-                    break;
-                case 'create':
-                    logs.push(`${color_1.colors.green('CREATE')} ${eventPath} (${event.content.length} bytes)`);
-                    files.add(eventPath);
-                    break;
-                case 'delete':
-                    logs.push(`${color_1.colors.yellow('DELETE')} ${eventPath}`);
-                    files.add(eventPath);
-                    break;
-                case 'rename':
-                    logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${event.to}`);
-                    files.add(eventPath);
-                    break;
-            }
-        });
-        const lifecycleSubscription = this.workflow.lifeCycle.subscribe(event => {
-            if (event.kind == 'end' || event.kind == 'post-tasks-start') {
-                if (!error) {
-                    // Output the logging queue, no error happened.
-                    logs.forEach(log => this.logger.info(log));
-                }
-            }
-        });
-        // TODO: Allow passing a schematic instance directly
-        try {
-            await this.workflow
-                .execute({
-                collection,
-                schematic,
-                options,
-                logger: this.logger,
-            })
-                .toPromise();
-            reporterSubscription.unsubscribe();
-            lifecycleSubscription.unsubscribe();
-            return { success: !error, files };
-        }
-        catch (e) {
-            if (e instanceof schematics_1.UnsuccessfulWorkflowExecution) {
-                this.logger.error('The update failed. See above.');
-            }
-            else {
-                this.logger.fatal(e.message);
-            }
-            return { success: false, files };
-        }
-    }
-    async executeMigrations(packageName, collectionPath, range, commit = false) {
-        const collection = this.workflow.engine.createCollection(collectionPath);
-        const migrations = [];
-        for (const name of collection.listSchematicNames()) {
-            const schematic = this.workflow.engine.createSchematic(name, collection);
-            const description = schematic.description;
-            if (!description.version) {
-                continue;
-            }
-            if (semver.satisfies(description.version, range, { includePrerelease: true })) {
-                migrations.push(description);
-            }
-        }
-        if (migrations.length === 0) {
-            return true;
-        }
-        const startingGitSha = this.findCurrentGitSha();
-        migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
-        for (const migration of migrations) {
-            this.logger.info(`** Executing migrations for version ${migration.version} of package '${packageName}' **`);
-            const result = await this.executeSchematic(migration.collection.name, migration.name);
-            if (!result.success) {
-                if (startingGitSha !== null) {
-                    const currentGitSha = this.findCurrentGitSha();
-                    if (currentGitSha !== startingGitSha) {
-                        this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
-                    }
-                }
-                return false;
-            }
-            // Commit migration
-            if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
-                if (migration.description) {
-                    message += '\n' + migration.description;
-                }
-                // TODO: Use result.files once package install tasks are accounted
-                this.createCommit(message, []);
-            }
-        }
+    async parseArguments(_schematicOptions, _schema) {
+        return {};
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
@@ -207,14 +94,19 @@ class UpdateCommand extends command_1.Command {
         this.logger.info(`Found ${Object.keys(rootDependencies).length} dependencies.`);
         if (options.all || packages.length === 0) {
             // Either update all packages or show status
-            const { success } = await this.executeSchematic('@schematics/update', 'update', {
-                force: options.force || false,
-                next: options.next || false,
-                verbose: options.verbose || false,
-                packageManager,
-                packages: options.all ? Object.keys(rootDependencies) : [],
+            return this.runSchematic({
+                collectionName: '@schematics/update',
+                schematicName: 'update',
+                dryRun: !!options.dryRun,
+                showNothingDone: false,
+                additionalOptions: {
+                    force: options.force || false,
+                    next: options.next || false,
+                    verbose: options.verbose || false,
+                    packageManager,
+                    packages: options.all ? Object.keys(rootDependencies) : [],
+                },
             });
-            return success ? 0 : 1;
         }
         if (options.migrateOnly) {
             if (!options.from) {
@@ -223,11 +115,6 @@ class UpdateCommand extends command_1.Command {
             }
             else if (packages.length !== 1) {
                 this.logger.error('A single package must be specified when using the "migrate-only" option.');
-                return 1;
-            }
-            const from = coerceVersionNumber(options.from);
-            if (!from) {
-                this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                 return 1;
             }
             if (options.next) {
@@ -295,9 +182,20 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
             }
-            const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const result = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
-            return result ? 1 : 0;
+            return this.runSchematic({
+                collectionName: '@schematics/update',
+                schematicName: 'migrate',
+                dryRun: !!options.dryRun,
+                force: false,
+                showNothingDone: false,
+                additionalOptions: {
+                    package: packageName,
+                    collection: migrations,
+                    from: options.from,
+                    verbose: options.verbose || false,
+                    to: options.to || packageNode.package.version,
+                },
+            });
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -327,9 +225,7 @@ class UpdateCommand extends command_1.Command {
             try {
                 // Metadata requests are internally cached; multiple requests for same name
                 // does not result in additional network traffic
-                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger, {
-                    verbose: options.verbose,
-                });
+                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger, { verbose: options.verbose });
             }
             catch (e) {
                 this.logger.error(`Error fetching metadata for '${packageName}': ` + e.message);
@@ -364,13 +260,18 @@ class UpdateCommand extends command_1.Command {
         if (packagesToUpdate.length === 0) {
             return 0;
         }
-        const { success } = await this.executeSchematic('@schematics/update', 'update', {
-            verbose: options.verbose || false,
-            force: options.force || false,
-            packageManager,
-            packages: packagesToUpdate,
+        return this.runSchematic({
+            collectionName: '@schematics/update',
+            schematicName: 'update',
+            dryRun: !!options.dryRun,
+            showNothingDone: false,
+            additionalOptions: {
+                verbose: options.verbose || false,
+                force: options.force || false,
+                packageManager,
+                packages: packagesToUpdate,
+            },
         });
-        return success ? 0 : 1;
     }
     checkCleanGit() {
         try {
@@ -389,39 +290,5 @@ class UpdateCommand extends command_1.Command {
         catch (_a) { }
         return true;
     }
-    createCommit(message, files) {
-        try {
-            child_process_1.execSync('git add -A ' + files.join(' '), { encoding: 'utf8', stdio: 'pipe' });
-            child_process_1.execSync(`git commit --no-verify -m "${message}"`, { encoding: 'utf8', stdio: 'pipe' });
-        }
-        catch (error) { }
-    }
-    findCurrentGitSha() {
-        try {
-            const result = child_process_1.execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
-            return result.trim();
-        }
-        catch (_a) {
-            return null;
-        }
-    }
 }
 exports.UpdateCommand = UpdateCommand;
-function coerceVersionNumber(version) {
-    if (!version.match(/^\d{1,30}\.\d{1,30}\.\d{1,30}/)) {
-        const match = version.match(/^\d{1,30}(\.\d{1,30})*/);
-        if (!match) {
-            return null;
-        }
-        if (!match[1]) {
-            version = version.substr(0, match[0].length) + '.0.0' + version.substr(match[0].length);
-        }
-        else if (!match[2]) {
-            version = version.substr(0, match[0].length) + '.0' + version.substr(match[0].length);
-        }
-        else {
-            return null;
-        }
-    }
-    return semver.valid(version);
-}
