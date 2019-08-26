@@ -1,18 +1,9 @@
-import * as semver from 'semver';
-import { Command } from '../models/command';
-import { Arguments } from '../models/interface';
+import { Arguments, Option } from '../models/interface';
+import { SchematicCommand } from '../models/schematic-command';
 import { Schema as UpdateCommandSchema } from './update';
-export declare class UpdateCommand extends Command<UpdateCommandSchema> {
+export declare class UpdateCommand extends SchematicCommand<UpdateCommandSchema> {
     readonly allowMissingWorkspace = true;
-    private workflow;
-    initialize(): Promise<void>;
-    executeSchematic(collection: string, schematic: string, options?: {}): Promise<{
-        success: boolean;
-        files: Set<string>;
-    }>;
-    executeMigrations(packageName: string, collectionPath: string, range: semver.Range, commit?: boolean): Promise<boolean | undefined>;
-    run(options: UpdateCommandSchema & Arguments): Promise<1 | 0 | 2>;
+    parseArguments(_schematicOptions: string[], _schema: Option[]): Promise<Arguments>;
+    run(options: UpdateCommandSchema & Arguments): Promise<number | void>;
     checkCleanGit(): boolean;
-    createCommit(message: string, files: string[]): void;
-    findCurrentGitSha(): string | null;
 }
