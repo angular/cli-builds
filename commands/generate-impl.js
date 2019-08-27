@@ -62,8 +62,10 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
     async parseSchematicInfo(options) {
         let collectionName = await this.getDefaultSchematicCollection();
         let schematicName = options.schematic;
-        if (schematicName && schematicName.includes(':')) {
-            [collectionName, schematicName] = schematicName.split(':', 2);
+        if (schematicName) {
+            if (schematicName.includes(':')) {
+                [collectionName, schematicName] = schematicName.split(':', 2);
+            }
         }
         return [collectionName, schematicName];
     }

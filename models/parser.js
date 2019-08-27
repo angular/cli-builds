@@ -76,8 +76,10 @@ function _coerce(str, o, v) {
         // enum. If there's no enum, just return the first one that matches.
         for (const type of types) {
             const maybeResult = _coerceType(str, type, v);
-            if (maybeResult !== undefined && (!o.enum || o.enum.includes(maybeResult))) {
-                return maybeResult;
+            if (maybeResult !== undefined) {
+                if (!o.enum || o.enum.includes(maybeResult)) {
+                    return maybeResult;
+                }
             }
         }
         return undefined;
@@ -125,9 +127,11 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
             if (maybeOption) {
                 value = nextArg;
                 let shouldShift = true;
-                if (value && value.startsWith('-') && _coerce(undefined, maybeOption) !== undefined) {
+                if (value && value.startsWith('-')) {
                     // Verify if not having a value results in a correct parse, if so don't shift.
-                    shouldShift = false;
+                    if (_coerce(undefined, maybeOption) !== undefined) {
+                        shouldShift = false;
+                    }
                 }
                 // Only absorb it if it leads to a better value.
                 if (shouldShift && _coerce(value, maybeOption) !== undefined) {

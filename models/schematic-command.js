@@ -47,8 +47,10 @@ class SchematicCommand extends command_1.Command {
             this.description.options.push(...options.filter(x => !x.hidden));
             // Remove any user analytics from schematics that are NOT part of our safelist.
             for (const o of this.description.options) {
-                if (o.userAnalytics && !analytics_1.isPackageNameSafeForAnalytics(this.collectionName)) {
-                    o.userAnalytics = undefined;
+                if (o.userAnalytics) {
+                    if (!analytics_1.isPackageNameSafeForAnalytics(this.collectionName)) {
+                        o.userAnalytics = undefined;
+                    }
                 }
             }
         }
