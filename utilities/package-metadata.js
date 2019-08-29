@@ -36,8 +36,8 @@ function readOptions(logger, yarn = false, showPotentials = false) {
         }
     }
     const defaultConfigLocations = [
-        path.join(globalPrefix, 'etc', baseFilename),
-        path.join(os_1.homedir(), dotFilename),
+        (!yarn && process.env.NPM_CONFIG_GLOBALCONFIG) || path.join(globalPrefix, 'etc', baseFilename),
+        (!yarn && process.env.NPM_CONFIG_USERCONFIG) || path.join(os_1.homedir(), dotFilename),
     ];
     const projectConfigLocations = [
         path.join(cwd, dotFilename),
