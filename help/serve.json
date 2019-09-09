@@ -152,6 +152,14 @@
       "hidden": false
     },
     {
+      "name": "allowedHosts",
+      "description": "Whitelist of hosts that are allowed to access the dev server.",
+      "type": "array",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
       "name": "servePath",
       "description": "The pathname where the app will be served.",
       "type": "string",
