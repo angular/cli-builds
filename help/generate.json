@@ -48,7 +48,8 @@
               "required": false,
               "aliases": [],
               "format": "html-selector",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "appId",
@@ -68,7 +69,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "root",
@@ -78,7 +80,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "index",
@@ -88,7 +91,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "main",
@@ -107,7 +111,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "tsconfigFileName",
@@ -127,7 +132,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "appDir",
@@ -169,7 +175,8 @@
                 "D"
               ],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             }
           ],
           "aliases": []
