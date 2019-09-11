@@ -14,19 +14,25 @@ function readPackageTree(path) {
     });
 }
 exports.readPackageTree = readPackageTree;
-function findNodeDependencies(root, node = root) {
-    const actual = node.isLink ? node.target : node;
+function findNodeDependencies(node) {
     const rawDeps = {
-        ...actual.package.dependencies,
-        ...actual.package.devDependencies,
-        ...actual.package.peerDependencies,
+        ...node.package.dependencies,
+        ...node.package.devDependencies,
+        ...node.package.peerDependencies,
+        ...node.package.optionalDependencies,
     };
     return Object.entries(rawDeps).reduce((deps, [name, version]) => {
-        const depNode = root.children.find(child => {
-            return child.name === name && !child.isLink && child.parent === node;
-        });
-        deps[name] = depNode || version;
+        let dependencyNode;
+        let parent = node;
+        while (!dependencyNode && parent) {
+            dependencyNode = parent.children.find(child => child.name === name);
+            parent = parent.parent;
+        }
+        deps[name] = {
+            node: dependencyNode,
+            version,
+        };
         return deps;
-    }, {});
+    }, Object.create(null));
 }
 exports.findNodeDependencies = findNodeDependencies;

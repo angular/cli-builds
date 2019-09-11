@@ -18,21 +18,25 @@ export interface PackageTreeNodeBase {
         dependencies?: Record<string, string>;
         devDependencies?: Record<string, string>;
         peerDependencies?: Record<string, string>;
+        optionalDependencies?: Record<string, string>;
         'ng-update'?: {
             migrations?: string;
         };
     };
+    parent?: PackageTreeNode;
     children: PackageTreeNode[];
 }
 export interface PackageTreeActual extends PackageTreeNodeBase {
     isLink: false;
-    parent?: PackageTreeActual;
 }
 export interface PackageTreeLink extends PackageTreeNodeBase {
     isLink: true;
-    parent: null;
     target: PackageTreeActual;
 }
 export declare type PackageTreeNode = PackageTreeActual | PackageTreeLink;
 export declare function readPackageTree(path: string): Promise<PackageTreeNode>;
-export declare function findNodeDependencies(root: PackageTreeNode, node?: PackageTreeNode): Record<string, string | PackageTreeActual | undefined>;
+export interface NodeDependency {
+    version: string;
+    node?: PackageTreeNode;
+}
+export declare function findNodeDependencies(node: PackageTreeNode): Record<string, NodeDependency>;
