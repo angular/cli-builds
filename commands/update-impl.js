@@ -121,24 +121,24 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 this.logger.warn('"next" option has no effect when using "migrate-only" option.');
             }
             const packageName = packages[0].name;
-            let packageNode = rootDependencies[packageName];
-            if (typeof packageNode === 'string') {
+            const packageDependency = rootDependencies[packageName];
+            let packageNode = packageDependency && packageDependency.node;
+            if (packageDependency && !packageNode) {
                 this.logger.error('Package found in package.json but is not installed.');
                 return 1;
             }
-            else if (!packageNode) {
+            else if (!packageDependency) {
                 // Allow running migrations on transitively installed dependencies
                 // There can technically be nested multiple versions
                 // TODO: If multiple, this should find all versions and ask which one to use
                 const child = packageTree.children.find(c => c.name === packageName);
                 if (child) {
-                    // A link represents a symlinked package so use the actual in this case
-                    packageNode = child.isLink ? child.target : child;
+                    packageNode = child;
                 }
-                if (!packageNode) {
-                    this.logger.error('Package is not installed.');
-                    return 1;
-                }
+            }
+            if (!packageNode) {
+                this.logger.error('Package is not installed.');
+                return 1;
             }
             const updateMetadata = packageNode.package['ng-update'];
             let migrations = updateMetadata && updateMetadata.migrations;
@@ -200,7 +200,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
         const requests = [];
         // Validate packages actually are part of the workspace
         for (const pkg of packages) {
-            const node = rootDependencies[pkg.name];
+            const node = rootDependencies[pkg.name] && rootDependencies[pkg.name].node;
             if (!node) {
                 this.logger.error(`Package '${pkg.name}' is not a dependency.`);
                 return 1;
