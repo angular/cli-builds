@@ -67,6 +67,14 @@ export declare function hasGlobalAnalyticsConfiguration(): Promise<boolean>;
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
 export declare function getGlobalAnalytics(): Promise<UniversalAnalytics | undefined>;
+export declare function hasWorkspaceAnalyticsConfiguration(): Promise<boolean>;
+/**
+ * Get the workspace analytics object for the user. This returns an instance of UniversalAnalytics,
+ * or undefined if analytics are disabled.
+ *
+ * If any problem happens, it is considered the user has been opting out of analytics.
+ */
+export declare function getWorkspaceAnalytics(): Promise<UniversalAnalytics | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
