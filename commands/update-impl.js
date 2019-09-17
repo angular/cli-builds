@@ -103,6 +103,7 @@ class UpdateCommand extends command_1.Command {
         for (const name of collection.listSchematicNames()) {
             const schematic = this.workflow.engine.createSchematic(name, collection);
             const description = schematic.description;
+            description.version = coerceVersionNumber(description.version) || undefined;
             if (!description.version) {
                 continue;
             }
@@ -369,7 +370,22 @@ class UpdateCommand extends command_1.Command {
             force: options.force || false,
             packageManager,
             packages: packagesToUpdate,
+            migrateExternal: true,
         });
+        if (success && !options.skipCommits) {
+            this.createCommit('Angular CLI update\n' + packagesToUpdate.join('\n'), []);
+        }
+        // This is a temporary workaround to allow data to be passed back from the update schematic
+        // tslint:disable-next-line: no-any
+        const migrations = global.externalMigrations;
+        if (success && migrations) {
+            for (const migration of migrations) {
+                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), !options.skipCommits);
+                if (!result) {
+                    return 0;
+                }
+            }
+        }
         return success ? 0 : 1;
     }
     checkCleanGit() {
@@ -408,6 +424,9 @@ class UpdateCommand extends command_1.Command {
 }
 exports.UpdateCommand = UpdateCommand;
 function coerceVersionNumber(version) {
+    if (!version) {
+        return null;
+    }
     if (!version.match(/^\d{1,30}\.\d{1,30}\.\d{1,30}/)) {
         const match = version.match(/^\d{1,30}(\.\d{1,30})*/);
         if (!match) {
