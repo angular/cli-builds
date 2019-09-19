@@ -10,12 +10,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const semver = require("semver");
 const schematic_command_1 = require("../models/schematic-command");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
+const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
 class UpdateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
@@ -206,9 +206,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 return 1;
             }
             // If a specific version is requested and matches the installed version, skip.
-            if (pkg.type === 'version' &&
-                typeof node === 'object' &&
-                node.package.version === pkg.fetchSpec) {
+            if (pkg.type === 'version' && node.package.version === pkg.fetchSpec) {
                 this.logger.info(`Package '${pkg.name}' is already at '${pkg.fetchSpec}'.`);
                 continue;
             }
@@ -234,24 +232,39 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
             // Try to find a package version based on the user requested package specifier
             // registry specifier types are either version, range, or tag
             let manifest;
-            if (requestIdentifier.type === 'version') {
-                manifest = metadata.versions.get(requestIdentifier.fetchSpec);
-            }
-            else if (requestIdentifier.type === 'range') {
-                const maxVersion = semver.maxSatisfying(Array.from(metadata.versions.keys()), requestIdentifier.fetchSpec);
-                if (maxVersion) {
-                    manifest = metadata.versions.get(maxVersion);
+            if (requestIdentifier.type === 'version' ||
+                requestIdentifier.type === 'range' ||
+                requestIdentifier.type === 'tag') {
+                try {
+                    manifest = pickManifest(metadata, requestIdentifier.fetchSpec);
                 }
-            }
-            else if (requestIdentifier.type === 'tag') {
-                manifest = metadata.tags[requestIdentifier.fetchSpec];
+                catch (e) {
+                    if (e.code === 'ETARGET') {
+                        // If not found and next was used and user did not provide a specifier, try latest.
+                        // Package may not have a next tag.
+                        if (requestIdentifier.type === 'tag' &&
+                            requestIdentifier.fetchSpec === 'next' &&
+                            !requestIdentifier.rawSpec) {
+                            try {
+                                manifest = pickManifest(metadata, 'latest');
+                            }
+                            catch (e) {
+                                if (e.code !== 'ETARGET' && e.code !== 'ENOVERSIONS') {
+                                    throw e;
+                                }
+                            }
+                        }
+                    }
+                    else if (e.code !== 'ENOVERSIONS') {
+                        throw e;
+                    }
+                }
             }
             if (!manifest) {
                 this.logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if ((typeof node === 'string' && manifest.version === node) ||
-                (typeof node === 'object' && manifest.version === node.package.version)) {
+            if (manifest.version === node.package.version) {
                 this.logger.info(`Package '${packageName}' is already up to date.`);
                 continue;
             }
