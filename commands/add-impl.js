@@ -75,7 +75,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
-                const versionManifests = Array.from(packageMetadata.versions.values()).filter(value => !semver_1.prerelease(value.version));
+                const versionManifests = Object.values(packageMetadata.versions).filter(value => !semver_1.prerelease(value.version));
                 versionManifests.sort((a, b) => semver_1.rcompare(a.version, b.version, true));
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
