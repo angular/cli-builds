@@ -243,6 +243,15 @@
       "aliases": [],
       "hidden": false,
       "userAnalytics": 14
+    },
+    {
+      "name": "strict",
+      "description": "Creates a workspace with stricter TypeScript compiler options.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [
