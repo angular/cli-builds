@@ -392,7 +392,8 @@
       "type": "array",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
     },
     {
       "name": "profile",
