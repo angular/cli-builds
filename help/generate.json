@@ -871,6 +871,68 @@
           ],
           "aliases": []
         },
+        "interceptor": {
+          "name": "interceptor",
+          "description": "Creates a new, generic interceptor definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the interceptor.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interceptor, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates files at the top level of the project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skipTests",
+              "description": "When true, does not create \"spec.ts\" test files for the new interceptor.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the interceptor.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 15
+            }
+          ],
+          "aliases": []
+        },
         "interface": {
           "name": "interface",
           "description": "Creates a new generic interface definition in the given or default project.",
