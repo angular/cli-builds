@@ -13,5 +13,4 @@ export declare class NewCommand extends SchematicCommand<NewCommandSchema> {
     schematicName: string;
     initialize(options: NewCommandSchema & Arguments): Promise<void>;
     run(options: NewCommandSchema & Arguments): Promise<number | void>;
-    private parseCollectionName;
 }
