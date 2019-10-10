@@ -529,15 +529,6 @@
               "userAnalytics": 5
             },
             {
-              "name": "type",
-              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
-              "type": "string",
-              "default": "Component",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
               "name": "spec",
               "description": "When true (the default), generates a  \"spec.ts\" test file for the new component.",
               "type": "boolean",

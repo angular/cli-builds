@@ -4,7 +4,7 @@
   "description": "Extracts i18n messages from source code.",
   "$longDescription": "",
 
-  "$aliases": ["i18n-extract"],
+  "$aliases": [],
   "$scope": "in",
   "$type": "architect",
   "$impl": "./xi18n-impl#Xi18nCommand",
