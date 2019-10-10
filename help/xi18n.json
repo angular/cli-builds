@@ -57,7 +57,7 @@
       "hidden": false
     },
     {
-      "name": "i18nFormat",
+      "name": "format",
       "description": "Output format for the generated file.",
       "type": "string",
       "default": "xlf",
@@ -74,12 +74,31 @@
       "hidden": false
     },
     {
+      "name": "i18nFormat",
+      "description": "Output format for the generated file.",
+      "type": "string",
+      "default": "xlf",
+      "enum": [
+        "xmb",
+        "xlf",
+        "xlif",
+        "xliff",
+        "xlf2",
+        "xliff2"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "deprecated": "Use 'format' option instead."
+    },
+    {
       "name": "i18nLocale",
       "description": "Specifies the source language of the application.",
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'i18n' project level sub-option 'sourceLocale' instead."
     },
     {
       "name": "progress",
@@ -107,7 +126,9 @@
       "hidden": false
     }
   ],
-  "aliases": [],
+  "aliases": [
+    "i18n-extract"
+  ],
   "scope": "in",
   "hidden": false
 }
