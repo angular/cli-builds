@@ -462,6 +462,15 @@
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "experimentalRollupPass",
+      "description": "Concatenate modules with Rollup before bundling them with Webpack.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [
