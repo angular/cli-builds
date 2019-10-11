@@ -203,7 +203,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'locales' object in the project metadata instead."
     },
     {
       "name": "i18nFormat",
@@ -211,7 +212,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "No longer needed as the format will be determined automatically."
     },
     {
       "name": "i18nLocale",
@@ -219,12 +221,27 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'localize' instead."
     },
     {
       "name": "i18nMissingTranslation",
       "description": "How to handle missing translations for i18n.",
       "type": "string",
+      "default": "warning",
+      "enum": [
+        "warning",
+        "error",
+        "ignore"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "localize",
+      "description": "",
+      "type": "boolean",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -442,6 +459,15 @@
         "anonymous",
         "use-credentials"
       ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "experimentalRollupPass",
+      "description": "Concatenate modules with Rollup before bundling them with Webpack.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
