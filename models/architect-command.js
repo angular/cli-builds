@@ -276,9 +276,14 @@ class ArchitectCommand extends command_1.Command {
         else {
             project = commandOptions.project;
             target = this.target;
-            configuration = commandOptions.configuration;
-            if (!configuration && commandOptions.prod) {
+            if (commandOptions.prod) {
+                // The --prod flag will always be the first configuration, available to be overwritten
+                // by following configurations.
                 configuration = 'production';
+            }
+            if (commandOptions.configuration) {
+                configuration =
+                    `${configuration ? `${configuration},` : ''}${commandOptions.configuration}`;
             }
         }
         if (!project) {
