@@ -6,5 +6,4 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { NgAddSaveDepedency } from '../utilities/package-metadata';
-export default function (packageName: string, logger: logging.Logger, packageManager: string, save?: NgAddSaveDepedency): Promise<void>;
+export default function (packageName: string, logger: logging.Logger, packageManager: string): Promise<void>;

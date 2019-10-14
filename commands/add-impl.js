@@ -14,6 +14,7 @@ const semver_1 = require("semver");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
 const npm_install_1 = require("../tasks/npm-install");
+const npm_uninstall_1 = require("../tasks/npm-uninstall");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
@@ -93,25 +94,30 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
         }
         let collectionName = packageIdentifier.name;
-        if (!packageIdentifier.registry) {
-            try {
-                const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
-                    registry: options.registry,
-                    verbose: options.verbose,
-                    usingYarn,
-                });
-                collectionName = manifest.name;
-                if (await this.hasMismatchedPeer(manifest)) {
-                    this.logger.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
-                }
-            }
-            catch (e) {
-                this.logger.error('Unable to fetch package manifest: ' + e.message);
-                return 1;
+        let dependencyType;
+        try {
+            const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
+                registry: options.registry,
+                verbose: options.verbose,
+                usingYarn,
+            });
+            dependencyType = manifest['ng-add'] && manifest['ng-add'].save;
+            collectionName = manifest.name;
+            if (await this.hasMismatchedPeer(manifest)) {
+                this.logger.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
             }
         }
-        await npm_install_1.default(packageIdentifier.raw, this.logger, packageManager, this.workspace.root);
-        return this.executeSchematic(collectionName, options['--']);
+        catch (e) {
+            this.logger.error('Unable to fetch package manifest: ' + e.message);
+            return 1;
+        }
+        await npm_install_1.default(packageIdentifier.raw, this.logger, packageManager, dependencyType);
+        const schematicResult = await this.executeSchematic(collectionName, options['--']);
+        if (dependencyType === false) {
+            // Uninstall the package if it was not meant to be retained.
+            return npm_uninstall_1.default(packageIdentifier.raw, this.logger, packageManager);
+        }
+        return schematicResult;
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {
         const collection = options.collection;
