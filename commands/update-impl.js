@@ -37,7 +37,7 @@ class UpdateCommand extends command_1.Command {
     }
     async executeSchematic(collection, schematic, options = {}) {
         let error = false;
-        const logs = [];
+        let logs = [];
         const files = new Set();
         const reporterSubscription = this.workflow.reporter.subscribe(event => {
             // Strip leading slash to prevent confusion.
@@ -71,6 +71,7 @@ class UpdateCommand extends command_1.Command {
                 if (!error) {
                     // Output the logging queue, no error happened.
                     logs.forEach(log => this.logger.info(log));
+                    logs = [];
                 }
             }
         });
