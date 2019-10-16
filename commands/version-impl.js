@@ -158,5 +158,5 @@ class VersionCommand extends command_1.Command {
         return '<error>';
     }
 }
-VersionCommand.aliases = ['v'];
 exports.VersionCommand = VersionCommand;
+VersionCommand.aliases = ['v'];
