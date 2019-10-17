@@ -288,13 +288,14 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     }
     checkCleanGit() {
         try {
+            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', { encoding: 'utf8', stdio: 'pipe' });
             const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
             if (result.trim().length === 0) {
                 return true;
             }
             // Only files inside the workspace root are relevant
             for (const entry of result.split('\n')) {
-                const relativeEntry = path.relative(path.resolve(this.workspace.root), path.resolve(entry.slice(3).trim()));
+                const relativeEntry = path.relative(path.resolve(this.workspace.root), path.resolve(topLevel.trim(), entry.slice(3).trim()));
                 if (!relativeEntry.startsWith('..') && !path.isAbsolute(relativeEntry)) {
                     return false;
                 }
