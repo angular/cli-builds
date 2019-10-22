@@ -364,16 +364,6 @@
               "hidden": false
             },
             {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new class.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
-            },
-            {
               "name": "skipTests",
               "description": "When true, does not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
@@ -502,16 +492,6 @@
               "hidden": false
             },
             {
-              "name": "styleext",
-              "description": "The file extension to use for style files.",
-              "type": "string",
-              "default": "css",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"style\" instead."
-            },
-            {
               "name": "style",
               "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
@@ -536,16 +516,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new component.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
             },
             {
               "name": "skipTests",
@@ -675,16 +645,6 @@
                 "p"
               ],
               "hidden": false
-            },
-            {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new directive.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
             },
             {
               "name": "skipTests",
@@ -1220,16 +1180,6 @@
               "hidden": false
             },
             {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new pipe.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
-            },
-            {
               "name": "skipTests",
               "description": "When true, does not create \"spec.ts\" test files for the new pipe.",
               "type": "boolean",
@@ -1320,16 +1270,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new service.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
             },
             {
               "name": "skipTests",
