@@ -13,7 +13,7 @@ const path_1 = require("path");
 const semver_1 = require("semver");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
-const npm_install_1 = require("../tasks/npm-install");
+const install_package_1 = require("../tasks/install-package");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
@@ -110,7 +110,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 return 1;
             }
         }
-        await npm_install_1.default(packageIdentifier.raw, this.logger, this.packageManager, this.workspace.root);
+        install_package_1.installPackage(packageIdentifier.raw, this.logger, this.packageManager);
         return this.executeSchematic(collectionName, options['--']);
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {

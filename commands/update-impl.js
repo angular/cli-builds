@@ -10,7 +10,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const semver = require("semver");
 const schematic_command_1 = require("../models/schematic-command");
+const install_package_1 = require("../tasks/install-package");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
@@ -21,12 +23,19 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.allowMissingWorkspace = true;
+        this.packageManager = package_manager_1.getPackageManager(this.workspace.root);
     }
     async parseArguments(_schematicOptions, _schema) {
         return {};
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        // Check if the current installed CLI version is older than the latest version.
+        if (await this.checkCLILatestVersion(options.verbose)) {
+            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+                'Installing a temporary version to perform the update.');
+            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+        }
         const packages = [];
         for (const request of options['--'] || []) {
             try {
@@ -75,8 +84,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                 return 2;
             }
         }
-        const packageManager = package_manager_1.getPackageManager(this.workspace.root);
-        this.logger.info(`Using package manager: '${packageManager}'`);
+        this.logger.info(`Using package manager: '${this.packageManager}'`);
         // Special handling for Angular CLI 1.x migrations
         if (options.migrateOnly === undefined &&
             options.from === undefined &&
@@ -103,7 +111,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
                     force: options.force || false,
                     next: options.next || false,
                     verbose: options.verbose || false,
-                    packageManager,
+                    packageManager: this.packageManager,
                     packages: options.all ? Object.keys(rootDependencies) : [],
                 },
             });
@@ -281,7 +289,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
             additionalOptions: {
                 verbose: options.verbose || false,
                 force: options.force || false,
-                packageManager,
+                packageManager: this.packageManager,
                 packages: packagesToUpdate,
             },
         });
@@ -303,6 +311,22 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
         }
         catch (_a) { }
         return true;
+    }
+    /**
+   * Checks if the current installed CLI version is older than the latest version.
+   * @returns `true` when the installed version is older.
+  */
+    async checkCLILatestVersion(verbose = false) {
+        const { version: installedCLIVersion } = require('../package.json');
+        const LatestCLIManifest = await package_metadata_1.fetchPackageMetadata('@angular/cli', this.logger, {
+            verbose,
+            usingYarn: this.packageManager === 'yarn',
+        });
+        const latest = LatestCLIManifest.tags['latest'];
+        if (!latest) {
+            return false;
+        }
+        return semver.lt(installedCLIVersion, latest.version);
     }
 }
 exports.UpdateCommand = UpdateCommand;
