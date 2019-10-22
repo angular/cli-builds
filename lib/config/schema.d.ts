@@ -68,10 +68,6 @@ export interface SchematicsAngularClass {
      * When true, does not create test files.
      */
     skipTests?: boolean;
-    /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
 }
 export interface SchematicsAngularComponent {
     /**
@@ -115,17 +111,9 @@ export interface SchematicsAngularComponent {
      */
     skipImport?: boolean;
     /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
-    /**
      * The file extension or preprocessor to use for style files.
      */
     style?: Style;
-    /**
-     * The file extension to be used for style files.
-     */
-    styleext?: string;
     /**
      * Specifies the view encapsulation strategy.
      */
@@ -186,10 +174,6 @@ export interface SchematicsAngularDirective {
      * When true, does not create test files.
      */
     skipTests?: boolean;
-    /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
 }
 export interface SchematicsAngularModule {
     /**
@@ -241,10 +225,6 @@ export interface SchematicsAngularPipe {
      * When true, does not create test files.
      */
     skipTests?: boolean;
-    /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
 }
 export interface SchematicsAngularService {
     /**
@@ -255,8 +235,4 @@ export interface SchematicsAngularService {
      * When true, does not create test files.
      */
     skipTests?: boolean;
-    /**
-     * Specifies if a spec file is generated.
-     */
-    spec?: boolean;
 }
