@@ -66,10 +66,6 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     else {
         tempNodeModules = path_1.join(tempPath, 'node_modules');
     }
-    // Needed to resolve schematics from this location since we use a custom
-    // resolve strategy in '@angular/devkit-core/node'
-    // todo: this should be removed when we change the resolutions to use require.resolve
-    process.env.NG_TEMP_MODULES_DIR = tempNodeModules;
     return tempNodeModules;
 }
 exports.installTempPackage = installTempPackage;
