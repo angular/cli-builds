@@ -112,13 +112,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             return 1;
         }
         if (savePackage === false) {
-            // Temporary packages are located in a different directory
-            // Hence we need to resolve them using the temp path
-            const tempPath = install_package_1.installTempPackage(packageIdentifier.raw, this.logger, packageManager);
-            const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
-                paths: [tempPath],
-            });
-            collectionName = path_1.dirname(resolvedCollectionPath);
+            install_package_1.installTempPackage(packageIdentifier.raw, this.logger, packageManager);
         }
         else {
             install_package_1.installPackage(packageIdentifier.raw, this.logger, packageManager, savePackage);
