@@ -47,14 +47,9 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
 }
 exports.installPackage = installPackage;
 function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm) {
-    const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), 'angular-cli-packages-'));
+    const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), '.ng-temp-packages-'));
     // clean up temp directory on process exit
-    process.on('exit', () => {
-        try {
-            rimraf.sync(tempPath);
-        }
-        catch (_a) { }
-    });
+    process.on('exit', () => rimraf.sync(tempPath));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
