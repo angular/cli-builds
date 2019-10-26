@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "9.0.0-next.13+1.f794069",
+  "version": "9.0.0-next.16+1.aa53fae",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#f794069c5",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#f794069c5",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#f794069c5",
-    "@schematics/angular": "github:angular/schematics-angular-builds#f794069c5",
-    "@schematics/update": "github:angular/schematics-update-builds#f794069c5",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#aa53faeba",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#aa53faeba",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#aa53faeba",
+    "@schematics/angular": "github:angular/schematics-angular-builds#aa53faeba",
+    "@schematics/update": "github:angular/schematics-update-builds#aa53faeba",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.1",
     "debug": "^4.1.1",
@@ -43,6 +43,7 @@
     "open": "7.0.0",
     "pacote": "9.5.8",
     "read-package-tree": "5.3.1",
+    "rimraf": "3.0.0",
     "semver": "6.3.0",
     "symbol-observable": "1.2.0",
     "universal-analytics": "^0.4.20",
@@ -51,10 +52,10 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#f794069c5",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#f794069c5",
-      "@angular-devkit/build-ng-packagr": "github:angular/angular-devkit-build-ng-packagr-builds#f794069c5",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#f794069c5"
+      "@angular/cli": "github:angular/cli-builds#aa53faeba",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#aa53faeba",
+      "@angular-devkit/build-ng-packagr": "github:angular/angular-devkit-build-ng-packagr-builds#aa53faeba",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#aa53faeba"
     }
   },
   "engines": {

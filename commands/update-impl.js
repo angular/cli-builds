@@ -15,7 +15,9 @@ const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
+const schema_1 = require("../lib/config/schema");
 const command_1 = require("../models/command");
+const install_package_1 = require("../tasks/install-package");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
@@ -29,8 +31,9 @@ class UpdateCommand extends command_1.Command {
         this.allowMissingWorkspace = true;
     }
     async initialize() {
+        this.packageManager = await package_manager_1.getPackageManager(this.workspace.root);
         this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
-            packageManager: await package_manager_1.getPackageManager(this.workspace.root),
+            packageManager: this.packageManager,
             root: core_1.normalize(this.workspace.root),
         });
         this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
@@ -143,6 +146,12 @@ class UpdateCommand extends command_1.Command {
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        // Check if the current installed CLI version is older than the latest version.
+        if (await this.checkCLILatestVersion(options.verbose)) {
+            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+                'Installing a temporary version to perform the update.');
+            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+        }
         const packages = [];
         for (const request of options['--'] || []) {
             try {
@@ -191,8 +200,7 @@ class UpdateCommand extends command_1.Command {
                 return 2;
             }
         }
-        const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
-        this.logger.info(`Using package manager: '${packageManager}'`);
+        this.logger.info(`Using package manager: '${this.packageManager}'`);
         // Special handling for Angular CLI 1.x migrations
         if (options.migrateOnly === undefined &&
             options.from === undefined &&
@@ -225,7 +233,7 @@ class UpdateCommand extends command_1.Command {
                 force: options.force || false,
                 next: options.next || false,
                 verbose: options.verbose || false,
-                packageManager,
+                packageManager: this.packageManager,
                 packages: options.all ? Object.keys(rootDependencies) : [],
             });
             return success ? 0 : 1;
@@ -394,7 +402,7 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
-            packageManager,
+            packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
         });
@@ -447,6 +455,18 @@ class UpdateCommand extends command_1.Command {
         catch (_a) {
             return null;
         }
+    }
+    /**
+     * Checks if the current installed CLI version is older than the latest version.
+     * @returns `true` when the installed version is older.
+    */
+    async checkCLILatestVersion(verbose = false) {
+        const { version: installedCLIVersion } = require('../package.json');
+        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest('@angular/cli@latest', this.logger, {
+            verbose,
+            usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
+        });
+        return semver.lt(installedCLIVersion, LatestCLIManifest.version);
     }
 }
 exports.UpdateCommand = UpdateCommand;
