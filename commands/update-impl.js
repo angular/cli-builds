@@ -143,14 +143,15 @@ class UpdateCommand extends command_1.Command {
                 this.createCommit(message, []);
             }
         }
+        return true;
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
-        if (await this.checkCLILatestVersion(options.verbose)) {
+        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
                 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
         const packages = [];
         for (const request of options['--'] || []) {
@@ -318,8 +319,8 @@ class UpdateCommand extends command_1.Command {
                 }
             }
             const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const result = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
-            return result ? 1 : 0;
+            const success = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
+            return success ? 0 : 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -460,9 +461,9 @@ class UpdateCommand extends command_1.Command {
      * Checks if the current installed CLI version is older than the latest version.
      * @returns `true` when the installed version is older.
     */
-    async checkCLILatestVersion(verbose = false) {
+    async checkCLILatestVersion(verbose = false, next = false) {
         const { version: installedCLIVersion } = require('../package.json');
-        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest('@angular/cli@latest', this.logger, {
+        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
         });
