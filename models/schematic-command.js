@@ -161,6 +161,11 @@ class SchematicCommand extends command_1.Command {
             packageManager: await package_manager_1.getPackageManager(this.workspace.root),
             root: core_1.normalize(this.workspace.root),
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
+            resolvePaths: !!this.workspace.configFile
+                // Workspace
+                ? [process.cwd(), this.workspace.root]
+                // Global
+                : [__dirname, process.cwd()],
         });
         workflow.engineHost.registerContextTransform(context => {
             // This is run by ALL schematics, so if someone uses `externalSchematics(...)` which
