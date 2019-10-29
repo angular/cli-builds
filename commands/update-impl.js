@@ -35,6 +35,9 @@ class UpdateCommand extends command_1.Command {
         this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
             packageManager: this.packageManager,
             root: core_1.normalize(this.workspace.root),
+            // __dirname -> favor @schematics/update from this package
+            // Otherwise, use packages from the active workspace (migrations)
+            resolvePaths: [__dirname, this.workspace.root],
         });
         this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
     }
