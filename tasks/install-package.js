@@ -102,6 +102,7 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
         env: {
             ...process.env,
             NG_DISABLE_VERSION_CHECK: 'true',
+            NG_CLI_ANALYTICS: 'false',
         },
     });
     if (status === null && error) {
