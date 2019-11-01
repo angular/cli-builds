@@ -35,6 +35,9 @@ class UpdateCommand extends command_1.Command {
         this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
             packageManager: this.packageManager,
             root: core_1.normalize(this.workspace.root),
+            // __dirname -> favor @schematics/update from this package
+            // Otherwise, use packages from the active workspace (migrations)
+            resolvePaths: [__dirname, this.workspace.root],
         });
         this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
     }
@@ -121,8 +124,9 @@ class UpdateCommand extends command_1.Command {
         }
         const startingGitSha = this.findCurrentGitSha();
         migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
+        this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         for (const migration of migrations) {
-            this.logger.info(`** Executing migrations for version ${migration.version} of package '${packageName}' **`);
+            this.logger.info(`${color_1.colors.symbols.pointer}  ${migration.description.replace(/\. /g, '.\n   ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
                 if (startingGitSha !== null) {
@@ -131,6 +135,7 @@ class UpdateCommand extends command_1.Command {
                         this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
                     }
                 }
+                this.logger.error(`${color_1.colors.symbols.cross}  Migration failed. See above for further details.\n`);
                 return false;
             }
             // Commit migration
@@ -142,15 +147,17 @@ class UpdateCommand extends command_1.Command {
                 // TODO: Use result.files once package install tasks are accounted
                 this.createCommit(message, []);
             }
+            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check}  Migration succeeded.\n`));
         }
+        return true;
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
-        if (await this.checkCLILatestVersion(options.verbose)) {
+        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
                 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
         const packages = [];
         for (const request of options['--'] || []) {
@@ -193,10 +200,10 @@ class UpdateCommand extends command_1.Command {
         const statusCheck = packages.length === 0 && !options.all;
         if (!statusCheck && !this.checkCleanGit()) {
             if (options.allowDirty) {
-                this.logger.warn('Repository is not clean.  Update changes will be mixed with pre-existing changes.');
+                this.logger.warn('Repository is not clean. Update changes will be mixed with pre-existing changes.');
             }
             else {
-                this.logger.error('Repository is not clean.  Please commit or stash any changes before updating.');
+                this.logger.error('Repository is not clean. Please commit or stash any changes before updating.');
                 return 2;
             }
         }
@@ -318,8 +325,8 @@ class UpdateCommand extends command_1.Command {
                 }
             }
             const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const result = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
-            return result ? 1 : 0;
+            const success = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
+            return success ? 0 : 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -460,9 +467,9 @@ class UpdateCommand extends command_1.Command {
      * Checks if the current installed CLI version is older than the latest version.
      * @returns `true` when the installed version is older.
     */
-    async checkCLILatestVersion(verbose = false) {
+    async checkCLILatestVersion(verbose = false, next = false) {
         const { version: installedCLIVersion } = require('../package.json');
-        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest('@angular/cli@latest', this.logger, {
+        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
         });
