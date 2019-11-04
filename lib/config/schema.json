@@ -67,7 +67,7 @@
           }
         },
         "analytics": {
-          "type": ["boolean", "string"],
+          "type": "boolean",
           "description": "Share anonymous usage data with the Angular Team at Google."
         }
       },
