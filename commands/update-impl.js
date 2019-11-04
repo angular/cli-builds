@@ -140,7 +140,7 @@ class UpdateCommand extends command_1.Command {
             }
             // Commit migration
             if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
+                let message = `${packageName} migration - ${migration.name}.`;
                 if (migration.description) {
                     message += '\n' + migration.description;
                 }
