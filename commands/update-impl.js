@@ -409,6 +409,7 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
+            next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
