@@ -14,17 +14,24 @@ const path_1 = require("path");
 const rimraf = require("rimraf");
 const schema_1 = require("../lib/config/schema");
 const color_1 = require("../utilities/color");
-function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
+function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, save = true, extraArgs = [], global = false) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
-        packageManagerArgs.noBinLinks,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     if (save === 'devDependencies') {
         installArgs.push(packageManagerArgs.saveDev);
+    }
+    if (global) {
+        if (packageManager === schema_1.PackageManager.Yarn) {
+            installArgs.unshift('global');
+        }
+        else {
+            installArgs.push('--global');
+        }
     }
     const { status } = child_process_1.spawnSync(packageManager, [
         ...installArgs,
@@ -32,7 +39,6 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     ], {
         stdio: 'inherit',
         shell: true,
-        cwd,
     });
     if (status !== 0) {
         throw new Error('Package install failed, see above.');
@@ -51,14 +57,20 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     });
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
-    const tempNodeModules = path_1.join(tempPath, 'node_modules');
     const installArgs = [
         packageManagerArgs.prefix,
-        // Yarn will no append 'node_modules' to the path
-        packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath,
-        packageManagerArgs.noLockfile,
+        tempPath,
     ];
-    installPackage(packageName, logger, packageManager, true, installArgs, tempPath);
+    installPackage(packageName, logger, packageManager, true, installArgs, true);
+    let tempNodeModules;
+    if (packageManager !== schema_1.PackageManager.Yarn && process.platform !== 'win32') {
+        // Global installs on Unix systems go to {prefix}/lib/node_modules.
+        // Global installs on Windows go to {prefix}/node_modules (that is, no lib folder.)
+        tempNodeModules = path_1.join(tempPath, 'lib', 'node_modules');
+    }
+    else {
+        tempNodeModules = path_1.join(tempPath, 'node_modules');
+    }
     return tempNodeModules;
 }
 exports.installTempPackage = installTempPackage;
@@ -109,16 +121,12 @@ function getPackageManagerArguments(packageManager) {
             silent: '--silent',
             saveDev: '--dev',
             install: 'add',
-            prefix: '--modules-folder',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-lockfile',
+            prefix: '--global-folder',
         }
         : {
             silent: '--quiet',
             saveDev: '--save-dev',
             install: 'install',
             prefix: '--prefix',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-package-lock',
         };
 }
