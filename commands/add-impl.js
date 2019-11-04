@@ -40,9 +40,26 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             return 1;
         }
         if (packageIdentifier.registry && this.isPackageInstalled(packageIdentifier.name)) {
-            // Already installed so just run schematic
-            this.logger.info('Skipping installation: Package already installed');
-            return this.executeSchematic(packageIdentifier.name, options['--']);
+            let validVersion = false;
+            const installedVersion = await this.findProjectVersion(packageIdentifier.name);
+            if (installedVersion) {
+                if (packageIdentifier.type === 'range') {
+                    validVersion = semver_1.satisfies(installedVersion, packageIdentifier.fetchSpec);
+                }
+                else if (packageIdentifier.type === 'version') {
+                    const v1 = semver_1.valid(packageIdentifier.fetchSpec);
+                    const v2 = semver_1.valid(installedVersion);
+                    validVersion = v1 !== null && v1 === v2;
+                }
+                else if (!packageIdentifier.rawSpec) {
+                    validVersion = true;
+                }
+            }
+            if (validVersion) {
+                // Already installed so just run schematic
+                this.logger.info('Skipping installation: Package already installed');
+                return this.executeSchematic(packageIdentifier.name, options['--']);
+            }
         }
         const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
         const usingYarn = packageManager === schema_1.PackageManager.Yarn;

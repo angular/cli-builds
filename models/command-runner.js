@@ -43,14 +43,18 @@ const standardCommands = {
  * Create the analytics instance.
  * @private
  */
-async function _createAnalytics(workspace) {
+async function _createAnalytics(workspace, skipPrompt = false) {
     let config = await analytics_1.getGlobalAnalytics();
     // If in workspace and global analytics is enabled, defer to workspace level
     if (workspace && config) {
+        const skipAnalytics = skipPrompt ||
+            (process.env['NG_CLI_ANALYTICS'] &&
+                (process.env['NG_CLI_ANALYTICS'].toLowerCase() === 'false' ||
+                    process.env['NG_CLI_ANALYTICS'] === '0'));
         // TODO: This should honor the `no-interactive` option.
         //       It is currently not an `ng` option but rather only an option for specific commands.
         //       The concept of `ng`-wide options are needed to cleanly handle this.
-        if (!(await analytics_1.hasWorkspaceAnalyticsConfiguration())) {
+        if (!skipAnalytics && !(await analytics_1.hasWorkspaceAnalyticsConfiguration())) {
             await analytics_1.promptProjectAnalytics();
         }
         config = await analytics_1.getWorkspaceAnalytics();
@@ -185,7 +189,8 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
             }
             return map;
         });
-        const analytics = options.analytics || await _createAnalytics(!!workspace.configFile);
+        const analytics = options.analytics ||
+            (await _createAnalytics(!!workspace.configFile, description.name === 'update'));
         const context = { workspace, analytics };
         const command = new description.impl(context, description, logger);
         // Flush on an interval (if the event loop is waiting).
