@@ -126,7 +126,7 @@ class UpdateCommand extends command_1.Command {
         migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         for (const migration of migrations) {
-            this.logger.info(`${color_1.colors.symbols.pointer}  ${migration.description.replace(/\. /g, '.\n   ')}`);
+            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
                 if (startingGitSha !== null) {
@@ -135,7 +135,7 @@ class UpdateCommand extends command_1.Command {
                         this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
                     }
                 }
-                this.logger.error(`${color_1.colors.symbols.cross}  Migration failed. See above for further details.\n`);
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
             // Commit migration
@@ -147,7 +147,7 @@ class UpdateCommand extends command_1.Command {
                 // TODO: Use result.files once package install tasks are accounted
                 this.createCommit(message, []);
             }
-            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check}  Migration succeeded.\n`));
+            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.\n`));
         }
         return true;
     }
