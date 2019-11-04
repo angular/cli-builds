@@ -17,7 +17,7 @@ export interface CliOptions {
     /**
      * Share anonymous usage data with the Angular Team at Google.
      */
-    analytics?: boolean;
+    analytics?: Analytics;
     /**
      * The default schematics collection to use.
      */
@@ -31,6 +31,10 @@ export interface CliOptions {
      */
     warnings?: Warnings;
 }
+/**
+ * Share anonymous usage data with the Angular Team at Google.
+ */
+export declare type Analytics = boolean | string;
 /**
  * Specify which package manager tool to use.
  */
