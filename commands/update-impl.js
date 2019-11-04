@@ -126,7 +126,7 @@ class UpdateCommand extends command_1.Command {
         migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         for (const migration of migrations) {
-            this.logger.info(`${color_1.colors.symbols.pointer}  ${migration.description.replace(/\. /g, '.\n   ')}`);
+            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
                 if (startingGitSha !== null) {
@@ -135,19 +135,19 @@ class UpdateCommand extends command_1.Command {
                         this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
                     }
                 }
-                this.logger.error(`${color_1.colors.symbols.cross}  Migration failed. See above for further details.\n`);
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
             // Commit migration
             if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
+                let message = `${packageName} migration - ${migration.name}.`;
                 if (migration.description) {
                     message += '\n' + migration.description;
                 }
                 // TODO: Use result.files once package install tasks are accounted
                 this.createCommit(message, []);
             }
-            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check}  Migration succeeded.\n`));
+            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.\n`));
         }
         return true;
     }
@@ -409,6 +409,7 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
+            next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
