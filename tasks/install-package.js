@@ -14,28 +14,22 @@ const path_1 = require("path");
 const rimraf = require("rimraf");
 const schema_1 = require("../lib/config/schema");
 const color_1 = require("../utilities/color");
-function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs = [], global = false) {
+function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs = [], cwd = process.cwd()) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
+        packageManagerArgs.noBinLinks,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
-    if (global) {
-        if (packageManager === schema_1.PackageManager.Yarn) {
-            installArgs.unshift('global');
-        }
-        else {
-            installArgs.push('--global');
-        }
-    }
     const { status } = child_process_1.spawnSync(packageManager, [
         ...installArgs,
         ...extraArgs,
     ], {
         stdio: 'inherit',
         shell: true,
+        cwd,
     });
     if (status !== 0) {
         throw new Error('Package install failed, see above.');
@@ -49,11 +43,6 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     process.on('exit', () => rimraf.sync(tempPath));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
-    const installArgs = [
-        packageManagerArgs.prefix,
-        tempPath,
-    ];
-    installPackage(packageName, logger, packageManager, installArgs, true);
     let tempNodeModules;
     if (packageManager !== schema_1.PackageManager.Yarn && process.platform !== 'win32') {
         // Global installs on Unix systems go to {prefix}/lib/node_modules.
@@ -63,6 +52,13 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     else {
         tempNodeModules = path_1.join(tempPath, 'node_modules');
     }
+    const installArgs = [
+        packageManagerArgs.prefix,
+        // Yarn will no append 'node_modules' to the path
+        packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath,
+        packageManagerArgs.noLockfile,
+    ];
+    installPackage(packageName, logger, packageManager, installArgs, tempPath);
     // Needed to resolve schematics from this location since we use a custom
     // resolve strategy in '@angular/devkit-core/node'
     // todo: this should be removed when we change the resolutions to use require.resolve
@@ -116,11 +112,15 @@ function getPackageManagerArguments(packageManager) {
         ? {
             silent: '--silent',
             install: 'add',
-            prefix: '--global-folder',
+            prefix: '--modules-folder',
+            noBinLinks: '--no-bin-links',
+            noLockfile: '--no-lockfile',
         }
         : {
             silent: '--quiet',
             install: 'install',
             prefix: '--prefix',
+            noBinLinks: '--no-bin-links',
+            noLockfile: '--no-package-lock',
         };
 }
