@@ -26,16 +26,17 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     if (save === 'devDependencies') {
         installArgs.push(packageManagerArgs.saveDev);
     }
-    const { status } = child_process_1.spawnSync(packageManager, [
-        ...installArgs,
-        ...extraArgs,
-    ], {
-        stdio: 'inherit',
-        shell: true,
+    const { status, stderr } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
+        stdio: 'pipe',
+        encoding: 'utf8',
         cwd,
     });
     if (status !== 0) {
-        throw new Error('Package install failed, see above.');
+        let errors = stderr.trim();
+        if (errors.length) {
+            errors += '\n';
+        }
+        throw new Error(errors + `Package install failed${errors.length ? ', see above' : ''}.`);
     }
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
@@ -84,10 +85,7 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const argv = [
-        binPath,
-        ...args,
-    ];
+    const argv = [binPath, ...args];
     const { status, error } = child_process_1.spawnSync('node', argv, {
         stdio: 'inherit',
         shell: true,
