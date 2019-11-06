@@ -122,29 +122,25 @@ class UpdateCommand extends command_1.Command {
         if (migrations.length === 0) {
             return true;
         }
-        const startingGitSha = this.findCurrentGitSha();
         migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
+        this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         for (const migration of migrations) {
-            this.logger.info(`** Executing migrations for version ${migration.version} of package '${packageName}' **`);
+            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
-                if (startingGitSha !== null) {
-                    const currentGitSha = this.findCurrentGitSha();
-                    if (currentGitSha !== startingGitSha) {
-                        this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
-                    }
-                }
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
             // Commit migration
             if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
+                let message = `${packageName} migration - ${migration.name}.`;
                 if (migration.description) {
                     message += '\n' + migration.description;
                 }
                 // TODO: Use result.files once package install tasks are accounted
                 this.createCommit(message, []);
             }
+            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.\n`));
         }
         return true;
     }
@@ -197,10 +193,10 @@ class UpdateCommand extends command_1.Command {
         const statusCheck = packages.length === 0 && !options.all;
         if (!statusCheck && !this.checkCleanGit()) {
             if (options.allowDirty) {
-                this.logger.warn('Repository is not clean.  Update changes will be mixed with pre-existing changes.');
+                this.logger.warn('Repository is not clean. Update changes will be mixed with pre-existing changes.');
             }
             else {
-                this.logger.error('Repository is not clean.  Please commit or stash any changes before updating.');
+                this.logger.error('Repository is not clean. Please commit or stash any changes before updating.');
                 return 2;
             }
         }
@@ -406,6 +402,7 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
+            next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
