@@ -43,15 +43,7 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     process.on('exit', () => rimraf.sync(tempPath));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
-    let tempNodeModules;
-    if (packageManager !== schema_1.PackageManager.Yarn && process.platform !== 'win32') {
-        // Global installs on Unix systems go to {prefix}/lib/node_modules.
-        // Global installs on Windows go to {prefix}/node_modules (that is, no lib folder.)
-        tempNodeModules = path_1.join(tempPath, 'lib', 'node_modules');
-    }
-    else {
-        tempNodeModules = path_1.join(tempPath, 'node_modules');
-    }
+    const tempNodeModules = path_1.join(tempPath, 'node_modules');
     const installArgs = [
         packageManagerArgs.prefix,
         // Yarn will no append 'node_modules' to the path
