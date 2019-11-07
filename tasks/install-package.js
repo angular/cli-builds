@@ -26,17 +26,17 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     if (save === 'devDependencies') {
         installArgs.push(packageManagerArgs.saveDev);
     }
-    const { status, stderr } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
+    const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
         stdio: 'pipe',
         encoding: 'utf8',
         cwd,
     });
     if (status !== 0) {
-        let errors = stderr.trim();
-        if (errors.length) {
-            errors += '\n';
+        let errorMessage = ((error && error.message) || stderr || stdout || '').trim();
+        if (errorMessage) {
+            errorMessage += '\n';
         }
-        throw new Error(errors + `Package install failed${errors.length ? ', see above' : ''}.`);
+        throw new Error(errorMessage + `Package install failed${errorMessage ? ', see above' : ''}.`);
     }
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
