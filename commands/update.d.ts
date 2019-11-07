@@ -11,6 +11,10 @@ export interface Schema {
      */
     allowDirty?: boolean;
     /**
+     * Create source control commits for updates and migrations.
+     */
+    createCommits?: boolean;
+    /**
      * If false, will error out if installed packages are incompatible with the update.
      */
     force?: boolean;
@@ -35,10 +39,6 @@ export interface Schema {
      * The names of package(s) to update.
      */
     packages?: string[];
-    /**
-     * Do not create source control commits for updates and migrations.
-     */
-    skipCommits?: boolean;
     /**
      * Version up to which to apply migrations. Only available with a single package being
      * updated, and only on migrations only. Requires from to be specified. Default to the
