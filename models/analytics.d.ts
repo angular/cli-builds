@@ -6,6 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics } from '@angular-devkit/core';
+export declare const AnalyticsProperties: {
+    AngularCliProd: string;
+    AngularCliStaging: string;
+    readonly AngularCliDefault: string;
+};
 /**
  * This is the ultimate safelist for checking if a package name is safe to report to analytics.
  */
@@ -54,15 +59,24 @@ export declare function promptGlobalAnalytics(force?: boolean): Promise<boolean>
  * @return Whether or not the user was shown a prompt.
  */
 export declare function promptProjectAnalytics(force?: boolean): Promise<boolean>;
+export declare function hasGlobalAnalyticsConfiguration(): Promise<boolean>;
 /**
  * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
  * or undefined if analytics are disabled.
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-export declare function getGlobalAnalytics(): UniversalAnalytics | undefined;
+export declare function getGlobalAnalytics(): Promise<UniversalAnalytics | undefined>;
+export declare function hasWorkspaceAnalyticsConfiguration(): Promise<boolean>;
+/**
+ * Get the workspace analytics object for the user. This returns an instance of UniversalAnalytics,
+ * or undefined if analytics are disabled.
+ *
+ * If any problem happens, it is considered the user has been opting out of analytics.
+ */
+export declare function getWorkspaceAnalytics(): Promise<UniversalAnalytics | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
  */
-export declare function getSharedAnalytics(): UniversalAnalytics | undefined;
+export declare function getSharedAnalytics(): Promise<UniversalAnalytics | undefined>;

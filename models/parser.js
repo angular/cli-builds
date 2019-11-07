@@ -12,7 +12,7 @@ const core_1 = require("@angular-devkit/core");
 const interface_1 = require("./interface");
 class ParseArgumentException extends core_1.BaseException {
     constructor(comments, parsed, ignored) {
-        super(`One or more errors occured while parsing arguments:\n  ${comments.join('\n  ')}`);
+        super(`One or more errors occurred while parsing arguments:\n  ${comments.join('\n  ')}`);
         this.comments = comments;
         this.parsed = parsed;
         this.ignored = ignored;
@@ -76,10 +76,8 @@ function _coerce(str, o, v) {
         // enum. If there's no enum, just return the first one that matches.
         for (const type of types) {
             const maybeResult = _coerceType(str, type, v);
-            if (maybeResult !== undefined) {
-                if (!o.enum || o.enum.includes(maybeResult)) {
-                    return maybeResult;
-                }
+            if (maybeResult !== undefined && (!o.enum || o.enum.includes(maybeResult))) {
+                return maybeResult;
             }
         }
         return undefined;
@@ -127,11 +125,9 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
             if (maybeOption) {
                 value = nextArg;
                 let shouldShift = true;
-                if (value && value.startsWith('-')) {
+                if (value && value.startsWith('-') && _coerce(undefined, maybeOption) !== undefined) {
                     // Verify if not having a value results in a correct parse, if so don't shift.
-                    if (_coerce(undefined, maybeOption) !== undefined) {
-                        shouldShift = false;
-                    }
+                    shouldShift = false;
                 }
                 // Only absorb it if it leads to a better value.
                 if (shouldShift && _coerce(value, maybeOption) !== undefined) {
@@ -164,7 +160,7 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
         const v = _coerce(value, option, parsedOptions[option.name]);
         if (v !== undefined) {
             if (parsedOptions[option.name] !== v) {
-                if (parsedOptions[option.name] !== undefined) {
+                if (parsedOptions[option.name] !== undefined && option.type !== interface_1.OptionType.Array) {
                     warnings.push(`Option ${JSON.stringify(option.name)} was already specified with value `
                         + `${JSON.stringify(parsedOptions[option.name])}. The new value ${JSON.stringify(v)} `
                         + `will override it.`);
@@ -231,7 +227,9 @@ function parseFreeFormArguments(args) {
             leftovers.push(arg);
         }
     }
-    parsedOptions['--'] = leftovers;
+    if (leftovers.length) {
+        parsedOptions['--'] = leftovers;
+    }
     return parsedOptions;
 }
 exports.parseFreeFormArguments = parseFreeFormArguments;

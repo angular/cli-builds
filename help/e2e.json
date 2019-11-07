@@ -5,7 +5,7 @@
   "options": [
     {
       "name": "project",
-      "description": "The name of the project to build. Can be an app or a library.",
+      "description": "The name of the project to build. Can be an application or a library.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
+      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.\nSetting this explicitly overrides the \"--prod\" flag",
       "type": "string",
       "required": false,
       "aliases": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "prod",
-      "description": "When true, sets the build configuration to the production target.\nAll builds make use of bundling and limited tree-shaking. A production build also runs limited dead code elimination.",
+      "description": "Shorthand for \"--configuration=production\".\nWhen true, sets the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
       "type": "boolean",
       "required": false,
       "aliases": [],
@@ -111,7 +111,6 @@
       "name": "host",
       "description": "Host to listen on.",
       "type": "string",
-      "default": "localhost",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -122,8 +121,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use \"baseUrl\" in the Protractor config file instead."
+      "hidden": false
     }
   ],
   "aliases": [

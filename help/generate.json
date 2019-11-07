@@ -16,22 +16,21 @@
           "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
             {
-              "name": "main",
-              "description": "The name of the main entry-point file.",
-              "type": "string",
-              "default": "main.server.ts",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
               "name": "clientProject",
               "description": "The name of the related client app.",
               "type": "string",
               "required": false,
               "aliases": [],
               "hidden": false
+            },
+            {
+              "name": "universalProject",
+              "description": "The name of related Universal app.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "route",
@@ -49,7 +48,8 @@
               "required": false,
               "aliases": [],
               "format": "html-selector",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "appId",
@@ -69,7 +69,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "root",
@@ -79,7 +80,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "index",
@@ -89,14 +91,17 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
-              "name": "universalProject",
-              "description": "The name of related Universal app.",
+              "name": "main",
+              "description": "The name of the main entry-point file.",
               "type": "string",
+              "default": "main.server.ts",
               "required": false,
               "aliases": [],
+              "format": "path",
               "hidden": false
             },
             {
@@ -106,7 +111,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "tsconfigFileName",
@@ -126,7 +132,8 @@
               "required": false,
               "aliases": [],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             },
             {
               "name": "appDir",
@@ -168,7 +175,8 @@
                 "D"
               ],
               "format": "path",
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             }
           ],
           "aliases": []
@@ -178,18 +186,6 @@
           "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
           "options": [
             {
-              "name": "prefix",
-              "description": "A prefix to apply to generated selectors.",
-              "type": "string",
-              "default": "app",
-              "required": false,
-              "aliases": [
-                "p"
-              ],
-              "format": "html-selector",
-              "hidden": false
-            },
-            {
               "name": "projectRoot",
               "description": "The root directory of the new app.",
               "type": "string",
@@ -198,14 +194,13 @@
               "hidden": true
             },
             {
-              "name": "enableIvy",
-              "description": "**EXPERIMENTAL** True to create a new app that uses the Ivy rendering engine.",
-              "type": "boolean",
-              "default": false,
+              "name": "name",
+              "description": "The name of the new app.",
+              "type": "string",
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 8
+              "positional": 0
             },
             {
               "name": "inlineStyle",
@@ -253,16 +248,20 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 17
             },
             {
-              "name": "name",
-              "description": "The name of the new app.",
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
               "type": "string",
+              "default": "app",
               "required": false,
-              "aliases": [],
-              "hidden": false,
-              "positional": 0
+              "aliases": [
+                "p"
+              ],
+              "format": "html-selector",
+              "hidden": false
             },
             {
               "name": "style",
@@ -365,16 +364,6 @@
               "hidden": false
             },
             {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new class.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
-            },
-            {
               "name": "skipTests",
               "description": "When true, does not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
@@ -411,23 +400,6 @@
           "description": "Creates a new generic component definition in the given or default project.",
           "options": [
             {
-              "name": "style",
-              "description": "The file extension or preprocessor to use for style files.",
-              "type": "string",
-              "default": "css",
-              "enum": [
-                "css",
-                "scss",
-                "sass",
-                "less",
-                "styl"
-              ],
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 5
-            },
-            {
               "name": "path",
               "description": "The path at which to create the component file, relative to the current workspace. Default is a folder with the same name as the component in the project root.",
               "type": "string",
@@ -435,6 +407,14 @@
               "aliases": [],
               "format": "path",
               "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
             },
             {
               "name": "name",
@@ -512,32 +492,30 @@
               "hidden": false
             },
             {
-              "name": "styleext",
-              "description": "The file extension to use for style files.",
+              "name": "style",
+              "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
               "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less",
+                "styl"
+              ],
               "required": false,
               "aliases": [],
               "hidden": false,
-              "deprecated": "Use \"style\" instead."
+              "userAnalytics": 5
             },
             {
-              "name": "project",
-              "description": "The name of the project.",
+              "name": "type",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
               "type": "string",
+              "default": "Component",
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new component.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
             },
             {
               "name": "skipTests",
@@ -578,6 +556,15 @@
               "hidden": false
             },
             {
+              "name": "skipSelector",
+              "description": "Specifies if the component should have a selector or not.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
               "name": "module",
               "description": "The declaring NgModule.",
               "type": "string",
@@ -604,7 +591,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "Since version 9.0.0 with Ivy, entryComponents is no longer necessary."
             },
             {
               "name": "lintFix",
@@ -624,16 +612,6 @@
           "description": "Creates a new generic directive definition in the given or default project.",
           "options": [
             {
-              "name": "skipImport",
-              "description": "When true, does not import this directive into the owning NgModule.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 18
-            },
-            {
               "name": "name",
               "description": "The name of the new directive.",
               "type": "string",
@@ -641,6 +619,15 @@
               "aliases": [],
               "hidden": false,
               "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
             },
             {
               "name": "project",
@@ -661,16 +648,6 @@
               "hidden": false
             },
             {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new directive.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
-            },
-            {
               "name": "skipTests",
               "description": "When true, does not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
@@ -681,13 +658,14 @@
               "userAnalytics": 12
             },
             {
-              "name": "path",
-              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
-              "type": "string",
+              "name": "skipImport",
+              "description": "When true, does not import this directive into the owning NgModule.",
+              "type": "boolean",
+              "default": false,
               "required": false,
               "aliases": [],
-              "format": "path",
-              "hidden": true
+              "hidden": false,
+              "userAnalytics": 18
             },
             {
               "name": "selector",
@@ -859,6 +837,68 @@
               "required": false,
               "aliases": [],
               "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "interceptor": {
+          "name": "interceptor",
+          "description": "Creates a new, generic interceptor definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the interceptor.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interceptor, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates files at the top level of the project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skipTests",
+              "description": "When true, does not create \"spec.ts\" test files for the new interceptor.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "lintFix",
+              "description": "When true, applies lint fixes after generating the interceptor.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1053,6 +1093,14 @@
               "hidden": false
             },
             {
+              "name": "route",
+              "description": "The route path for a lazy-loaded module. When supplied, creates a component in the new module, and adds the route to that component in the `Routes` array declared in the module provided in the `--module` option.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
               "name": "flat",
               "description": "When true, creates the new files at the top level of the current project root. ",
               "type": "boolean",
@@ -1131,16 +1179,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new pipe.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
             },
             {
               "name": "skipTests",
@@ -1235,16 +1273,6 @@
               "hidden": false
             },
             {
-              "name": "spec",
-              "description": "When true (the default), generates a  \"spec.ts\" test file for the new service.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Use \"skipTests\" instead."
-            },
-            {
               "name": "skipTests",
               "description": "When true, does not create \"spec.ts\" test files for the new service.",
               "type": "boolean",
@@ -1256,7 +1284,7 @@
             },
             {
               "name": "lintFix",
-              "description": "When true, applies lint fixes after generating the pipe.",
+              "description": "When true, applies lint fixes after generating the service.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1293,107 +1321,6 @@
               "description": "The configuration to apply service worker to.",
               "type": "string",
               "default": "production",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            }
-          ],
-          "aliases": []
-        },
-        "universal": {
-          "name": "universal",
-          "description": "Pass this schematic to the \"run\" command to set up server-side rendering for an app.",
-          "options": [
-            {
-              "name": "clientProject",
-              "description": "The name of the related client app. Required in place of \"project\".",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
-              "name": "appId",
-              "description": "The app identifier to use for transition.",
-              "type": "string",
-              "default": "serverApp",
-              "required": false,
-              "aliases": [],
-              "format": "html-selector",
-              "hidden": false
-            },
-            {
-              "name": "main",
-              "description": "The name of the main entry-point file.",
-              "type": "string",
-              "default": "main.server.ts",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "test",
-              "description": "The name of the test entry-point file.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "tsconfigFileName",
-              "description": "The name of the TypeScript configuration file.",
-              "type": "string",
-              "default": "tsconfig.server",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
-              "name": "testTsconfigFileName",
-              "description": "The name of the TypeScript configuration file for tests.",
-              "type": "string",
-              "default": "tsconfig.spec",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "appDir",
-              "description": "The name of the application folder.",
-              "type": "string",
-              "default": "app",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "rootModuleFileName",
-              "description": "The name of the root NgModule file.",
-              "type": "string",
-              "default": "app.server.module.ts",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "rootModuleClassName",
-              "description": "The name of the root NgModule class.",
-              "type": "string",
-              "default": "AppServerModule",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
-              "name": "skipInstall",
-              "description": "When true, does not install packages for dependencies.",
-              "type": "boolean",
-              "default": false,
               "required": false,
               "aliases": [],
               "hidden": false

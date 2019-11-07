@@ -7,3 +7,7 @@ var HelpEnum;
     HelpEnum["HelpJson"] = "JSON";
     HelpEnum["Json"] = "json";
 })(HelpEnum = exports.HelpEnum || (exports.HelpEnum = {}));
+var VersionEnum;
+(function (VersionEnum) {
+    VersionEnum["Next"] = "next";
+})(VersionEnum = exports.VersionEnum || (exports.VersionEnum = {}));

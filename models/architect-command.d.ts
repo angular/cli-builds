@@ -7,7 +7,7 @@
  */
 import { Architect, Target } from '@angular-devkit/architect';
 import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
-import { experimental, json } from '@angular-devkit/core';
+import { json, workspaces } from '@angular-devkit/core';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments } from './interface';
 export interface ArchitectCommandOptions extends BaseCommandOptions {
@@ -16,14 +16,15 @@ export interface ArchitectCommandOptions extends BaseCommandOptions {
     prod?: boolean;
     target?: string;
 }
-export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<ArchitectCommandOptions> {
+export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<T> {
     protected _architect: Architect;
     protected _architectHost: WorkspaceNodeModulesArchitectHost;
-    protected _workspace: experimental.workspace.Workspace;
+    protected _workspace: workspaces.WorkspaceDefinition;
     protected _registry: json.schema.SchemaRegistry;
     protected multiTarget: boolean;
     target: string | undefined;
-    initialize(options: ArchitectCommandOptions & Arguments): Promise<void>;
+    missingTargetError: string | undefined;
+    initialize(options: T & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
     protected runBepTarget<T>(command: string, configuration: Target, overrides: json.JsonObject, buildEventLog: string): Promise<number>;
     protected runSingleTarget(target: Target, targetOptions: string[], commandOptions: ArchitectCommandOptions & Arguments): Promise<number>;

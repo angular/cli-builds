@@ -1,10 +1,19 @@
 'use strict';
 // This file is ES6 because it needs to be executed as is.
 
-try {
-  const analytics = require('../../models/analytics');
+if ('NG_CLI_ANALYTICS' in process.env) {
+  return;
+}
 
-  if (analytics.getGlobalAnalytics() === undefined) {
-    analytics.promptGlobalAnalytics();
-  }
+try {
+  var analytics = require('../../models/analytics');
+
+  analytics
+    .hasGlobalAnalyticsConfiguration()
+    .then(hasGlobalConfig => {
+      if (!hasGlobalConfig) {
+        return analytics.promptGlobalAnalytics();
+      }
+    })
+    .catch(() => {});
 } catch (_) {}

@@ -15,10 +15,32 @@ const inquirer = require("inquirer");
 const os = require("os");
 const ua = require("universal-analytics");
 const uuid_1 = require("uuid");
+const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
+const tty_1 = require("../utilities/tty");
+// tslint:disable: no-console
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
 const analyticsLogDebug = debug('ng:analytics:log'); // Actual logs of events.
-const BYTES_PER_MEGABYTES = 1024 * 1024;
+const BYTES_PER_GIGABYTES = 1024 * 1024 * 1024;
+let _defaultAngularCliPropertyCache;
+exports.AnalyticsProperties = {
+    AngularCliProd: 'UA-8594346-29',
+    AngularCliStaging: 'UA-8594346-32',
+    get AngularCliDefault() {
+        if (_defaultAngularCliPropertyCache) {
+            return _defaultAngularCliPropertyCache;
+        }
+        const v = require('../package.json').version;
+        // The logic is if it's a full version then we should use the prod GA property.
+        if (/^\d+\.\d+\.\d+$/.test(v) && v !== '0.0.0') {
+            _defaultAngularCliPropertyCache = exports.AnalyticsProperties.AngularCliProd;
+        }
+        else {
+            _defaultAngularCliPropertyCache = exports.AnalyticsProperties.AngularCliStaging;
+        }
+        return _defaultAngularCliPropertyCache;
+    },
+};
 /**
  * This is the ultimate safelist for checking if a package name is safe to report to analytics.
  */
@@ -52,7 +74,10 @@ function _getWindowsLanguageCode() {
     try {
         // This is true on Windows XP, 7, 8 and 10 AFAIK. Would return empty string or fail if it
         // doesn't work.
-        return child_process.execSync('wmic.exe os get locale').toString().trim();
+        return child_process
+            .execSync('wmic.exe os get locale')
+            .toString()
+            .trim();
     }
     catch (_) { }
     return undefined;
@@ -63,11 +88,11 @@ function _getWindowsLanguageCode() {
  */
 function _getLanguage() {
     // Note: Windows does not expose the configured language by default.
-    return process.env.LANG // Default Unix env variable.
-        || process.env.LC_CTYPE // For C libraries. Sometimes the above isn't set.
-        || process.env.LANGSPEC // For Windows, sometimes this will be set (not always).
-        || _getWindowsLanguageCode()
-        || '??'; // ¯\_(ツ)_/¯
+    return (process.env.LANG || // Default Unix env variable.
+        process.env.LC_CTYPE || // For C libraries. Sometimes the above isn't set.
+        process.env.LANGSPEC || // For Windows, sometimes this will be set (not always).
+        _getWindowsLanguageCode() ||
+        '??'); // ¯\_(ツ)_/¯
 }
 /**
  * Return the number of CPUs.
@@ -92,8 +117,8 @@ function _getCpuSpeed() {
  * @private
  */
 function _getRamSize() {
-    // Report in megabytes. Otherwise it's too much noise.
-    return Math.floor(os.totalmem() / BYTES_PER_MEGABYTES);
+    // Report in gigabytes (or closest). Otherwise it's too much noise.
+    return Math.round(os.totalmem() / BYTES_PER_GIGABYTES);
 }
 /**
  * Get the Node name and version. This returns a string like "Node 10.11", or "io.js 3.5".
@@ -103,8 +128,8 @@ function _getNodeVersion() {
     // We use any here because p.release is a new Node construct in Node 10 (and our typings are the
     // minimal version of Node we support).
     const p = process; // tslint:disable-line:no-any
-    const name = typeof p.release == 'object' && typeof p.release.name == 'string' && p.release.name
-        || process.argv0;
+    const name = (typeof p.release == 'object' && typeof p.release.name == 'string' && p.release.name) ||
+        process.argv0;
     return name + ' ' + process.version;
 }
 /**
@@ -114,7 +139,7 @@ function _getNodeVersion() {
 function _getNumericNodeVersion() {
     const p = process.version;
     const m = p.match(/\d+\.\d+/);
-    return m && m[0] && parseFloat(m[0]) || 0;
+    return (m && m[0] && parseFloat(m[0])) || 0;
 }
 // These are just approximations of UA strings. We just try to fool Google Analytics to give us the
 // data we want.
@@ -225,7 +250,7 @@ class UniversalAnalytics {
         // We set custom metrics for values we care about.
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuCount] = _getCpuCount();
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.CpuSpeed] = _getCpuSpeed();
-        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.RamInMegabytes] = _getRamSize();
+        this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.RamInGigabytes] = _getRamSize();
         this._dimensions[core_1.analytics.NgCliAnalyticsDimensions.NodeVersion] = _getNumericNodeVersion();
     }
     /**
@@ -234,10 +259,10 @@ class UniversalAnalytics {
      */
     _customVariables(options) {
         const additionals = {};
-        this._dimensions.forEach((v, i) => additionals['cd' + i] = v);
-        (options.dimensions || []).forEach((v, i) => additionals['cd' + i] = v);
-        this._metrics.forEach((v, i) => additionals['cm' + i] = v);
-        (options.metrics || []).forEach((v, i) => additionals['cm' + i] = v);
+        this._dimensions.forEach((v, i) => (additionals['cd' + i] = v));
+        (options.dimensions || []).forEach((v, i) => (additionals['cd' + i] = v));
+        this._metrics.forEach((v, i) => (additionals['cm' + i] = v));
+        (options.metrics || []).forEach((v, i) => (additionals['cm' + i] = v));
         return additionals;
     }
     event(ec, ea, options = {}) {
@@ -309,7 +334,7 @@ exports.setAnalyticsConfig = setAnalyticsConfig;
  */
 async function promptGlobalAnalytics(force = false) {
     analyticsDebug('prompting global analytics.');
-    if (force || (process.stdout.isTTY && process.stdin.isTTY)) {
+    if (force || tty_1.isTTY()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -329,9 +354,19 @@ async function promptGlobalAnalytics(force = false) {
         Thank you for sharing anonymous usage data. If you change your mind, the following
         command will disable this feature entirely:
 
-            ${core_1.terminal.yellow('ng analytics off')}
+            ${color_1.colors.yellow('ng analytics off')}
       `);
             console.log('');
+            // Send back a ping with the user `optin`.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optin');
+            ua.pageview('/telemetry/optin');
+            await ua.flush();
+        }
+        else {
+            // Send back a ping with the user `optout`. This is the only thing we send.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optout');
+            ua.pageview('/telemetry/optout');
+            await ua.flush();
         }
         return true;
     }
@@ -353,7 +388,7 @@ async function promptProjectAnalytics(force = false) {
     if (!config || !configPath) {
         throw new Error(`Could not find a local workspace. Are you in a project?`);
     }
-    if (force || (process.stdout.isTTY && process.stdin.isTTY)) {
+    if (force || tty_1.isTTY()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -374,24 +409,46 @@ async function promptProjectAnalytics(force = false) {
         Thank you for sharing anonymous usage data. Would you change your mind, the following
         command will disable this feature entirely:
 
-            ${core_1.terminal.yellow('ng analytics project off')}
+            ${color_1.colors.yellow('ng analytics project off')}
       `);
             console.log('');
+            // Send back a ping with the user `optin`.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optin');
+            ua.pageview('/telemetry/project/optin');
+            await ua.flush();
+        }
+        else {
+            // Send back a ping with the user `optout`. This is the only thing we send.
+            const ua = new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, 'optout');
+            ua.pageview('/telemetry/project/optout');
+            await ua.flush();
         }
         return true;
     }
     return false;
 }
 exports.promptProjectAnalytics = promptProjectAnalytics;
+async function hasGlobalAnalyticsConfiguration() {
+    try {
+        const globalWorkspace = await config_1.getWorkspace('global');
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
+        if (analyticsConfig !== null && analyticsConfig !== undefined) {
+            return true;
+        }
+    }
+    catch (_a) { }
+    return false;
+}
+exports.hasGlobalAnalyticsConfiguration = hasGlobalAnalyticsConfiguration;
 /**
  * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
  * or undefined if analytics are disabled.
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-function getGlobalAnalytics() {
+async function getGlobalAnalytics() {
     analyticsDebug('getGlobalAnalytics');
-    const propertyId = 'UA-8594346-29';
+    const propertyId = exports.AnalyticsProperties.AngularCliDefault;
     if ('NG_CLI_ANALYTICS' in process.env) {
         if (process.env['NG_CLI_ANALYTICS'] == 'false' || process.env['NG_CLI_ANALYTICS'] == '') {
             analyticsDebug('NG_CLI_ANALYTICS is false');
@@ -404,10 +461,8 @@ function getGlobalAnalytics() {
     }
     // If anything happens we just keep the NOOP analytics.
     try {
-        const globalWorkspace = config_1.getWorkspace('global');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analytics'];
+        const globalWorkspace = await config_1.getWorkspace('global');
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         analyticsDebug('Client Analytics config found: %j', analyticsConfig);
         if (analyticsConfig === false) {
             analyticsDebug('Analytics disabled. Ignoring all analytics.');
@@ -441,11 +496,68 @@ function getGlobalAnalytics() {
     }
 }
 exports.getGlobalAnalytics = getGlobalAnalytics;
+async function hasWorkspaceAnalyticsConfiguration() {
+    try {
+        const globalWorkspace = await config_1.getWorkspace('local');
+        const analyticsConfig = globalWorkspace
+            && globalWorkspace.getCli()
+            && globalWorkspace.getCli()['analytics'];
+        if (analyticsConfig !== undefined) {
+            return true;
+        }
+    }
+    catch (_a) { }
+    return false;
+}
+exports.hasWorkspaceAnalyticsConfiguration = hasWorkspaceAnalyticsConfiguration;
+/**
+ * Get the workspace analytics object for the user. This returns an instance of UniversalAnalytics,
+ * or undefined if analytics are disabled.
+ *
+ * If any problem happens, it is considered the user has been opting out of analytics.
+ */
+async function getWorkspaceAnalytics() {
+    analyticsDebug('getWorkspaceAnalytics');
+    try {
+        const globalWorkspace = await config_1.getWorkspace('local');
+        const analyticsConfig = globalWorkspace
+            && globalWorkspace.getCli()
+            && globalWorkspace.getCli()['analytics'];
+        analyticsDebug('Workspace Analytics config found: %j', analyticsConfig);
+        if (analyticsConfig === false) {
+            analyticsDebug('Analytics disabled. Ignoring all analytics.');
+            return undefined;
+        }
+        else if (analyticsConfig === undefined || analyticsConfig === null) {
+            analyticsDebug('Analytics settings not found. Ignoring all analytics.');
+            return undefined;
+        }
+        else {
+            let uid = undefined;
+            if (typeof analyticsConfig == 'string') {
+                uid = analyticsConfig;
+            }
+            else if (typeof analyticsConfig == 'object' && typeof analyticsConfig['uid'] == 'string') {
+                uid = analyticsConfig['uid'];
+            }
+            analyticsDebug('client id: %j', uid);
+            if (uid == undefined) {
+                return undefined;
+            }
+            return new UniversalAnalytics(exports.AnalyticsProperties.AngularCliDefault, uid);
+        }
+    }
+    catch (err) {
+        analyticsDebug('Error happened during reading of analytics config: %s', err.message);
+        return undefined;
+    }
+}
+exports.getWorkspaceAnalytics = getWorkspaceAnalytics;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
  */
-function getSharedAnalytics() {
+async function getSharedAnalytics() {
     analyticsDebug('getSharedAnalytics');
     const envVarName = 'NG_CLI_ANALYTICS_SHARE';
     if (envVarName in process.env) {
@@ -456,10 +568,8 @@ function getSharedAnalytics() {
     }
     // If anything happens we just keep the NOOP analytics.
     try {
-        const globalWorkspace = config_1.getWorkspace('global');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analyticsSharing'];
+        const globalWorkspace = await config_1.getWorkspace('global');
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analyticsSharing'];
         if (!analyticsConfig || !analyticsConfig.tracking || !analyticsConfig.uuid) {
             return undefined;
         }

@@ -27,7 +27,7 @@
     "projects": {
       "type": "object",
       "patternProperties": {
-        "^[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*$": {
+        "^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$": {
           "$ref": "#/definitions/project"
         }
       },
@@ -65,6 +65,10 @@
               "x-deprecated": true
             }
           }
+        },
+        "analytics": {
+          "type": ["boolean", "string"],
+          "description": "Share anonymous usage data with the Angular Team at Google."
         }
       },
       "additionalProperties": false
@@ -130,16 +134,6 @@
               "description": "Flag to skip the module import.",
               "default": false
             },
-            "spec": {
-              "type": "boolean",
-              "description": "Specifies if a spec file is generated.",
-              "default": true
-            },
-            "styleext": {
-              "description": "The file extension to be used for style files.",
-              "type": "string",
-              "default": "css"
-            },
             "style": {
               "description": "The file extension or preprocessor to use for style files.",
               "type": "string",
@@ -195,11 +189,6 @@
               "description": "Flag to skip the module import.",
               "default": false
             },
-            "spec": {
-              "type": "boolean",
-              "description": "Specifies if a spec file is generated.",
-              "default": true
-            },
             "skipTests": {
               "type": "boolean",
               "description": "When true, does not create test files.",
@@ -247,11 +236,6 @@
               "default": true,
               "description": "Flag to indicate if a directory is created."
             },
-            "spec": {
-              "type": "boolean",
-              "description": "Specifies if a spec file is generated.",
-              "default": true
-            },
             "skipTests": {
               "type": "boolean",
               "description": "When true, does not create test files.",
@@ -266,11 +250,6 @@
               "type": "boolean",
               "default": true,
               "description": "Flag to indicate if a directory is created."
-            },
-            "spec": {
-              "type": "boolean",
-              "description": "Specifies if a spec file is generated.",
-              "default": true
             },
             "skipTests": {
               "type": "boolean",
@@ -298,11 +277,6 @@
         "@schematics/angular:class": {
           "type": "object",
           "properties": {
-            "spec": {
-              "type": "boolean",
-              "description": "Specifies if a spec file is generated.",
-              "default": true
-            },
             "skipTests": {
               "type": "boolean",
               "description": "When true, does not create test files.",
@@ -337,6 +311,9 @@
         "root": {
           "type": "string",
           "description": "Root of the project files."
+        },
+        "i18n": {
+          "$ref": "#/definitions/project/definitions/i18n"
         },
         "sourceRoot": {
           "type": "string",
@@ -394,6 +371,28 @@
         "^[a-z]{1,3}-.*": {}
       },
       "definitions": {
+        "i18n": {
+          "description": "Project i18n options",
+          "type": "object",
+          "properties": {
+            "sourceLocale": {
+              "type": "string",
+              "description": "Specifies the source language of the application.",
+              "default": "en-US"
+            },
+            "locales": {
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[a-z]{2}(-[a-zA-Z]{2,})?$": {
+                  "type": "string",
+                  "description": "Localization file to use for i18n"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
         "target": {
           "oneOf": [
             {
@@ -752,21 +751,26 @@
               "description": "Log progress to the console while building.",
               "default": true
             },
+            "localize": {
+              "$ref": "#/definitions/buildersOptions/localize"
+            },
+            "i18nMissingTranslation": {
+              "$ref": "#/definitions/buildersOptions/missingTranslation"
+            },
             "i18nFile": {
               "type": "string",
-              "description": "Localization file to use for i18n."
+              "description": "Localization file to use for i18n.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "i18nFormat": {
               "type": "string",
-              "description": "Format of the localization file specified with --i18n-file."
+              "description": "Format of the localization file specified with --i18n-file.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "i18nLocale": {
               "type": "string",
-              "description": "Locale to use for i18n."
-            },
-            "i18nMissingTranslation": {
-              "type": "string",
-              "description": "How to handle missing translations for i18n."
+              "description": "Locale to use for i18n.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "extractCss": {
               "type": "boolean",
@@ -843,8 +847,31 @@
               "default": false
             },
             "index": {
-              "type": "string",
-              "description": "The name of the index HTML file."
+              "description": "Configures the generation of the application's HTML index.",
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "The path of a file to use for the application's HTML index. The filename of the specified path will be used for the generated file and will be created in the root of the application's configured output path."
+                },
+                {
+                  "type": "object",
+                  "description": "",
+                  "properties": {
+                    "input": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "The path of a file to use for the application's generated HTML index."
+                    },
+                    "output": {
+                      "type": "string",
+                      "minLength": 1,
+                      "default": "index.html",
+                      "description": "The output path of the application's generated HTML index file. The full provided path will be used and will be considered relative to the application's configured output path."
+                    }
+                  },
+                  "required": ["input"]
+                }
+              ]
             },
             "statsJson": {
               "type": "boolean",
@@ -887,10 +914,15 @@
               "type": "string",
               "description": "TypeScript configuration for Web Worker modules."
             },
-            "experimentalImportFactories": {
-              "description": "**EXPERIMENTAL** Transform import statements for lazy routes to import factories when using View Engine. Should only be used when switching back and forth between View Engine and Ivy. See https://angular.io/guide/ivy for usage information.",
-              "type": "boolean",
-              "default": false
+            "crossOrigin": {
+              "type": "string",
+              "description": "Define the crossorigin attribute setting of elements that provide CORS support.",
+              "default": "none",
+              "enum": [
+                "none",
+                "anonymous",
+                "use-credentials"
+              ]
             }
           },
           "additionalProperties": false,
@@ -986,6 +1018,11 @@
                       "type": "boolean",
                       "description": "If the bundle will be lazy loaded.",
                       "default": false
+                    },
+                    "inject": {
+                      "type": "boolean",
+                      "description": "If the bundle will be referenced in the HTML file.",
+                      "default": true
                     }
                   },
                   "additionalProperties": false,
@@ -1010,6 +1047,7 @@
                     "allScript",
                     "any",
                     "anyScript",
+                    "anyComponentStyle",
                     "bundle",
                     "initial"
                   ]
@@ -1103,6 +1141,14 @@
             "publicHost": {
               "type": "string",
               "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies."
+            },
+            "allowedHosts": {
+              "type": "array",
+              "description": "Whitelist of hosts that are allowed to access the dev server.",
+              "default": [],
+              "items": {
+                "type": "string"
+              }
             },
             "servePath": {
               "type": "string",
@@ -1235,7 +1281,7 @@
               "type": "string",
               "description": "Target to extract from."
             },
-            "i18nFormat": {
+            "format": {
               "type": "string",
               "description": "Output format for the generated file.",
               "default": "xlf",
@@ -1248,9 +1294,24 @@
                 "xliff2"
               ]
             },
+            "i18nFormat": {
+              "type": "string",
+              "description": "Output format for the generated file.",
+              "default": "xlf",
+              "x-deprecated": "Use 'format' option instead.",
+              "enum": [
+                "xmb",
+                "xlf",
+                "xlif",
+                "xliff",
+                "xlf2",
+                "xliff2"
+              ]
+            },
             "i18nLocale": {
               "type": "string",
-              "description": "Specifies the source language of the application."
+              "description": "Specifies the source language of the application.",
+              "x-deprecated": "Use 'i18n' project level sub-option 'sourceLocale' instead."
             },
             "progress": {
               "type": "boolean",
@@ -1507,6 +1568,11 @@
                       "type": "boolean",
                       "description": "If the bundle will be lazy loaded.",
                       "default": false
+                    },
+                    "inject": {
+                      "type": "boolean",
+                      "description": "If the bundle will be referenced in the HTML file.",
+                      "default": true
                     }
                   },
                   "additionalProperties": false,
@@ -1710,21 +1776,26 @@
               "description": "Log progress to the console while building.",
               "default": true
             },
+            "localize": {
+              "$ref": "#/definitions/buildersOptions/localize"
+            },
             "i18nFile": {
               "type": "string",
-              "description": "Localization file to use for i18n."
+              "description": "Localization file to use for i18n.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "i18nFormat": {
               "type": "string",
-              "description": "Format of the localization file specified with --i18n-file."
+              "description": "Format of the localization file specified with --i18n-file.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "i18nLocale": {
               "type": "string",
-              "description": "Locale to use for i18n."
+              "description": "Locale to use for i18n.",
+              "x-deprecated": "Deprecated since 9.0"
             },
             "i18nMissingTranslation": {
-              "type": "string",
-              "description": "How to handle missing translations for i18n."
+              "$ref": "#/definitions/buildersOptions/missingTranslation"
             },
             "outputHashing": {
               "type": "string",
@@ -1913,6 +1984,31 @@
           },
           "additionalProperties": false
         }
+      }
+    },
+    "buildersOptions": {
+      "missingTranslation": {
+        "type": "string",
+        "description": "How to handle missing translations for i18n.",
+        "enum": ["warning", "error", "ignore"],
+        "default": "warning"
+      },
+      "localize": {
+        "oneOf": [
+          {
+            "type": "boolean",
+            "description": "Translate all locales."
+          },
+          {
+            "type": "array",
+            "description": "List of locales ID's to translate.",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z]{2}(-[a-zA-Z]{2,})?$"
+            }
+          }
+        ]
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "name": "build",
   "description": "Compiles an Angular app into an output directory named dist/ at the given output path. Must be executed from within a workspace directory.",
-  "longDescription": "Uses the [webpack](https://webpack.js.org/) build tool, with default configuration options specified in the workspace configuration file (`angular.json`) or with a named alternative configuration. \nA \"production\" configuration is created by default when you use the CLI to create the project, and you can use that configuration by specifying the `--prod` option.\n\nThe configuration options generally correspond to the command options.\nYou can override individual configuration defaults by specifying the corresponding options on the command line. \nThe command can accept option names given in either dash-case or camelCase.\nNote that in the configuration file, you must specify names in camelCase.\n\nSome additional options can only be set through the configuration file,\neither by direct editing or with the `ng config` command.\nThese include `assets`, `styles`, and `scripts` objects that provide runtime-global resources to include in the project. \nResources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nFor further details, see [Workspace Configuration](guide/workspace-config).\n",
+  "longDescription": "The command can be used to build a project of type \"application\" or \"library\".\nWhen used to build a library, a different builder is invoked, and only the `ts-config`, `configuration`, and `watch` options are applied.\nAll other options apply only to building applications.\n\nThe application builder uses the [webpack](https://webpack.js.org/) build tool, with default configuration options specified in the workspace configuration file (`angular.json`) or with a named alternative configuration.\nA \"production\" configuration is created by default when you use the CLI to create the project, and you can use that configuration by specifying the `--configuration=\"production\"` or the `--prod=\"true\"` option.\n\nThe configuration options generally correspond to the command options.\nYou can override individual configuration defaults by specifying the corresponding options on the command line.\nThe command can accept option names given in either dash-case or camelCase.\nNote that in the configuration file, you must specify names in camelCase.\n\nSome additional options can only be set through the configuration file,\neither by direct editing or with the `ng config` command.\nThese include `assets`, `styles`, and `scripts` objects that provide runtime-global resources to include in the project.\nResources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nFor further details, see [Workspace Configuration](guide/workspace-config).\n",
   "options": [
     {
       "name": "project",
-      "description": "The name of the project to build. Can be an app or a library.",
+      "description": "The name of the project to build. Can be an application or a library.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
+      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.\nSetting this explicitly overrides the \"--prod\" flag",
       "type": "string",
       "required": false,
       "aliases": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "prod",
-      "description": "When true, sets the build configuration to the production target.\nAll builds make use of bundling and limited tree-shaking. A production build also runs limited dead code elimination.",
+      "description": "Shorthand for \"--configuration=production\".\nWhen true, sets the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
       "type": "boolean",
       "required": false,
       "aliases": [],
@@ -58,17 +58,16 @@
       "hidden": false
     },
     {
-      "name": "watch",
-      "description": "Run build when files change.",
-      "type": "boolean",
-      "default": false,
+      "name": "main",
+      "description": "The full path for the main entry point to the app, relative to the current workspace.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "main",
-      "description": "The full path for the main entry point to the app, relative to the current workspace.",
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -204,7 +203,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'locales' object in the project metadata instead."
     },
     {
       "name": "i18nFormat",
@@ -212,7 +212,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "No longer needed as the format will be determined automatically."
     },
     {
       "name": "i18nLocale",
@@ -220,12 +221,27 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'localize' instead."
     },
     {
       "name": "i18nMissingTranslation",
       "description": "How to handle missing translations for i18n.",
       "type": "string",
+      "default": "warning",
+      "enum": [
+        "warning",
+        "error",
+        "ignore"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "localize",
+      "description": "",
+      "type": "boolean",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -240,9 +256,10 @@
       "hidden": false
     },
     {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
-      "type": "string",
+      "name": "watch",
+      "description": "Run build when files change.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -362,7 +379,7 @@
     },
     {
       "name": "index",
-      "description": "The name of the index HTML file.",
+      "description": "Configures the generation of the application's HTML index.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -392,7 +409,8 @@
       "type": "array",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
     },
     {
       "name": "profile",
@@ -424,18 +442,32 @@
       "deprecated": true
     },
     {
-      "name": "experimentalImportFactories",
-      "description": "**EXPERIMENTAL** Transform import statements for lazy routes to import factories when using View Engine. Should only be used when switching back and forth between View Engine and Ivy. See https://angular.io/guide/ivy for usage information.",
-      "type": "boolean",
-      "default": false,
+      "name": "webWorkerTsConfig",
+      "description": "TypeScript configuration for Web Worker modules.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "webWorkerTsConfig",
-      "description": "TypeScript configuration for Web Worker modules.",
+      "name": "crossOrigin",
+      "description": "Define the crossorigin attribute setting of elements that provide CORS support.",
       "type": "string",
+      "default": "none",
+      "enum": [
+        "none",
+        "anonymous",
+        "use-credentials"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "experimentalRollupPass",
+      "description": "Concatenate modules with Rollup before bundling them with Webpack.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false

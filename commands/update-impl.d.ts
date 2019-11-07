@@ -1,10 +1,20 @@
-import { Arguments, Option } from '../models/interface';
-import { SchematicCommand } from '../models/schematic-command';
+import { Command } from '../models/command';
+import { Arguments } from '../models/interface';
 import { Schema as UpdateCommandSchema } from './update';
-export declare class UpdateCommand extends SchematicCommand<UpdateCommandSchema> {
+export declare class UpdateCommand extends Command<UpdateCommandSchema> {
     readonly allowMissingWorkspace = true;
-    collectionName: string;
-    schematicName: string;
-    parseArguments(schematicOptions: string[], schema: Option[]): Promise<Arguments>;
-    run(options: UpdateCommandSchema & Arguments): Promise<number | void>;
+    private workflow;
+    private packageManager;
+    initialize(): Promise<void>;
+    private executeSchematic;
+    private executeMigrations;
+    run(options: UpdateCommandSchema & Arguments): Promise<number>;
+    private checkCleanGit;
+    private createCommit;
+    private findCurrentGitSha;
+    /**
+     * Checks if the current installed CLI version is older than the latest version.
+     * @returns `true` when the installed version is older.
+    */
+    private checkCLILatestVersion;
 }

@@ -36,12 +36,10 @@ function readOptions(logger, yarn = false, showPotentials = false) {
         }
     }
     const defaultConfigLocations = [
-        path.join(globalPrefix, 'etc', baseFilename),
-        path.join(os_1.homedir(), dotFilename),
+        (!yarn && process.env.NPM_CONFIG_GLOBALCONFIG) || path.join(globalPrefix, 'etc', baseFilename),
+        (!yarn && process.env.NPM_CONFIG_USERCONFIG) || path.join(os_1.homedir(), dotFilename),
     ];
-    const projectConfigLocations = [
-        path.join(cwd, dotFilename),
-    ];
+    const projectConfigLocations = [path.join(cwd, dotFilename)];
     const root = path.parse(cwd).root;
     for (let curDir = path.dirname(cwd); curDir && curDir !== root; curDir = path.dirname(curDir)) {
         projectConfigLocations.unshift(path.join(curDir, dotFilename));
@@ -101,7 +99,7 @@ async function fetchPackageMetadata(name, logger, options) {
     };
     ensureNpmrc(logger, usingYarn, verbose);
     const response = await pacote.packument(name, {
-        'full-metadata': true,
+        fullMetadata: true,
         ...npmrc,
         ...(registry ? { registry } : {}),
     });
@@ -109,16 +107,19 @@ async function fetchPackageMetadata(name, logger, options) {
     const metadata = {
         name: response.name,
         tags: {},
-        versions: new Map(),
+        versions: {},
     };
     if (response.versions) {
         for (const [version, manifest] of Object.entries(response.versions)) {
-            metadata.versions.set(version, normalizeManifest(manifest));
+            metadata.versions[version] = normalizeManifest(manifest);
         }
     }
     if (response['dist-tags']) {
+        // Store this for use with other npm utility packages
+        // tslint:disable-next-line: no-any
+        metadata['dist-tags'] = response['dist-tags'];
         for (const [tag, version] of Object.entries(response['dist-tags'])) {
-            const manifest = metadata.versions.get(version);
+            const manifest = metadata.versions[version];
             if (manifest) {
                 metadata.tags[tag] = manifest;
             }
@@ -139,7 +140,7 @@ async function fetchPackageManifest(name, logger, options) {
     };
     ensureNpmrc(logger, usingYarn, verbose);
     const response = await pacote.manifest(name, {
-        'full-metadata': true,
+        fullMetadata: true,
         ...npmrc,
         ...(registry ? { registry } : {}),
     });

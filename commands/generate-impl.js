@@ -1,21 +1,15 @@
 "use strict";
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 Object.defineProperty(exports, "__esModule", { value: true });
-// tslint:disable:no-global-tslint-disable no-any
-const core_1 = require("@angular-devkit/core");
 const schematic_command_1 = require("../models/schematic-command");
+const color_1 = require("../utilities/color");
 const json_schema_1 = require("../utilities/json-schema");
 class GenerateCommand extends schematic_command_1.SchematicCommand {
     async initialize(options) {
-        await super.initialize(options);
         // Fill up the schematics property of the command description.
-        const [collectionName, schematicName] = this.parseSchematicInfo(options);
+        const [collectionName, schematicName] = await this.parseSchematicInfo(options);
+        this.collectionName = collectionName;
+        this.schematicName = schematicName;
+        await super.initialize(options);
         const collection = this.getCollection(collectionName);
         const subcommands = {};
         const schematicNames = schematicName ? [schematicName] : collection.listSchematicNames();
@@ -31,7 +25,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
             else {
                 continue;
             }
-            if (this.getDefaultSchematicCollection() == collectionName) {
+            if ((await this.getDefaultSchematicCollection()) == collectionName) {
                 subcommands[name] = subcommand;
             }
             else {
@@ -45,13 +39,12 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     async run(options) {
-        const [collectionName, schematicName] = this.parseSchematicInfo(options);
-        if (!schematicName || !collectionName) {
+        if (!this.schematicName || !this.collectionName) {
             return this.printHelp(options);
         }
         return this.runSchematic({
-            collectionName,
-            schematicName,
+            collectionName: this.collectionName,
+            schematicName: this.schematicName,
             schematicOptions: options['--'] || [],
             debug: !!options.debug || false,
             dryRun: !!options.dryRun || false,
@@ -59,20 +52,18 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     async reportAnalytics(paths, options) {
-        const [collectionName, schematicName] = this.parseSchematicInfo(options);
+        const [collectionName, schematicName] = await this.parseSchematicInfo(options);
         if (!schematicName || !collectionName) {
             return;
         }
         const escapedSchematicName = (this.longSchematicName || schematicName).replace(/\//g, '_');
         return super.reportAnalytics(['generate', collectionName.replace(/\//g, '_'), escapedSchematicName], options);
     }
-    parseSchematicInfo(options) {
-        let collectionName = this.getDefaultSchematicCollection();
+    async parseSchematicInfo(options) {
+        let collectionName = await this.getDefaultSchematicCollection();
         let schematicName = options.schematic;
-        if (schematicName) {
-            if (schematicName.includes(':')) {
-                [collectionName, schematicName] = schematicName.split(':', 2);
-            }
+        if (schematicName && schematicName.includes(':')) {
+            [collectionName, schematicName] = schematicName.split(':', 2);
         }
         return [collectionName, schematicName];
     }
@@ -83,7 +74,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         const subcommand = this.description.options.filter(x => x.subcommands)[0];
         if (Object.keys((subcommand && subcommand.subcommands) || {}).length == 1) {
             this.logger.info(`\nTo see help for a schematic run:`);
-            this.logger.info(core_1.terminal.cyan(`  ng generate <schematic> --help`));
+            this.logger.info(color_1.colors.cyan(`  ng generate <schematic> --help`));
         }
         return 0;
     }

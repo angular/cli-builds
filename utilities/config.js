@@ -38,7 +38,7 @@ function globalFilePath() {
     return null;
 }
 const cachedWorkspaces = new Map();
-function getWorkspace(level = 'local') {
+async function getWorkspace(level = 'local') {
     const cached = cachedWorkspaces.get(level);
     if (cached != undefined) {
         return cached;
@@ -51,7 +51,13 @@ function getWorkspace(level = 'local') {
     const root = core_1.normalize(path.dirname(configPath));
     const file = core_1.normalize(path.basename(configPath));
     const workspace = new core_1.experimental.workspace.Workspace(root, new node_1.NodeJsSyncHost());
-    workspace.loadWorkspaceFromHost(file).subscribe();
+    try {
+        await workspace.loadWorkspaceFromHost(file).toPromise();
+    }
+    catch (error) {
+        throw new Error(`Workspace config file cannot be loaded: ${configPath}`
+            + `\n${error instanceof Error ? error.message : error}`);
+    }
     cachedWorkspaces.set(level, workspace);
     return workspace;
 }
@@ -81,20 +87,14 @@ function getWorkspaceRaw(level = 'local') {
         .subscribe(data => content = core_1.virtualFs.fileBufferToString(data));
     const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
     if (ast.kind != 'object') {
-        throw new Error('Invalid JSON');
+        throw new Error(`Invalid JSON file: ${configPath}`);
     }
     return [ast, configPath];
 }
 exports.getWorkspaceRaw = getWorkspaceRaw;
-function validateWorkspace(json) {
+async function validateWorkspace(json) {
     const workspace = new core_1.experimental.workspace.Workspace(core_1.normalize('.'), new node_1.NodeJsSyncHost());
-    let error;
-    workspace.loadWorkspaceFromJson(json).subscribe({
-        error: e => error = e,
-    });
-    if (error) {
-        throw error;
-    }
+    await workspace.loadWorkspaceFromJson(json).toPromise();
     return true;
 }
 exports.validateWorkspace = validateWorkspace;
@@ -110,8 +110,8 @@ function getProjectByCwd(workspace) {
     }
 }
 exports.getProjectByCwd = getProjectByCwd;
-function getConfiguredPackageManager() {
-    let workspace = getWorkspace('local');
+async function getConfiguredPackageManager() {
+    let workspace = await getWorkspace('local');
     if (workspace) {
         const project = getProjectByCwd(workspace);
         if (project && workspace.getProjectCli(project)) {
@@ -127,7 +127,7 @@ function getConfiguredPackageManager() {
             }
         }
     }
-    workspace = getWorkspace('global');
+    workspace = await getWorkspace('global');
     if (workspace && workspace.getCli()) {
         const value = workspace.getCli()['packageManager'];
         if (typeof value == 'string') {
@@ -204,10 +204,10 @@ function getLegacyPackageManager() {
     }
     return null;
 }
-function getSchematicDefaults(collection, schematic, project) {
+async function getSchematicDefaults(collection, schematic, project) {
     let result = {};
     const fullName = `${collection}:${schematic}`;
-    let workspace = getWorkspace('global');
+    let workspace = await getWorkspace('global');
     if (workspace && workspace.getSchematics()) {
         const schematicObject = workspace.getSchematics()[fullName];
         if (schematicObject) {
@@ -218,7 +218,7 @@ function getSchematicDefaults(collection, schematic, project) {
             result = { ...result, ...collectionObject[schematic] };
         }
     }
-    workspace = getWorkspace('local');
+    workspace = await getWorkspace('local');
     if (workspace) {
         if (workspace.getSchematics()) {
             const schematicObject = workspace.getSchematics()[fullName];
@@ -245,8 +245,8 @@ function getSchematicDefaults(collection, schematic, project) {
     return result;
 }
 exports.getSchematicDefaults = getSchematicDefaults;
-function isWarningEnabled(warning) {
-    let workspace = getWorkspace('local');
+async function isWarningEnabled(warning) {
+    let workspace = await getWorkspace('local');
     if (workspace) {
         const project = getProjectByCwd(workspace);
         if (project && workspace.getProjectCli(project)) {
@@ -268,7 +268,7 @@ function isWarningEnabled(warning) {
             }
         }
     }
-    workspace = getWorkspace('global');
+    workspace = await getWorkspace('global');
     if (workspace && workspace.getCli()) {
         const warnings = workspace.getCli()['warnings'];
         if (typeof warnings == 'object' && !Array.isArray(warnings)) {

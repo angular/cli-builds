@@ -11,13 +11,11 @@ const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
 const node_2 = require("@angular-devkit/core/node");
-const version_1 = require("../upgrade/version");
 const bep_1 = require("../utilities/bep");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser_1 = require("./parser");
-const workspace_loader_1 = require("./workspace-loader");
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -28,8 +26,7 @@ class ArchitectCommand extends command_1.Command {
         await super.initialize(options);
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
-        const workspaceLoader = new workspace_loader_1.WorkspaceLoader(new node_2.NodeJsSyncHost());
-        const workspace = await workspaceLoader.loadWorkspace(this.workspace.root);
+        const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(new node_2.NodeJsSyncHost()));
         this._workspace = workspace;
         this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);
         this._architect = new architect_1.Architect(this._architectHost, this._registry);
@@ -47,16 +44,17 @@ class ArchitectCommand extends command_1.Command {
         const commandLeftovers = options['--'];
         let projectName = options.project;
         const targetProjectNames = [];
-        for (const name of this._workspace.listProjectNames()) {
-            if (this._workspace.getProjectTargets(name)[this.target]) {
+        for (const [name, project] of this._workspace.projects) {
+            if (project.targets.has(this.target)) {
                 targetProjectNames.push(name);
             }
         }
         if (targetProjectNames.length === 0) {
-            throw new Error(`No projects support the '${this.target}' target.`);
+            throw new Error(this.missingTargetError || `No projects support the '${this.target}' target.`);
         }
         if (projectName && !targetProjectNames.includes(projectName)) {
-            throw new Error(`Project '${projectName}' does not support the '${this.target}' target.`);
+            throw new Error(this.missingTargetError ||
+                `Project '${projectName}' does not support the '${this.target}' target.`);
         }
         if (!projectName && commandLeftovers && commandLeftovers.length > 0) {
             const builderNames = new Set();
@@ -113,7 +111,7 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (!projectName && !this.multiTarget) {
-            const defaultProjectName = this._workspace.getDefaultProjectName();
+            const defaultProjectName = this._workspace.extensions['defaultProject'];
             if (targetProjectNames.length === 1) {
                 projectName = targetProjectNames[0];
             }
@@ -125,7 +123,7 @@ class ArchitectCommand extends command_1.Command {
                 return;
             }
             else {
-                throw new Error('Cannot determine project or target for command.');
+                throw new Error(this.missingTargetError || 'Cannot determine project or target for command.');
             }
         }
         options.project = projectName;
@@ -137,10 +135,8 @@ class ArchitectCommand extends command_1.Command {
         this.description.options.push(...(await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema)));
         // Update options to remove analytics from options if the builder isn't safelisted.
         for (const o of this.description.options) {
-            if (o.userAnalytics) {
-                if (!analytics_1.isPackageNameSafeForAnalytics(builderConf)) {
-                    o.userAnalytics = undefined;
-                }
+            if (o.userAnalytics && !analytics_1.isPackageNameSafeForAnalytics(builderConf)) {
+                o.userAnalytics = undefined;
             }
         }
     }
@@ -153,7 +149,9 @@ class ArchitectCommand extends command_1.Command {
         bep.writeBuildStarted(command);
         let last = 1;
         let rebuild = false;
-        const run = await this._architect.scheduleTarget(configuration, overrides, { logger: this.logger });
+        const run = await this._architect.scheduleTarget(configuration, overrides, {
+            logger: this.logger,
+        });
         await run.output.forEach(event => {
             last = event.success ? 0 : 1;
             if (rebuild) {
@@ -177,7 +175,8 @@ class ArchitectCommand extends command_1.Command {
         const builderDesc = await this._architectHost.resolveBuilder(builderConf);
         const targetOptionArray = await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema);
         const overrides = parser_1.parseArguments(targetOptions, targetOptionArray, this.logger);
-        if (overrides['--']) {
+        const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object' && builderDesc.optionSchema.additionalProperties;
+        if (overrides['--'] && !allowAdditionalProperties) {
             (overrides['--'] || []).forEach(additional => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
             });
@@ -189,15 +188,19 @@ class ArchitectCommand extends command_1.Command {
             return this.runBepTarget(this.description.name, target, overrides, commandOptions.buildEventLog);
         }
         else {
-            const run = await this._architect.scheduleTarget(target, overrides, { logger: this.logger });
-            const result = await run.output.toPromise();
+            const run = await this._architect.scheduleTarget(target, overrides, {
+                logger: this.logger,
+                analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
+            });
+            const { error, success } = await run.output.toPromise();
             await run.stop();
-            return result.success ? 0 : 1;
+            if (error) {
+                this.logger.error(error);
+            }
+            return success ? 0 : 1;
         }
     }
     async runArchitectTarget(options) {
-        // Check Angular version.
-        version_1.Version.assertCompatibleAngularVersion(this.workspace.root);
         const extra = options['--'] || [];
         try {
             const targetSpec = this._makeTargetSpecifier(options);
@@ -239,7 +242,12 @@ class ArchitectCommand extends command_1.Command {
         }
     }
     getProjectNamesByTarget(targetName) {
-        const allProjectsForTargetName = this._workspace.listProjectNames().map(projectName => this._workspace.getProjectTargets(projectName)[targetName] ? projectName : null).filter(x => !!x);
+        const allProjectsForTargetName = [];
+        for (const [name, project] of this._workspace.projects) {
+            if (project.targets.has(targetName)) {
+                allProjectsForTargetName.push(name);
+            }
+        }
         if (this.multiTarget) {
             // For multi target commands, we always list all projects that have the target.
             return allProjectsForTargetName;
@@ -247,7 +255,7 @@ class ArchitectCommand extends command_1.Command {
         else {
             // For single target commands, we try the default project first,
             // then the full list if it has a single project, then error out.
-            const maybeDefaultProject = this._workspace.getDefaultProjectName();
+            const maybeDefaultProject = this._workspace.extensions['defaultProject'];
             if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
                 return [maybeDefaultProject];
             }
@@ -268,9 +276,14 @@ class ArchitectCommand extends command_1.Command {
         else {
             project = commandOptions.project;
             target = this.target;
-            configuration = commandOptions.configuration;
-            if (!configuration && commandOptions.prod) {
+            if (commandOptions.prod) {
+                // The --prod flag will always be the first configuration, available to be overwritten
+                // by following configurations.
                 configuration = 'production';
+            }
+            if (commandOptions.configuration) {
+                configuration =
+                    `${configuration ? `${configuration},` : ''}${commandOptions.configuration}`;
             }
         }
         if (!project) {

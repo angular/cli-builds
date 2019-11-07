@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const fs_1 = require("fs");
 const path_1 = require("path");
+const schema_1 = require("../lib/config/schema");
 const config_1 = require("./config");
 function supports(name) {
     try {
@@ -28,8 +29,8 @@ function supportsNpm() {
     return supports('npm');
 }
 exports.supportsNpm = supportsNpm;
-function getPackageManager(root) {
-    let packageManager = config_1.getConfiguredPackageManager();
+async function getPackageManager(root) {
+    let packageManager = await config_1.getConfiguredPackageManager();
     if (packageManager) {
         return packageManager;
     }
@@ -38,19 +39,19 @@ function getPackageManager(root) {
     const hasNpm = supportsNpm();
     const hasNpmLock = fs_1.existsSync(path_1.join(root, 'package-lock.json'));
     if (hasYarn && hasYarnLock && !hasNpmLock) {
-        packageManager = 'yarn';
+        packageManager = schema_1.PackageManager.Yarn;
     }
     else if (hasNpm && hasNpmLock && !hasYarnLock) {
-        packageManager = 'npm';
+        packageManager = schema_1.PackageManager.Npm;
     }
     else if (hasYarn && !hasNpm) {
-        packageManager = 'yarn';
+        packageManager = schema_1.PackageManager.Yarn;
     }
     else if (hasNpm && !hasYarn) {
-        packageManager = 'npm';
+        packageManager = schema_1.PackageManager.Npm;
     }
     // TODO: This should eventually inform the user of ambiguous package manager usage.
     //       Potentially with a prompt to choose and optionally set as the default.
-    return packageManager || 'npm';
+    return packageManager || schema_1.PackageManager.Npm;
 }
 exports.getPackageManager = getPackageManager;

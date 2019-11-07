@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // tslint:disable:no-global-tslint-disable no-any
 const core_1 = require("@angular-devkit/core");
 const path = require("path");
+const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const interface_1 = require("./interface");
 class Command {
@@ -40,12 +41,8 @@ class Command {
         const name = this.description.name;
         const args = this.description.options.filter(x => x.positional !== undefined);
         const opts = this.description.options.filter(x => x.positional === undefined);
-        const argDisplay = args && args.length > 0
-            ? ' ' + args.map(a => `<${a.name}>`).join(' ')
-            : '';
-        const optionsDisplay = opts && opts.length > 0
-            ? ` [options]`
-            : ``;
+        const argDisplay = args && args.length > 0 ? ' ' + args.map(a => `<${a.name}>`).join(' ') : '';
+        const optionsDisplay = opts && opts.length > 0 ? ` [options]` : ``;
         this.logger.info(`usage: ng ${name}${argDisplay}${optionsDisplay}`);
         this.logger.info('');
     }
@@ -60,7 +57,7 @@ class Command {
         if (args.length > 0) {
             this.logger.info(`arguments:`);
             args.forEach(o => {
-                this.logger.info(`  ${core_1.terminal.cyan(o.name)}`);
+                this.logger.info(`  ${color_1.colors.cyan(o.name)}`);
                 if (o.description) {
                     this.logger.info(formatDescription(o.description));
                 }
@@ -78,7 +75,7 @@ class Command {
                 const aliases = o.aliases && o.aliases.length > 0
                     ? '(' + o.aliases.map(a => `-${a}`).join(' ') + ')'
                     : '';
-                this.logger.info(`  ${core_1.terminal.cyan('--' + core_1.strings.dasherize(o.name))} ${aliases}`);
+                this.logger.info(`  ${color_1.colors.cyan('--' + core_1.strings.dasherize(o.name))} ${aliases}`);
                 if (o.description) {
                     this.logger.info(formatDescription(o.description));
                 }
@@ -97,7 +94,7 @@ class Command {
                 }
                 break;
             case interface_1.CommandScope.InProject:
-                if (!this.workspace.configFile || config_1.getWorkspace('local') === null) {
+                if (!this.workspace.configFile || (await config_1.getWorkspace('local')) === null) {
                     this.logger.fatal(core_1.tags.oneLine `
             The ${this.description.name} command requires to be run in an Angular project, but a
             project definition could not be found.
@@ -118,7 +115,7 @@ class Command {
                 dimensions[ua] = v;
             }
         }
-        this.analytics.pageview('/command/' + paths.join('/'), { dimensions });
+        this.analytics.pageview('/command/' + paths.join('/'), { dimensions, metrics });
     }
     async validateAndRun(options) {
         if (!(options.help === true || options.help === 'json' || options.help === 'JSON')) {

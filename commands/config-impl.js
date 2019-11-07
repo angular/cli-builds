@@ -70,7 +70,7 @@ const validCliPaths = new Map([
  * by the path. For example, a path of "a[3].foo.bar[2]" would give you a fragment array of
  * ["a", 3, "foo", "bar", 2].
  * @param path The JSON string to parse.
- * @returns {string[]} The fragments for the string.
+ * @returns {(string|number)[]} The fragments for the string.
  * @private
  */
 function parseJsonPath(path) {
@@ -87,11 +87,14 @@ function parseJsonPath(path) {
         }
         result.push(match[1]);
         if (match[2]) {
-            const indices = match[2].slice(1, -1).split('][');
+            const indices = match[2]
+                .slice(1, -1)
+                .split('][')
+                .map(x => (/^\d$/.test(x) ? +x : x.replace(/\"|\'/g, '')));
             result.push(...indices);
         }
     }
-    return result.filter(fragment => !!fragment);
+    return result.filter(fragment => fragment != null);
 }
 function getValueFromPath(root, path) {
     const fragments = parseJsonPath(path);
@@ -185,12 +188,11 @@ class ConfigCommand extends command_1.Command {
         if (!options.global) {
             await this.validateScope(interface_1.CommandScope.InProject);
         }
-        let config = config_1.getWorkspace(level);
+        let config = await config_1.getWorkspace(level);
         if (options.global && !config) {
             try {
                 if (config_1.migrateLegacyGlobalConfig()) {
-                    config =
-                        config_1.getWorkspace(level);
+                    config = await config_1.getWorkspace(level);
                     this.logger.info(core_1.tags.oneLine `
             We found a global configuration that was used in Angular CLI 1.
             It has been automatically migrated.`);
@@ -203,7 +205,9 @@ class ConfigCommand extends command_1.Command {
                 this.logger.error('No config found.');
                 return 1;
             }
-            return this.get(config._workspace, options);
+            const workspace = config
+                ._workspace;
+            return this.get(workspace, options);
         }
         else {
             return this.set(options);
@@ -236,7 +240,7 @@ class ConfigCommand extends command_1.Command {
         }
         return 0;
     }
-    set(options) {
+    async set(options) {
         if (!options.jsonPath || !options.jsonPath.trim()) {
             throw new Error('Invalid Path.');
         }
@@ -245,9 +249,9 @@ class ConfigCommand extends command_1.Command {
             this.logger.warn('The "typescriptMismatch" warning has been removed in 8.0.');
             return 0;
         }
-        if (options.global
-            && !options.jsonPath.startsWith('schematics.')
-            && !validCliPaths.has(options.jsonPath)) {
+        if (options.global &&
+            !options.jsonPath.startsWith('schematics.') &&
+            !validCliPaths.has(options.jsonPath)) {
             throw new Error('Invalid Path.');
         }
         const [config, configPath] = config_1.getWorkspaceRaw(options.global ? 'global' : 'local');
@@ -264,7 +268,7 @@ class ConfigCommand extends command_1.Command {
             return 1;
         }
         try {
-            config_1.validateWorkspace(configValue);
+            await config_1.validateWorkspace(configValue);
         }
         catch (error) {
             this.logger.fatal(error.message);

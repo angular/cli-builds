@@ -29,12 +29,13 @@ export interface RunSchematicOptions extends BaseSchematicSchema {
 export declare class UnknownCollectionError extends Error {
     constructor(collectionName: string);
 }
-export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & BaseCommandOptions)> extends Command<T> {
+export declare abstract class SchematicCommand<T extends BaseSchematicSchema & BaseCommandOptions> extends Command<T> {
     readonly allowPrivateSchematics: boolean;
     readonly allowAdditionalArgs: boolean;
     private _host;
     private _workspace;
     protected _workflow: NodeWorkflow;
+    protected defaultCollectionName: string;
     protected collectionName: string;
     protected schematicName?: string;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
@@ -47,8 +48,8 @@ export declare abstract class SchematicCommand<T extends (BaseSchematicSchema & 
     protected setPathOptions(options: Option[], workingDir: string): {
         [name: string]: string;
     };
-    protected createWorkflow(options: BaseSchematicSchema): workflow.BaseWorkflow;
-    protected getDefaultSchematicCollection(): string;
+    protected createWorkflow(options: BaseSchematicSchema): Promise<workflow.BaseWorkflow>;
+    protected getDefaultSchematicCollection(): Promise<string>;
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected parseFreeFormArguments(schematicOptions: string[]): Promise<Arguments>;
     protected parseArguments(schematicOptions: string[], options: Option[] | null): Promise<Arguments>;
