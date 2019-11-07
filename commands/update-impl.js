@@ -318,7 +318,7 @@ class UpdateCommand extends command_1.Command {
                 }
             }
             const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const success = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
+            const success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
             return success ? 0 : 1;
         }
         const requests = [];
@@ -407,7 +407,7 @@ class UpdateCommand extends command_1.Command {
             packages: packagesToUpdate,
             migrateExternal: true,
         });
-        if (success && !options.skipCommits) {
+        if (success && options.createCommits) {
             this.createCommit('Angular CLI update\n' + packagesToUpdate.join('\n'), []);
         }
         // This is a temporary workaround to allow data to be passed back from the update schematic
@@ -415,7 +415,7 @@ class UpdateCommand extends command_1.Command {
         const migrations = global.externalMigrations;
         if (success && migrations) {
             for (const migration of migrations) {
-                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), !options.skipCommits);
+                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
                 if (!result) {
                     return 0;
                 }
