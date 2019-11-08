@@ -28,6 +28,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     }
     const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
         stdio: 'pipe',
+        shell: true,
         encoding: 'utf8',
         cwd,
     });
