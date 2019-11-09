@@ -25,6 +25,8 @@ const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
 const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
+const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
+    'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -319,7 +321,14 @@ class UpdateCommand extends command_1.Command {
             }
             const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
             const success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
-            return success ? 0 : 1;
+            if (success) {
+                if (packageName === '@angular/core'
+                    && (options.to || packageNode.package.version).split('.')[0] === '9') {
+                    this.logger.info(NG_VERSION_9_POST_MSG);
+                }
+                return 0;
+            }
+            return 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -419,6 +428,9 @@ class UpdateCommand extends command_1.Command {
                 if (!result) {
                     return 0;
                 }
+            }
+            if (migrations.some(m => m.package === '@angular/core' && m.to.split('.')[0] === '9')) {
+                this.logger.info(NG_VERSION_9_POST_MSG);
             }
         }
         return success ? 0 : 1;
