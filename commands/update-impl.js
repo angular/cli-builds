@@ -25,6 +25,8 @@ const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
 const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
+const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
+    'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -122,32 +124,25 @@ class UpdateCommand extends command_1.Command {
         if (migrations.length === 0) {
             return true;
         }
-        const startingGitSha = this.findCurrentGitSha();
         migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         for (const migration of migrations) {
-            this.logger.info(`${color_1.colors.symbols.pointer}  ${migration.description.replace(/\. /g, '.\n   ')}`);
+            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
-                if (startingGitSha !== null) {
-                    const currentGitSha = this.findCurrentGitSha();
-                    if (currentGitSha !== startingGitSha) {
-                        this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
-                    }
-                }
-                this.logger.error(`${color_1.colors.symbols.cross}  Migration failed. See above for further details.\n`);
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
             // Commit migration
             if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
+                let message = `${packageName} migration - ${migration.name}`;
                 if (migration.description) {
                     message += '\n' + migration.description;
                 }
                 // TODO: Use result.files once package install tasks are accounted
                 this.createCommit(message, []);
             }
-            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check}  Migration succeeded.\n`));
+            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.\n`));
         }
         return true;
     }
@@ -325,8 +320,15 @@ class UpdateCommand extends command_1.Command {
                 }
             }
             const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const success = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
-            return success ? 0 : 1;
+            const success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+            if (success) {
+                if (packageName === '@angular/core'
+                    && (options.to || packageNode.package.version).split('.')[0] === '9') {
+                    this.logger.info(NG_VERSION_9_POST_MSG);
+                }
+                return 0;
+            }
+            return 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -409,11 +411,12 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
+            next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
         });
-        if (success && !options.skipCommits) {
+        if (success && options.createCommits) {
             this.createCommit('Angular CLI update\n' + packagesToUpdate.join('\n'), []);
         }
         // This is a temporary workaround to allow data to be passed back from the update schematic
@@ -421,10 +424,13 @@ class UpdateCommand extends command_1.Command {
         const migrations = global.externalMigrations;
         if (success && migrations) {
             for (const migration of migrations) {
-                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), !options.skipCommits);
+                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
                 if (!result) {
                     return 0;
                 }
+            }
+            if (migrations.some(m => m.package === '@angular/core' && m.to.split('.')[0] === '9')) {
+                this.logger.info(NG_VERSION_9_POST_MSG);
             }
         }
         return success ? 0 : 1;
