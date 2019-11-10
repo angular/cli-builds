@@ -11,10 +11,10 @@ const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const path_1 = require("path");
 const semver_1 = require("semver");
+const schema_1 = require("../lib/config/schema");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
-const npm_install_1 = require("../tasks/npm-install");
-const npm_uninstall_1 = require("../tasks/npm-uninstall");
+const install_package_1 = require("../tasks/install-package");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
@@ -40,12 +40,29 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             return 1;
         }
         if (packageIdentifier.registry && this.isPackageInstalled(packageIdentifier.name)) {
-            // Already installed so just run schematic
-            this.logger.info('Skipping installation: Package already installed');
-            return this.executeSchematic(packageIdentifier.name, options['--']);
+            let validVersion = false;
+            const installedVersion = await this.findProjectVersion(packageIdentifier.name);
+            if (installedVersion) {
+                if (packageIdentifier.type === 'range') {
+                    validVersion = semver_1.satisfies(installedVersion, packageIdentifier.fetchSpec);
+                }
+                else if (packageIdentifier.type === 'version') {
+                    const v1 = semver_1.valid(packageIdentifier.fetchSpec);
+                    const v2 = semver_1.valid(installedVersion);
+                    validVersion = v1 !== null && v1 === v2;
+                }
+                else if (!packageIdentifier.rawSpec) {
+                    validVersion = true;
+                }
+            }
+            if (validVersion) {
+                // Already installed so just run schematic
+                this.logger.info('Skipping installation: Package already installed');
+                return this.executeSchematic(packageIdentifier.name, options['--']);
+            }
         }
         const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
-        const usingYarn = packageManager === 'yarn';
+        const usingYarn = packageManager === schema_1.PackageManager.Yarn;
         if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version
             // plus special cases for packages that did not have peer deps setup
@@ -94,14 +111,14 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
         }
         let collectionName = packageIdentifier.name;
-        let dependencyType;
+        let savePackage;
         try {
             const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
                 registry: options.registry,
                 verbose: options.verbose,
                 usingYarn,
             });
-            dependencyType = manifest['ng-add'] && manifest['ng-add'].save;
+            savePackage = manifest['ng-add'] && manifest['ng-add'].save;
             collectionName = manifest.name;
             if (await this.hasMismatchedPeer(manifest)) {
                 this.logger.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
@@ -111,13 +128,19 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             this.logger.error('Unable to fetch package manifest: ' + e.message);
             return 1;
         }
-        await npm_install_1.default(packageIdentifier.raw, this.logger, packageManager, dependencyType);
-        const schematicResult = await this.executeSchematic(collectionName, options['--']);
-        if (dependencyType === false) {
-            // Uninstall the package if it was not meant to be retained.
-            return npm_uninstall_1.default(packageIdentifier.raw, this.logger, packageManager);
+        if (savePackage === false) {
+            // Temporary packages are located in a different directory
+            // Hence we need to resolve them using the temp path
+            const tempPath = install_package_1.installTempPackage(packageIdentifier.raw, this.logger, packageManager);
+            const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
+                paths: [tempPath],
+            });
+            collectionName = path_1.dirname(resolvedCollectionPath);
         }
-        return schematicResult;
+        else {
+            install_package_1.installPackage(packageIdentifier.raw, this.logger, packageManager, savePackage);
+        }
+        return this.executeSchematic(collectionName, options['--']);
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {
         const collection = options.collection;
