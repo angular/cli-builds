@@ -20,7 +20,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
-        packageManagerArgs.noBinLinks,
+        packageManagerArgs.noLockfile,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     const { status } = child_process_1.spawnSync(packageManager, [
@@ -40,7 +40,12 @@ exports.installPackage = installPackage;
 function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm) {
     const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), '.ng-temp-packages-'));
     // clean up temp directory on process exit
-    process.on('exit', () => rimraf.sync(tempPath));
+    process.on('exit', () => {
+        try {
+            rimraf.sync(tempPath);
+        }
+        catch (_a) { }
+    });
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const tempNodeModules = path_1.join(tempPath, 'node_modules');
@@ -100,19 +105,27 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
 }
 exports.runTempPackageBin = runTempPackageBin;
 function getPackageManagerArguments(packageManager) {
-    return packageManager === schema_1.PackageManager.Yarn
-        ? {
-            silent: '--silent',
-            install: 'add',
-            prefix: '--modules-folder',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-lockfile',
-        }
-        : {
-            silent: '--quiet',
-            install: 'install',
-            prefix: '--prefix',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-package-lock',
-        };
+    switch (packageManager) {
+        case schema_1.PackageManager.Yarn:
+            return {
+                silent: '--silent',
+                install: 'add',
+                prefix: '--modules-folder',
+                noLockfile: '--no-lockfile',
+            };
+        case schema_1.PackageManager.Pnpm:
+            return {
+                silent: '--silent',
+                install: 'add',
+                prefix: '--prefix',
+                noLockfile: '--no-lockfile',
+            };
+        default:
+            return {
+                silent: '--quiet',
+                install: 'install',
+                prefix: '--prefix',
+                noLockfile: '--no-package-lock',
+            };
+    }
 }

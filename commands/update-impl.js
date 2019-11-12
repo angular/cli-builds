@@ -32,7 +32,7 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
         if (await this.checkCLILatestVersion(options.verbose, options.next)) {
-            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+            this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
