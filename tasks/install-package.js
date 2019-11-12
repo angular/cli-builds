@@ -20,6 +20,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
+        packageManagerArgs.noBinLinks,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     if (save === 'devDependencies') {
@@ -108,6 +109,7 @@ function getPackageManagerArguments(packageManager) {
             saveDev: '--dev',
             install: 'add',
             prefix: '--modules-folder',
+            noBinLinks: '--no-bin-links',
             noLockfile: '--no-lockfile',
         }
         : {
@@ -115,6 +117,7 @@ function getPackageManagerArguments(packageManager) {
             saveDev: '--save-dev',
             install: 'install',
             prefix: '--prefix',
+            noBinLinks: '--no-bin-links',
             noLockfile: '--no-package-lock',
         };
 }
