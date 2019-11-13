@@ -20,6 +20,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
+        packageManagerArgs.noBinLinks,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     if (save === 'devDependencies') {
@@ -102,30 +103,21 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
 }
 exports.runTempPackageBin = runTempPackageBin;
 function getPackageManagerArguments(packageManager) {
-    switch (packageManager) {
-        case schema_1.PackageManager.Yarn:
-            return {
-                silent: '--silent',
-                saveDev: '--dev',
-                install: 'add',
-                prefix: '--modules-folder',
-                noLockfile: '--no-lockfile',
-            };
-        case schema_1.PackageManager.Pnpm:
-            return {
-                silent: '--silent',
-                saveDev: '--save-dev',
-                install: 'add',
-                prefix: '--prefix',
-                noLockfile: '--no-lockfile',
-            };
-        default:
-            return {
-                silent: '--quiet',
-                saveDev: '--save-dev',
-                install: 'install',
-                prefix: '--prefix',
-                noLockfile: '--no-package-lock',
-            };
-    }
+    return packageManager === schema_1.PackageManager.Yarn
+        ? {
+            silent: '--silent',
+            saveDev: '--dev',
+            install: 'add',
+            prefix: '--modules-folder',
+            noBinLinks: '--no-bin-links',
+            noLockfile: '--no-lockfile',
+        }
+        : {
+            silent: '--quiet',
+            saveDev: '--save-dev',
+            install: 'install',
+            prefix: '--prefix',
+            noBinLinks: '--no-bin-links',
+            noLockfile: '--no-package-lock',
+        };
 }
