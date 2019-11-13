@@ -20,22 +20,23 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
-        packageManagerArgs.noBinLinks,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
     if (save === 'devDependencies') {
         installArgs.push(packageManagerArgs.saveDev);
     }
-    const { status } = child_process_1.spawnSync(packageManager, [
-        ...installArgs,
-        ...extraArgs,
-    ], {
-        stdio: 'inherit',
+    const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
+        stdio: 'pipe',
         shell: true,
+        encoding: 'utf8',
         cwd,
     });
     if (status !== 0) {
-        throw new Error('Package install failed, see above.');
+        let errorMessage = ((error && error.message) || stderr || stdout || '').trim();
+        if (errorMessage) {
+            errorMessage += '\n';
+        }
+        throw new Error(errorMessage + `Package install failed${errorMessage ? ', see above' : ''}.`);
     }
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
@@ -84,10 +85,7 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const argv = [
-        binPath,
-        ...args,
-    ];
+    const argv = [binPath, ...args];
     const { status, error } = child_process_1.spawnSync('node', argv, {
         stdio: 'inherit',
         shell: true,
@@ -104,21 +102,30 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
 }
 exports.runTempPackageBin = runTempPackageBin;
 function getPackageManagerArguments(packageManager) {
-    return packageManager === schema_1.PackageManager.Yarn
-        ? {
-            silent: '--silent',
-            saveDev: '--dev',
-            install: 'add',
-            prefix: '--modules-folder',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-lockfile',
-        }
-        : {
-            silent: '--quiet',
-            saveDev: '--save-dev',
-            install: 'install',
-            prefix: '--prefix',
-            noBinLinks: '--no-bin-links',
-            noLockfile: '--no-package-lock',
-        };
+    switch (packageManager) {
+        case schema_1.PackageManager.Yarn:
+            return {
+                silent: '--silent',
+                saveDev: '--dev',
+                install: 'add',
+                prefix: '--modules-folder',
+                noLockfile: '--no-lockfile',
+            };
+        case schema_1.PackageManager.Pnpm:
+            return {
+                silent: '--silent',
+                saveDev: '--save-dev',
+                install: 'add',
+                prefix: '--prefix',
+                noLockfile: '--no-lockfile',
+            };
+        default:
+            return {
+                silent: '--quiet',
+                saveDev: '--save-dev',
+                install: 'install',
+                prefix: '--prefix',
+                noLockfile: '--no-package-lock',
+            };
+    }
 }
