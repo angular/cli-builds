@@ -136,7 +136,7 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
-            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.`));
+            this.logger.info('  Migration completed.');
             // Commit migration
             if (commit) {
                 const commitPrefix = `${packageName} migration - ${migration.name}`;
