@@ -61,6 +61,10 @@
       "name": "migrateOnly",
       "description": "Only perform a migration, does not update the installed version.",
       "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
       "required": false,
       "aliases": [],
       "hidden": false
