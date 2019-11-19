@@ -61,6 +61,10 @@
       "name": "migrateOnly",
       "description": "Only perform a migration, does not update the installed version.",
       "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
       "required": false,
       "aliases": [],
       "hidden": false
@@ -99,8 +103,8 @@
       "hidden": false
     },
     {
-      "name": "skipCommits",
-      "description": "Do not create source control commits for updates and migrations.",
+      "name": "createCommits",
+      "description": "Create source control commits for updates and migrations.",
       "type": "boolean",
       "default": false,
       "required": false,
