@@ -23,16 +23,18 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
         packageManagerArgs.noLockfile,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
-    const { status } = child_process_1.spawnSync(packageManager, [
-        ...installArgs,
-        ...extraArgs,
-    ], {
-        stdio: 'inherit',
+    const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
+        stdio: 'pipe',
+        encoding: 'utf8',
         shell: true,
         cwd,
     });
     if (status !== 0) {
-        throw new Error('Package install failed, see above.');
+        let errorMessage = ((error && error.message) || stderr || stdout || '').trim();
+        if (errorMessage) {
+            errorMessage += '\n';
+        }
+        throw new Error(errorMessage + `Package install failed${errorMessage ? ', see above' : ''}.`);
     }
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
@@ -46,6 +48,20 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
         }
         catch (_a) { }
     });
+    // NPM will warn when a `package.json` is not found in the install directory
+    // Example:
+    // npm WARN enoent ENOENT: no such file or directory, open '/tmp/.ng-temp-packages-84Qi7y/package.json'
+    // npm WARN .ng-temp-packages-84Qi7y No description
+    // npm WARN .ng-temp-packages-84Qi7y No repository field.
+    // npm WARN .ng-temp-packages-84Qi7y No license field.
+    // While we can use `npm init -y` we will end up needing to update the 'package.json' anyways
+    // because of missing fields.
+    fs_1.writeFileSync(path_1.join(tempPath, 'package.json'), JSON.stringify({
+        name: 'temp-cli-install',
+        description: 'temp-cli-install',
+        repository: 'temp-cli-install',
+        license: 'MIT',
+    }));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const tempNodeModules = path_1.join(tempPath, 'node_modules');
@@ -85,10 +101,7 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const argv = [
-        binPath,
-        ...args,
-    ];
+    const argv = [binPath, ...args];
     const { status, error } = child_process_1.spawnSync('node', argv, {
         stdio: 'inherit',
         shell: true,
