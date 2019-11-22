@@ -108,9 +108,23 @@ class UpdateCommand extends command_1.Command {
         }
     }
     /**
+     * @return Whether or not the migration was performed successfully.
+     */
+    async executeMigration(packageName, collectionPath, migrationName, commit) {
+        const collection = this.workflow.engine.createCollection(collectionPath);
+        const name = collection.listSchematicNames().find(name => name === migrationName);
+        if (!name) {
+            this.logger.error(`Cannot find migration '${migrationName}' in '${packageName}'.`);
+            return false;
+        }
+        const schematic = this.workflow.engine.createSchematic(name, collection);
+        this.logger.info(color_1.colors.cyan(`** Executing '${migrationName}' of package '${packageName}' **\n`));
+        return this.executePackageMigrations([schematic.description], packageName, commit);
+    }
+    /**
      * @return Whether or not the migrations were performed successfully.
      */
-    async executeMigrations(packageName, collectionPath, range, commit = false) {
+    async executeMigrations(packageName, collectionPath, range, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
         const migrations = [];
         for (const name of collection.listSchematicNames()) {
@@ -124,11 +138,15 @@ class UpdateCommand extends command_1.Command {
                 migrations.push(description);
             }
         }
+        migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         if (migrations.length === 0) {
             return true;
         }
-        migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
+        return this.executePackageMigrations(migrations, packageName, commit);
+    }
+    // tslint:disable-next-line: no-any
+    async executePackageMigrations(migrations, packageName, commit = false) {
         for (const migration of migrations) {
             this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
@@ -136,7 +154,7 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
-            this.logger.info(color_1.colors.green(`${color_1.colors.symbols.check} Migration succeeded.`));
+            this.logger.info('  Migration completed.');
             // Commit migration
             if (commit) {
                 const commitPrefix = `${packageName} migration - ${migration.name}`;
@@ -157,7 +175,7 @@ class UpdateCommand extends command_1.Command {
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
         if (await this.checkCLILatestVersion(options.verbose, options.next)) {
-            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+            this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
@@ -173,6 +191,9 @@ class UpdateCommand extends command_1.Command {
                 if (packages.some(v => v.name === packageIdentifier.name)) {
                     this.logger.error(`Duplicate package '${packageIdentifier.name}' specified.`);
                     return 1;
+                }
+                if (options.migrateOnly && packageIdentifier.rawSpec) {
+                    this.logger.warn('Package specifier has no effect when using "migrate-only" option.');
                 }
                 // If next option is used and no specifier supplied, use next tag
                 if (options.next && !packageIdentifier.rawSpec) {
@@ -248,17 +269,12 @@ class UpdateCommand extends command_1.Command {
             return success ? 0 : 1;
         }
         if (options.migrateOnly) {
-            if (!options.from) {
-                this.logger.error('"from" option is required when using the "migrate-only" option.');
+            if (!options.from && typeof options.migrateOnly !== 'string') {
+                this.logger.error('"from" option is required when using the "migrate-only" option without a migration name.');
                 return 1;
             }
             else if (packages.length !== 1) {
                 this.logger.error('A single package must be specified when using the "migrate-only" option.');
-                return 1;
-            }
-            const from = coerceVersionNumber(options.from);
-            if (!from) {
-                this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                 return 1;
             }
             if (options.next) {
@@ -326,8 +342,19 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
             }
-            const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+            let success = false;
+            if (typeof options.migrateOnly == 'string') {
+                success = await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
+            }
+            else {
+                const from = coerceVersionNumber(options.from);
+                if (!from) {
+                    this.logger.error(`"from" value [${options.from}] is not a valid version.`);
+                    return 1;
+                }
+                const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
+                success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+            }
             if (success) {
                 if (packageName === '@angular/core'
                     && (options.to || packageNode.package.version).split('.')[0] === '9') {
