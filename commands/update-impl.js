@@ -25,6 +25,8 @@ const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
 const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
+const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
+    'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -35,6 +37,9 @@ class UpdateCommand extends command_1.Command {
         this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
             packageManager: this.packageManager,
             root: core_1.normalize(this.workspace.root),
+            // __dirname -> favor @schematics/update from this package
+            // Otherwise, use packages from the active workspace (migrations)
+            resolvePaths: [__dirname, this.workspace.root],
         });
         this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
     }
@@ -102,7 +107,24 @@ class UpdateCommand extends command_1.Command {
             return { success: false, files };
         }
     }
-    async executeMigrations(packageName, collectionPath, range, commit = false) {
+    /**
+     * @return Whether or not the migration was performed successfully.
+     */
+    async executeMigration(packageName, collectionPath, migrationName, commit) {
+        const collection = this.workflow.engine.createCollection(collectionPath);
+        const name = collection.listSchematicNames().find(name => name === migrationName);
+        if (!name) {
+            this.logger.error(`Cannot find migration '${migrationName}' in '${packageName}'.`);
+            return false;
+        }
+        const schematic = this.workflow.engine.createSchematic(name, collection);
+        this.logger.info(color_1.colors.cyan(`** Executing '${migrationName}' of package '${packageName}' **\n`));
+        return this.executePackageMigrations([schematic.description], packageName, commit);
+    }
+    /**
+     * @return Whether or not the migrations were performed successfully.
+     */
+    async executeMigrations(packageName, collectionPath, range, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
         const migrations = [];
         for (const name of collection.listSchematicNames()) {
@@ -116,41 +138,46 @@ class UpdateCommand extends command_1.Command {
                 migrations.push(description);
             }
         }
+        migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
         if (migrations.length === 0) {
             return true;
         }
-        const startingGitSha = this.findCurrentGitSha();
-        migrations.sort((a, b) => semver.compare(a.version, b.version) || a.name.localeCompare(b.name));
+        this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
+        return this.executePackageMigrations(migrations, packageName, commit);
+    }
+    // tslint:disable-next-line: no-any
+    async executePackageMigrations(migrations, packageName, commit = false) {
         for (const migration of migrations) {
-            this.logger.info(`** Executing migrations for version ${migration.version} of package '${packageName}' **`);
+            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
-                if (startingGitSha !== null) {
-                    const currentGitSha = this.findCurrentGitSha();
-                    if (currentGitSha !== startingGitSha) {
-                        this.logger.warn(`git HEAD was at ${startingGitSha} before migrations.`);
-                    }
-                }
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
+            this.logger.info('  Migration completed.');
             // Commit migration
             if (commit) {
-                let message = `migrate workspace for ${packageName}@${migration.version}`;
-                if (migration.description) {
-                    message += '\n' + migration.description;
+                const commitPrefix = `${packageName} migration - ${migration.name}`;
+                const commitMessage = migration.description
+                    ? `${commitPrefix}\n${migration.description}`
+                    : commitPrefix;
+                const committed = this.commit(commitMessage);
+                if (!committed) {
+                    // Failed to commit, something went wrong. Abort the update.
+                    return false;
                 }
-                // TODO: Use result.files once package install tasks are accounted
-                this.createCommit(message, []);
             }
+            this.logger.info(''); // Extra trailing newline.
         }
+        return true;
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
-        if (await this.checkCLILatestVersion(options.verbose)) {
-            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
+            this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
         const packages = [];
         for (const request of options['--'] || []) {
@@ -164,6 +191,9 @@ class UpdateCommand extends command_1.Command {
                 if (packages.some(v => v.name === packageIdentifier.name)) {
                     this.logger.error(`Duplicate package '${packageIdentifier.name}' specified.`);
                     return 1;
+                }
+                if (options.migrateOnly && packageIdentifier.rawSpec) {
+                    this.logger.warn('Package specifier has no effect when using "migrate-only" option.');
                 }
                 // If next option is used and no specifier supplied, use next tag
                 if (options.next && !packageIdentifier.rawSpec) {
@@ -193,10 +223,10 @@ class UpdateCommand extends command_1.Command {
         const statusCheck = packages.length === 0 && !options.all;
         if (!statusCheck && !this.checkCleanGit()) {
             if (options.allowDirty) {
-                this.logger.warn('Repository is not clean.  Update changes will be mixed with pre-existing changes.');
+                this.logger.warn('Repository is not clean. Update changes will be mixed with pre-existing changes.');
             }
             else {
-                this.logger.error('Repository is not clean.  Please commit or stash any changes before updating.');
+                this.logger.error('Repository is not clean. Please commit or stash any changes before updating.');
                 return 2;
             }
         }
@@ -239,17 +269,12 @@ class UpdateCommand extends command_1.Command {
             return success ? 0 : 1;
         }
         if (options.migrateOnly) {
-            if (!options.from) {
-                this.logger.error('"from" option is required when using the "migrate-only" option.');
+            if (!options.from && typeof options.migrateOnly !== 'string') {
+                this.logger.error('"from" option is required when using the "migrate-only" option without a migration name.');
                 return 1;
             }
             else if (packages.length !== 1) {
                 this.logger.error('A single package must be specified when using the "migrate-only" option.');
-                return 1;
-            }
-            const from = coerceVersionNumber(options.from);
-            if (!from) {
-                this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                 return 1;
             }
             if (options.next) {
@@ -317,9 +342,27 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
             }
-            const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-            const result = await this.executeMigrations(packageName, migrations, migrationRange, !options.skipCommits);
-            return result ? 1 : 0;
+            let success = false;
+            if (typeof options.migrateOnly == 'string') {
+                success = await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
+            }
+            else {
+                const from = coerceVersionNumber(options.from);
+                if (!from) {
+                    this.logger.error(`"from" value [${options.from}] is not a valid version.`);
+                    return 1;
+                }
+                const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
+                success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+            }
+            if (success) {
+                if (packageName === '@angular/core'
+                    && (options.to || packageNode.package.version).split('.')[0] === '9') {
+                    this.logger.info(NG_VERSION_9_POST_MSG);
+                }
+                return 0;
+            }
+            return 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -402,25 +445,71 @@ class UpdateCommand extends command_1.Command {
         const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
+            next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
             migrateExternal: true,
         });
-        if (success && !options.skipCommits) {
-            this.createCommit('Angular CLI update\n' + packagesToUpdate.join('\n'), []);
+        if (success && options.createCommits) {
+            const committed = this.commit(`Angular CLI update for packages - ${packagesToUpdate.join(', ')}`);
+            if (!committed) {
+                return 1;
+            }
         }
         // This is a temporary workaround to allow data to be passed back from the update schematic
         // tslint:disable-next-line: no-any
         const migrations = global.externalMigrations;
         if (success && migrations) {
             for (const migration of migrations) {
-                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), !options.skipCommits);
+                const result = await this.executeMigrations(migration.package, migration.collection, new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
                 if (!result) {
                     return 0;
                 }
             }
+            if (migrations.some(m => m.package === '@angular/core' && m.to.split('.')[0] === '9')) {
+                this.logger.info(NG_VERSION_9_POST_MSG);
+            }
         }
         return success ? 0 : 1;
+    }
+    /**
+     * @return Whether or not the commit was successful.
+     */
+    commit(message) {
+        // Check if a commit is needed.
+        let commitNeeded;
+        try {
+            commitNeeded = hasChangesToCommit();
+        }
+        catch (err) {
+            this.logger.error(`  Failed to read Git tree:\n${err.stderr}`);
+            return false;
+        }
+        if (!commitNeeded) {
+            this.logger.info('  No changes to commit after migration.');
+            return true;
+        }
+        // Commit changes and abort on error.
+        try {
+            createCommit(message);
+        }
+        catch (err) {
+            this.logger.error(`Failed to commit update (${message}):\n${err.stderr}`);
+            return false;
+        }
+        // Notify user of the commit.
+        const hash = findCurrentGitSha();
+        const shortMessage = message.split('\n')[0];
+        if (hash) {
+            this.logger.info(`  Committed migration step (${getShortHash(hash)}): ${shortMessage}.`);
+        }
+        else {
+            // Commit was successful, but reading the hash was not. Something weird happened,
+            // but nothing that would stop the update. Just log the weirdness and continue.
+            this.logger.info(`  Committed migration step: ${shortMessage}.`);
+            this.logger.warn('  Failed to look up hash of most recent commit, continuing anyways.');
+        }
+        return true;
     }
     checkCleanGit() {
         try {
@@ -440,29 +529,13 @@ class UpdateCommand extends command_1.Command {
         catch (_a) { }
         return true;
     }
-    createCommit(message, files) {
-        try {
-            child_process_1.execSync('git add -A ' + files.join(' '), { encoding: 'utf8', stdio: 'pipe' });
-            child_process_1.execSync(`git commit --no-verify -m "${message}"`, { encoding: 'utf8', stdio: 'pipe' });
-        }
-        catch (error) { }
-    }
-    findCurrentGitSha() {
-        try {
-            const result = child_process_1.execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
-            return result.trim();
-        }
-        catch (_a) {
-            return null;
-        }
-    }
     /**
      * Checks if the current installed CLI version is older than the latest version.
      * @returns `true` when the installed version is older.
     */
-    async checkCLILatestVersion(verbose = false) {
+    async checkCLILatestVersion(verbose = false, next = false) {
         const { version: installedCLIVersion } = require('../package.json');
-        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest('@angular/cli@latest', this.logger, {
+        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
         });
@@ -470,6 +543,41 @@ class UpdateCommand extends command_1.Command {
     }
 }
 exports.UpdateCommand = UpdateCommand;
+/**
+ * @return Whether or not the working directory has Git changes to commit.
+ */
+function hasChangesToCommit() {
+    // List all modified files not covered by .gitignore.
+    const files = child_process_1.execSync('git ls-files -m -d -o --exclude-standard').toString();
+    // If any files are returned, then there must be something to commit.
+    return files !== '';
+}
+/**
+ * Precondition: Must have pending changes to commit, they do not need to be staged.
+ * Postcondition: The Git working tree is committed and the repo is clean.
+ * @param message The commit message to use.
+ */
+function createCommit(message) {
+    // Stage entire working tree for commit.
+    child_process_1.execSync('git add -A', { encoding: 'utf8', stdio: 'pipe' });
+    // Commit with the message passed via stdin to avoid bash escaping issues.
+    child_process_1.execSync('git commit --no-verify -F -', { encoding: 'utf8', stdio: 'pipe', input: message });
+}
+/**
+ * @return The Git SHA hash of the HEAD commit. Returns null if unable to retrieve the hash.
+ */
+function findCurrentGitSha() {
+    try {
+        const hash = child_process_1.execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
+        return hash.trim();
+    }
+    catch (_a) {
+        return null;
+    }
+}
+function getShortHash(commitHash) {
+    return commitHash.slice(0, 9);
+}
 function coerceVersionNumber(version) {
     if (!version) {
         return null;
