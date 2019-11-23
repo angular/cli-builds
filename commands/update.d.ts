@@ -30,7 +30,7 @@ export interface Schema {
     /**
      * Only perform a migration, does not update the installed version.
      */
-    migrateOnly?: boolean;
+    migrateOnly?: MigrateOnly;
     /**
      * Use the largest version, including beta and RCs.
      */
@@ -58,3 +58,7 @@ export declare enum HelpEnum {
     HelpJson = "JSON",
     Json = "json"
 }
+/**
+ * Only perform a migration, does not update the installed version.
+ */
+export declare type MigrateOnly = boolean | string;
