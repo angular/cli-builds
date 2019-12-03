@@ -382,8 +382,7 @@ class SchematicCommand extends command_1.Command {
                     loggingQueue.push(`${color_1.colors.yellow('DELETE')} ${eventPath}`);
                     break;
                 case 'rename':
-                    const eventToPath = event.to.startsWith('/') ? event.to.substr(1) : event.to;
-                    loggingQueue.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${eventToPath}`);
+                    loggingQueue.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${event.to}`);
                     break;
             }
         });

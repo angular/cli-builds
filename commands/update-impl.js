@@ -69,8 +69,7 @@ class UpdateCommand extends command_1.Command {
                     files.add(eventPath);
                     break;
                 case 'rename':
-                    const eventToPath = event.to.startsWith('/') ? event.to.substr(1) : event.to;
-                    logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${eventToPath}`);
+                    logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${event.to}`);
                     files.add(eventPath);
                     break;
             }
