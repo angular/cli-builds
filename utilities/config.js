@@ -151,7 +151,7 @@ function migrateLegacyGlobalConfig() {
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
             const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
-            if (!core_1.isJsonObject(legacy)) {
+            if (!legacy || typeof legacy != 'object' || Array.isArray(legacy)) {
                 return false;
             }
             const cli = {};
@@ -159,12 +159,14 @@ function migrateLegacyGlobalConfig() {
                 && legacy.packageManager !== 'default') {
                 cli['packageManager'] = legacy.packageManager;
             }
-            if (core_1.isJsonObject(legacy.defaults)
-                && core_1.isJsonObject(legacy.defaults.schematics)
+            if (legacy.defaults && typeof legacy.defaults == 'object' && !Array.isArray(legacy.defaults)
+                && legacy.defaults.schematics && typeof legacy.defaults.schematics == 'object'
+                && !Array.isArray(legacy.defaults.schematics)
                 && typeof legacy.defaults.schematics.collection == 'string') {
                 cli['defaultCollection'] = legacy.defaults.schematics.collection;
             }
-            if (core_1.isJsonObject(legacy.warnings)) {
+            if (legacy.warnings && typeof legacy.warnings == 'object'
+                && !Array.isArray(legacy.warnings)) {
                 const warnings = {};
                 if (typeof legacy.warnings.versionMismatch == 'boolean') {
                     warnings['versionMismatch'] = legacy.warnings.versionMismatch;
@@ -191,7 +193,7 @@ function getLegacyPackageManager() {
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
             const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
-            if (!core_1.isJsonObject(legacy)) {
+            if (!legacy || typeof legacy != 'object' || Array.isArray(legacy)) {
                 return null;
             }
             if (legacy.packageManager && typeof legacy.packageManager === 'string'
@@ -212,7 +214,7 @@ async function getSchematicDefaults(collection, schematic, project) {
             result = { ...result, ...schematicObject };
         }
         const collectionObject = workspace.getSchematics()[collection];
-        if (core_1.isJsonObject(collectionObject)) {
+        if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
             result = { ...result, ...collectionObject[schematic] };
         }
     }
@@ -224,7 +226,7 @@ async function getSchematicDefaults(collection, schematic, project) {
                 result = { ...result, ...schematicObject };
             }
             const collectionObject = workspace.getSchematics()[collection];
-            if (core_1.isJsonObject(collectionObject)) {
+            if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
                 result = { ...result, ...collectionObject[schematic] };
             }
         }
@@ -235,7 +237,7 @@ async function getSchematicDefaults(collection, schematic, project) {
                 result = { ...result, ...schematicObject };
             }
             const collectionObject = workspace.getProjectSchematics(project)[collection];
-            if (core_1.isJsonObject(collectionObject)) {
+            if (typeof collectionObject == 'object' && !Array.isArray(collectionObject)) {
                 result = { ...result, ...collectionObject[schematic] };
             }
         }
@@ -249,7 +251,7 @@ async function isWarningEnabled(warning) {
         const project = getProjectByCwd(workspace);
         if (project && workspace.getProjectCli(project)) {
             const warnings = workspace.getProjectCli(project)['warnings'];
-            if (core_1.isJsonObject(warnings)) {
+            if (typeof warnings == 'object' && !Array.isArray(warnings)) {
                 const value = warnings[warning];
                 if (typeof value == 'boolean') {
                     return value;
@@ -258,7 +260,7 @@ async function isWarningEnabled(warning) {
         }
         if (workspace.getCli()) {
             const warnings = workspace.getCli()['warnings'];
-            if (core_1.isJsonObject(warnings)) {
+            if (typeof warnings == 'object' && !Array.isArray(warnings)) {
                 const value = warnings[warning];
                 if (typeof value == 'boolean') {
                     return value;
@@ -269,7 +271,7 @@ async function isWarningEnabled(warning) {
     workspace = await getWorkspace('global');
     if (workspace && workspace.getCli()) {
         const warnings = workspace.getCli()['warnings'];
-        if (core_1.isJsonObject(warnings)) {
+        if (typeof warnings == 'object' && !Array.isArray(warnings)) {
             const value = warnings[warning];
             if (typeof value == 'boolean') {
                 return value;

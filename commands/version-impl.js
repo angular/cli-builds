@@ -7,7 +7,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-const core_1 = require("@angular-devkit/core");
 const child_process = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -21,7 +20,7 @@ class VersionCommand extends command_1.Command {
         try {
             projPkg = require(path.resolve(this.workspace.root, 'package.json'));
         }
-        catch (_a) {
+        catch (exception) {
             projPkg = undefined;
         }
         const patterns = [
@@ -78,7 +77,7 @@ class VersionCommand extends command_1.Command {
                 });
                 gitBranch = gitRefName.replace('\n', '');
             }
-            catch (_b) { }
+            catch (_a) { }
             ngCliVersion = `local (v${pkg.version}, branch: ${gitBranch})`;
         }
         let angularCoreVersion = '';
@@ -115,7 +114,6 @@ class VersionCommand extends command_1.Command {
       Angular CLI: ${ngCliVersion}
       Node: ${process.versions.node}
       OS: ${process.platform} ${process.arch}
-
       Angular: ${angularCoreVersion}
       ... ${angularSameAsCore
             .reduce((acc, name) => {
@@ -133,7 +131,6 @@ class VersionCommand extends command_1.Command {
             return acc;
         }, [])
             .join('\n... ')}
-      Ivy Workspace: ${projPkg ? this.getIvyWorkspace() : ''}
 
       Package${namePad.slice(7)}Version
       -------${namePad.replace(/ /g, '-')}------------------
@@ -150,31 +147,15 @@ class VersionCommand extends command_1.Command {
                 return modulePkg.version;
             }
         }
-        catch (_a) { }
+        catch (_) { }
         try {
             if (cliNodeModules) {
                 const modulePkg = require(path.resolve(cliNodeModules, moduleName, 'package.json'));
                 return modulePkg.version + ' (cli-only)';
             }
         }
-        catch (_b) { }
+        catch (_a) { }
         return '<error>';
-    }
-    getIvyWorkspace() {
-        try {
-            const content = fs.readFileSync(path.resolve(this.workspace.root, 'tsconfig.json'), 'utf-8');
-            const tsConfig = core_1.parseJson(content, core_1.JsonParseMode.Loose);
-            if (!core_1.isJsonObject(tsConfig)) {
-                return '<error>';
-            }
-            const { angularCompilerOptions } = tsConfig;
-            return core_1.isJsonObject(angularCompilerOptions) && angularCompilerOptions.enableIvy === false
-                ? 'No'
-                : 'Yes';
-        }
-        catch (_a) {
-            return '<error>';
-        }
     }
 }
 exports.VersionCommand = VersionCommand;
