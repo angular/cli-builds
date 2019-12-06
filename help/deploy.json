@@ -32,7 +32,9 @@
       "hidden": false
     }
   ],
-  "aliases": [],
+  "aliases": [
+    "d"
+  ],
   "scope": "in",
   "hidden": false
 }
