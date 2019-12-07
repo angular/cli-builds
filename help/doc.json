@@ -25,10 +25,10 @@
     {
       "name": "version",
       "description": "Contains the version of Angular to use for the documentation. If not provided, the command uses your current Angular core version.",
-      "type": "string",
+      "type": "number",
       "types": [
-        "string",
-        "number"
+        "number",
+        "string"
       ],
       "required": false,
       "aliases": [],

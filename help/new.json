@@ -252,6 +252,20 @@
       "required": false,
       "aliases": [],
       "hidden": false
+    },
+    {
+      "name": "packageManager",
+      "description": "The package manager used to install dependencies.",
+      "type": "string",
+      "enum": [
+        "npm",
+        "yarn",
+        "pnpm",
+        "cnpm"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
   ],
   "aliases": [
