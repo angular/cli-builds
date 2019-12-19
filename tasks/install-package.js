@@ -14,31 +14,27 @@ const path_1 = require("path");
 const rimraf = require("rimraf");
 const schema_1 = require("../lib/config/schema");
 const color_1 = require("../utilities/color");
-function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs = [], global = false) {
+function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs = [], cwd = process.cwd()) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
+        packageManagerArgs.noLockfile,
     ];
     logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
-    if (global) {
-        if (packageManager === schema_1.PackageManager.Yarn) {
-            installArgs.unshift('global');
-        }
-        else {
-            installArgs.push('--global');
-        }
-    }
-    const { status } = child_process_1.spawnSync(packageManager, [
-        ...installArgs,
-        ...extraArgs,
-    ], {
-        stdio: 'inherit',
+    const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
+        stdio: 'pipe',
+        encoding: 'utf8',
         shell: true,
+        cwd,
     });
     if (status !== 0) {
-        throw new Error('Package install failed, see above.');
+        let errorMessage = ((error && error.message) || stderr || stdout || '').trim();
+        if (errorMessage) {
+            errorMessage += '\n';
+        }
+        throw new Error(errorMessage + `Package install failed${errorMessage ? ', see above' : ''}.`);
     }
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
@@ -46,23 +42,36 @@ exports.installPackage = installPackage;
 function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm) {
     const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), '.ng-temp-packages-'));
     // clean up temp directory on process exit
-    process.on('exit', () => rimraf.sync(tempPath));
+    process.on('exit', () => {
+        try {
+            rimraf.sync(tempPath);
+        }
+        catch (_a) { }
+    });
+    // NPM will warn when a `package.json` is not found in the install directory
+    // Example:
+    // npm WARN enoent ENOENT: no such file or directory, open '/tmp/.ng-temp-packages-84Qi7y/package.json'
+    // npm WARN .ng-temp-packages-84Qi7y No description
+    // npm WARN .ng-temp-packages-84Qi7y No repository field.
+    // npm WARN .ng-temp-packages-84Qi7y No license field.
+    // While we can use `npm init -y` we will end up needing to update the 'package.json' anyways
+    // because of missing fields.
+    fs_1.writeFileSync(path_1.join(tempPath, 'package.json'), JSON.stringify({
+        name: 'temp-cli-install',
+        description: 'temp-cli-install',
+        repository: 'temp-cli-install',
+        license: 'MIT',
+    }));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
+    const tempNodeModules = path_1.join(tempPath, 'node_modules');
     const installArgs = [
         packageManagerArgs.prefix,
-        tempPath,
+        // Yarn will no append 'node_modules' to the path
+        packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath,
+        packageManagerArgs.noLockfile,
     ];
-    installPackage(packageName, logger, packageManager, installArgs, true);
-    let tempNodeModules;
-    if (packageManager !== schema_1.PackageManager.Yarn && process.platform !== 'win32') {
-        // Global installs on Unix systems go to {prefix}/lib/node_modules.
-        // Global installs on Windows go to {prefix}/node_modules (that is, no lib folder.)
-        tempNodeModules = path_1.join(tempPath, 'lib', 'node_modules');
-    }
-    else {
-        tempNodeModules = path_1.join(tempPath, 'node_modules');
-    }
+    installPackage(packageName, logger, packageManager, installArgs, tempPath);
     // Needed to resolve schematics from this location since we use a custom
     // resolve strategy in '@angular/devkit-core/node'
     // todo: this should be removed when we change the resolutions to use require.resolve
@@ -92,16 +101,14 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const argv = [
-        binPath,
-        ...args,
-    ];
+    const argv = [binPath, ...args];
     const { status, error } = child_process_1.spawnSync('node', argv, {
         stdio: 'inherit',
         shell: true,
         env: {
             ...process.env,
             NG_DISABLE_VERSION_CHECK: 'true',
+            NG_CLI_ANALYTICS: 'false',
         },
     });
     if (status === null && error) {
@@ -111,15 +118,27 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
 }
 exports.runTempPackageBin = runTempPackageBin;
 function getPackageManagerArguments(packageManager) {
-    return packageManager === schema_1.PackageManager.Yarn
-        ? {
-            silent: '--silent',
-            install: 'add',
-            prefix: '--global-folder',
-        }
-        : {
-            silent: '--quiet',
-            install: 'install',
-            prefix: '--prefix',
-        };
+    switch (packageManager) {
+        case schema_1.PackageManager.Yarn:
+            return {
+                silent: '--silent',
+                install: 'add',
+                prefix: '--modules-folder',
+                noLockfile: '--no-lockfile',
+            };
+        case schema_1.PackageManager.Pnpm:
+            return {
+                silent: '--silent',
+                install: 'add',
+                prefix: '--prefix',
+                noLockfile: '--no-lockfile',
+            };
+        default:
+            return {
+                silent: '--quiet',
+                install: 'install',
+                prefix: '--prefix',
+                noLockfile: '--no-package-lock',
+            };
+    }
 }

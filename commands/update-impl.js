@@ -31,10 +31,10 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
     // tslint:disable-next-line:no-big-function
     async run(options) {
         // Check if the current installed CLI version is older than the latest version.
-        if (await this.checkCLILatestVersion(options.verbose)) {
-            this.logger.warn('The installed Angular CLI version is older than the latest published version.\n' +
+        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
+            this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin('@angular/cli@latest', this.logger, this.packageManager, process.argv.slice(2));
+            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
         const packages = [];
         for (const request of options['--'] || []) {
@@ -316,13 +316,13 @@ class UpdateCommand extends schematic_command_1.SchematicCommand {
    * Checks if the current installed CLI version is older than the latest version.
    * @returns `true` when the installed version is older.
   */
-    async checkCLILatestVersion(verbose = false) {
+    async checkCLILatestVersion(verbose = false, next = false) {
         const { version: installedCLIVersion } = require('../package.json');
         const LatestCLIManifest = await package_metadata_1.fetchPackageMetadata('@angular/cli', this.logger, {
             verbose,
             usingYarn: this.packageManager === 'yarn',
         });
-        const latest = LatestCLIManifest.tags['latest'];
+        const latest = LatestCLIManifest.tags[next ? 'next' : 'latest'];
         if (!latest) {
             return false;
         }
