@@ -11,6 +11,10 @@ export interface Schema {
      */
     allowDirty?: boolean;
     /**
+     * Create source control commits for updates and migrations.
+     */
+    createCommits?: boolean;
+    /**
      * If false, will error out if installed packages are incompatible with the update.
      */
     force?: boolean;
@@ -26,7 +30,7 @@ export interface Schema {
     /**
      * Only perform a migration, does not update the installed version.
      */
-    migrateOnly?: boolean;
+    migrateOnly?: MigrateOnly;
     /**
      * Use the largest version, including beta and RCs.
      */
@@ -35,10 +39,6 @@ export interface Schema {
      * The names of package(s) to update.
      */
     packages?: string[];
-    /**
-     * Do not create source control commits for updates and migrations.
-     */
-    skipCommits?: boolean;
     /**
      * Version up to which to apply migrations. Only available with a single package being
      * updated, and only on migrations only. Requires from to be specified. Default to the
@@ -58,3 +58,7 @@ export declare enum HelpEnum {
     HelpJson = "JSON",
     Json = "json"
 }
+/**
+ * Only perform a migration, does not update the installed version.
+ */
+export declare type MigrateOnly = boolean | string;
