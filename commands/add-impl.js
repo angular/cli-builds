@@ -23,6 +23,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
         this.allowPrivateSchematics = true;
+        this.allowAdditionalArgs = true;
     }
     async run(options) {
         if (!options.collection) {

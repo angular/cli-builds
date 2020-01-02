@@ -31,6 +31,7 @@ class SchematicCommand extends command_1.Command {
     constructor(context, description, logger) {
         super(context, description, logger);
         this.allowPrivateSchematics = false;
+        this.allowAdditionalArgs = false;
         this._host = new node_1.NodeJsSyncHost();
         this.defaultCollectionName = '@schematics/angular';
         this.collectionName = this.defaultCollectionName;
@@ -340,8 +341,8 @@ class SchematicCommand extends command_1.Command {
             o = await json_schema_1.parseJsonSchemaToOptions(workflow.registry, schematic.description.schemaJson);
             args = await this.parseArguments(schematicOptions || [], o);
         }
-        const allowAdditionalProperties = typeof schematic.description.schemaJson === 'object' && schematic.description.schemaJson.additionalProperties;
-        if (args['--'] && !allowAdditionalProperties) {
+        // ng-add is special because we don't know all possible options at this point
+        if (args['--'] && !this.allowAdditionalArgs) {
             args['--'].forEach(additional => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
             });
