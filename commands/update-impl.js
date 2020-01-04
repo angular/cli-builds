@@ -27,14 +27,6 @@ const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
 const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
     'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
-/**
- * Disable CLI version mismatch checks and forces usage of the invoked CLI
- * instead of invoking the local installed version.
- */
-const disableVersionCheckEnv = process.env['NG_DISABLE_VERSION_CHECK'];
-const disableVersionCheck = disableVersionCheckEnv !== undefined &&
-    disableVersionCheckEnv !== '0' &&
-    disableVersionCheckEnv.toLowerCase() !== 'false';
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -201,7 +193,7 @@ class UpdateCommand extends command_1.Command {
             throw e;
         }
         // Check if the current installed CLI version is older than the latest version.
-        if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
+        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
