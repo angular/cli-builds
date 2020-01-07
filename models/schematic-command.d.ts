@@ -31,7 +31,6 @@ export declare class UnknownCollectionError extends Error {
 }
 export declare abstract class SchematicCommand<T extends BaseSchematicSchema & BaseCommandOptions> extends Command<T> {
     readonly allowPrivateSchematics: boolean;
-    readonly allowAdditionalArgs: boolean;
     private _host;
     private _workspace;
     protected _workflow: NodeWorkflow;
