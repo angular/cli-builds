@@ -27,6 +27,14 @@ const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
 const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
     'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
+/**
+ * Disable CLI version mismatch checks and forces usage of the invoked CLI
+ * instead of invoking the local installed version.
+ */
+const disableVersionCheckEnv = process.env['NG_DISABLE_VERSION_CHECK'];
+const disableVersionCheck = disableVersionCheckEnv !== undefined &&
+    disableVersionCheckEnv !== '0' &&
+    disableVersionCheckEnv.toLowerCase() !== 'false';
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -174,8 +182,26 @@ class UpdateCommand extends command_1.Command {
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        // Check if the @angular-devkit/schematics package can be resolved from the workspace root
+        // This works around issues with packages containing migrations that cannot directly depend on the package
+        // This check can be removed once the schematic runtime handles this situation
+        try {
+            require.resolve('@angular-devkit/schematics', { paths: [this.workspace.root] });
+        }
+        catch (e) {
+            if (e.code === 'MODULE_NOT_FOUND') {
+                this.logger.fatal('The "@angular-devkit/schematics" package cannot be resolved from the workspace root directory. ' +
+                    'This may be due to an unsupported node modules structure.\n' +
+                    'Please remove both the "node_modules" directory and the package lock file; and then reinstall.\n' +
+                    'If this does not correct the problem, ' +
+                    'please temporarily install the "@angular-devkit/schematics" package within the workspace. ' +
+                    'It can be removed once the update is complete.');
+                return 1;
+            }
+            throw e;
+        }
         // Check if the current installed CLI version is older than the latest version.
-        if (await this.checkCLILatestVersion(options.verbose, options.next)) {
+        if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn(`The installed Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
