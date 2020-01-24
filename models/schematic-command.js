@@ -162,7 +162,7 @@ class SchematicCommand extends command_1.Command {
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
             resolvePaths: !!this.workspace.configFile
                 // Workspace
-                ? [process.cwd(), this.workspace.root]
+                ? [process.cwd(), this.workspace.root, __dirname]
                 // Global
                 : [__dirname, process.cwd()],
         });
