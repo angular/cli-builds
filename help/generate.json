@@ -426,6 +426,17 @@
               "positional": 0
             },
             {
+              "name": "displayBlock",
+              "description": "Specifies if the style will contain `:host { display: block; }`.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [
+                "b"
+              ],
+              "hidden": false
+            },
+            {
               "name": "inlineStyle",
               "description": "When true, includes styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
               "type": "boolean",
