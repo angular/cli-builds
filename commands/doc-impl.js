@@ -42,7 +42,7 @@ class DocCommand extends command_1.Command {
         }
         let searchUrl = `https://${domain}/api?query=${options.keyword}`;
         if (options.search) {
-            searchUrl = `https://www.google.com/search?q=site%3A${domain}+${options.keyword}`;
+            searchUrl = `https://${domain}/?search=${options.keyword}`;
         }
         // We should wrap `open` in a new Promise because `open` is already resolved
         await new Promise(() => {
