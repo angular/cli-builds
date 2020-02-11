@@ -158,6 +158,7 @@ class SchematicCommand extends command_1.Command {
             force,
             dryRun,
             packageManager: await package_manager_1.getPackageManager(this.workspace.root),
+            packageRegistry: options.packageRegistry,
             root: core_1.normalize(this.workspace.root),
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
             resolvePaths: !!this.workspace.configFile
