@@ -16,6 +16,7 @@ export interface BaseSchematicSchema {
     force?: boolean;
     interactive?: boolean;
     defaults?: boolean;
+    packageRegistry?: string;
 }
 export interface RunSchematicOptions extends BaseSchematicSchema {
     collectionName: string;

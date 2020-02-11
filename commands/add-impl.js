@@ -24,6 +24,14 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         super(...arguments);
         this.allowPrivateSchematics = true;
     }
+    async initialize(options) {
+        if (options.registry) {
+            return super.initialize({ ...options, packageRegistry: options.registry });
+        }
+        else {
+            return super.initialize(options);
+        }
+    }
     async run(options) {
         if (!options.collection) {
             this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. ` +
@@ -130,14 +138,14 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         if (savePackage === false) {
             // Temporary packages are located in a different directory
             // Hence we need to resolve them using the temp path
-            const tempPath = install_package_1.installTempPackage(packageIdentifier.raw, this.logger, packageManager);
+            const tempPath = install_package_1.installTempPackage(packageIdentifier.raw, this.logger, packageManager, options.registry ? [`--registry="${options.registry}"`] : undefined);
             const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
                 paths: [tempPath],
             });
             collectionName = path_1.dirname(resolvedCollectionPath);
         }
         else {
-            install_package_1.installPackage(packageIdentifier.raw, this.logger, packageManager, savePackage);
+            install_package_1.installPackage(packageIdentifier.raw, this.logger, packageManager, savePackage, options.registry ? [`--registry="${options.registry}"`] : undefined);
         }
         return this.executeSchematic(collectionName, options['--']);
     }

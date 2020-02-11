@@ -41,7 +41,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
 exports.installPackage = installPackage;
-function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm) {
+function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs) {
     const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), 'angular-cli-packages-'));
     // clean up temp directory on process exit
     process.on('exit', () => {
@@ -67,10 +67,11 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const tempNodeModules = path_1.join(tempPath, 'node_modules');
+    // Yarn will not append 'node_modules' to the path
+    const prefixPath = packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath;
     const installArgs = [
-        packageManagerArgs.prefix,
-        // Yarn will no append 'node_modules' to the path
-        packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath,
+        ...(extraArgs || []),
+        `${packageManagerArgs.prefix}="${prefixPath}"`,
         packageManagerArgs.noLockfile,
     ];
     installPackage(packageName, logger, packageManager, true, installArgs, tempPath);
