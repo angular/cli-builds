@@ -119,10 +119,6 @@ export interface SchematicsAngularComponent {
      */
     skipImport?: boolean;
     /**
-     * When true, does not create test files.
-     */
-    skipTests?: boolean;
-    /**
      * The file extension or preprocessor to use for style files.
      */
     style?: Style;
