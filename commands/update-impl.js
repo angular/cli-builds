@@ -19,6 +19,7 @@ const schema_1 = require("../lib/config/schema");
 const command_1 = require("../models/command");
 const install_package_1 = require("../tasks/install-package");
 const color_1 = require("../utilities/color");
+const log_file_1 = require("../utilities/log-file");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
@@ -108,10 +109,12 @@ class UpdateCommand extends command_1.Command {
         }
         catch (e) {
             if (e instanceof schematics_1.UnsuccessfulWorkflowExecution) {
-                this.logger.error('The update failed. See above.');
+                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
             }
             else {
-                this.logger.fatal(e.message);
+                const logPath = log_file_1.writeErrorToLogFile(e);
+                this.logger.fatal(`${color_1.colors.symbols.cross} Migration failed: ${e.message}\n` +
+                    `  See "${logPath}" for further details.\n`);
             }
             return { success: false, files };
         }
@@ -160,7 +163,6 @@ class UpdateCommand extends command_1.Command {
             this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
-                this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
                 return false;
             }
             this.logger.info('  Migration completed.');
