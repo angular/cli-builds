@@ -856,7 +856,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "extractLicenses": {
               "type": "boolean",
@@ -1489,7 +1490,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "browsers": {
               "type": "string",
@@ -1874,7 +1876,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "extractLicenses": {
               "type": "boolean",
