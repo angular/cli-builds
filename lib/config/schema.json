@@ -856,7 +856,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "extractLicenses": {
               "type": "boolean",
@@ -974,13 +975,6 @@
                 "anonymous",
                 "use-credentials"
               ]
-            },
-            "allowedCommonJsDependencies": {
-              "description": "A list of CommonJS packages that are allowed to be used without a built time warning.",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
             }
           },
           "additionalProperties": false,
@@ -1496,7 +1490,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "browsers": {
               "type": "string",
@@ -1881,7 +1876,8 @@
             },
             "preserveSymlinks": {
               "type": "boolean",
-              "description": "Do not use the real path when resolving modules."
+              "description": "Do not use the real path when resolving modules.",
+              "default": false
             },
             "extractLicenses": {
               "type": "boolean",
