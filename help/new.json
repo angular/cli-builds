@@ -1,7 +1,7 @@
 {
   "name": "new",
   "description": "Creates a new workspace and an initial Angular app.",
-  "longDescription": "Creates and initializes a new Angular app that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n* The new workspace folder is given the specified project name, and contains configuration files at the top level.\n\n* By default, the files for a new initial app (with the same name as the workspace) are placed in the `src/` subfolder. Corresponding end-to-end tests are placed in the `e2e/` subfolder.\n\n* The new app's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.\n\n* Subsequent apps that you generate in the workspace reside in the `projects/` subfolder.\n\nIf you plan to have multiple apps in the workspace, you can create an empty workspace by setting the `--createApplication` option to false.\nYou can then use `ng generate application` to create an initial app.\nThis allows a workspace name different from the initial app name, and ensures that all apps reside in the `/projects` subfolder, matching the structure of the configuration file.",
+  "longDescription": "Creates and initializes a new Angular app that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n* The new workspace folder is given the specified project name, and contains configuration files at the top level.\n\n* By default, the files for a new initial app (with the same name as the workspace) are placed in the `src/` subfolder. A corresponding end-to-end test app is placed in the `e2e/` subfolder.\n\n* The new app's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.\n\n* Subsequent apps that you generate in the workspace reside in the `projects/` subfolder.\n\nIf you plan to have multiple apps in the workspace, you can create an empty workspace by setting the `--createApplication` option to false.\nYou can then use `ng generate application` to create an initial app.\nThis allows a workspace name different from the initial app name, and ensures that all apps reside in the `/projects` subfolder, matching the structure of the configuration file.",
   "options": [
     {
       "name": "collection",
@@ -82,6 +82,17 @@
       "hidden": false
     },
     {
+      "name": "inlineTemplate",
+      "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [
+        "t"
+      ],
+      "hidden": false
+    },
+    {
       "name": "directory",
       "description": "The directory name to create the workspace in.",
       "type": "string",
@@ -90,14 +101,13 @@
       "hidden": false
     },
     {
-      "name": "name",
-      "description": "The name of the new workspace and initial project.",
-      "type": "string",
+      "name": "experimentalIvy",
+      "description": "EXPERIMENTAL: When true, creates a new app that uses the Ivy rendering engine.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
-      "format": "html-selector",
-      "hidden": false,
-      "positional": 0
+      "hidden": false
     },
     {
       "name": "skipInstall",
@@ -146,20 +156,17 @@
       "aliases": [
         "s"
       ],
-      "hidden": false,
-      "userAnalytics": 9
+      "hidden": false
     },
     {
-      "name": "inlineTemplate",
-      "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
-      "type": "boolean",
-      "default": false,
+      "name": "name",
+      "description": "The name of the new workspace and initial project.",
+      "type": "string",
       "required": false,
-      "aliases": [
-        "t"
-      ],
+      "aliases": [],
+      "format": "html-selector",
       "hidden": false,
-      "userAnalytics": 10
+      "positional": 0
     },
     {
       "name": "viewEncapsulation",
@@ -173,17 +180,16 @@
       ],
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 11
+      "hidden": false
     },
     {
       "name": "routing",
       "description": "When true, generates a routing module for the initial project.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 17
+      "hidden": false
     },
     {
       "name": "prefix",
@@ -201,6 +207,7 @@
       "name": "style",
       "description": "The file extension or preprocessor to use for style files.",
       "type": "string",
+      "default": "css",
       "enum": [
         "css",
         "scss",
@@ -210,8 +217,7 @@
       ],
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 5
+      "hidden": false
     },
     {
       "name": "skipTests",
@@ -222,8 +228,7 @@
       "aliases": [
         "S"
       ],
-      "hidden": false,
-      "userAnalytics": 12
+      "hidden": false
     },
     {
       "name": "createApplication",
@@ -239,30 +244,6 @@
       "description": "When true, creates a project without any testing frameworks. (Use for learning purposes only.)",
       "type": "boolean",
       "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "userAnalytics": 14
-    },
-    {
-      "name": "strict",
-      "description": "Creates a workspace with stricter TypeScript compiler options.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "packageManager",
-      "description": "The package manager used to install dependencies.",
-      "type": "string",
-      "enum": [
-        "npm",
-        "yarn",
-        "pnpm",
-        "cnpm"
-      ],
       "required": false,
       "aliases": [],
       "hidden": false

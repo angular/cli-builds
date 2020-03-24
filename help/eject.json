@@ -1,0 +1,29 @@
+{
+  "name": "eject",
+  "description": "Deprecated, will be removed in Angular 8.0.",
+  "longDescription": "The 'eject' command has been disabled and will be removed completely in 8.0.\nThe new configuration format provides increased flexibility to modify the\nconfiguration of your workspace without ejecting.\n\nThere are several projects that can be used in conjuction with the new\nconfiguration format that provide the benefits of ejecting without the maintenance\noverhead.  One such project is ngx-build-plus found here:\nhttps://github.com/manfredsteyer/ngx-build-plus",
+  "options": [
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    }
+  ],
+  "aliases": [],
+  "scope": "in",
+  "hidden": true
+}

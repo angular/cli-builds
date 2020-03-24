@@ -5,9 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { Architect, Target } from '@angular-devkit/architect';
-import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
-import { json, workspaces } from '@angular-devkit/core';
+import { Architect, BuilderConfiguration, TargetSpecifier } from '@angular-devkit/architect';
+import { experimental, json } from '@angular-devkit/core';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments } from './interface';
 export interface ArchitectCommandOptions extends BaseCommandOptions {
@@ -16,19 +15,19 @@ export interface ArchitectCommandOptions extends BaseCommandOptions {
     prod?: boolean;
     target?: string;
 }
-export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<T> {
+export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<ArchitectCommandOptions> {
+    private _host;
     protected _architect: Architect;
-    protected _architectHost: WorkspaceNodeModulesArchitectHost;
-    protected _workspace: workspaces.WorkspaceDefinition;
+    protected _workspace: experimental.workspace.Workspace;
     protected _registry: json.schema.SchemaRegistry;
     protected multiTarget: boolean;
     target: string | undefined;
-    missingTargetError: string | undefined;
-    initialize(options: T & Arguments): Promise<void>;
+    initialize(options: ArchitectCommandOptions & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
-    protected runBepTarget<T>(command: string, configuration: Target, overrides: json.JsonObject, buildEventLog: string): Promise<number>;
-    protected runSingleTarget(target: Target, targetOptions: string[], commandOptions: ArchitectCommandOptions & Arguments): Promise<number>;
+    protected runBepTarget<T>(command: string, configuration: BuilderConfiguration<T>, buildEventLog: string): Promise<number>;
+    protected runSingleTarget(targetSpec: TargetSpecifier, targetOptions: string[], commandOptions: ArchitectCommandOptions & Arguments): Promise<number>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;
     private getProjectNamesByTarget;
+    private _loadWorkspaceAndArchitect;
     private _makeTargetSpecifier;
 }

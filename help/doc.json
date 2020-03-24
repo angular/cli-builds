@@ -23,18 +23,6 @@
       "hidden": false
     },
     {
-      "name": "version",
-      "description": "Contains the version of Angular to use for the documentation. If not provided, the command uses your current Angular core version.",
-      "type": "number",
-      "types": [
-        "number",
-        "string"
-      ],
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "help",
       "description": "Shows a help message for this command in the console.",
       "type": "boolean",

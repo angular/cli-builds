@@ -1,16 +1,11 @@
 /**
- * Invokes the deploy builder for a specified project or for the default project in the
- * workspace.
+ * Deprecated, will be removed in Angular 8.0.
  */
 export interface Schema {
     /**
      * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
-    /**
-     * The name of the project to deploy.
-     */
-    project?: string;
 }
 /**
  * Shows a help message for this command in the console.

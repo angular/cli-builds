@@ -15,10 +15,6 @@ export interface Schema {
 }
 export interface CliOptions {
     /**
-     * Share anonymous usage data with the Angular Team at Google.
-     */
-    analytics?: Analytics;
-    /**
      * The default schematics collection to use.
      */
     defaultCollection?: string;
@@ -32,16 +28,11 @@ export interface CliOptions {
     warnings?: Warnings;
 }
 /**
- * Share anonymous usage data with the Angular Team at Google.
- */
-export declare type Analytics = boolean | string;
-/**
  * Specify which package manager tool to use.
  */
 export declare enum PackageManager {
     Cnpm = "cnpm",
     Npm = "npm",
-    Pnpm = "pnpm",
     Yarn = "yarn"
 }
 /**
@@ -72,16 +63,16 @@ export interface SchematicsAngularClass {
      * When true, does not create test files.
      */
     skipTests?: boolean;
+    /**
+     * Specifies if a spec file is generated.
+     */
+    spec?: boolean;
 }
 export interface SchematicsAngularComponent {
     /**
      * Specifies the change detection strategy.
      */
     changeDetection?: ChangeDetection;
-    /**
-     * Specifies if the style will contain `:host { display: block; }`.
-     */
-    displayBlock?: boolean;
     /**
      * Specifies if the component is an entry component of declaring module.
      */
@@ -119,13 +110,17 @@ export interface SchematicsAngularComponent {
      */
     skipImport?: boolean;
     /**
-     * When true, does not create test files.
+     * Specifies if a spec file is generated.
      */
-    skipTests?: boolean;
+    spec?: boolean;
     /**
      * The file extension or preprocessor to use for style files.
      */
     style?: Style;
+    /**
+     * The file extension to be used for style files.
+     */
+    styleext?: string;
     /**
      * Specifies the view encapsulation strategy.
      */
@@ -186,6 +181,10 @@ export interface SchematicsAngularDirective {
      * When true, does not create test files.
      */
     skipTests?: boolean;
+    /**
+     * Specifies if a spec file is generated.
+     */
+    spec?: boolean;
 }
 export interface SchematicsAngularModule {
     /**
@@ -237,6 +236,10 @@ export interface SchematicsAngularPipe {
      * When true, does not create test files.
      */
     skipTests?: boolean;
+    /**
+     * Specifies if a spec file is generated.
+     */
+    spec?: boolean;
 }
 export interface SchematicsAngularService {
     /**
@@ -247,4 +250,8 @@ export interface SchematicsAngularService {
      * When true, does not create test files.
      */
     skipTests?: boolean;
+    /**
+     * Specifies if a spec file is generated.
+     */
+    spec?: boolean;
 }

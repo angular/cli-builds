@@ -4,7 +4,7 @@
   "options": [
     {
       "name": "project",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "The name of the project to build. Can be an app or a library.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -13,7 +13,7 @@
     },
     {
       "name": "configuration",
-      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.\nSetting this explicitly overrides the \"--prod\" flag",
+      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
       "type": "string",
       "required": false,
       "aliases": [
@@ -23,7 +23,7 @@
     },
     {
       "name": "prod",
-      "description": "Shorthand for \"--configuration=production\".\nWhen true, sets the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
+      "description": "When true, sets the build configuration to the production target.\nAll builds make use of bundling and limited tree-shaking. A production build also runs limited dead code elimination.",
       "type": "boolean",
       "required": false,
       "aliases": [],
@@ -50,8 +50,17 @@
     },
     {
       "name": "buildEventLog",
-      "description": "**EXPERIMENTAL** Output file path for Build Event Protocol events",
+      "description": "(experimental) Output file path for Build Event Protocol events",
       "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "watch",
+      "description": "Rebuild on change.",
+      "type": "boolean",
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -60,15 +69,6 @@
       "name": "browserTarget",
       "description": "Target to serve.",
       "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "port",
-      "description": "Port to listen on.",
-      "type": "number",
-      "default": 4200,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -130,6 +130,7 @@
       "name": "verbose",
       "description": "Adds more details to output logging.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -145,16 +146,8 @@
     },
     {
       "name": "publicHost",
-      "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies.",
+      "description": "Specify the URL that the browser client will use.",
       "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "allowedHosts",
-      "description": "Whitelist of hosts that are allowed to access the dev server.",
-      "type": "array",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -186,10 +179,10 @@
       "hidden": false
     },
     {
-      "name": "watch",
-      "description": "Rebuild on change.",
-      "type": "boolean",
-      "default": true,
+      "name": "port",
+      "description": "Port to listen on.",
+      "type": "number",
+      "default": 4200,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -218,8 +211,7 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 16
+      "hidden": false
     },
     {
       "name": "aot",
@@ -227,13 +219,13 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 13
+      "hidden": false
     },
     {
       "name": "sourceMap",
       "description": "Output sourcemaps.",
       "type": "boolean",
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -242,6 +234,7 @@
       "name": "vendorSourceMap",
       "description": "Resolve vendor packages sourcemaps.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false,

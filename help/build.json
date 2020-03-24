@@ -1,11 +1,11 @@
 {
   "name": "build",
   "description": "Compiles an Angular app into an output directory named dist/ at the given output path. Must be executed from within a workspace directory.",
-  "longDescription": "The command can be used to build a project of type \"application\" or \"library\".\nWhen used to build a library, a different builder is invoked, and only the `ts-config`, `configuration`, and `watch` options are applied.\nAll other options apply only to building applications.\n\nThe application builder uses the [webpack](https://webpack.js.org/) build tool, with default configuration options specified in the workspace configuration file (`angular.json`) or with a named alternative configuration.\nA \"production\" configuration is created by default when you use the CLI to create the project, and you can use that configuration by specifying the `--configuration=\"production\"` or the `--prod=\"true\"` option.\n\nThe configuration options generally correspond to the command options.\nYou can override individual configuration defaults by specifying the corresponding options on the command line.\nThe command can accept option names given in either dash-case or camelCase.\nNote that in the configuration file, you must specify names in camelCase.\n\nSome additional options can only be set through the configuration file,\neither by direct editing or with the `ng config` command.\nThese include `assets`, `styles`, and `scripts` objects that provide runtime-global resources to include in the project.\nResources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nFor further details, see [Workspace Configuration](guide/workspace-config).\n",
+  "longDescription": "Uses the [webpack](https://webpack.js.org/) build tool, with default configuration options specified in the workspace configuration file (`angular.json`) or with a named alternative configuration. \nA \"production\" configuration is created by default when you use the CLI to create the project, and you can use that configuration by specifying the `--prod` option.\n\nThe configuration options generally correspond to the command options.\nYou can override individual configuration defaults by specifying the corresponding options on the command line. \nThe command can accept option names given in either dash-case or camelCase.\nNote that in the configuration file, you must specify names in camelCase.\n\nSome additional options can only be set through the configuration file,\neither by direct editing or with the `ng config` command.\nThese include `assets`, `styles`, and `scripts` objects that provide runtime-global resources to include in the project. \nResources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nFor further details, see [Workspace Configuration](guide/workspace-config).\n",
   "options": [
     {
       "name": "project",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "The name of the project to build. Can be an app or a library.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.\nSetting this explicitly overrides the \"--prod\" flag",
+      "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
       "type": "string",
       "required": false,
       "aliases": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "prod",
-      "description": "Shorthand for \"--configuration=production\".\nWhen true, sets the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
+      "description": "When true, sets the build configuration to the production target.\nAll builds make use of bundling and limited tree-shaking. A production build also runs limited dead code elimination.",
       "type": "boolean",
       "required": false,
       "aliases": [],
@@ -51,8 +51,17 @@
     },
     {
       "name": "buildEventLog",
-      "description": "**EXPERIMENTAL** Output file path for Build Event Protocol events",
+      "description": "(experimental) Output file path for Build Event Protocol events",
       "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "extractCss",
+      "description": "Extract css from global styles into css files instead of js ones.",
+      "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -60,14 +69,6 @@
     {
       "name": "main",
       "description": "The full path for the main entry point to the app, relative to the current workspace.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "polyfills",
-      "description": "The full path for the polyfills file, relative to the current workspace.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -87,8 +88,7 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 16
+      "hidden": false
     },
     {
       "name": "outputPath",
@@ -114,8 +114,7 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 13
+      "hidden": false
     },
     {
       "name": "sourceMap",
@@ -203,8 +202,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'locales' object in the project metadata instead."
+      "hidden": false
     },
     {
       "name": "i18nFormat",
@@ -212,8 +210,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "No longer needed as the format will be determined automatically."
+      "hidden": false
     },
     {
       "name": "i18nLocale",
@@ -221,36 +218,20 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'localize' instead."
+      "hidden": false
     },
     {
       "name": "i18nMissingTranslation",
       "description": "How to handle missing translations for i18n.",
       "type": "string",
-      "default": "warning",
-      "enum": [
-        "warning",
-        "error",
-        "ignore"
-      ],
       "required": false,
       "aliases": [],
       "hidden": false
     },
     {
-      "name": "localize",
-      "description": "",
-      "type": "boolean",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "extractCss",
-      "description": "Extract css from global styles into css files instead of js ones.",
-      "type": "boolean",
-      "default": false,
+      "name": "polyfills",
+      "description": "The full path for the polyfills file, relative to the current workspace.",
+      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
@@ -298,8 +279,9 @@
     },
     {
       "name": "preserveSymlinks",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set.",
+      "description": "Do not use the real path when resolving modules.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -378,7 +360,7 @@
     },
     {
       "name": "index",
-      "description": "Configures the generation of the application's HTML index.",
+      "description": "The name of the index HTML file.",
       "type": "string",
       "required": false,
       "aliases": [],
@@ -408,8 +390,7 @@
       "type": "array",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
+      "hidden": false
     },
     {
       "name": "profile",
@@ -418,63 +399,13 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use \"NG_BUILD_PROFILING\" environment variable instead."
+      "hidden": false
     },
     {
       "name": "es5BrowserSupport",
       "description": "Enables conditionally loaded ES2015 polyfills.",
       "type": "boolean",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "This will be determined from the list of supported browsers specified in the 'browserslist' file."
-    },
-    {
-      "name": "rebaseRootRelativeCssUrls",
-      "description": "Change root relative URLs in stylesheets to include base HREF and deploy URL. Use only for compatibility and transition. The behavior of this option is non-standard and will be removed in the next major release.",
-      "type": "boolean",
       "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
-      "name": "webWorkerTsConfig",
-      "description": "TypeScript configuration for Web Worker modules.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "crossOrigin",
-      "description": "Define the crossorigin attribute setting of elements that provide CORS support.",
-      "type": "string",
-      "default": "none",
-      "enum": [
-        "none",
-        "anonymous",
-        "use-credentials"
-      ],
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "experimentalRollupPass",
-      "description": "Concatenate modules with Rollup before bundling them with Webpack.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "allowedCommonJsDependencies",
-      "description": "A list of CommonJS packages that are allowed to be used without a built time warning.",
-      "type": "array",
       "required": false,
       "aliases": [],
       "hidden": false

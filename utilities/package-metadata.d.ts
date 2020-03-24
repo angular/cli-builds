@@ -9,15 +9,12 @@ import { logging } from '@angular-devkit/core';
 export interface PackageDependencies {
     [dependency: string]: string;
 }
-export declare type NgAddSaveDepedency = 'dependencies' | 'devDependencies' | boolean;
 export interface PackageIdentifier {
     type: 'git' | 'tag' | 'version' | 'range' | 'file' | 'directory' | 'remote';
     name: string;
     scope: string | null;
     registry: boolean;
     raw: string;
-    fetchSpec: string;
-    rawSpec: string;
 }
 export interface PackageManifest {
     name: string;
@@ -29,9 +26,7 @@ export interface PackageManifest {
     devDependencies: PackageDependencies;
     peerDependencies: PackageDependencies;
     optionalDependencies: PackageDependencies;
-    'ng-add'?: {
-        save?: NgAddSaveDepedency;
-    };
+    'ng-add'?: {};
     'ng-update'?: {
         migrations: string;
         packageGroup: {
@@ -44,7 +39,7 @@ export interface PackageMetadata {
     tags: {
         [tag: string]: PackageManifest | undefined;
     };
-    versions: Record<string, PackageManifest>;
+    versions: Map<string, PackageManifest>;
 }
 export declare function fetchPackageMetadata(name: string, logger: logging.LoggerApi, options?: {
     registry?: string;
