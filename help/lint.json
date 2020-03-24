@@ -97,7 +97,7 @@
       "name": "format",
       "description": "Output format (prose, json, stylish, verbose, pmd, msbuild, checkstyle, vso, fileslist).",
       "type": "string",
-      "default": "prose",
+      "default": "stylish",
       "required": false,
       "aliases": [],
       "hidden": false
