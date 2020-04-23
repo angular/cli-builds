@@ -1,6 +1,6 @@
 /**
  * Configures the gathering of Angular CLI usage metrics. See
- * https://v8.angular.io/cli/usage-analytics-gathering.
+ * https://angular.io/cli/usage-analytics-gathering.
  */
 export interface Schema {
     /**
