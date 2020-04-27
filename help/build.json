@@ -127,26 +127,6 @@
       "hidden": false
     },
     {
-      "name": "vendorSourceMap",
-      "description": "Resolve vendor packages sourcemaps.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
-      "name": "evalSourceMap",
-      "description": "Output in-file eval sourcemaps.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
       "name": "vendorChunk",
       "description": "Use a separate bundle containing only vendor libraries.",
       "type": "boolean",
@@ -367,16 +347,6 @@
       "hidden": false
     },
     {
-      "name": "skipAppShell",
-      "description": "Flag to prevent building an app shell.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
       "name": "index",
       "description": "Configures the generation of the application's HTML index.",
       "type": "string",
@@ -410,16 +380,6 @@
       "aliases": [],
       "hidden": false,
       "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
-    },
-    {
-      "name": "profile",
-      "description": "Output profile events for Chrome profiler.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "Use \"NG_BUILD_PROFILING\" environment variable instead."
     },
     {
       "name": "rebaseRootRelativeCssUrls",

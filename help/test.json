@@ -108,25 +108,6 @@
       "hidden": false
     },
     {
-      "name": "vendorSourceMap",
-      "description": "Resolve vendor packages sourcemaps.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
-      "name": "evalSourceMap",
-      "description": "Output in-file eval sourcemaps.",
-      "type": "boolean",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
       "name": "progress",
       "description": "Log progress to the console while building.",
       "type": "boolean",
