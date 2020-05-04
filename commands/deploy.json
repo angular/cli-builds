@@ -18,16 +18,17 @@
             "$source": "argv",
             "index": 0
           }
-        },
-        "configuration": {
-          "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
-          "type": "string",
-          "aliases": [
-            "c"
-          ]
         }
       },
-      "required": []
+      "configuration": {
+        "description": "A named build target, as specified in the \"configurations\" section of angular.json.\nEach named target is accompanied by a configuration of option defaults for that target.",
+        "type": "string",
+        "aliases": [
+          "c"
+        ]
+      },
+      "required": [
+      ]
     },
     {
       "$ref": "./definitions.json#/definitions/base"
