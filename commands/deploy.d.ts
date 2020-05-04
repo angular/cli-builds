@@ -4,6 +4,11 @@
  */
 export interface Schema {
     /**
+     * A named build target, as specified in the "configurations" section of angular.json.
+     * Each named target is accompanied by a configuration of option defaults for that target.
+     */
+    configuration?: string;
+    /**
      * Shows a help message for this command in the console.
      */
     help?: HelpUnion;
