@@ -24,15 +24,6 @@
               "hidden": false
             },
             {
-              "name": "universalProject",
-              "description": "The name of related Universal app.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "This option has no effect."
-            },
-            {
               "name": "route",
               "description": "Route path used to produce the app shell.",
               "type": "string",
@@ -40,16 +31,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "name",
-              "description": "The HTML selector of the Universal app",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "format": "html-selector",
-              "hidden": false,
-              "deprecated": "This option has no effect."
             },
             {
               "name": "appId",
@@ -62,39 +43,6 @@
               "hidden": false
             },
             {
-              "name": "outDir",
-              "description": "The output directory for build results.",
-              "type": "string",
-              "default": "dist-server",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
-            },
-            {
-              "name": "root",
-              "description": "The root directory of the app.",
-              "type": "string",
-              "default": "src",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
-            },
-            {
-              "name": "index",
-              "description": "The name of the index file",
-              "type": "string",
-              "default": "index.html",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
-            },
-            {
               "name": "main",
               "description": "The name of the main entry-point file.",
               "type": "string",
@@ -103,37 +51,6 @@
               "aliases": [],
               "format": "path",
               "hidden": false
-            },
-            {
-              "name": "test",
-              "description": "The name of the test entry-point file.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
-            },
-            {
-              "name": "tsconfigFileName",
-              "description": "The name of the TypeScript configuration file.",
-              "type": "string",
-              "default": "tsconfig.server",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false
-            },
-            {
-              "name": "testTsconfigFileName",
-              "description": "The name of the TypeScript configuration file for tests.",
-              "type": "string",
-              "default": "tsconfig.spec",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
             },
             {
               "name": "appDir",
@@ -166,17 +83,13 @@
               "hidden": false
             },
             {
-              "name": "sourceDir",
-              "description": "The path of the source directory.",
+              "name": "tsconfigFileName",
+              "description": "The name of the TypeScript configuration file.",
               "type": "string",
-              "default": "src",
+              "default": "tsconfig.server",
               "required": false,
-              "aliases": [
-                "D"
-              ],
-              "format": "path",
-              "hidden": false,
-              "deprecated": "This option has no effect."
+              "aliases": [],
+              "hidden": false
             }
           ],
           "aliases": []
