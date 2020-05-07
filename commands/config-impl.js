@@ -216,13 +216,6 @@ class ConfigCommand extends command_1.Command {
     get(config, options) {
         let value;
         if (options.jsonPath) {
-            if (options.jsonPath === 'cli.warnings.typescriptMismatch') {
-                // NOTE: Remove this in 9.0.
-                this.logger.warn('The "typescriptMismatch" warning has been removed in 8.0.');
-                // Since there is no actual warning, this value is always false.
-                this.logger.info('false');
-                return 0;
-            }
             value = getValueFromPath(config, options.jsonPath);
         }
         else {
@@ -243,11 +236,6 @@ class ConfigCommand extends command_1.Command {
     async set(options) {
         if (!options.jsonPath || !options.jsonPath.trim()) {
             throw new Error('Invalid Path.');
-        }
-        if (options.jsonPath === 'cli.warnings.typescriptMismatch') {
-            // NOTE: Remove this in 9.0.
-            this.logger.warn('The "typescriptMismatch" warning has been removed in 8.0.');
-            return 0;
         }
         if (options.global &&
             !options.jsonPath.startsWith('schematics.') &&

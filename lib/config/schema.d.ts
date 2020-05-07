@@ -49,10 +49,6 @@ export declare enum PackageManager {
  */
 export interface Warnings {
     /**
-     * Show a warning when the TypeScript version is incompatible.
-     */
-    typescriptMismatch?: boolean;
-    /**
      * Show a warning when the global version is newer than the local one.
      */
     versionMismatch?: boolean;

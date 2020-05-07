@@ -8,14 +8,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * found in the LICENSE file at https://angular.io/license
  */
 const core_1 = require("@angular-devkit/core");
-const debug = require("debug");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser = require("./parser");
-const analyticsDebug = debug('ng:analytics:commands');
 // NOTE: Update commands.json if changing this.  It's still deep imported in one CI validation
 const standardCommands = {
     'add': '../commands/add.json',
@@ -27,8 +25,6 @@ const standardCommands = {
     'e2e': '../commands/e2e.json',
     'make-this-awesome': '../commands/easter-egg.json',
     'generate': '../commands/generate.json',
-    'get': '../commands/deprecated.json',
-    'set': '../commands/deprecated.json',
     'help': '../commands/help.json',
     'lint': '../commands/lint.json',
     'new': '../commands/new.json',
