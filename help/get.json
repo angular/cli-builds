@@ -1,0 +1,28 @@
+{
+  "name": "get",
+  "description": "Deprecated in favor of config command.",
+  "options": [
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    }
+  ],
+  "aliases": [],
+  "scope": "in",
+  "hidden": true
+}
