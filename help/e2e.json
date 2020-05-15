@@ -99,15 +99,6 @@
       "hidden": false
     },
     {
-      "name": "elementExplorer",
-      "description": "Start Protractor's Element Explorer for debugging.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "webdriverUpdate",
       "description": "Try to update webdriver.",
       "type": "boolean",
