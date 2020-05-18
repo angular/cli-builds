@@ -7,6 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getWorkspaceDetails = exports.insideWorkspace = void 0;
 // tslint:disable:no-global-tslint-disable no-any
 const core_1 = require("@angular-devkit/core");
 const fs = require("fs");

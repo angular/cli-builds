@@ -7,6 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RunCommand = void 0;
 const architect_command_1 = require("../models/architect-command");
 class RunCommand extends architect_command_1.ArchitectCommand {
     async run(options) {

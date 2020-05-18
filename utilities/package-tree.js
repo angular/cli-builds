@@ -7,6 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.findNodeDependencies = exports.readPackageTree = void 0;
 function readPackageTree(path) {
     const rpt = require('read-package-tree');
     return new Promise((resolve, reject) => {

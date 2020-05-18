@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GenerateCommand = void 0;
 const schematic_command_1 = require("../models/schematic-command");
 const color_1 = require("../utilities/color");
 const json_schema_1 = require("../utilities/json-schema");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.colors = exports.removeColor = exports.supportsColor = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.

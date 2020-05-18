@@ -424,7 +424,7 @@
     },
     {
       "name": "allowedCommonJsDependencies",
-      "description": "A list of CommonJS packages that are allowed to be used without a built time warning.",
+      "description": "A list of CommonJS packages that are allowed to be used without a build time warning.",
       "type": "array",
       "required": false,
       "aliases": [],

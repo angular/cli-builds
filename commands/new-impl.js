@@ -7,6 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NewCommand = void 0;
 const schematic_command_1 = require("../models/schematic-command");
 class NewCommand extends schematic_command_1.SchematicCommand {
     constructor() {
