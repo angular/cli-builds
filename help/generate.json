@@ -89,7 +89,8 @@
               "default": "tsconfig.server",
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             }
           ],
           "aliases": []
