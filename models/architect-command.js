@@ -42,11 +42,8 @@ class ArchitectCommand extends command_1.Command {
             }
             return;
         }
-        let projectName = options.project;
-        if (projectName && !this._workspace.projects.has(projectName)) {
-            throw new Error(`Project '${projectName}' does not exist.`);
-        }
         const commandLeftovers = options['--'];
+        let projectName = options.project;
         const targetProjectNames = [];
         for (const [name, project] of this._workspace.projects) {
             if (project.targets.has(this.target)) {
