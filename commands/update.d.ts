@@ -32,7 +32,7 @@ export interface Schema {
      */
     migrateOnly?: MigrateOnly;
     /**
-     * Use the largest version, including beta and RCs.
+     * Use the prerelease version, including beta and RCs.
      */
     next?: boolean;
     /**
