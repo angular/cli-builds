@@ -25,9 +25,7 @@ function _getEnumFromValue(value, enumeration, defaultValue) {
     if (typeof value !== 'string') {
         return defaultValue;
     }
-    if (Object.values(enumeration).indexOf(value) !== -1) {
-        // TODO: this should be unknown
-        // tslint:disable-next-line:no-any
+    if (Object.values(enumeration).includes(value)) {
         return value;
     }
     return defaultValue;
