@@ -14,5 +14,5 @@ export declare class GenerateCommand extends SchematicCommand<GenerateCommandSch
     run(options: GenerateCommandSchema & Arguments): Promise<number | void>;
     reportAnalytics(paths: string[], options: GenerateCommandSchema & Arguments): Promise<void>;
     private parseSchematicInfo;
-    printHelp(options: GenerateCommandSchema & Arguments): Promise<number>;
+    printHelp(): Promise<number>;
 }

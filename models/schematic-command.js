@@ -53,8 +53,8 @@ class SchematicCommand extends command_1.Command {
             }
         }
     }
-    async printHelp(options) {
-        await super.printHelp(options);
+    async printHelp() {
+        await super.printHelp();
         this.logger.info('');
         const subCommandOption = this.description.options.filter(x => x.subcommands)[0];
         if (!subCommandOption || !subCommandOption.subcommands) {
@@ -220,6 +220,7 @@ class SchematicCommand extends command_1.Command {
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions.map(definition => {
+                    var _a;
                     const question = {
                         name: definition.id,
                         message: definition.message,
@@ -234,20 +235,15 @@ class SchematicCommand extends command_1.Command {
                             question.type = 'confirm';
                             break;
                         case 'list':
-                            question.type = !!definition.multiselect ? 'checkbox' : 'list';
-                            question.choices =
-                                definition.items &&
-                                    definition.items.map(item => {
-                                        if (typeof item == 'string') {
-                                            return item;
-                                        }
-                                        else {
-                                            return {
-                                                name: item.label,
-                                                value: item.value,
-                                            };
-                                        }
-                                    });
+                            question.type = definition.multiselect ? 'checkbox' : 'list';
+                            question.choices = (_a = definition.items) === null || _a === void 0 ? void 0 : _a.map(item => {
+                                return typeof item == 'string'
+                                    ? item
+                                    : {
+                                        name: item.label,
+                                        value: item.value,
+                                    };
+                            });
                             break;
                         default:
                             question.type = definition.type;

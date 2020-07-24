@@ -25,13 +25,6 @@ function _validateBoolean(value) {
         throw new Error(`Invalid value type; expected Boolean, received ${JSON.stringify(value)}.`);
     }
 }
-function _validateNumber(value) {
-    const numberValue = Number(value);
-    if (!Number.isFinite(numberValue)) {
-        return numberValue;
-    }
-    throw new Error(`Invalid value type; expected Number, received ${JSON.stringify(value)}.`);
-}
 function _validateString(value) {
     return value;
 }

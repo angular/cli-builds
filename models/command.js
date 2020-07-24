@@ -28,7 +28,7 @@ class Command {
     async initialize(options) {
         return;
     }
-    async printHelp(options) {
+    async printHelp() {
         await this.printHelpUsage();
         await this.printHelpOptions();
         return 0;
@@ -124,7 +124,7 @@ class Command {
         }
         await this.initialize(options);
         if (options.help === true) {
-            return this.printHelp(options);
+            return this.printHelp();
         }
         else if (options.help === 'json' || options.help === 'JSON') {
             return this.printJsonHelp(options);

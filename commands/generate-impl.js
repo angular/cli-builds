@@ -41,7 +41,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
     }
     async run(options) {
         if (!this.schematicName || !this.collectionName) {
-            return this.printHelp(options);
+            return this.printHelp();
         }
         return this.runSchematic({
             collectionName: this.collectionName,
@@ -68,8 +68,8 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         }
         return [collectionName, schematicName];
     }
-    async printHelp(options) {
-        await super.printHelp(options);
+    async printHelp() {
+        await super.printHelp();
         this.logger.info('');
         // Find the generate subcommand.
         const subcommand = this.description.options.filter(x => x.subcommands)[0];

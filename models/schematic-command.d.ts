@@ -40,7 +40,7 @@ export declare abstract class SchematicCommand<T extends BaseSchematicSchema & B
     protected schematicName?: string;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
     initialize(options: T & Arguments): Promise<void>;
-    printHelp(options: T & Arguments): Promise<number>;
+    printHelp(): Promise<number>;
     printHelpUsage(): Promise<void>;
     protected getEngine(): FileSystemEngine;
     protected getCollection(collectionName: string): FileSystemCollection;

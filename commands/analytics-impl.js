@@ -25,7 +25,7 @@ class AnalyticsCommand extends command_1.Command {
             }
             else {
                 // No argument were passed.
-                await this.printHelp(options);
+                await this.printHelp();
                 return 2;
             }
         }
@@ -58,7 +58,7 @@ class AnalyticsCommand extends command_1.Command {
                             await analytics_1.promptProjectAnalytics(true);
                             break;
                         default:
-                            await this.printHelp(options);
+                            await this.printHelp();
                             return 3;
                     }
                     break;
@@ -66,7 +66,7 @@ class AnalyticsCommand extends command_1.Command {
                     await analytics_1.promptGlobalAnalytics(true);
                     break;
                 default:
-                    await this.printHelp(options);
+                    await this.printHelp();
                     return 4;
             }
         }
