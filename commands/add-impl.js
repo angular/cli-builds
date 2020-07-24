@@ -34,6 +34,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
     }
     async run(options) {
+        var _a;
         if (!options.collection) {
             this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. ` +
                 `${color_1.colors.yellow('ng add [name] ')}. For more details, use "ng help".`);
@@ -126,7 +127,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 verbose: options.verbose,
                 usingYarn,
             });
-            savePackage = manifest['ng-add'] && manifest['ng-add'].save;
+            savePackage = (_a = manifest['ng-add']) === null || _a === void 0 ? void 0 : _a.save;
             collectionName = manifest.name;
             if (await this.hasMismatchedPeer(manifest)) {
                 this.logger.warn('Package has unmet peer dependencies. Adding the package may not succeed.');
