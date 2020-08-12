@@ -41,6 +41,7 @@ class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
         this.allowMissingWorkspace = true;
+        this.packageManager = schema_1.PackageManager.Npm;
     }
     async initialize() {
         this.packageManager = await package_manager_1.getPackageManager(this.workspace.root);
