@@ -7,13 +7,16 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isWarningEnabled = exports.getSchematicDefaults = exports.migrateLegacyGlobalConfig = exports.getConfiguredPackageManager = exports.getProjectByCwd = exports.validateWorkspace = exports.getWorkspaceRaw = exports.createGlobalSettings = exports.getWorkspace = exports.workspaceSchemaPath = void 0;
+exports.isWarningEnabled = exports.getSchematicDefaults = exports.migrateLegacyGlobalConfig = exports.getConfiguredPackageManager = exports.getProjectByCwd = exports.validateWorkspace = exports.getWorkspaceRaw = exports.createGlobalSettings = exports.getWorkspace = exports.AngularWorkspace = exports.workspaceSchemaPath = void 0;
 const core_1 = require("@angular-devkit/core");
 const node_1 = require("@angular-devkit/core/node");
 const fs_1 = require("fs");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
+function isJsonObject(value) {
+    return value !== undefined && core_1.json.isJsonObject(value);
+}
 function getSchemaLocation() {
     return path.join(__dirname, '../lib/config/schema.json');
 }
@@ -28,9 +31,9 @@ function xdgConfigHome(home, configFile) {
 function projectFilePath(projectPath) {
     // Find the configuration, either where specified, in the Angular CLI project
     // (if it's in node_modules) or from the current process.
-    return (projectPath && find_up_1.findUp(configNames, projectPath))
-        || find_up_1.findUp(configNames, process.cwd())
-        || find_up_1.findUp(configNames, __dirname);
+    return ((projectPath && find_up_1.findUp(configNames, projectPath)) ||
+        find_up_1.findUp(configNames, process.cwd()) ||
+        find_up_1.findUp(configNames, __dirname));
 }
 function globalFilePath() {
     const home = os.homedir();
@@ -51,10 +54,36 @@ function globalFilePath() {
     }
     return null;
 }
+class AngularWorkspace {
+    constructor(workspace, filePath) {
+        this.workspace = workspace;
+        this.filePath = filePath;
+        this.basePath = path.dirname(filePath);
+    }
+    get extensions() {
+        return this.workspace.extensions;
+    }
+    get projects() {
+        return this.workspace.projects;
+    }
+    // Temporary helper functions to support refactoring
+    // tslint:disable-next-line: no-any
+    getCli() {
+        // tslint:disable-next-line: no-any
+        return this.workspace.extensions['cli'] || {};
+    }
+    // tslint:disable-next-line: no-any
+    getProjectCli(projectName) {
+        const project = this.workspace.projects.get(projectName);
+        // tslint:disable-next-line: no-any
+        return (project === null || project === void 0 ? void 0 : project.extensions['cli']) || {};
+    }
+}
+exports.AngularWorkspace = AngularWorkspace;
 const cachedWorkspaces = new Map();
 async function getWorkspace(level = 'local') {
     const cached = cachedWorkspaces.get(level);
-    if (cached != undefined) {
+    if (cached !== undefined) {
         return cached;
     }
     const configPath = level === 'local' ? projectFilePath() : globalFilePath();
@@ -62,18 +91,16 @@ async function getWorkspace(level = 'local') {
         cachedWorkspaces.set(level, null);
         return null;
     }
-    const root = core_1.normalize(path.dirname(configPath));
-    const file = core_1.normalize(path.basename(configPath));
-    const workspace = new core_1.experimental.workspace.Workspace(root, new node_1.NodeJsSyncHost());
     try {
-        await workspace.loadWorkspaceFromHost(file).toPromise();
+        const result = await core_1.workspaces.readWorkspace(configPath, core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost()), core_1.workspaces.WorkspaceFormat.JSON);
+        const workspace = new AngularWorkspace(result.workspace, configPath);
+        cachedWorkspaces.set(level, workspace);
+        return workspace;
     }
     catch (error) {
-        throw new Error(`Workspace config file cannot be loaded: ${configPath}`
-            + `\n${error instanceof Error ? error.message : error}`);
+        throw new Error(`Workspace config file cannot be loaded: ${configPath}` +
+            `\n${error instanceof Error ? error.message : error}`);
     }
-    cachedWorkspaces.set(level, workspace);
-    return workspace;
 }
 exports.getWorkspace = getWorkspace;
 function createGlobalSettings() {
@@ -96,9 +123,13 @@ function getWorkspaceRaw(level = 'local') {
             return [null, null];
         }
     }
-    let content = '';
-    new node_1.NodeJsSyncHost().read(core_1.normalize(configPath))
-        .subscribe(data => content = core_1.virtualFs.fileBufferToString(data));
+    const data = fs_1.readFileSync(configPath);
+    let start = 0;
+    if (data.length > 3 && data[0] === 0xef && data[1] === 0xbb && data[2] === 0xbf) {
+        // Remove BOM
+        start = 3;
+    }
+    const content = data.toString('utf-8', start);
     const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
     if (ast.kind != 'object') {
         throw new Error(`Invalid JSON file: ${configPath}`);
@@ -106,56 +137,100 @@ function getWorkspaceRaw(level = 'local') {
     return [ast, configPath];
 }
 exports.getWorkspaceRaw = getWorkspaceRaw;
-async function validateWorkspace(json) {
-    const workspace = new core_1.experimental.workspace.Workspace(core_1.normalize('.'), new node_1.NodeJsSyncHost());
-    await workspace.loadWorkspaceFromJson(json).toPromise();
-    return true;
+async function validateWorkspace(data) {
+    const schemaContent = fs_1.readFileSync(path.join(__dirname, '..', 'lib', 'config', 'schema.json'), 'utf-8');
+    const schema = core_1.parseJson(schemaContent, core_1.JsonParseMode.Loose);
+    const { formats } = await Promise.resolve().then(() => require('@angular-devkit/schematics'));
+    const registry = new core_1.json.schema.CoreSchemaRegistry(formats.standardFormats);
+    const validator = await registry.compile(schema).toPromise();
+    const { success, errors } = await validator(data).toPromise();
+    if (!success) {
+        throw new core_1.json.schema.SchemaValidationException(errors);
+    }
 }
 exports.validateWorkspace = validateWorkspace;
-function getProjectByCwd(workspace) {
-    try {
-        return workspace.getProjectByPath(core_1.normalize(process.cwd()));
-    }
-    catch (e) {
-        if (e instanceof core_1.experimental.workspace.AmbiguousProjectPathException) {
-            return workspace.getDefaultProjectName();
+function getProjectByPath(workspace, location) {
+    const isInside = (base, potential) => {
+        const absoluteBase = path.resolve(workspace.basePath, base);
+        const absolutePotential = path.resolve(workspace.basePath, potential);
+        const relativePotential = path.relative(absoluteBase, absolutePotential);
+        if (!relativePotential.startsWith('..') && !path.isAbsolute(relativePotential)) {
+            return true;
         }
-        throw e;
+        return false;
+    };
+    const projects = Array.from(workspace.projects)
+        .map(([name, project]) => [project.root, name])
+        .filter((tuple) => isInside(tuple[0], location))
+        // Sort tuples by depth, with the deeper ones first. Since the first member is a path and
+        // we filtered all invalid paths, the longest will be the deepest (and in case of equality
+        // the sort is stable and the first declared project will win).
+        .sort((a, b) => b[0].length - a[0].length);
+    if (projects.length === 0) {
+        return null;
     }
+    else if (projects.length > 1) {
+        const found = new Set();
+        const sameRoots = projects.filter((v) => {
+            if (!found.has(v[0])) {
+                found.add(v[0]);
+                return false;
+            }
+            return true;
+        });
+        if (sameRoots.length > 0) {
+            // Ambiguous location - cannot determine a project
+            return null;
+        }
+    }
+    return projects[0][1];
+}
+function getProjectByCwd(workspace) {
+    if (workspace.projects.size === 1) {
+        // If there is only one project, return that one.
+        return Array.from(workspace.projects.keys())[0];
+    }
+    const project = getProjectByPath(workspace, process.cwd());
+    if (project) {
+        return project;
+    }
+    const defaultProject = workspace.extensions['defaultProject'];
+    if (defaultProject && typeof defaultProject === 'string') {
+        // If there is a default project name, return it.
+        return defaultProject;
+    }
+    return null;
 }
 exports.getProjectByCwd = getProjectByCwd;
 async function getConfiguredPackageManager() {
-    let workspace = await getWorkspace('local');
+    var _a;
+    const getPackageManager = (source) => {
+        if (isJsonObject(source)) {
+            const value = source['packageManager'];
+            if (value && typeof value === 'string') {
+                return value;
+            }
+        }
+    };
+    let result;
+    const workspace = await getWorkspace('local');
     if (workspace) {
         const project = getProjectByCwd(workspace);
-        if (project && workspace.getProjectCli(project)) {
-            const value = workspace.getProjectCli(project)['packageManager'];
-            if (typeof value == 'string') {
-                return value;
-            }
+        if (project) {
+            result = getPackageManager((_a = workspace.projects.get(project)) === null || _a === void 0 ? void 0 : _a.extensions['cli']);
         }
-        if (workspace.getCli()) {
-            const value = workspace.getCli()['packageManager'];
-            if (typeof value == 'string') {
-                return value;
-            }
+        result = result !== null && result !== void 0 ? result : getPackageManager(workspace.extensions['cli']);
+    }
+    if (result === undefined) {
+        const globalOptions = await getWorkspace('global');
+        result = getPackageManager(globalOptions === null || globalOptions === void 0 ? void 0 : globalOptions.extensions['cli']);
+        if (!workspace && !globalOptions) {
+            // Only check legacy if updated workspace is not found
+            result = getLegacyPackageManager();
         }
     }
-    workspace = await getWorkspace('global');
-    if (workspace && workspace.getCli()) {
-        const value = workspace.getCli()['packageManager'];
-        if (typeof value == 'string') {
-            return value;
-        }
-    }
-    // Only check legacy if updated workspace is not found.
-    if (!workspace) {
-        const legacyPackageManager = getLegacyPackageManager();
-        if (legacyPackageManager !== null) {
-            return legacyPackageManager;
-        }
-    }
-    return null;
+    // Default to null
+    return result !== null && result !== void 0 ? result : null;
 }
 exports.getConfiguredPackageManager = getConfiguredPackageManager;
 function migrateLegacyGlobalConfig() {
@@ -165,20 +240,21 @@ function migrateLegacyGlobalConfig() {
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
             const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
-            if (!core_1.isJsonObject(legacy)) {
+            if (!isJsonObject(legacy)) {
                 return false;
             }
             const cli = {};
-            if (legacy.packageManager && typeof legacy.packageManager == 'string'
-                && legacy.packageManager !== 'default') {
+            if (legacy.packageManager &&
+                typeof legacy.packageManager == 'string' &&
+                legacy.packageManager !== 'default') {
                 cli['packageManager'] = legacy.packageManager;
             }
-            if (core_1.isJsonObject(legacy.defaults)
-                && core_1.isJsonObject(legacy.defaults.schematics)
-                && typeof legacy.defaults.schematics.collection == 'string') {
+            if (isJsonObject(legacy.defaults) &&
+                isJsonObject(legacy.defaults.schematics) &&
+                typeof legacy.defaults.schematics.collection == 'string') {
                 cli['defaultCollection'] = legacy.defaults.schematics.collection;
             }
-            if (core_1.isJsonObject(legacy.warnings)) {
+            if (isJsonObject(legacy.warnings)) {
                 const warnings = {};
                 if (typeof legacy.warnings.versionMismatch == 'boolean') {
                     warnings['versionMismatch'] = legacy.warnings.versionMismatch;
@@ -205,11 +281,12 @@ function getLegacyPackageManager() {
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
             const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
-            if (!core_1.isJsonObject(legacy)) {
+            if (!isJsonObject(legacy)) {
                 return null;
             }
-            if (legacy.packageManager && typeof legacy.packageManager === 'string'
-                && legacy.packageManager !== 'default') {
+            if (legacy.packageManager &&
+                typeof legacy.packageManager === 'string' &&
+                legacy.packageManager !== 'default') {
                 return legacy.packageManager;
             }
         }
@@ -217,79 +294,62 @@ function getLegacyPackageManager() {
     return null;
 }
 async function getSchematicDefaults(collection, schematic, project) {
-    let result = {};
-    const fullName = `${collection}:${schematic}`;
-    let workspace = await getWorkspace('global');
-    if (workspace && workspace.getSchematics()) {
-        const schematicObject = workspace.getSchematics()[fullName];
-        if (schematicObject) {
-            result = { ...result, ...schematicObject };
+    var _a;
+    const result = {};
+    const mergeOptions = (source) => {
+        if (isJsonObject(source)) {
+            // Merge options from the qualified name
+            Object.assign(result, source[`${collection}:${schematic}`]);
+            // Merge options from nested collection schematics
+            const collectionOptions = source[collection];
+            if (isJsonObject(collectionOptions)) {
+                Object.assign(result, collectionOptions[schematic]);
+            }
         }
-        const collectionObject = workspace.getSchematics()[collection];
-        if (core_1.isJsonObject(collectionObject)) {
-            result = { ...result, ...collectionObject[schematic] };
-        }
-    }
-    workspace = await getWorkspace('local');
+    };
+    // Global level schematic options
+    const globalOptions = await getWorkspace('global');
+    mergeOptions(globalOptions === null || globalOptions === void 0 ? void 0 : globalOptions.extensions['schematics']);
+    const workspace = await getWorkspace('local');
     if (workspace) {
-        if (workspace.getSchematics()) {
-            const schematicObject = workspace.getSchematics()[fullName];
-            if (schematicObject) {
-                result = { ...result, ...schematicObject };
-            }
-            const collectionObject = workspace.getSchematics()[collection];
-            if (core_1.isJsonObject(collectionObject)) {
-                result = { ...result, ...collectionObject[schematic] };
-            }
-        }
+        // Workspace level schematic options
+        mergeOptions(workspace.extensions['schematics']);
         project = project || getProjectByCwd(workspace);
-        if (project && workspace.getProjectSchematics(project)) {
-            const schematicObject = workspace.getProjectSchematics(project)[fullName];
-            if (schematicObject) {
-                result = { ...result, ...schematicObject };
-            }
-            const collectionObject = workspace.getProjectSchematics(project)[collection];
-            if (core_1.isJsonObject(collectionObject)) {
-                result = { ...result, ...collectionObject[schematic] };
-            }
+        if (project) {
+            // Project level schematic options
+            mergeOptions((_a = workspace.projects.get(project)) === null || _a === void 0 ? void 0 : _a.extensions['schematics']);
         }
     }
     return result;
 }
 exports.getSchematicDefaults = getSchematicDefaults;
 async function isWarningEnabled(warning) {
-    let workspace = await getWorkspace('local');
+    var _a;
+    const getWarning = (source) => {
+        if (isJsonObject(source)) {
+            const warnings = source['warnings'];
+            if (isJsonObject(warnings)) {
+                const value = warnings[warning];
+                if (typeof value == 'boolean') {
+                    return value;
+                }
+            }
+        }
+    };
+    let result;
+    const workspace = await getWorkspace('local');
     if (workspace) {
         const project = getProjectByCwd(workspace);
-        if (project && workspace.getProjectCli(project)) {
-            const warnings = workspace.getProjectCli(project)['warnings'];
-            if (core_1.isJsonObject(warnings)) {
-                const value = warnings[warning];
-                if (typeof value == 'boolean') {
-                    return value;
-                }
-            }
+        if (project) {
+            result = getWarning((_a = workspace.projects.get(project)) === null || _a === void 0 ? void 0 : _a.extensions['cli']);
         }
-        if (workspace.getCli()) {
-            const warnings = workspace.getCli()['warnings'];
-            if (core_1.isJsonObject(warnings)) {
-                const value = warnings[warning];
-                if (typeof value == 'boolean') {
-                    return value;
-                }
-            }
-        }
+        result = result !== null && result !== void 0 ? result : getWarning(workspace.extensions['cli']);
     }
-    workspace = await getWorkspace('global');
-    if (workspace && workspace.getCli()) {
-        const warnings = workspace.getCli()['warnings'];
-        if (core_1.isJsonObject(warnings)) {
-            const value = warnings[warning];
-            if (typeof value == 'boolean') {
-                return value;
-            }
-        }
+    if (result === undefined) {
+        const globalOptions = await getWorkspace('global');
+        result = getWarning(globalOptions === null || globalOptions === void 0 ? void 0 : globalOptions.extensions['cli']);
     }
-    return true;
+    // All warnings are enabled by default
+    return result !== null && result !== void 0 ? result : true;
 }
 exports.isWarningEnabled = isWarningEnabled;

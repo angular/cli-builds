@@ -182,11 +182,11 @@ class ConfigCommand extends command_1.Command {
         if (!options.global) {
             await this.validateScope(interface_1.CommandScope.InProject);
         }
-        let config = await config_1.getWorkspace(level);
+        let [config] = config_1.getWorkspaceRaw(level);
         if (options.global && !config) {
             try {
                 if (config_1.migrateLegacyGlobalConfig()) {
-                    config = await config_1.getWorkspace(level);
+                    config = config_1.getWorkspaceRaw(level)[0];
                     this.logger.info(core_1.tags.oneLine `
             We found a global configuration that was used in Angular CLI 1.
             It has been automatically migrated.`);
@@ -199,9 +199,7 @@ class ConfigCommand extends command_1.Command {
                 this.logger.error('No config found.');
                 return 1;
             }
-            const workspace = config
-                ._workspace;
-            return this.get(workspace, options);
+            return this.get(config.value, options);
         }
         else {
             return this.set(options);
