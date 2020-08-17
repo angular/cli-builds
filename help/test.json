@@ -87,8 +87,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "This option has no effect."
+      "hidden": false
     },
     {
       "name": "include",

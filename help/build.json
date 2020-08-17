@@ -183,8 +183,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'locales' object in the project metadata instead."
+      "hidden": false
     },
     {
       "name": "i18nFormat",
@@ -192,8 +191,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "No longer needed as the format will be determined automatically."
+      "hidden": false
     },
     {
       "name": "i18nLocale",
@@ -201,8 +199,7 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'localize' instead."
+      "hidden": false
     },
     {
       "name": "i18nMissingTranslation",
@@ -378,8 +375,7 @@
       "type": "array",
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
+      "hidden": false
     },
     {
       "name": "rebaseRootRelativeCssUrls",
@@ -388,8 +384,7 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "deprecated": true
+      "hidden": false
     },
     {
       "name": "webWorkerTsConfig",

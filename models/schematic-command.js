@@ -217,6 +217,7 @@ class SchematicCommand extends command_1.Command {
         }
         workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
+        workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions.map(definition => {

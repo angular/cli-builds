@@ -27,6 +27,7 @@ class ArchitectCommand extends command_1.Command {
         await super.initialize(options);
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
+        this._registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
         const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(new node_2.NodeJsSyncHost()));
         this._workspace = workspace;
         this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);

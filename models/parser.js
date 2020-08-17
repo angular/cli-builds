@@ -167,9 +167,6 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
                         + `will override it.`);
                 }
                 parsedOptions[option.name] = v;
-                if (option.deprecated !== undefined && option.deprecated !== false) {
-                    warnings.push(`Option ${JSON.stringify(option.name)} is deprecated${typeof option.deprecated == 'string' ? ': ' + option.deprecated : '.'}`);
-                }
             }
         }
         else {
