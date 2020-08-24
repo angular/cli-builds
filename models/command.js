@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Command = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -6,9 +8,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Command = void 0;
-// tslint:disable:no-global-tslint-disable no-any
 const core_1 = require("@angular-devkit/core");
 const path = require("path");
 const color_1 = require("../utilities/color");

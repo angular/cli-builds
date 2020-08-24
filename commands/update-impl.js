@@ -159,7 +159,6 @@ class UpdateCommand extends command_1.Command {
         this.logger.info(color_1.colors.cyan(`** Executing migrations of package '${packageName}' **\n`));
         return this.executePackageMigrations(migrations, packageName, commit);
     }
-    // tslint:disable-next-line: no-any
     async executePackageMigrations(migrations, packageName, commit = false) {
         for (const migration of migrations) {
             this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);

@@ -17,7 +17,8 @@ function removeColor(text) {
     return text.replace(new RegExp(ansiColors.ansiRegex), '');
 }
 exports.removeColor = removeColor;
-// tslint:disable-next-line: no-any
+// create a separate instance to prevent unintended global changes to the color configuration
+// create function is not defined in the typings
 const colors = ansiColors.create();
 exports.colors = colors;
 colors.enabled = exports.supportsColor;

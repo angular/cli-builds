@@ -91,7 +91,6 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             if (latestManifest && Object.keys(latestManifest.peerDependencies).length === 0) {
                 if (latestManifest.name === '@angular/pwa') {
                     const version = await this.findProjectVersion('@angular/cli');
-                    // tslint:disable-next-line:no-any
                     const semverOptions = { includePrerelease: true };
                     if (version &&
                         ((semver_1.validRange(version) && semver_1.intersects(version, '7', semverOptions)) ||
@@ -240,7 +239,6 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     if (!version) {
                         continue;
                     }
-                    // tslint:disable-next-line:no-any
                     const options = { includePrerelease: true };
                     if (!semver_1.intersects(version, peerIdentifier.rawSpec, options) &&
                         !semver_1.satisfies(version, peerIdentifier.rawSpec, options)) {

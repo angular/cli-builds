@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getWorkspaceDetails = exports.insideWorkspace = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -6,9 +8,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWorkspaceDetails = exports.insideWorkspace = void 0;
-// tslint:disable:no-global-tslint-disable no-any
 const core_1 = require("@angular-devkit/core");
 const fs = require("fs");
 const os = require("os");
@@ -54,14 +53,10 @@ function getWorkspaceDetails() {
 }
 exports.getWorkspaceDetails = getWorkspaceDetails;
 function containsCliDep(obj) {
+    var _a, _b;
     const pkgName = '@angular/cli';
-    if (obj) {
-        if (obj.dependencies && obj.dependencies[pkgName]) {
-            return true;
-        }
-        if (obj.devDependencies && obj.devDependencies[pkgName]) {
-            return true;
-        }
+    if (!obj) {
+        return false;
     }
-    return false;
+    return !!(((_a = obj.dependencies) === null || _a === void 0 ? void 0 : _a[pkgName]) || ((_b = obj.devDependencies) === null || _b === void 0 ? void 0 : _b[pkgName]));
 }

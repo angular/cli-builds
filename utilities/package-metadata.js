@@ -87,7 +87,6 @@ function normalizeManifest(rawManifest) {
         devDependencies: {},
         peerDependencies: {},
         optionalDependencies: {},
-        // tslint:disable-next-line:no-any
         ...rawManifest,
     };
 }
@@ -117,7 +116,6 @@ async function fetchPackageMetadata(name, logger, options) {
     }
     if (response['dist-tags']) {
         // Store this for use with other npm utility packages
-        // tslint:disable-next-line: no-any
         metadata['dist-tags'] = response['dist-tags'];
         for (const [tag, version] of Object.entries(response['dist-tags'])) {
             const manifest = metadata.versions[version];

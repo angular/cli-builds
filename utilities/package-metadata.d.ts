@@ -45,6 +45,7 @@ export interface PackageMetadata {
         [tag: string]: PackageManifest | undefined;
     };
     versions: Record<string, PackageManifest>;
+    'dist-tags'?: unknown;
 }
 export declare function fetchPackageMetadata(name: string, logger: logging.LoggerApi, options?: {
     registry?: string;

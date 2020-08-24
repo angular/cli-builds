@@ -69,13 +69,11 @@ class AngularWorkspace {
     // Temporary helper functions to support refactoring
     // tslint:disable-next-line: no-any
     getCli() {
-        // tslint:disable-next-line: no-any
         return this.workspace.extensions['cli'] || {};
     }
     // tslint:disable-next-line: no-any
     getProjectCli(projectName) {
         const project = this.workspace.projects.get(projectName);
-        // tslint:disable-next-line: no-any
         return (project === null || project === void 0 ? void 0 : project.extensions['cli']) || {};
     }
 }
