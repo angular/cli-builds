@@ -225,9 +225,9 @@
     },
     {
       "name": "extractCss",
-      "description": "Extract css from global styles into css files instead of js ones.",
+      "description": "Extract CSS from global styles into '.css' files instead of '.js'.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false

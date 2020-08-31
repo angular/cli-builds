@@ -81,15 +81,6 @@
               "aliases": [],
               "format": "html-selector",
               "hidden": false
-            },
-            {
-              "name": "tsconfigFileName",
-              "description": "The name of the TypeScript configuration file.",
-              "type": "string",
-              "default": "tsconfig.server",
-              "required": false,
-              "aliases": [],
-              "hidden": false
             }
           ],
           "aliases": []
