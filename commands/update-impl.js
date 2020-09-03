@@ -185,6 +185,7 @@ class UpdateCommand extends command_1.Command {
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        var _a;
         // Check if the @angular-devkit/schematics package can be resolved from the workspace root
         // This works around issues with packages containing migrations that cannot directly depend on the package
         // This check can be removed once the schematic runtime handles this situation
@@ -273,13 +274,12 @@ class UpdateCommand extends command_1.Command {
             options.from = '1.0.0';
         }
         this.logger.info('Collecting installed dependencies...');
-        const packageTree = await package_tree_1.readPackageTree(this.workspace.root);
-        const rootDependencies = package_tree_1.findNodeDependencies(packageTree);
-        this.logger.info(`Found ${Object.keys(rootDependencies).length} dependencies.`);
+        const rootDependencies = await package_tree_1.getProjectDependencies(this.workspace.root);
+        this.logger.info(`Found ${rootDependencies.size} dependencies.`);
         if (options.all) {
             // 'all' option and a zero length packages have already been checked.
             // Add all direct dependencies to be updated
-            for (const dep of Object.keys(rootDependencies)) {
+            for (const dep of rootDependencies.keys()) {
                 const packageIdentifier = npa(dep);
                 if (options.next) {
                     packageIdentifier.fetchSpec = 'next';
@@ -294,7 +294,7 @@ class UpdateCommand extends command_1.Command {
                 next: options.next || false,
                 verbose: options.verbose || false,
                 packageManager: this.packageManager,
-                packages: options.all ? Object.keys(rootDependencies) : [],
+                packages: options.all ? rootDependencies.keys() : [],
             });
             return success ? 0 : 1;
         }
@@ -311,8 +311,9 @@ class UpdateCommand extends command_1.Command {
                 this.logger.warn('"next" option has no effect when using "migrate-only" option.');
             }
             const packageName = packages[0].name;
-            const packageDependency = rootDependencies[packageName];
-            let packageNode = packageDependency && packageDependency.node;
+            const packageDependency = rootDependencies.get(packageName);
+            let packagePath = packageDependency === null || packageDependency === void 0 ? void 0 : packageDependency.path;
+            let packageNode = packageDependency === null || packageDependency === void 0 ? void 0 : packageDependency.package;
             if (packageDependency && !packageNode) {
                 this.logger.error('Package found in package.json but is not installed.');
                 return 1;
@@ -321,17 +322,18 @@ class UpdateCommand extends command_1.Command {
                 // Allow running migrations on transitively installed dependencies
                 // There can technically be nested multiple versions
                 // TODO: If multiple, this should find all versions and ask which one to use
-                const child = packageTree.children.find(c => c.name === packageName);
-                if (child) {
-                    packageNode = child;
+                const packageJson = package_tree_1.findPackageJson(this.workspace.root, packageName);
+                if (packageJson) {
+                    packagePath = path.dirname(packageJson);
+                    packageNode = await package_tree_1.readPackageJson(packagePath);
                 }
             }
-            if (!packageNode) {
+            if (!packageNode || !packagePath) {
                 this.logger.error('Package is not installed.');
                 return 1;
             }
-            const updateMetadata = packageNode.package['ng-update'];
-            let migrations = updateMetadata && updateMetadata.migrations;
+            const updateMetadata = packageNode['ng-update'];
+            let migrations = updateMetadata === null || updateMetadata === void 0 ? void 0 : updateMetadata.migrations;
             if (migrations === undefined) {
                 this.logger.error('Package does not provide migrations.');
                 return 1;
@@ -352,7 +354,7 @@ class UpdateCommand extends command_1.Command {
                 return 1;
             }
             // Check if it is a package-local location
-            const localMigrations = path.join(packageNode.path, migrations);
+            const localMigrations = path.join(packagePath, migrations);
             if (fs.existsSync(localMigrations)) {
                 migrations = localMigrations;
             }
@@ -360,7 +362,7 @@ class UpdateCommand extends command_1.Command {
                 // Try to resolve from package location.
                 // This avoids issues with package hoisting.
                 try {
-                    migrations = require.resolve(migrations, { paths: [packageNode.path] });
+                    migrations = require.resolve(migrations, { paths: [packagePath] });
                 }
                 catch (e) {
                     if (e.code === 'MODULE_NOT_FOUND') {
@@ -382,14 +384,14 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                     return 1;
                 }
-                const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
+                const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.version));
                 success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
             }
             if (success) {
                 if (packageName === '@angular/core'
                     && options.from
                     && +options.from.split('.')[0] < 9
-                    && (options.to || packageNode.package.version).split('.')[0] === '9') {
+                    && (options.to || packageNode.version).split('.')[0] === '9') {
                     this.logger.info(NG_VERSION_9_POST_MSG);
                 }
                 return 0;
@@ -399,8 +401,8 @@ class UpdateCommand extends command_1.Command {
         const requests = [];
         // Validate packages actually are part of the workspace
         for (const pkg of packages) {
-            const node = rootDependencies[pkg.name] && rootDependencies[pkg.name].node;
-            if (!node) {
+            const node = rootDependencies.get(pkg.name);
+            if (!(node === null || node === void 0 ? void 0 : node.package)) {
                 this.logger.error(`Package '${pkg.name}' is not a dependency.`);
                 return 1;
             }
@@ -465,7 +467,7 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if (manifest.version === node.package.version) {
+            if (manifest.version === ((_a = node.package) === null || _a === void 0 ? void 0 : _a.version)) {
                 this.logger.info(`Package '${packageName}' is already up to date.`);
                 continue;
             }

@@ -6,41 +6,27 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { NgAddSaveDepedency } from './package-metadata';
-export interface PackageTreeNodeBase {
+interface PackageJson {
     name: string;
-    path: string;
-    realpath: string;
-    error?: Error;
-    id: number;
-    isLink: boolean;
-    package: {
-        name: string;
-        version: string;
-        dependencies?: Record<string, string>;
-        devDependencies?: Record<string, string>;
-        peerDependencies?: Record<string, string>;
-        optionalDependencies?: Record<string, string>;
-        'ng-update'?: {
-            migrations?: string;
-        };
-        'ng-add'?: {
-            save?: NgAddSaveDepedency;
-        };
-    };
-    parent?: PackageTreeNode;
-    children: PackageTreeNode[];
-}
-export interface PackageTreeActual extends PackageTreeNodeBase {
-    isLink: false;
-}
-export interface PackageTreeLink extends PackageTreeNodeBase {
-    isLink: true;
-    target: PackageTreeActual;
-}
-export declare type PackageTreeNode = PackageTreeActual | PackageTreeLink;
-export declare function readPackageTree(path: string): Promise<PackageTreeNode>;
-export interface NodeDependency {
     version: string;
-    node?: PackageTreeNode;
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+    peerDependencies?: Record<string, string>;
+    optionalDependencies?: Record<string, string>;
+    'ng-update'?: {
+        migrations?: string;
+    };
+    'ng-add'?: {
+        save?: NgAddSaveDepedency;
+    };
 }
-export declare function findNodeDependencies(node: PackageTreeNode): Record<string, NodeDependency>;
+export interface PackageTreeNode {
+    name: string;
+    version: string;
+    path: string;
+    package: PackageJson | undefined;
+}
+export declare function readPackageJson(packageJsonPath: string): Promise<PackageJson | undefined>;
+export declare function findPackageJson(workspaceDir: string, packageName: string): string | undefined;
+export declare function getProjectDependencies(dir: string): Promise<Map<string, PackageTreeNode>>;
+export {};
