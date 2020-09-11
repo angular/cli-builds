@@ -50,14 +50,6 @@
       "hidden": false
     },
     {
-      "name": "buildEventLog",
-      "description": "**EXPERIMENTAL** Output file path for Build Event Protocol events",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "main",
       "description": "The full path for the main entry point to the app, relative to the current workspace.",
       "type": "string",

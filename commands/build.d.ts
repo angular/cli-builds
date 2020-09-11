@@ -4,10 +4,6 @@
  */
 export interface Schema {
     /**
-     * **EXPERIMENTAL** Output file path for Build Event Protocol events
-     */
-    buildEventLog?: string;
-    /**
      * A named build target, as specified in the "configurations" section of angular.json.
      * Each named target is accompanied by a configuration of option defaults for that target.
      * Setting this explicitly overrides the "--prod" flag

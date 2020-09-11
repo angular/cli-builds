@@ -49,14 +49,6 @@
       "hidden": false
     },
     {
-      "name": "buildEventLog",
-      "description": "**EXPERIMENTAL** Output file path for Build Event Protocol events",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "browserTarget",
       "description": "Target to serve.",
       "type": "string",

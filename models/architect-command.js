@@ -12,7 +12,6 @@ const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
 const node_2 = require("@angular-devkit/core/node");
-const bep_1 = require("../utilities/bep");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
@@ -148,30 +147,6 @@ class ArchitectCommand extends command_1.Command {
     async run(options) {
         return await this.runArchitectTarget(options);
     }
-    async runBepTarget(command, configuration, overrides, buildEventLog) {
-        const bep = new bep_1.BepJsonWriter(buildEventLog);
-        // Send start
-        bep.writeBuildStarted(command);
-        let last = 1;
-        let rebuild = false;
-        const run = await this._architect.scheduleTarget(configuration, overrides, {
-            logger: this.logger,
-        });
-        await run.output.forEach(event => {
-            last = event.success ? 0 : 1;
-            if (rebuild) {
-                // NOTE: This will have an incorrect timestamp but this cannot be fixed
-                //       until builders report additional status events
-                bep.writeBuildStarted(command);
-            }
-            else {
-                rebuild = true;
-            }
-            bep.writeBuildFinished(last);
-        });
-        await run.stop();
-        return last;
-    }
     async runSingleTarget(target, targetOptions, commandOptions) {
         // We need to build the builderSpec twice because architect does not understand
         // overrides separately (getting the configuration builds the whole project, including
@@ -187,23 +162,16 @@ class ArchitectCommand extends command_1.Command {
             });
             return 1;
         }
-        if (commandOptions.buildEventLog && ['build', 'serve'].includes(this.description.name)) {
-            // The build/serve commands supports BEP messaging
-            this.logger.warn('BEP support is experimental and subject to change.');
-            return this.runBepTarget(this.description.name, target, overrides, commandOptions.buildEventLog);
+        const run = await this._architect.scheduleTarget(target, overrides, {
+            logger: this.logger,
+            analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
+        });
+        const { error, success } = await run.output.toPromise();
+        await run.stop();
+        if (error) {
+            this.logger.error(error);
         }
-        else {
-            const run = await this._architect.scheduleTarget(target, overrides, {
-                logger: this.logger,
-                analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
-            });
-            const { error, success } = await run.output.toPromise();
-            await run.stop();
-            if (error) {
-                this.logger.error(error);
-            }
-            return success ? 0 : 1;
-        }
+        return success ? 0 : 1;
     }
     async runArchitectTarget(options) {
         const extra = options['--'] || [];
