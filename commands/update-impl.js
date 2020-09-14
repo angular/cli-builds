@@ -68,7 +68,7 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`ERROR! ${eventPath} ${desc}.`);
                     break;
                 case 'update':
-                    logs.push(`${color_1.colors.whiteBright('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
+                    logs.push(`${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
                     files.add(eventPath);
                     break;
                 case 'create':
@@ -90,7 +90,7 @@ class UpdateCommand extends command_1.Command {
             if (event.kind == 'end' || event.kind == 'post-tasks-start') {
                 if (!error) {
                     // Output the logging queue, no error happened.
-                    logs.forEach(log => this.logger.info(log));
+                    logs.forEach(log => this.logger.info(`  ${log}`));
                     logs = [];
                 }
             }
@@ -161,7 +161,12 @@ class UpdateCommand extends command_1.Command {
     }
     async executePackageMigrations(migrations, packageName, commit = false) {
         for (const migration of migrations) {
-            this.logger.info(`${color_1.colors.symbols.pointer} ${migration.description.replace(/\. /g, '.\n  ')}`);
+            const [title, ...description] = migration.description.split('. ');
+            this.logger.info(color_1.colors.cyan(color_1.colors.symbols.pointer) + ' ' +
+                color_1.colors.bold(title.endsWith('.') ? title : title + '.'));
+            if (description.length) {
+                this.logger.info('  ' + description.join('.\n  '));
+            }
             const result = await this.executeSchematic(migration.collection.name, migration.name);
             if (!result.success) {
                 return false;

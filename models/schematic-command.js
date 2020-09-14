@@ -368,7 +368,7 @@ class SchematicCommand extends command_1.Command {
                     break;
                 case 'update':
                     loggingQueue.push(core_1.tags.oneLine `
-            ${color_1.colors.white('UPDATE')} ${eventPath} (${event.content.length} bytes)
+            ${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)
           `);
                     break;
                 case 'create':
