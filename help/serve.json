@@ -145,7 +145,7 @@
     },
     {
       "name": "allowedHosts",
-      "description": "List of hosts that are allowed to access the dev server.",
+      "description": "Whitelist of hosts that are allowed to access the dev server.",
       "type": "array",
       "required": false,
       "aliases": [],
