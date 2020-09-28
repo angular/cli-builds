@@ -100,7 +100,7 @@
     },
     {
       "name": "ivy",
-      "description": "Use Ivy compiler to extract translations.",
+      "description": "Use Ivy compiler to extract translations. The default for Ivy applications.",
       "type": "boolean",
       "required": false,
       "aliases": [],
