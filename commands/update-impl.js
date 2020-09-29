@@ -215,6 +215,17 @@ class UpdateCommand extends command_1.Command {
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
+        if (options.all) {
+            const updateCmd = this.packageManager === schema_1.PackageManager.Yarn
+                ? `'yarn upgrade-interactive' or 'yarn upgrade'`
+                : `'${this.packageManager} update'`;
+            this.logger.warn(`
+        '--all' functionality has been removed as updating multiple packages at once is not recommended.
+        To update packages which don’t provide 'ng update' capabilities in your workspace 'package.json' use ${updateCmd} instead.
+        Run the package manager update command after updating packages which provide 'ng update' capabilities.
+      `);
+            return 0;
+        }
         const packages = [];
         for (const request of options['--'] || []) {
             try {
@@ -242,22 +253,13 @@ class UpdateCommand extends command_1.Command {
                 return 1;
             }
         }
-        if (options.all && packages.length > 0) {
-            this.logger.error('Cannot specify packages when using the "all" option.');
-            return 1;
-        }
-        else if (options.all && options.migrateOnly) {
-            this.logger.error('Cannot use "all" option with "migrate-only" option.');
-            return 1;
-        }
-        else if (!options.migrateOnly && (options.from || options.to)) {
+        if (!options.migrateOnly && (options.from || options.to)) {
             this.logger.error('Can only use "from" or "to" options with "migrate-only" option.');
             return 1;
         }
         // If not asking for status then check for a clean git repository.
         // This allows the user to easily reset any changes from the update.
-        const statusCheck = packages.length === 0 && !options.all;
-        if (!statusCheck && !this.checkCleanGit()) {
+        if (packages.length && !this.checkCleanGit()) {
             if (options.allowDirty) {
                 this.logger.warn('Repository is not clean. Update changes will be mixed with pre-existing changes.');
             }
@@ -270,7 +272,6 @@ class UpdateCommand extends command_1.Command {
         // Special handling for Angular CLI 1.x migrations
         if (options.migrateOnly === undefined &&
             options.from === undefined &&
-            !options.all &&
             packages.length === 1 &&
             packages[0].name === '@angular/cli' &&
             this.workspace.configFile &&
@@ -281,25 +282,14 @@ class UpdateCommand extends command_1.Command {
         this.logger.info('Collecting installed dependencies...');
         const rootDependencies = await package_tree_1.getProjectDependencies(this.workspace.root);
         this.logger.info(`Found ${rootDependencies.size} dependencies.`);
-        if (options.all) {
-            // 'all' option and a zero length packages have already been checked.
-            // Add all direct dependencies to be updated
-            for (const dep of rootDependencies.keys()) {
-                const packageIdentifier = npa(dep);
-                if (options.next) {
-                    packageIdentifier.fetchSpec = 'next';
-                }
-                packages.push(packageIdentifier);
-            }
-        }
-        else if (packages.length === 0) {
+        if (packages.length === 0) {
             // Show status
             const { success } = await this.executeSchematic('@schematics/update', 'update', {
                 force: options.force || false,
                 next: options.next || false,
                 verbose: options.verbose || false,
                 packageManager: this.packageManager,
-                packages: options.all ? rootDependencies.keys() : [],
+                packages: [],
             });
             return success ? 0 : 1;
         }
