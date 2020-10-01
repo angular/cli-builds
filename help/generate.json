@@ -236,7 +236,7 @@
             },
             {
               "name": "strict",
-              "description": "Creates an application with stricter build optimization options.",
+              "description": "Creates an application with stricter bundle budgets settings.",
               "type": "boolean",
               "default": false,
               "required": false,
