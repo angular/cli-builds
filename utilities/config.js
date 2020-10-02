@@ -76,6 +76,16 @@ class AngularWorkspace {
         const project = this.workspace.projects.get(projectName);
         return (project === null || project === void 0 ? void 0 : project.extensions['cli']) || {};
     }
+    static async load(workspaceFilePath) {
+        const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
+        if (oldConfigFileNames.includes(path.basename(workspaceFilePath))) {
+            // 1.x file format
+            // Create an empty workspace to allow update to be used
+            return new AngularWorkspace({ extensions: {}, projects: new core_1.workspaces.ProjectDefinitionCollection() }, workspaceFilePath);
+        }
+        const result = await core_1.workspaces.readWorkspace(workspaceFilePath, core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost()), core_1.workspaces.WorkspaceFormat.JSON);
+        return new AngularWorkspace(result.workspace, workspaceFilePath);
+    }
 }
 exports.AngularWorkspace = AngularWorkspace;
 const cachedWorkspaces = new Map();
@@ -147,7 +157,7 @@ async function validateWorkspace(data) {
     }
 }
 exports.validateWorkspace = validateWorkspace;
-function getProjectByPath(workspace, location) {
+function findProjectByPath(workspace, location) {
     const isInside = (base, potential) => {
         const absoluteBase = path.resolve(workspace.basePath, base);
         const absolutePotential = path.resolve(workspace.basePath, potential);
@@ -188,7 +198,7 @@ function getProjectByCwd(workspace) {
         // If there is only one project, return that one.
         return Array.from(workspace.projects.keys())[0];
     }
-    const project = getProjectByPath(workspace, process.cwd());
+    const project = findProjectByPath(workspace, process.cwd());
     if (project) {
         return project;
     }

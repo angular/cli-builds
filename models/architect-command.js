@@ -11,7 +11,6 @@ exports.ArchitectCommand = void 0;
 const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
-const node_2 = require("@angular-devkit/core/node");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
@@ -27,9 +26,10 @@ class ArchitectCommand extends command_1.Command {
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
         this._registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
-        const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(new node_2.NodeJsSyncHost()));
-        this._workspace = workspace;
-        this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);
+        if (!this.workspace) {
+            throw new Error('A workspace is required for an architect command.');
+        }
+        this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(this.workspace, this.workspace.basePath);
         this._architect = new architect_1.Architect(this._architectHost, this._registry);
         if (!this.target) {
             if (options.help) {
@@ -43,12 +43,12 @@ class ArchitectCommand extends command_1.Command {
             return;
         }
         let projectName = options.project;
-        if (projectName && !this._workspace.projects.has(projectName)) {
+        if (projectName && !this.workspace.projects.has(projectName)) {
             throw new Error(`Project '${projectName}' does not exist.`);
         }
         const commandLeftovers = options['--'];
         const targetProjectNames = [];
-        for (const [name, project] of this._workspace.projects) {
+        for (const [name, project] of this.workspace.projects) {
             if (project.targets.has(this.target)) {
                 targetProjectNames.push(name);
             }
@@ -115,7 +115,7 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (!projectName && !this.multiTarget) {
-            const defaultProjectName = this._workspace.extensions['defaultProject'];
+            const defaultProjectName = this.workspace.extensions['defaultProject'];
             if (targetProjectNames.length === 1) {
                 projectName = targetProjectNames[0];
             }
@@ -216,7 +216,8 @@ class ArchitectCommand extends command_1.Command {
     }
     getProjectNamesByTarget(targetName) {
         const allProjectsForTargetName = [];
-        for (const [name, project] of this._workspace.projects) {
+        // tslint:disable-next-line: no-non-null-assertion
+        for (const [name, project] of this.workspace.projects) {
             if (project.targets.has(targetName)) {
                 allProjectsForTargetName.push(name);
             }
@@ -228,7 +229,8 @@ class ArchitectCommand extends command_1.Command {
         else {
             // For single target commands, we try the default project first,
             // then the full list if it has a single project, then error out.
-            const maybeDefaultProject = this._workspace.extensions['defaultProject'];
+            // tslint:disable-next-line: no-non-null-assertion
+            const maybeDefaultProject = this.workspace.extensions['defaultProject'];
             if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
                 return [maybeDefaultProject];
             }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWorkspaceDetails = exports.insideWorkspace = void 0;
+exports.findWorkspaceFile = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -13,45 +13,37 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
-function insideWorkspace() {
-    return getWorkspaceDetails() !== null;
-}
-exports.insideWorkspace = insideWorkspace;
-function getWorkspaceDetails() {
-    const currentDir = process.cwd();
+function findWorkspaceFile(currentDirectory = process.cwd()) {
     const possibleConfigFiles = [
         'angular.json',
         '.angular.json',
         'angular-cli.json',
         '.angular-cli.json',
     ];
-    const configFilePath = find_up_1.findUp(possibleConfigFiles, currentDir);
+    const configFilePath = find_up_1.findUp(possibleConfigFiles, currentDirectory);
     if (configFilePath === null) {
         return null;
     }
-    const configFileName = path.basename(configFilePath);
     const possibleDir = path.dirname(configFilePath);
     const homedir = os.homedir();
     if (core_1.normalize(possibleDir) === core_1.normalize(homedir)) {
         const packageJsonPath = path.join(possibleDir, 'package.json');
-        if (!fs.existsSync(packageJsonPath)) {
-            // No package.json
-            return null;
+        try {
+            const packageJsonText = fs.readFileSync(packageJsonPath, 'utf-8');
+            const packageJson = JSON.parse(packageJsonText);
+            if (!containsCliDep(packageJson)) {
+                // No CLI dependency
+                return null;
+            }
         }
-        const packageJsonBuffer = fs.readFileSync(packageJsonPath);
-        const packageJsonText = packageJsonBuffer === null ? '{}' : packageJsonBuffer.toString();
-        const packageJson = JSON.parse(packageJsonText);
-        if (!containsCliDep(packageJson)) {
-            // No CLI dependency
+        catch (_a) {
+            // No or invalid package.json
             return null;
         }
     }
-    return {
-        root: possibleDir,
-        configFile: configFileName,
-    };
+    return configFilePath;
 }
-exports.getWorkspaceDetails = getWorkspaceDetails;
+exports.findWorkspaceFile = findWorkspaceFile;
 function containsCliDep(obj) {
     var _a, _b;
     const pkgName = '@angular/cli';

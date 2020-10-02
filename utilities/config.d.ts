@@ -16,6 +16,7 @@ export declare class AngularWorkspace {
     get projects(): workspaces.ProjectDefinitionCollection;
     getCli(): Record<string, any>;
     getProjectCli(projectName: string): Record<string, any>;
+    static load(workspaceFilePath: string): Promise<AngularWorkspace>;
 }
 export declare function getWorkspace(level?: 'local' | 'global'): Promise<AngularWorkspace | null>;
 export declare function createGlobalSettings(): string;

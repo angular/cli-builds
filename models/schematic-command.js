@@ -32,12 +32,10 @@ class SchematicCommand extends command_1.Command {
     constructor(context, description, logger) {
         super(context, description, logger);
         this.allowPrivateSchematics = false;
-        this._host = new node_1.NodeJsSyncHost();
         this.defaultCollectionName = '@schematics/angular';
         this.collectionName = this.defaultCollectionName;
     }
     async initialize(options) {
-        await this._loadWorkspace();
         await this.createWorkflow(options);
         if (this.schematicName) {
             // Set the options.
@@ -154,20 +152,21 @@ class SchematicCommand extends command_1.Command {
             return this._workflow;
         }
         const { force, dryRun } = options;
-        const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root));
+        const root = this.context.root;
+        const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(root));
         const workflow = new tools_1.NodeWorkflow(fsHost, {
             force,
             dryRun,
-            packageManager: await package_manager_1.getPackageManager(this.workspace.root),
+            packageManager: await package_manager_1.getPackageManager(root),
             packageRegistry: options.packageRegistry,
-            root: core_1.normalize(this.workspace.root),
+            root: core_1.normalize(root),
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
-            resolvePaths: !!this.workspace.configFile
+            resolvePaths: !!this.workspace
                 // Workspace
                 ? this.collectionName === this.defaultCollectionName
                     // Favor __dirname for @schematics/angular to use the build-in version
-                    ? [__dirname, process.cwd(), this.workspace.root]
-                    : [process.cwd(), this.workspace.root, __dirname]
+                    ? [__dirname, process.cwd(), root]
+                    : [process.cwd(), root, __dirname]
                 // Global
                 : [__dirname, process.cwd()],
         });
@@ -186,8 +185,8 @@ class SchematicCommand extends command_1.Command {
             }
         });
         const getProjectName = () => {
-            if (this._workspace) {
-                const projectNames = getProjectsByPath(this._workspace, process.cwd(), this.workspace.root);
+            if (this.workspace) {
+                const projectNames = getProjectsByPath(this.workspace, process.cwd(), this.workspace.basePath);
                 if (projectNames.length === 1) {
                     return projectNames[0];
                 }
@@ -199,7 +198,7 @@ class SchematicCommand extends command_1.Command {
               Using default workspace project instead.
             `);
                     }
-                    const defaultProjectName = this._workspace.extensions['defaultProject'];
+                    const defaultProjectName = this.workspace.extensions['defaultProject'];
                     if (typeof defaultProjectName === 'string' && defaultProjectName) {
                         return defaultProjectName;
                     }
@@ -293,7 +292,7 @@ class SchematicCommand extends command_1.Command {
         let loggingQueue = [];
         let error = false;
         const workflow = this._workflow;
-        const workingDir = core_1.normalize(systemPath.relative(this.workspace.root, process.cwd()));
+        const workingDir = core_1.normalize(systemPath.relative(this.context.root, process.cwd()));
         // Get the option object from the schematic schema.
         const schematic = this.getSchematic(this.getCollection(collectionName), schematicName, this.allowPrivateSchematics);
         // Update the schematic and collection name in case they're not the same as the ones we
@@ -441,21 +440,6 @@ class SchematicCommand extends command_1.Command {
     }
     async parseArguments(schematicOptions, options) {
         return parser_1.parseArguments(schematicOptions, options, this.logger);
-    }
-    async _loadWorkspace() {
-        if (this._workspace) {
-            return;
-        }
-        try {
-            const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(this._host));
-            this._workspace = workspace;
-        }
-        catch (err) {
-            if (!this.allowMissingWorkspace) {
-                // Ignore missing workspace
-                throw err;
-            }
-        }
     }
 }
 exports.SchematicCommand = SchematicCommand;
