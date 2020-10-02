@@ -9,7 +9,6 @@ exports.SchematicCommand = exports.UnknownCollectionError = void 0;
  * found in the LICENSE file at https://angular.io/license
  */
 const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const inquirer = require("inquirer");
@@ -153,13 +152,12 @@ class SchematicCommand extends command_1.Command {
         }
         const { force, dryRun } = options;
         const root = this.context.root;
-        const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(root));
-        const workflow = new tools_1.NodeWorkflow(fsHost, {
+        const workflow = new tools_1.NodeWorkflow(root, {
             force,
             dryRun,
             packageManager: await package_manager_1.getPackageManager(root),
             packageRegistry: options.packageRegistry,
-            root: core_1.normalize(root),
+            // A schema registry is required to allow customizing addUndefinedDefaults
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
             resolvePaths: !!this.workspace
                 // Workspace
@@ -169,6 +167,7 @@ class SchematicCommand extends command_1.Command {
                     : [process.cwd(), root, __dirname]
                 // Global
                 : [__dirname, process.cwd()],
+            schemaValidation: true,
         });
         workflow.engineHost.registerContextTransform(context => {
             // This is run by ALL schematics, so if someone uses `externalSchematics(...)` which
@@ -217,7 +216,6 @@ class SchematicCommand extends command_1.Command {
         else {
             workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
         }
-        workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
         if (options.interactive !== false && tty_1.isTTY()) {

@@ -8,8 +8,6 @@ exports.UpdateCommand = void 0;
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const child_process_1 = require("child_process");
@@ -45,14 +43,13 @@ class UpdateCommand extends command_1.Command {
     }
     async initialize() {
         this.packageManager = await package_manager_1.getPackageManager(this.context.root);
-        this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.context.root)), {
+        this.workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: this.packageManager,
-            root: core_1.normalize(this.context.root),
             // __dirname -> favor @schematics/update from this package
             // Otherwise, use packages from the active workspace (migrations)
             resolvePaths: [__dirname, this.context.root],
+            schemaValidation: true,
         });
-        this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
     }
     async executeSchematic(collection, schematic, options = {}) {
         let error = false;
