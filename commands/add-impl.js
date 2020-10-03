@@ -70,7 +70,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 return this.executeSchematic(packageIdentifier.name, options['--']);
             }
         }
-        const packageManager = await package_manager_1.getPackageManager(this.context.root);
+        const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
         const usingYarn = packageManager === schema_1.PackageManager.Yarn;
         if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version
@@ -163,7 +163,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     isPackageInstalled(name) {
         try {
-            require.resolve(path_1.join(name, 'package.json'), { paths: [this.context.root] });
+            require.resolve(path_1.join(name, 'package.json'), { paths: [this.workspace.root] });
             return true;
         }
         catch (e) {
@@ -199,7 +199,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         let installedPackage;
         try {
             installedPackage = require.resolve(path_1.join(name, 'package.json'), {
-                paths: [this.context.root],
+                paths: [this.workspace.root],
             });
         }
         catch (_a) { }
@@ -212,7 +212,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
         let projectManifest;
         try {
-            projectManifest = await package_metadata_1.fetchPackageManifest(this.context.root, this.logger);
+            projectManifest = await package_metadata_1.fetchPackageManifest(this.workspace.root, this.logger);
         }
         catch (_c) { }
         if (projectManifest) {
