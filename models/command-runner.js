@@ -87,7 +87,8 @@ async function loadCommandDescription(name, path, registry) {
  * @param commands The map of supported commands.
  * @param options Additional options.
  */
-async function runCommand(args, logger, workspace, commands = standardCommands, options = {}) {
+async function runCommand(args, logger, workspace, commands = standardCommands, options = { currentDirectory: process.cwd() }) {
+    var _a;
     // This registry is exclusively used for flattening schemas, and not for validating.
     const registry = new core_1.schema.CoreSchemaRegistry([]);
     registry.registerUriHandler((uri) => {
@@ -187,8 +188,13 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
             return map;
         });
         const analytics = options.analytics ||
-            (await _createAnalytics(!!workspace.configFile, description.name === 'update'));
-        const context = { workspace, analytics };
+            (await _createAnalytics(!!workspace, description.name === 'update'));
+        const context = {
+            workspace,
+            analytics,
+            currentDirectory: options.currentDirectory,
+            root: (_a = workspace === null || workspace === void 0 ? void 0 : workspace.basePath) !== null && _a !== void 0 ? _a : options.currentDirectory,
+        };
         const command = new description.impl(context, description, logger);
         // Flush on an interval (if the event loop is waiting).
         let analyticsFlushPromise = Promise.resolve();

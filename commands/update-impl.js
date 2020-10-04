@@ -8,8 +8,6 @@ exports.UpdateCommand = void 0;
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const child_process_1 = require("child_process");
@@ -44,15 +42,14 @@ class UpdateCommand extends command_1.Command {
         this.packageManager = schema_1.PackageManager.Npm;
     }
     async initialize() {
-        this.packageManager = await package_manager_1.getPackageManager(this.workspace.root);
-        this.workflow = new tools_1.NodeWorkflow(new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root)), {
+        this.packageManager = await package_manager_1.getPackageManager(this.context.root);
+        this.workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: this.packageManager,
-            root: core_1.normalize(this.workspace.root),
             // __dirname -> favor @schematics/update from this package
             // Otherwise, use packages from the active workspace (migrations)
-            resolvePaths: [__dirname, this.workspace.root],
+            resolvePaths: [__dirname, this.context.root],
+            schemaValidation: true,
         });
-        this.workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(this.workflow.registry));
     }
     async executeSchematic(collection, schematic, options = {}) {
         let error = false;
@@ -176,7 +173,7 @@ class UpdateCommand extends command_1.Command {
             if (commit) {
                 const commitPrefix = `${packageName} migration - ${migration.name}`;
                 const commitMessage = migration.description
-                    ? `${commitPrefix}\n${migration.description}`
+                    ? `${commitPrefix}\n\n${migration.description}`
                     : commitPrefix;
                 const committed = this.commit(commitMessage);
                 if (!committed) {
@@ -195,7 +192,7 @@ class UpdateCommand extends command_1.Command {
         // This works around issues with packages containing migrations that cannot directly depend on the package
         // This check can be removed once the schematic runtime handles this situation
         try {
-            require.resolve('@angular-devkit/schematics', { paths: [this.workspace.root] });
+            require.resolve('@angular-devkit/schematics', { paths: [this.context.root] });
         }
         catch (e) {
             if (e.code === 'MODULE_NOT_FOUND') {
@@ -274,13 +271,13 @@ class UpdateCommand extends command_1.Command {
             options.from === undefined &&
             packages.length === 1 &&
             packages[0].name === '@angular/cli' &&
-            this.workspace.configFile &&
-            oldConfigFileNames.includes(this.workspace.configFile)) {
+            this.workspace &&
+            oldConfigFileNames.includes(path.basename(this.workspace.filePath))) {
             options.migrateOnly = true;
             options.from = '1.0.0';
         }
         this.logger.info('Collecting installed dependencies...');
-        const rootDependencies = await package_tree_1.getProjectDependencies(this.workspace.root);
+        const rootDependencies = await package_tree_1.getProjectDependencies(this.context.root);
         this.logger.info(`Found ${rootDependencies.size} dependencies.`);
         if (packages.length === 0) {
             // Show status
@@ -317,7 +314,7 @@ class UpdateCommand extends command_1.Command {
                 // Allow running migrations on transitively installed dependencies
                 // There can technically be nested multiple versions
                 // TODO: If multiple, this should find all versions and ask which one to use
-                const packageJson = package_tree_1.findPackageJson(this.workspace.root, packageName);
+                const packageJson = package_tree_1.findPackageJson(this.context.root, packageName);
                 if (packageJson) {
                     packagePath = path.dirname(packageJson);
                     packageNode = await package_tree_1.readPackageJson(packagePath);
@@ -493,7 +490,7 @@ class UpdateCommand extends command_1.Command {
                 const result = await this.executeMigrations(migration.package, 
                 // Resolve the collection from the workspace root, as otherwise it will be resolved from the temp
                 // installed CLI version.
-                require.resolve(migration.collection, { paths: [this.workspace.root] }), new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
+                require.resolve(migration.collection, { paths: [this.context.root] }), new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
                 if (!result) {
                     return 0;
                 }
@@ -552,7 +549,7 @@ class UpdateCommand extends command_1.Command {
             }
             // Only files inside the workspace root are relevant
             for (const entry of result.split('\n')) {
-                const relativeEntry = path.relative(path.resolve(this.workspace.root), path.resolve(topLevel.trim(), entry.slice(3).trim()));
+                const relativeEntry = path.relative(path.resolve(this.context.root), path.resolve(topLevel.trim(), entry.slice(3).trim()));
                 if (!relativeEntry.startsWith('..') && !path.isAbsolute(relativeEntry)) {
                     return false;
                 }

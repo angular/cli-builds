@@ -6,16 +6,18 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics, logging } from '@angular-devkit/core';
-import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, CommandWorkspace, Option, SubCommandDescription } from './interface';
+import { AngularWorkspace } from '../utilities/config';
+import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, Option, SubCommandDescription } from './interface';
 export interface BaseCommandOptions {
     help?: boolean | string;
 }
 export declare abstract class Command<T extends BaseCommandOptions = BaseCommandOptions> {
+    protected readonly context: CommandContext;
     readonly description: CommandDescription;
     protected readonly logger: logging.Logger;
     allowMissingWorkspace: boolean;
-    workspace: CommandWorkspace;
-    analytics: analytics.Analytics;
+    readonly workspace?: AngularWorkspace;
+    readonly analytics: analytics.Analytics;
     protected static commandMap: () => Promise<CommandDescriptionMap>;
     static setCommandMap(map: () => Promise<CommandDescriptionMap>): void;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);

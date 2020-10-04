@@ -7,7 +7,7 @@
  */
 import { Architect, Target } from '@angular-devkit/architect';
 import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
-import { json, workspaces } from '@angular-devkit/core';
+import { json } from '@angular-devkit/core';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments } from './interface';
 export interface ArchitectCommandOptions extends BaseCommandOptions {
@@ -19,7 +19,6 @@ export interface ArchitectCommandOptions extends BaseCommandOptions {
 export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<T> {
     protected _architect: Architect;
     protected _architectHost: WorkspaceNodeModulesArchitectHost;
-    protected _workspace: workspaces.WorkspaceDefinition;
     protected _registry: json.schema.SchemaRegistry;
     protected multiTarget: boolean;
     target: string | undefined;
