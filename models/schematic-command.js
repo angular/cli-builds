@@ -31,6 +31,7 @@ class SchematicCommand extends command_1.Command {
     constructor(context, description, logger) {
         super(context, description, logger);
         this.allowPrivateSchematics = false;
+        this.useReportAnalytics = false;
         this.defaultCollectionName = '@schematics/angular';
         this.collectionName = this.defaultCollectionName;
     }
@@ -356,6 +357,8 @@ class SchematicCommand extends command_1.Command {
             ...input,
             ...options.additionalOptions,
         };
+        const transformOptions = await workflow.engine.transformOptions(schematic, input).toPromise();
+        await this.reportAnalytics([this.description.name], transformOptions);
         workflow.reporter.subscribe((event) => {
             nothingDone = false;
             // Strip leading slash to prevent confusion.

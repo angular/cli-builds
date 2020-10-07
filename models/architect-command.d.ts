@@ -20,12 +20,13 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     protected _architect: Architect;
     protected _architectHost: WorkspaceNodeModulesArchitectHost;
     protected _registry: json.schema.SchemaRegistry;
+    protected readonly useReportAnalytics = false;
     protected multiTarget: boolean;
     target: string | undefined;
     missingTargetError: string | undefined;
     initialize(options: T & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
-    protected runSingleTarget(target: Target, targetOptions: string[], commandOptions: ArchitectCommandOptions & Arguments): Promise<0 | 1>;
+    protected runSingleTarget(target: Target, targetOptions: string[]): Promise<0 | 1>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;
     private getProjectNamesByTarget;
     private _makeTargetSpecifier;

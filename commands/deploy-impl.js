@@ -37,8 +37,5 @@ class DeployCommand extends architect_command_1.ArchitectCommand {
             return super.initialize(options);
         }
     }
-    async reportAnalytics(paths, options, dimensions = [], metrics = []) {
-        return super.reportAnalytics(paths, options, dimensions, metrics);
-    }
 }
 exports.DeployCommand = DeployCommand;

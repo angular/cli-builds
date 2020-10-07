@@ -17,8 +17,5 @@ class BuildCommand extends architect_command_1.ArchitectCommand {
     async run(options) {
         return this.runArchitectTarget(options);
     }
-    async reportAnalytics(paths, options, dimensions = [], metrics = []) {
-        return super.reportAnalytics(paths, options, dimensions, metrics);
-    }
 }
 exports.BuildCommand = BuildCommand;

@@ -15,7 +15,8 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     protected readonly context: CommandContext;
     readonly description: CommandDescription;
     protected readonly logger: logging.Logger;
-    allowMissingWorkspace: boolean;
+    protected allowMissingWorkspace: boolean;
+    protected useReportAnalytics: boolean;
     readonly workspace?: AngularWorkspace;
     readonly analytics: analytics.Analytics;
     protected static commandMap: () => Promise<CommandDescriptionMap>;
@@ -28,7 +29,7 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     protected printHelpSubcommand(subcommand: SubCommandDescription): Promise<void>;
     protected printHelpOptions(options?: Option[]): Promise<void>;
     validateScope(scope?: CommandScope): Promise<void>;
-    reportAnalytics(paths: string[], options: T & Arguments, dimensions?: (boolean | number | string)[], metrics?: (boolean | number | string)[]): Promise<void>;
+    reportAnalytics(paths: string[], options: Arguments, dimensions?: (boolean | number | string)[], metrics?: (boolean | number | string)[]): Promise<void>;
     abstract run(options: T & Arguments): Promise<number | void>;
     validateAndRun(options: T & Arguments): Promise<number | void>;
 }

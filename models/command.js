@@ -17,6 +17,7 @@ class Command {
         this.description = description;
         this.logger = logger;
         this.allowMissingWorkspace = false;
+        this.useReportAnalytics = true;
         this.workspace = context.workspace;
         this.analytics = context.analytics || new core_1.analytics.NoopAnalytics();
     }
@@ -129,7 +130,9 @@ class Command {
         }
         else {
             const startTime = +new Date();
-            await this.reportAnalytics([this.description.name], options);
+            if (this.useReportAnalytics) {
+                await this.reportAnalytics([this.description.name], options);
+            }
             const result = await this.run(options);
             const endTime = +new Date();
             this.analytics.timing(this.description.name, 'duration', endTime - startTime);

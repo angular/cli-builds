@@ -18,6 +18,7 @@ const parser_1 = require("./parser");
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
+        this.useReportAnalytics = false;
         // If this command supports running multiple targets.
         this.multiTarget = false;
     }
@@ -147,7 +148,7 @@ class ArchitectCommand extends command_1.Command {
     async run(options) {
         return await this.runArchitectTarget(options);
     }
-    async runSingleTarget(target, targetOptions, commandOptions) {
+    async runSingleTarget(target, targetOptions) {
         // We need to build the builderSpec twice because architect does not understand
         // overrides separately (getting the configuration builds the whole project, including
         // overrides).
@@ -162,6 +163,10 @@ class ArchitectCommand extends command_1.Command {
             });
             return 1;
         }
+        await this.reportAnalytics([this.description.name], {
+            ...await this._architectHost.getOptionsForTarget(target),
+            ...overrides,
+        });
         const run = await this._architect.scheduleTarget(target, overrides, {
             logger: this.logger,
             analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
@@ -182,12 +187,12 @@ class ArchitectCommand extends command_1.Command {
                 // Running them in parallel would jumble the log messages.
                 let result = 0;
                 for (const project of this.getProjectNamesByTarget(this.target)) {
-                    result |= await this.runSingleTarget({ ...targetSpec, project }, extra, options);
+                    result |= await this.runSingleTarget({ ...targetSpec, project }, extra);
                 }
                 return result;
             }
             else {
-                return await this.runSingleTarget(targetSpec, extra, options);
+                return await this.runSingleTarget(targetSpec, extra);
             }
         }
         catch (e) {
