@@ -241,7 +241,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "userAnalytics": 7
             },
             {
               "name": "legacyBrowsers",
