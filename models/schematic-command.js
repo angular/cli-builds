@@ -211,17 +211,14 @@ class SchematicCommand extends command_1.Command {
             ...current,
         });
         workflow.engineHost.registerOptionsTransform(defaultOptionTransform);
-        if (options.defaults) {
-            workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
-        else {
-            workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
+        workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
-                const questions = definitions.map(definition => {
+                const questions = definitions
+                    .filter(definition => !options.defaults || definition.default === undefined)
+                    .map(definition => {
                     var _a;
                     const question = {
                         name: definition.id,
