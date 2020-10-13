@@ -211,17 +211,22 @@ class SchematicCommand extends command_1.Command {
             ...current,
         });
         workflow.engineHost.registerOptionsTransform(defaultOptionTransform);
-        if (options.defaults) {
-            workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
-        else {
-            workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
-        }
+        workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
+        let shouldReportAnalytics = true;
+        workflow.engineHost.registerOptionsTransform(async (_, options) => {
+            if (shouldReportAnalytics) {
+                shouldReportAnalytics = false;
+                await this.reportAnalytics([this.description.name], options);
+            }
+            return options;
+        });
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
-                const questions = definitions.map(definition => {
+                const questions = definitions
+                    .filter(definition => !options.defaults || definition.default === undefined)
+                    .map(definition => {
                     var _a;
                     const question = {
                         name: definition.id,
@@ -357,8 +362,6 @@ class SchematicCommand extends command_1.Command {
             ...input,
             ...options.additionalOptions,
         };
-        const transformOptions = await workflow.engine.transformOptions(schematic, input).toPromise();
-        await this.reportAnalytics([this.description.name], transformOptions);
         workflow.reporter.subscribe((event) => {
             nothingDone = false;
             // Strip leading slash to prevent confusion.
