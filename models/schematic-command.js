@@ -170,20 +170,6 @@ class SchematicCommand extends command_1.Command {
                 : [__dirname, process.cwd()],
             schemaValidation: true,
         });
-        workflow.engineHost.registerContextTransform(context => {
-            // This is run by ALL schematics, so if someone uses `externalSchematics(...)` which
-            // is safelisted, it would move to the right analytics (even if their own isn't).
-            const collectionName = context.schematic.collection.description.name;
-            if (analytics_1.isPackageNameSafeForAnalytics(collectionName)) {
-                return {
-                    ...context,
-                    analytics: this.analytics,
-                };
-            }
-            else {
-                return context;
-            }
-        });
         const getProjectName = () => {
             if (this.workspace) {
                 const projectNames = getProjectsByPath(this.workspace, process.cwd(), this.workspace.basePath);
