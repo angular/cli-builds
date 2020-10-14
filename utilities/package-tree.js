@@ -13,10 +13,6 @@ const path_1 = require("path");
 const resolve = require("resolve");
 const util_1 = require("util");
 const readFile = util_1.promisify(fs.readFile);
-async function readJSON(file) {
-    const buffer = await readFile(file);
-    return JSON.parse(buffer.toString());
-}
 function getAllDependencies(pkg) {
     return new Set([
         ...Object.entries(pkg.dependencies || []),
@@ -27,9 +23,9 @@ function getAllDependencies(pkg) {
 }
 async function readPackageJson(packageJsonPath) {
     try {
-        return await readJSON(packageJsonPath);
+        return JSON.parse((await readFile(packageJsonPath)).toString());
     }
-    catch (err) {
+    catch (_a) {
         return undefined;
     }
 }
@@ -37,33 +33,32 @@ exports.readPackageJson = readPackageJson;
 function findPackageJson(workspaceDir, packageName) {
     try {
         // avoid require.resolve here, see: https://github.com/angular/angular-cli/pull/18610#issuecomment-681980185
-        const packageJsonPath = resolve.sync(`${packageName}/package.json`, { paths: [workspaceDir] });
+        const packageJsonPath = resolve.sync(`${packageName}/package.json`, { basedir: workspaceDir });
         return packageJsonPath;
     }
-    catch (err) {
+    catch (_a) {
         return undefined;
     }
 }
 exports.findPackageJson = findPackageJson;
 async function getProjectDependencies(dir) {
-    const pkgJsonPath = resolve.sync(path_1.join(dir, `package.json`));
-    if (!pkgJsonPath) {
+    const pkg = await readPackageJson(path_1.join(dir, 'package.json'));
+    if (!pkg) {
         throw new Error('Could not find package.json');
     }
-    const pkg = await readJSON(pkgJsonPath);
     const results = new Map();
-    await Promise.all(Array.from(getAllDependencies(pkg)).map(async ([name, version]) => {
+    for (const [name, version] of getAllDependencies(pkg)) {
         const packageJsonPath = findPackageJson(dir, name);
-        if (packageJsonPath) {
-            const currentDependency = {
-                name,
-                version,
-                path: path_1.dirname(packageJsonPath),
-                package: await readPackageJson(packageJsonPath),
-            };
-            results.set(currentDependency.name, currentDependency);
+        if (!packageJsonPath) {
+            continue;
         }
-    }));
+        results.set(name, {
+            name,
+            version,
+            path: path_1.dirname(packageJsonPath),
+            package: await readPackageJson(packageJsonPath),
+        });
+    }
     return results;
 }
 exports.getProjectDependencies = getProjectDependencies;
