@@ -1156,6 +1156,58 @@
           ],
           "aliases": []
         },
+        "resolver": {
+          "name": "resolver",
+          "description": "Generates a new, generic resolver definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the new resolver.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "skipTests",
+              "description": "When true, does not create \"spec.ts\" test files for the new resolver.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the resolver, relative to the current workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
         "service": {
           "name": "service",
           "description": "Creates a new, generic service definition in the given or default project.",
