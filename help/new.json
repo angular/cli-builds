@@ -141,7 +141,6 @@
       "name": "inlineStyle",
       "description": "When true, includes styles inline in the component TS file. By default, an external styles file is created and referenced in the component TS file.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [
         "s"
@@ -153,7 +152,6 @@
       "name": "inlineTemplate",
       "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
       "type": "boolean",
-      "default": false,
       "required": false,
       "aliases": [
         "t"
