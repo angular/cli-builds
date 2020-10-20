@@ -89,7 +89,8 @@
               "default": "tsconfig.server",
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "This option has no effect."
             }
           ],
           "aliases": []
@@ -533,7 +534,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "Since version 9.0.0 with Ivy, entryComponents is no longer necessary."
             },
             {
               "name": "lintFix",

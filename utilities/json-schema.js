@@ -199,6 +199,10 @@ async function parseJsonSchemaToOptions(registry, schema) {
         const hidden = !!current.hidden || !visible;
         const xUserAnalytics = current['x-user-analytics'];
         const userAnalytics = typeof xUserAnalytics == 'number' ? xUserAnalytics : undefined;
+        // Deprecated is set only if it's true or a string.
+        const xDeprecated = current['x-deprecated'];
+        const deprecated = (xDeprecated === true || typeof xDeprecated === 'string')
+            ? xDeprecated : undefined;
         const option = {
             name,
             description: '' + (current.description === undefined ? '' : current.description),
@@ -210,6 +214,7 @@ async function parseJsonSchemaToOptions(registry, schema) {
             ...format !== undefined ? { format } : {},
             hidden,
             ...userAnalytics ? { userAnalytics } : {},
+            ...deprecated !== undefined ? { deprecated } : {},
             ...positional !== undefined ? { positional } : {},
         };
         options.push(option);
