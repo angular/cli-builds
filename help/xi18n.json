@@ -88,7 +88,8 @@
       ],
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'format' option instead."
     },
     {
       "name": "i18nLocale",
@@ -96,7 +97,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'i18n' project level sub-option 'sourceLocale' instead."
     },
     {
       "name": "ivy",
