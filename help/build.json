@@ -176,7 +176,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'locales' object in the project metadata instead."
     },
     {
       "name": "i18nFormat",
@@ -184,7 +185,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "No longer needed as the format will be determined automatically."
     },
     {
       "name": "i18nLocale",
@@ -192,7 +194,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use 'localize' instead."
     },
     {
       "name": "i18nMissingTranslation",
@@ -223,7 +226,8 @@
       "default": true,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Deprecated since version 11.0. No longer required to disable CSS extraction for HMR."
     },
     {
       "name": "watch",
@@ -368,16 +372,8 @@
       "type": "array",
       "required": false,
       "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "rebaseRootRelativeCssUrls",
-      "description": "Change root relative URLs in stylesheets to include base HREF and deploy URL. Use only for compatibility and transition. The behavior of this option is non-standard and will be removed in the next major release.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
     },
     {
       "name": "webWorkerTsConfig",

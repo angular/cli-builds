@@ -193,7 +193,8 @@
       "default": true,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "No longer has an effect."
     },
     {
       "name": "servePathDefaultWarning",
@@ -202,7 +203,8 @@
       "default": true,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "No longer has an effect."
     },
     {
       "name": "optimization",
@@ -211,7 +213,8 @@
       "required": false,
       "aliases": [],
       "hidden": false,
-      "userAnalytics": 16
+      "userAnalytics": 16,
+      "deprecated": "Use the \"optimization\" option in the browser builder instead."
     },
     {
       "name": "aot",
@@ -220,7 +223,8 @@
       "required": false,
       "aliases": [],
       "hidden": false,
-      "userAnalytics": 13
+      "userAnalytics": 13,
+      "deprecated": "Use the \"aot\" option in the browser builder instead."
     },
     {
       "name": "sourceMap",
@@ -228,7 +232,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"sourceMap\" option in the browser builder instead."
     },
     {
       "name": "vendorChunk",
@@ -236,7 +241,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"vendorChunk\" option in the browser builder instead."
     },
     {
       "name": "commonChunk",
@@ -244,7 +250,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"commonChunk\" option in the browser builder instead."
     },
     {
       "name": "baseHref",
@@ -252,7 +259,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"baseHref\" option in the browser builder instead."
     },
     {
       "name": "deployUrl",
@@ -260,7 +268,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"deployUrl\" option in the browser builder instead."
     },
     {
       "name": "progress",
@@ -268,7 +277,8 @@
       "type": "boolean",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use the \"progress\" option in the browser builder instead."
     },
     {
       "name": "poll",

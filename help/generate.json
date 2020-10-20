@@ -230,7 +230,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             },
             {
               "name": "strict",
@@ -311,7 +312,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -523,7 +525,8 @@
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "Since version 9.0.0 with Ivy, entryComponents is no longer necessary."
             },
             {
               "name": "lintFix",
@@ -533,7 +536,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -644,7 +648,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -687,7 +692,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -749,7 +755,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             },
             {
               "name": "implements",
@@ -819,7 +826,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -871,7 +879,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             },
             {
               "name": "type",
@@ -955,7 +964,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1057,7 +1067,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1149,7 +1160,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1263,7 +1275,8 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15
+              "userAnalytics": 15,
+              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
