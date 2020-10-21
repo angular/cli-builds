@@ -1,5 +1,5 @@
 {
-  "name": "extract-i18n",
+  "name": "xi18n",
   "description": "Extracts i18n messages from source code.",
   "options": [
     {
@@ -135,8 +135,7 @@
     }
   ],
   "aliases": [
-    "i18n-extract",
-    "xi18n"
+    "i18n-extract"
   ],
   "scope": "in",
   "hidden": false
