@@ -53,11 +53,12 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         });
     }
     async reportAnalytics(paths, options) {
-        if (!this.collectionName || !this.schematicName) {
+        const [collectionName, schematicName] = await this.parseSchematicInfo(options);
+        if (!schematicName || !collectionName) {
             return;
         }
-        const escapedSchematicName = (this.longSchematicName || this.schematicName).replace(/\//g, '_');
-        return super.reportAnalytics(['generate', this.collectionName.replace(/\//g, '_'), escapedSchematicName], options);
+        const escapedSchematicName = (this.longSchematicName || schematicName).replace(/\//g, '_');
+        return super.reportAnalytics(['generate', collectionName.replace(/\//g, '_'), escapedSchematicName], options);
     }
     async parseSchematicInfo(options) {
         let collectionName = await this.getDefaultSchematicCollection();

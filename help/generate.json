@@ -81,6 +81,16 @@
               "aliases": [],
               "format": "html-selector",
               "hidden": false
+            },
+            {
+              "name": "tsconfigFileName",
+              "description": "The name of the TypeScript configuration file.",
+              "type": "string",
+              "default": "tsconfig.server",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "deprecated": "This option has no effect."
             }
           ],
           "aliases": []
@@ -110,6 +120,7 @@
               "name": "inlineStyle",
               "description": "When true, includes styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
               "type": "boolean",
+              "default": false,
               "required": false,
               "aliases": [
                 "s"
@@ -121,6 +132,7 @@
               "name": "inlineTemplate",
               "description": "When true, includes template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
               "type": "boolean",
+              "default": false,
               "required": false,
               "aliases": [
                 "t"
@@ -230,18 +242,16 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             },
             {
               "name": "strict",
-              "description": "Creates an application with stricter bundle budgets settings.",
+              "description": "Creates an application with stricter build optimization options.",
               "type": "boolean",
               "default": false,
               "required": false,
               "aliases": [],
-              "hidden": false,
-              "userAnalytics": 7
+              "hidden": false
             },
             {
               "name": "legacyBrowsers",
@@ -312,8 +322,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -536,8 +545,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -648,8 +656,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -692,8 +699,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -755,8 +761,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             },
             {
               "name": "implements",
@@ -826,8 +831,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -879,8 +883,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             },
             {
               "name": "type",
@@ -964,8 +967,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1067,8 +1069,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1160,60 +1161,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
-            }
-          ],
-          "aliases": []
-        },
-        "resolver": {
-          "name": "resolver",
-          "description": "Generates a new, generic resolver definition in the given or default project.",
-          "options": [
-            {
-              "name": "name",
-              "description": "The name of the new resolver.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "positional": 0
-            },
-            {
-              "name": "skipTests",
-              "description": "When true, does not create \"spec.ts\" test files for the new resolver.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 12
-            },
-            {
-              "name": "flat",
-              "description": "When true (the default), creates the new files at the top level of the current project.",
-              "type": "boolean",
-              "default": true,
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
-              "name": "path",
-              "description": "The path at which to create the interface that defines the resolver, relative to the current workspace.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "format": "path",
-              "hidden": true
-            },
-            {
-              "name": "project",
-              "description": "The name of the project.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false
+              "userAnalytics": 15
             }
           ],
           "aliases": []
@@ -1275,8 +1223,7 @@
               "required": false,
               "aliases": [],
               "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
+              "userAnalytics": 15
             }
           ],
           "aliases": []

@@ -15,8 +15,8 @@ const semver_1 = require("semver");
 const schema_1 = require("../lib/config/schema");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
+const install_package_1 = require("../tasks/install-package");
 const color_1 = require("../utilities/color");
-const install_package_1 = require("../utilities/install-package");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const npa = require('npm-package-arg');
@@ -70,7 +70,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 return this.executeSchematic(packageIdentifier.name, options['--']);
             }
         }
-        const packageManager = await package_manager_1.getPackageManager(this.context.root);
+        const packageManager = await package_manager_1.getPackageManager(this.workspace.root);
         const usingYarn = packageManager === schema_1.PackageManager.Yarn;
         if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version
@@ -101,7 +101,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
-                const versionManifests = Object.values(packageMetadata.versions).filter((value) => !semver_1.prerelease(value.version) && !value.deprecated);
+                const versionManifests = Object.values(packageMetadata.versions).filter((value) => !semver_1.prerelease(value.version));
                 versionManifests.sort((a, b) => semver_1.rcompare(a.version, b.version, true));
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
@@ -163,7 +163,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     isPackageInstalled(name) {
         try {
-            require.resolve(path_1.join(name, 'package.json'), { paths: [this.context.root] });
+            require.resolve(path_1.join(name, 'package.json'), { paths: [this.workspace.root] });
             return true;
         }
         catch (e) {
@@ -199,7 +199,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         let installedPackage;
         try {
             installedPackage = require.resolve(path_1.join(name, 'package.json'), {
-                paths: [this.context.root],
+                paths: [this.workspace.root],
             });
         }
         catch (_a) { }
@@ -212,7 +212,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
         let projectManifest;
         try {
-            projectManifest = await package_metadata_1.fetchPackageManifest(this.context.root, this.logger);
+            projectManifest = await package_metadata_1.fetchPackageManifest(this.workspace.root, this.logger);
         }
         catch (_c) { }
         if (projectManifest) {

@@ -11,6 +11,8 @@ exports.ArchitectCommand = void 0;
 const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
+const node_2 = require("@angular-devkit/core/node");
+const bep_1 = require("../utilities/bep");
 const json_schema_1 = require("../utilities/json-schema");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
@@ -18,7 +20,6 @@ const parser_1 = require("./parser");
 class ArchitectCommand extends command_1.Command {
     constructor() {
         super(...arguments);
-        this.useReportAnalytics = false;
         // If this command supports running multiple targets.
         this.multiTarget = false;
     }
@@ -27,10 +28,9 @@ class ArchitectCommand extends command_1.Command {
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
         this._registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
-        if (!this.workspace) {
-            throw new Error('A workspace is required for an architect command.');
-        }
-        this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(this.workspace, this.workspace.basePath);
+        const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(new node_2.NodeJsSyncHost()));
+        this._workspace = workspace;
+        this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(workspace, this.workspace.root);
         this._architect = new architect_1.Architect(this._architectHost, this._registry);
         if (!this.target) {
             if (options.help) {
@@ -44,12 +44,12 @@ class ArchitectCommand extends command_1.Command {
             return;
         }
         let projectName = options.project;
-        if (projectName && !this.workspace.projects.has(projectName)) {
+        if (projectName && !this._workspace.projects.has(projectName)) {
             throw new Error(`Project '${projectName}' does not exist.`);
         }
         const commandLeftovers = options['--'];
         const targetProjectNames = [];
-        for (const [name, project] of this.workspace.projects) {
+        for (const [name, project] of this._workspace.projects) {
             if (project.targets.has(this.target)) {
                 targetProjectNames.push(name);
             }
@@ -116,7 +116,7 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (!projectName && !this.multiTarget) {
-            const defaultProjectName = this.workspace.extensions['defaultProject'];
+            const defaultProjectName = this._workspace.extensions['defaultProject'];
             if (targetProjectNames.length === 1) {
                 projectName = targetProjectNames[0];
             }
@@ -148,7 +148,31 @@ class ArchitectCommand extends command_1.Command {
     async run(options) {
         return await this.runArchitectTarget(options);
     }
-    async runSingleTarget(target, targetOptions) {
+    async runBepTarget(command, configuration, overrides, buildEventLog) {
+        const bep = new bep_1.BepJsonWriter(buildEventLog);
+        // Send start
+        bep.writeBuildStarted(command);
+        let last = 1;
+        let rebuild = false;
+        const run = await this._architect.scheduleTarget(configuration, overrides, {
+            logger: this.logger,
+        });
+        await run.output.forEach(event => {
+            last = event.success ? 0 : 1;
+            if (rebuild) {
+                // NOTE: This will have an incorrect timestamp but this cannot be fixed
+                //       until builders report additional status events
+                bep.writeBuildStarted(command);
+            }
+            else {
+                rebuild = true;
+            }
+            bep.writeBuildFinished(last);
+        });
+        await run.stop();
+        return last;
+    }
+    async runSingleTarget(target, targetOptions, commandOptions) {
         // We need to build the builderSpec twice because architect does not understand
         // overrides separately (getting the configuration builds the whole project, including
         // overrides).
@@ -163,20 +187,23 @@ class ArchitectCommand extends command_1.Command {
             });
             return 1;
         }
-        await this.reportAnalytics([this.description.name], {
-            ...await this._architectHost.getOptionsForTarget(target),
-            ...overrides,
-        });
-        const run = await this._architect.scheduleTarget(target, overrides, {
-            logger: this.logger,
-            analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
-        });
-        const { error, success } = await run.output.toPromise();
-        await run.stop();
-        if (error) {
-            this.logger.error(error);
+        if (commandOptions.buildEventLog && ['build', 'serve'].includes(this.description.name)) {
+            // The build/serve commands supports BEP messaging
+            this.logger.warn('BEP support is experimental and subject to change.');
+            return this.runBepTarget(this.description.name, target, overrides, commandOptions.buildEventLog);
         }
-        return success ? 0 : 1;
+        else {
+            const run = await this._architect.scheduleTarget(target, overrides, {
+                logger: this.logger,
+                analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
+            });
+            const { error, success } = await run.output.toPromise();
+            await run.stop();
+            if (error) {
+                this.logger.error(error);
+            }
+            return success ? 0 : 1;
+        }
     }
     async runArchitectTarget(options) {
         const extra = options['--'] || [];
@@ -187,12 +214,12 @@ class ArchitectCommand extends command_1.Command {
                 // Running them in parallel would jumble the log messages.
                 let result = 0;
                 for (const project of this.getProjectNamesByTarget(this.target)) {
-                    result |= await this.runSingleTarget({ ...targetSpec, project }, extra);
+                    result |= await this.runSingleTarget({ ...targetSpec, project }, extra, options);
                 }
                 return result;
             }
             else {
-                return await this.runSingleTarget(targetSpec, extra);
+                return await this.runSingleTarget(targetSpec, extra, options);
             }
         }
         catch (e) {
@@ -221,8 +248,7 @@ class ArchitectCommand extends command_1.Command {
     }
     getProjectNamesByTarget(targetName) {
         const allProjectsForTargetName = [];
-        // tslint:disable-next-line: no-non-null-assertion
-        for (const [name, project] of this.workspace.projects) {
+        for (const [name, project] of this._workspace.projects) {
             if (project.targets.has(targetName)) {
                 allProjectsForTargetName.push(name);
             }
@@ -234,8 +260,7 @@ class ArchitectCommand extends command_1.Command {
         else {
             // For single target commands, we try the default project first,
             // then the full list if it has a single project, then error out.
-            // tslint:disable-next-line: no-non-null-assertion
-            const maybeDefaultProject = this.workspace.extensions['defaultProject'];
+            const maybeDefaultProject = this._workspace.extensions['defaultProject'];
             if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
                 return [maybeDefaultProject];
             }

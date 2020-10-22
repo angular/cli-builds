@@ -9,6 +9,7 @@ exports.SchematicCommand = exports.UnknownCollectionError = void 0;
  * found in the LICENSE file at https://angular.io/license
  */
 const core_1 = require("@angular-devkit/core");
+const node_1 = require("@angular-devkit/core/node");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const inquirer = require("inquirer");
@@ -31,11 +32,12 @@ class SchematicCommand extends command_1.Command {
     constructor(context, description, logger) {
         super(context, description, logger);
         this.allowPrivateSchematics = false;
-        this.useReportAnalytics = false;
+        this._host = new node_1.NodeJsSyncHost();
         this.defaultCollectionName = '@schematics/angular';
         this.collectionName = this.defaultCollectionName;
     }
     async initialize(options) {
+        await this._loadWorkspace();
         await this.createWorkflow(options);
         if (this.schematicName) {
             // Set the options.
@@ -152,27 +154,40 @@ class SchematicCommand extends command_1.Command {
             return this._workflow;
         }
         const { force, dryRun } = options;
-        const root = this.context.root;
-        const workflow = new tools_1.NodeWorkflow(root, {
+        const fsHost = new core_1.virtualFs.ScopedHost(new node_1.NodeJsSyncHost(), core_1.normalize(this.workspace.root));
+        const workflow = new tools_1.NodeWorkflow(fsHost, {
             force,
             dryRun,
-            packageManager: await package_manager_1.getPackageManager(root),
+            packageManager: await package_manager_1.getPackageManager(this.workspace.root),
             packageRegistry: options.packageRegistry,
-            // A schema registry is required to allow customizing addUndefinedDefaults
+            root: core_1.normalize(this.workspace.root),
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
-            resolvePaths: !!this.workspace
+            resolvePaths: !!this.workspace.configFile
                 // Workspace
                 ? this.collectionName === this.defaultCollectionName
                     // Favor __dirname for @schematics/angular to use the build-in version
-                    ? [__dirname, process.cwd(), root]
-                    : [process.cwd(), root, __dirname]
+                    ? [__dirname, process.cwd(), this.workspace.root]
+                    : [process.cwd(), this.workspace.root, __dirname]
                 // Global
                 : [__dirname, process.cwd()],
-            schemaValidation: true,
+        });
+        workflow.engineHost.registerContextTransform(context => {
+            // This is run by ALL schematics, so if someone uses `externalSchematics(...)` which
+            // is safelisted, it would move to the right analytics (even if their own isn't).
+            const collectionName = context.schematic.collection.description.name;
+            if (analytics_1.isPackageNameSafeForAnalytics(collectionName)) {
+                return {
+                    ...context,
+                    analytics: this.analytics,
+                };
+            }
+            else {
+                return context;
+            }
         });
         const getProjectName = () => {
-            if (this.workspace) {
-                const projectNames = getProjectsByPath(this.workspace, process.cwd(), this.workspace.basePath);
+            if (this._workspace) {
+                const projectNames = getProjectsByPath(this._workspace, process.cwd(), this.workspace.root);
                 if (projectNames.length === 1) {
                     return projectNames[0];
                 }
@@ -184,7 +199,7 @@ class SchematicCommand extends command_1.Command {
               Using default workspace project instead.
             `);
                     }
-                    const defaultProjectName = this.workspace.extensions['defaultProject'];
+                    const defaultProjectName = this._workspace.extensions['defaultProject'];
                     if (typeof defaultProjectName === 'string' && defaultProjectName) {
                         return defaultProjectName;
                     }
@@ -197,22 +212,18 @@ class SchematicCommand extends command_1.Command {
             ...current,
         });
         workflow.engineHost.registerOptionsTransform(defaultOptionTransform);
-        workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
+        if (options.defaults) {
+            workflow.registry.addPreTransform(core_1.schema.transforms.addUndefinedDefaults);
+        }
+        else {
+            workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
+        }
+        workflow.engineHost.registerOptionsTransform(tools_1.validateOptionsWithSchema(workflow.registry));
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
-        let shouldReportAnalytics = true;
-        workflow.engineHost.registerOptionsTransform(async (_, options) => {
-            if (shouldReportAnalytics) {
-                shouldReportAnalytics = false;
-                await this.reportAnalytics([this.description.name], options);
-            }
-            return options;
-        });
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
-                const questions = definitions
-                    .filter(definition => !options.defaults || definition.default === undefined)
-                    .map(definition => {
+                const questions = definitions.map(definition => {
                     var _a;
                     const question = {
                         name: definition.id,
@@ -222,30 +233,6 @@ class SchematicCommand extends command_1.Command {
                     const validator = definition.validator;
                     if (validator) {
                         question.validate = input => validator(input);
-                        // Filter allows transformation of the value prior to validation
-                        question.filter = async (input) => {
-                            for (const type of definition.propertyTypes) {
-                                let value;
-                                switch (type) {
-                                    case 'string':
-                                        value = String(input);
-                                        break;
-                                    case 'integer':
-                                    case 'number':
-                                        value = Number(input);
-                                        break;
-                                    default:
-                                        value = input;
-                                        break;
-                                }
-                                // Can be a string if validation fails
-                                const isValid = (await validator(value)) === true;
-                                if (isValid) {
-                                    return value;
-                                }
-                            }
-                            return input;
-                        };
                     }
                     switch (definition.type) {
                         case 'confirmation':
@@ -261,16 +248,6 @@ class SchematicCommand extends command_1.Command {
                                         value: item.value,
                                     };
                             });
-                            break;
-                        case 'input':
-                            if (definition.propertyTypes.size === 1 &&
-                                (definition.propertyTypes.has('number') ||
-                                    definition.propertyTypes.has('integer'))) {
-                                question.type = 'number';
-                            }
-                            else {
-                                question.type = 'input';
-                            }
                             break;
                         default:
                             question.type = definition.type;
@@ -316,7 +293,7 @@ class SchematicCommand extends command_1.Command {
         let loggingQueue = [];
         let error = false;
         const workflow = this._workflow;
-        const workingDir = core_1.normalize(systemPath.relative(this.context.root, process.cwd()));
+        const workingDir = core_1.normalize(systemPath.relative(this.workspace.root, process.cwd()));
         // Get the option object from the schematic schema.
         const schematic = this.getSchematic(this.getCollection(collectionName), schematicName, this.allowPrivateSchematics);
         // Update the schematic and collection name in case they're not the same as the ones we
@@ -344,7 +321,7 @@ class SchematicCommand extends command_1.Command {
                 }
                 if (positions.length > 0) {
                     const warning = core_1.tags.oneLine `
-            Warning: This command may not execute successfully.
+            WARNING: This command may not execute successfully.
             The package/collection may not support the 'targets' field within '${configPath}'.
             This can be corrected by renaming the following 'targets' fields to 'architect':
           `;
@@ -394,7 +371,7 @@ class SchematicCommand extends command_1.Command {
                     break;
                 case 'update':
                     loggingQueue.push(core_1.tags.oneLine `
-            ${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)
+            ${color_1.colors.white('UPDATE')} ${eventPath} (${event.content.length} bytes)
           `);
                     break;
                 case 'create':
@@ -464,6 +441,21 @@ class SchematicCommand extends command_1.Command {
     }
     async parseArguments(schematicOptions, options) {
         return parser_1.parseArguments(schematicOptions, options, this.logger);
+    }
+    async _loadWorkspace() {
+        if (this._workspace) {
+            return;
+        }
+        try {
+            const { workspace } = await core_1.workspaces.readWorkspace(this.workspace.root, core_1.workspaces.createWorkspaceHost(this._host));
+            this._workspace = workspace;
+        }
+        catch (err) {
+            if (!this.allowMissingWorkspace) {
+                // Ignore missing workspace
+                throw err;
+            }
+        }
     }
 }
 exports.SchematicCommand = SchematicCommand;

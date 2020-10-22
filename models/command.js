@@ -9,15 +9,15 @@ exports.Command = void 0;
  * found in the LICENSE file at https://angular.io/license
  */
 const core_1 = require("@angular-devkit/core");
+const path = require("path");
 const color_1 = require("../utilities/color");
+const config_1 = require("../utilities/config");
 const interface_1 = require("./interface");
 class Command {
     constructor(context, description, logger) {
-        this.context = context;
         this.description = description;
         this.logger = logger;
         this.allowMissingWorkspace = false;
-        this.useReportAnalytics = true;
         this.workspace = context.workspace;
         this.analytics = context.analytics || new core_1.analytics.NoopAnalytics();
     }
@@ -85,16 +85,16 @@ class Command {
     async validateScope(scope) {
         switch (scope === undefined ? this.description.scope : scope) {
             case interface_1.CommandScope.OutProject:
-                if (this.workspace) {
+                if (this.workspace.configFile) {
                     this.logger.fatal(core_1.tags.oneLine `
             The ${this.description.name} command requires to be run outside of a project, but a
-            project definition was found at "${this.workspace.filePath}".
+            project definition was found at "${path.join(this.workspace.root, this.workspace.configFile)}".
           `);
                     throw 1;
                 }
                 break;
             case interface_1.CommandScope.InProject:
-                if (!this.workspace) {
+                if (!this.workspace.configFile || (await config_1.getWorkspace('local')) === null) {
                     this.logger.fatal(core_1.tags.oneLine `
             The ${this.description.name} command requires to be run in an Angular project, but a
             project definition could not be found.
@@ -130,9 +130,7 @@ class Command {
         }
         else {
             const startTime = +new Date();
-            if (this.useReportAnalytics) {
-                await this.reportAnalytics([this.description.name], options);
-            }
+            await this.reportAnalytics([this.description.name], options);
             const result = await this.run(options);
             const endTime = +new Date();
             this.analytics.timing(this.description.name, 'duration', endTime - startTime);

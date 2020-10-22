@@ -7,8 +7,8 @@
  */
 import { ArchitectCommand } from '../models/architect-command';
 import { Arguments } from '../models/interface';
-import { Schema as ExtractI18nCommandSchema } from './extract-i18n';
-export declare class ExtractI18nCommand extends ArchitectCommand<ExtractI18nCommandSchema> {
+import { Schema as Xi18nCommandSchema } from './xi18n';
+export declare class Xi18nCommand extends ArchitectCommand<Xi18nCommandSchema> {
     readonly target = "extract-i18n";
-    run(options: ExtractI18nCommandSchema & Arguments): Promise<number>;
+    run(options: Xi18nCommandSchema & Arguments): Promise<number>;
 }

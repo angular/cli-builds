@@ -35,8 +35,7 @@
         "all": {
           "description": "Whether to update all packages in package.json.",
           "default": false,
-          "type": "boolean",
-          "x-deprecated": true
+          "type": "boolean"
         },
         "next": {
           "description": "Use the prerelease version, including beta and RCs.",

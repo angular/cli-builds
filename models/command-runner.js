@@ -24,7 +24,6 @@ const standardCommands = {
     'config': '../commands/config.json',
     'doc': '../commands/doc.json',
     'e2e': '../commands/e2e.json',
-    'extract-i18n': '../commands/extract-i18n.json',
     'make-this-awesome': '../commands/easter-egg.json',
     'generate': '../commands/generate.json',
     'help': '../commands/help.json',
@@ -35,6 +34,7 @@ const standardCommands = {
     'test': '../commands/test.json',
     'update': '../commands/update.json',
     'version': '../commands/version.json',
+    'xi18n': '../commands/xi18n.json',
 };
 /**
  * Create the analytics instance.
@@ -87,8 +87,7 @@ async function loadCommandDescription(name, path, registry) {
  * @param commands The map of supported commands.
  * @param options Additional options.
  */
-async function runCommand(args, logger, workspace, commands = standardCommands, options = { currentDirectory: process.cwd() }) {
-    var _a;
+async function runCommand(args, logger, workspace, commands = standardCommands, options = {}) {
     // This registry is exclusively used for flattening schemas, and not for validating.
     const registry = new core_1.schema.CoreSchemaRegistry([]);
     registry.registerUriHandler((uri) => {
@@ -188,13 +187,8 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
             return map;
         });
         const analytics = options.analytics ||
-            (await _createAnalytics(!!workspace, description.name === 'update'));
-        const context = {
-            workspace,
-            analytics,
-            currentDirectory: options.currentDirectory,
-            root: (_a = workspace === null || workspace === void 0 ? void 0 : workspace.basePath) !== null && _a !== void 0 ? _a : options.currentDirectory,
-        };
+            (await _createAnalytics(!!workspace.configFile, description.name === 'update'));
+        const context = { workspace, analytics };
         const command = new description.impl(context, description, logger);
         // Flush on an interval (if the event loop is waiting).
         let analyticsFlushPromise = Promise.resolve();

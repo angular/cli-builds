@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import * as ansiColors from 'ansi-colors';
+export declare const supportsColor: boolean;
 export declare function removeColor(text: string): string;
 declare const colors: typeof ansiColors;
 export { colors };

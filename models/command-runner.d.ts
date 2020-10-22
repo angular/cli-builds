@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics, logging } from '@angular-devkit/core';
-import { AngularWorkspace } from '../utilities/config';
+import { CommandWorkspace } from './interface';
 export interface CommandMapOptions {
     [key: string]: string;
 }
@@ -18,7 +18,6 @@ export interface CommandMapOptions {
  * @param commands The map of supported commands.
  * @param options Additional options.
  */
-export declare function runCommand(args: string[], logger: logging.Logger, workspace: AngularWorkspace | undefined, commands?: CommandMapOptions, options?: {
+export declare function runCommand(args: string[], logger: logging.Logger, workspace: CommandWorkspace, commands?: CommandMapOptions, options?: {
     analytics?: analytics.Analytics;
-    currentDirectory: string;
 }): Promise<number | void>;

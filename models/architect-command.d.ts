@@ -7,7 +7,7 @@
  */
 import { Architect, Target } from '@angular-devkit/architect';
 import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
-import { json } from '@angular-devkit/core';
+import { json, workspaces } from '@angular-devkit/core';
 import { BaseCommandOptions, Command } from './command';
 import { Arguments } from './interface';
 export interface ArchitectCommandOptions extends BaseCommandOptions {
@@ -19,14 +19,15 @@ export interface ArchitectCommandOptions extends BaseCommandOptions {
 export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions = ArchitectCommandOptions> extends Command<T> {
     protected _architect: Architect;
     protected _architectHost: WorkspaceNodeModulesArchitectHost;
+    protected _workspace: workspaces.WorkspaceDefinition;
     protected _registry: json.schema.SchemaRegistry;
-    protected readonly useReportAnalytics = false;
     protected multiTarget: boolean;
     target: string | undefined;
     missingTargetError: string | undefined;
     initialize(options: T & Arguments): Promise<void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
-    protected runSingleTarget(target: Target, targetOptions: string[]): Promise<0 | 1>;
+    protected runBepTarget(command: string, configuration: Target, overrides: json.JsonObject, buildEventLog: string): Promise<number>;
+    protected runSingleTarget(target: Target, targetOptions: string[], commandOptions: ArchitectCommandOptions & Arguments): Promise<number>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;
     private getProjectNamesByTarget;
     private _makeTargetSpecifier;

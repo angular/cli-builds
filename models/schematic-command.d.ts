@@ -31,8 +31,9 @@ export declare class UnknownCollectionError extends Error {
     constructor(collectionName: string);
 }
 export declare abstract class SchematicCommand<T extends BaseSchematicSchema & BaseCommandOptions> extends Command<T> {
-    protected readonly allowPrivateSchematics: boolean;
-    protected readonly useReportAnalytics = false;
+    readonly allowPrivateSchematics: boolean;
+    private _host;
+    private _workspace;
     protected _workflow: NodeWorkflow;
     protected defaultCollectionName: string;
     protected collectionName: string;
@@ -52,4 +53,5 @@ export declare abstract class SchematicCommand<T extends BaseSchematicSchema & B
     protected runSchematic(options: RunSchematicOptions): Promise<number | void>;
     protected parseFreeFormArguments(schematicOptions: string[]): Promise<Arguments>;
     protected parseArguments(schematicOptions: string[], options: Option[] | null): Promise<Arguments>;
+    private _loadWorkspace;
 }

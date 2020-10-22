@@ -141,6 +141,7 @@
       "name": "inlineStyle",
       "description": "When true, includes styles inline in the component TS file. By default, an external styles file is created and referenced in the component TS file.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [
         "s"
@@ -152,6 +153,7 @@
       "name": "inlineTemplate",
       "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
       "type": "boolean",
+      "default": false,
       "required": false,
       "aliases": [
         "t"
@@ -244,13 +246,12 @@
     },
     {
       "name": "strict",
-      "description": "Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.io/strict",
+      "description": "Creates a workspace with stricter type checking and build optimization options.",
       "type": "boolean",
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false,
-      "userAnalytics": 7
+      "hidden": false
     },
     {
       "name": "legacyBrowsers",
