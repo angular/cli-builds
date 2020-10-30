@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isWarningEnabled = exports.getSchematicDefaults = exports.migrateLegacyGlobalConfig = exports.getConfiguredPackageManager = exports.getProjectByCwd = exports.validateWorkspace = exports.getWorkspaceRaw = exports.createGlobalSettings = exports.getWorkspace = exports.AngularWorkspace = exports.workspaceSchemaPath = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -6,16 +8,40 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.isWarningEnabled = exports.getSchematicDefaults = exports.migrateLegacyGlobalConfig = exports.getConfiguredPackageManager = exports.getProjectByCwd = exports.validateWorkspace = exports.getWorkspaceRaw = exports.createGlobalSettings = exports.getWorkspace = exports.AngularWorkspace = exports.workspaceSchemaPath = void 0;
 const core_1 = require("@angular-devkit/core");
-const node_1 = require("@angular-devkit/core/node");
 const fs_1 = require("fs");
+const jsonc_parser_1 = require("jsonc-parser");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
 function isJsonObject(value) {
     return value !== undefined && core_1.json.isJsonObject(value);
+}
+function createWorkspaceHost() {
+    return {
+        async readFile(path) {
+            return fs_1.readFileSync(path, 'utf-8');
+        },
+        async writeFile(path, data) {
+            fs_1.writeFileSync(path, data);
+        },
+        async isDirectory(path) {
+            try {
+                return fs_1.statSync(path).isDirectory();
+            }
+            catch (_a) {
+                return false;
+            }
+        },
+        async isFile(path) {
+            try {
+                return fs_1.statSync(path).isFile();
+            }
+            catch (_a) {
+                return false;
+            }
+        },
+    };
 }
 function getSchemaLocation() {
     return path.join(__dirname, '../lib/config/schema.json');
@@ -83,7 +109,7 @@ class AngularWorkspace {
             // Create an empty workspace to allow update to be used
             return new AngularWorkspace({ extensions: {}, projects: new core_1.workspaces.ProjectDefinitionCollection() }, workspaceFilePath);
         }
-        const result = await core_1.workspaces.readWorkspace(workspaceFilePath, core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost()), core_1.workspaces.WorkspaceFormat.JSON);
+        const result = await core_1.workspaces.readWorkspace(workspaceFilePath, createWorkspaceHost(), core_1.workspaces.WorkspaceFormat.JSON);
         return new AngularWorkspace(result.workspace, workspaceFilePath);
     }
 }
@@ -100,8 +126,7 @@ async function getWorkspace(level = 'local') {
         return null;
     }
     try {
-        const result = await core_1.workspaces.readWorkspace(configPath, core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost()), core_1.workspaces.WorkspaceFormat.JSON);
-        const workspace = new AngularWorkspace(result.workspace, configPath);
+        const workspace = await AngularWorkspace.load(configPath);
         cachedWorkspaces.set(level, workspace);
         return workspace;
     }
@@ -138,7 +163,7 @@ function getWorkspaceRaw(level = 'local') {
         start = 3;
     }
     const content = data.toString('utf-8', start);
-    const ast = core_1.parseJsonAst(content, core_1.JsonParseMode.Loose);
+    const ast = core_1.parseJsonAst(content, core_1.json.JsonParseMode.Loose);
     if (ast.kind != 'object') {
         throw new Error(`Invalid JSON file: ${configPath}`);
     }
@@ -147,7 +172,7 @@ function getWorkspaceRaw(level = 'local') {
 exports.getWorkspaceRaw = getWorkspaceRaw;
 async function validateWorkspace(data) {
     const schemaContent = fs_1.readFileSync(path.join(__dirname, '..', 'lib', 'config', 'schema.json'), 'utf-8');
-    const schema = core_1.parseJson(schemaContent, core_1.JsonParseMode.Loose);
+    const schema = jsonc_parser_1.parse(schemaContent);
     const { formats } = await Promise.resolve().then(() => require('@angular-devkit/schematics'));
     const registry = new core_1.json.schema.CoreSchemaRegistry(formats.standardFormats);
     const validator = await registry.compile(schema).toPromise();
@@ -247,7 +272,7 @@ function migrateLegacyGlobalConfig() {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
-            const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
+            const legacy = jsonc_parser_1.parse(content);
             if (!isJsonObject(legacy)) {
                 return false;
             }
@@ -288,7 +313,7 @@ function getLegacyPackageManager() {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
             const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
-            const legacy = core_1.parseJson(content, core_1.JsonParseMode.Loose);
+            const legacy = jsonc_parser_1.parse(content);
             if (!isJsonObject(legacy)) {
                 return null;
             }
