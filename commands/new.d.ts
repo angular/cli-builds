@@ -1,9 +1,9 @@
 /**
- * Creates a new workspace and an initial Angular app.
+ * Creates a new workspace and an initial Angular application.
  */
 export interface Schema {
     /**
-     * A collection of schematics to use in generating the initial app.
+     * A collection of schematics to use in generating the initial application.
      */
     collection?: string;
     /**
