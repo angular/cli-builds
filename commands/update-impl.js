@@ -317,7 +317,7 @@ class UpdateCommand extends command_1.Command {
                 const packageJson = package_tree_1.findPackageJson(this.context.root, packageName);
                 if (packageJson) {
                     packagePath = path.dirname(packageJson);
-                    packageNode = await package_tree_1.readPackageJson(packagePath);
+                    packageNode = await package_tree_1.readPackageJson(packageJson);
                 }
             }
             if (!packageNode || !packagePath) {
