@@ -166,6 +166,7 @@
       "name": "progress",
       "description": "Log progress to the console while building.",
       "type": "boolean",
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false

@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { json, workspaces } from '@angular-devkit/core';
+import { JSONFile } from './json-file';
 export declare const workspaceSchemaPath: string;
 export declare class AngularWorkspace {
     private workspace;
@@ -20,7 +21,7 @@ export declare class AngularWorkspace {
 }
 export declare function getWorkspace(level?: 'local' | 'global'): Promise<AngularWorkspace | null>;
 export declare function createGlobalSettings(): string;
-export declare function getWorkspaceRaw(level?: 'local' | 'global'): [json.JsonAstObject | null, string | null];
+export declare function getWorkspaceRaw(level?: 'local' | 'global'): [JSONFile | null, string | null];
 export declare function validateWorkspace(data: json.JsonObject): Promise<void>;
 export declare function getProjectByCwd(workspace: AngularWorkspace): string | null;
 export declare function getConfiguredPackageManager(): Promise<string | null>;

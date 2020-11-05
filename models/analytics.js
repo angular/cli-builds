@@ -11,7 +11,6 @@ exports.getSharedAnalytics = exports.getWorkspaceAnalytics = exports.hasWorkspac
 const core_1 = require("@angular-devkit/core");
 const child_process = require("child_process");
 const debug = require("debug");
-const fs_1 = require("fs");
 const inquirer = require("inquirer");
 const os = require("os");
 const ua = require("universal-analytics");
@@ -310,17 +309,15 @@ function setAnalyticsConfig(level, value) {
     if (!config || !configPath) {
         throw new Error(`Could not find ${level} workspace.`);
     }
-    const configValue = config.value;
-    const cli = configValue['cli'] || (configValue['cli'] = {});
+    const cli = config.get(['cli']);
     if (!core_1.json.isJsonObject(cli)) {
         throw new Error(`Invalid config found at ${configPath}. CLI should be an object.`);
     }
     if (value === true) {
         value = uuid_1.v4();
     }
-    cli['analytics'] = value;
-    const output = JSON.stringify(configValue, null, 2);
-    fs_1.writeFileSync(configPath, output);
+    config.modify(['cli', 'analytics'], value);
+    config.save();
     analyticsDebug('done');
 }
 exports.setAnalyticsConfig = setAnalyticsConfig;

@@ -10,10 +10,10 @@ exports.isWarningEnabled = exports.getSchematicDefaults = exports.migrateLegacyG
  */
 const core_1 = require("@angular-devkit/core");
 const fs_1 = require("fs");
-const jsonc_parser_1 = require("jsonc-parser");
 const os = require("os");
 const path = require("path");
 const find_up_1 = require("./find-up");
+const json_file_1 = require("./json-file");
 function isJsonObject(value) {
     return value !== undefined && core_1.json.isJsonObject(value);
 }
@@ -156,23 +156,11 @@ function getWorkspaceRaw(level = 'local') {
             return [null, null];
         }
     }
-    const data = fs_1.readFileSync(configPath);
-    let start = 0;
-    if (data.length > 3 && data[0] === 0xef && data[1] === 0xbb && data[2] === 0xbf) {
-        // Remove BOM
-        start = 3;
-    }
-    const content = data.toString('utf-8', start);
-    const ast = core_1.parseJsonAst(content, core_1.json.JsonParseMode.Loose);
-    if (ast.kind != 'object') {
-        throw new Error(`Invalid JSON file: ${configPath}`);
-    }
-    return [ast, configPath];
+    return [new json_file_1.JSONFile(configPath), configPath];
 }
 exports.getWorkspaceRaw = getWorkspaceRaw;
 async function validateWorkspace(data) {
-    const schemaContent = fs_1.readFileSync(path.join(__dirname, '..', 'lib', 'config', 'schema.json'), 'utf-8');
-    const schema = jsonc_parser_1.parse(schemaContent);
+    const schema = json_file_1.readAndParseJson(path.join(__dirname, '../lib/config/schema.json'));
     const { formats } = await Promise.resolve().then(() => require('@angular-devkit/schematics'));
     const registry = new core_1.json.schema.CoreSchemaRegistry(formats.standardFormats);
     const validator = await registry.compile(schema).toPromise();
@@ -271,8 +259,7 @@ function migrateLegacyGlobalConfig() {
     if (homeDir) {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
-            const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
-            const legacy = jsonc_parser_1.parse(content);
+            const legacy = json_file_1.readAndParseJson(legacyGlobalConfigPath);
             if (!isJsonObject(legacy)) {
                 return false;
             }
@@ -312,8 +299,7 @@ function getLegacyPackageManager() {
     if (homeDir) {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
         if (fs_1.existsSync(legacyGlobalConfigPath)) {
-            const content = fs_1.readFileSync(legacyGlobalConfigPath, 'utf-8');
-            const legacy = jsonc_parser_1.parse(content);
+            const legacy = json_file_1.readAndParseJson(legacyGlobalConfigPath);
             if (!isJsonObject(legacy)) {
                 return null;
             }
