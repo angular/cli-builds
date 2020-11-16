@@ -169,6 +169,13 @@ class SchematicCommand extends command_1.Command {
                 // Global
                 : [__dirname, process.cwd()],
             schemaValidation: true,
+            optionTransforms: [
+                // Add configuration file defaults
+                async (schematic, current) => ({
+                    ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName())),
+                    ...current,
+                }),
+            ],
         });
         const getProjectName = () => {
             if (this.workspace) {
@@ -192,11 +199,6 @@ class SchematicCommand extends command_1.Command {
             }
             return undefined;
         };
-        const defaultOptionTransform = async (schematic, current) => ({
-            ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName())),
-            ...current,
-        });
-        workflow.engineHost.registerOptionsTransform(defaultOptionTransform);
         workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
         workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
