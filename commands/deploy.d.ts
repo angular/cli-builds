@@ -4,8 +4,11 @@
  */
 export interface Schema {
     /**
-     * A named build target, as specified in the "configurations" section of angular.json.
-     * Each named target is accompanied by a configuration of option defaults for that target.
+     * One or more named builder configurations as a comma-separated list as specified in the
+     * "configurations" section of angular.json.
+     * The builder uses the named configurations to run the given target.
+     * For more information, see
+     * https://angular.io/guide/workspace-config#alternate-build-configurations.
      */
     configuration?: string;
     /**
