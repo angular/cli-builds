@@ -214,7 +214,7 @@
     },
     {
       "name": "localize",
-      "description": "",
+      "description": "Translate the bundles in one or more locales.",
       "type": "boolean",
       "required": false,
       "aliases": [],
