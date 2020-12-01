@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "11.1.0-next.0+50.b07fc6f",
+  "version": "11.1.0-next.0+19.535a507",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#b07fc6faf",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#b07fc6faf",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#b07fc6faf",
-    "@schematics/angular": "github:angular/schematics-angular-builds#b07fc6faf",
-    "@schematics/update": "github:angular/schematics-update-builds#b07fc6faf",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#535a5076d",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#535a5076d",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#535a5076d",
+    "@schematics/angular": "github:angular/schematics-angular-builds#535a5076d",
+    "@schematics/update": "github:angular/schematics-update-builds#535a5076d",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.1",
     "debug": "4.3.1",
@@ -53,16 +53,22 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#b07fc6faf",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#b07fc6faf",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#b07fc6faf",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#b07fc6faf",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#b07fc6faf"
+      "@angular/cli": "github:angular/cli-builds#535a5076d",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#535a5076d",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#535a5076d",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#535a5076d",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#535a5076d"
     }
   },
   "engines": {
     "node": ">= 10.13.0",
     "npm": ">= 6.11.0",
     "yarn": ">= 1.13.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "yarn -s ng-dev commit-message pre-commit-validate --file-env-variable HUSKY_GIT_PARAMS",
+      "prepare-commit-msg": "yarn -s ng-dev commit-message restore-commit-message-draft --file-env-variable HUSKY_GIT_PARAMS"
+    }
   }
 }
