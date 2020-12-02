@@ -3,7 +3,7 @@
   "description": "Retrieves or sets Angular configuration values in the angular.json file for the workspace.",
   "options": [
     {
-      "name": "jsonPath",
+      "name": "json-path",
       "description": "The configuration key to set or query, in JSON path format. For example: \"a[3].foo.bar[2]\". If no new value is provided, returns the current value of this key.",
       "type": "string",
       "required": false,
