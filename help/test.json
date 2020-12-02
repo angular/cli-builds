@@ -58,7 +58,7 @@
       "hidden": false
     },
     {
-      "name": "tsConfig",
+      "name": "ts-config",
       "description": "The name of the TypeScript configuration file.",
       "type": "string",
       "required": false,
@@ -66,7 +66,7 @@
       "hidden": false
     },
     {
-      "name": "karmaConfig",
+      "name": "karma-config",
       "description": "The name of the Karma configuration file.",
       "type": "string",
       "required": false,
@@ -90,7 +90,7 @@
       "hidden": false
     },
     {
-      "name": "sourceMap",
+      "name": "source-map",
       "description": "Output sourcemaps.",
       "type": "boolean",
       "default": true,
@@ -124,7 +124,7 @@
       "hidden": false
     },
     {
-      "name": "preserveSymlinks",
+      "name": "preserve-symlinks",
       "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set.",
       "type": "boolean",
       "required": false,
@@ -140,7 +140,7 @@
       "hidden": false
     },
     {
-      "name": "codeCoverage",
+      "name": "code-coverage",
       "description": "Output a code coverage report.",
       "type": "boolean",
       "default": false,
@@ -149,7 +149,7 @@
       "hidden": false
     },
     {
-      "name": "codeCoverageExclude",
+      "name": "code-coverage-exclude",
       "description": "Globs to exclude from code coverage.",
       "type": "array",
       "required": false,
@@ -165,7 +165,7 @@
       "hidden": false
     },
     {
-      "name": "webWorkerTsConfig",
+      "name": "web-worker-ts-config",
       "description": "TypeScript configuration for Web Worker modules.",
       "type": "string",
       "required": false,

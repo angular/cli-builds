@@ -12,11 +12,11 @@
       "positional": 0,
       "subcommands": {
         "appShell": {
-          "name": "appShell",
+          "name": "app-shell",
           "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
             {
-              "name": "clientProject",
+              "name": "client-project",
               "description": "The name of the related client app.",
               "type": "string",
               "required": false,
@@ -33,7 +33,7 @@
               "hidden": false
             },
             {
-              "name": "appId",
+              "name": "app-id",
               "description": "The app ID to use in withServerTransition().",
               "type": "string",
               "default": "serverApp",
@@ -53,7 +53,7 @@
               "hidden": false
             },
             {
-              "name": "appDir",
+              "name": "app-dir",
               "description": "The name of the application directory.",
               "type": "string",
               "default": "app",
@@ -63,7 +63,7 @@
               "hidden": false
             },
             {
-              "name": "rootModuleFileName",
+              "name": "root-module-file-name",
               "description": "The name of the root module file",
               "type": "string",
               "default": "app.server.module.ts",
@@ -73,7 +73,7 @@
               "hidden": false
             },
             {
-              "name": "rootModuleClassName",
+              "name": "root-module-class-name",
               "description": "The name of the root module class.",
               "type": "string",
               "default": "AppServerModule",
@@ -90,7 +90,7 @@
           "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
           "options": [
             {
-              "name": "projectRoot",
+              "name": "project-root",
               "description": "The root directory of the new app.",
               "type": "string",
               "required": false,
@@ -107,7 +107,7 @@
               "positional": 0
             },
             {
-              "name": "inlineStyle",
+              "name": "inline-style",
               "description": "When true, includes styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
               "type": "boolean",
               "required": false,
@@ -118,7 +118,7 @@
               "userAnalytics": 9
             },
             {
-              "name": "inlineTemplate",
+              "name": "inline-template",
               "description": "When true, includes template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
               "type": "boolean",
               "required": false,
@@ -129,7 +129,7 @@
               "userAnalytics": 10
             },
             {
-              "name": "viewEncapsulation",
+              "name": "view-encapsulation",
               "description": "The view encapsulation strategy to use in the new app.",
               "type": "string",
               "enum": [
@@ -183,7 +183,7 @@
               "userAnalytics": 5
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the application.",
               "type": "boolean",
               "default": false,
@@ -195,7 +195,7 @@
               "userAnalytics": 12
             },
             {
-              "name": "skipPackageJson",
+              "name": "skip-package-json",
               "description": "When true, does not add dependencies to the \"package.json\" file.",
               "type": "boolean",
               "default": false,
@@ -214,7 +214,7 @@
               "userAnalytics": 14
             },
             {
-              "name": "skipInstall",
+              "name": "skip-install",
               "description": "Skip installing dependency packages.",
               "type": "boolean",
               "default": false,
@@ -223,7 +223,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the application.",
               "type": "boolean",
               "required": false,
@@ -243,7 +243,7 @@
               "userAnalytics": 7
             },
             {
-              "name": "legacyBrowsers",
+              "name": "legacy-browsers",
               "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
               "type": "boolean",
               "default": false,
@@ -285,7 +285,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
               "default": false,
@@ -304,7 +304,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the class.",
               "type": "boolean",
               "default": false,
@@ -348,7 +348,7 @@
               "positional": 0
             },
             {
-              "name": "displayBlock",
+              "name": "display-block",
               "description": "Specifies if the style will contain `:host { display: block; }`.",
               "type": "boolean",
               "default": false,
@@ -359,7 +359,7 @@
               "hidden": false
             },
             {
-              "name": "inlineStyle",
+              "name": "inline-style",
               "description": "When true, includes styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
@@ -371,7 +371,7 @@
               "userAnalytics": 9
             },
             {
-              "name": "inlineTemplate",
+              "name": "inline-template",
               "description": "When true, includes template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
@@ -383,7 +383,7 @@
               "userAnalytics": 10
             },
             {
-              "name": "viewEncapsulation",
+              "name": "view-encapsulation",
               "description": "The view encapsulation strategy to use in the new component.",
               "type": "string",
               "enum": [
@@ -400,7 +400,7 @@
               "userAnalytics": 11
             },
             {
-              "name": "changeDetection",
+              "name": "change-detection",
               "description": "The change detection strategy to use in the new component.",
               "type": "string",
               "default": "Default",
@@ -451,7 +451,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new component.",
               "type": "boolean",
               "default": false,
@@ -470,7 +470,7 @@
               "hidden": false
             },
             {
-              "name": "skipImport",
+              "name": "skip-import",
               "description": "When true, does not import this component into the owning NgModule.",
               "type": "boolean",
               "default": false,
@@ -489,7 +489,7 @@
               "hidden": false
             },
             {
-              "name": "skipSelector",
+              "name": "skip-selector",
               "description": "Specifies if the component should have a selector or not.",
               "type": "boolean",
               "default": false,
@@ -518,7 +518,7 @@
               "userAnalytics": 19
             },
             {
-              "name": "entryComponent",
+              "name": "entry-component",
               "description": "When true, the new component is the entry component of the declaring NgModule.",
               "type": "boolean",
               "default": false,
@@ -528,7 +528,7 @@
               "deprecated": "Since version 9.0.0 with Ivy, entryComponents is no longer necessary."
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the component.",
               "type": "boolean",
               "required": false,
@@ -581,7 +581,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
               "default": false,
@@ -591,7 +591,7 @@
               "userAnalytics": 12
             },
             {
-              "name": "skipImport",
+              "name": "skip-import",
               "description": "When true, does not import this directive into the owning NgModule.",
               "type": "boolean",
               "default": false,
@@ -639,7 +639,7 @@
               "userAnalytics": 19
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the directive.",
               "type": "boolean",
               "required": false,
@@ -682,7 +682,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the enum.",
               "type": "boolean",
               "required": false,
@@ -708,7 +708,7 @@
               "positional": 0
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new guard.",
               "type": "boolean",
               "default": false,
@@ -744,7 +744,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the guard.",
               "type": "boolean",
               "required": false,
@@ -804,7 +804,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new interceptor.",
               "type": "boolean",
               "default": false,
@@ -814,7 +814,7 @@
               "userAnalytics": 12
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the interceptor.",
               "type": "boolean",
               "required": false,
@@ -866,7 +866,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the interface.",
               "type": "boolean",
               "required": false,
@@ -901,7 +901,7 @@
               "positional": 0
             },
             {
-              "name": "entryFile",
+              "name": "entry-file",
               "description": "The path at which to create the library's public API file, relative to the workspace root.",
               "type": "string",
               "default": "public-api",
@@ -923,7 +923,7 @@
               "hidden": false
             },
             {
-              "name": "skipPackageJson",
+              "name": "skip-package-json",
               "description": "When true, does not add dependencies to the \"package.json\" file. ",
               "type": "boolean",
               "default": false,
@@ -932,7 +932,7 @@
               "hidden": false
             },
             {
-              "name": "skipInstall",
+              "name": "skip-install",
               "description": "When true, does not install dependency packages.",
               "type": "boolean",
               "default": false,
@@ -941,7 +941,7 @@
               "hidden": false
             },
             {
-              "name": "skipTsConfig",
+              "name": "skip-ts-config",
               "description": "When true, does not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development.",
               "type": "boolean",
               "default": false,
@@ -950,7 +950,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the library.",
               "type": "boolean",
               "required": false,
@@ -1003,7 +1003,7 @@
               "userAnalytics": 17
             },
             {
-              "name": "routingScope",
+              "name": "routing-scope",
               "description": "The scope for the new routing module.",
               "type": "string",
               "default": "Child",
@@ -1033,7 +1033,7 @@
               "hidden": false
             },
             {
-              "name": "commonModule",
+              "name": "common-module",
               "description": "When true, the new NgModule imports \"CommonModule\". ",
               "type": "boolean",
               "default": true,
@@ -1052,7 +1052,7 @@
               "hidden": false
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the module.",
               "type": "boolean",
               "required": false,
@@ -1104,7 +1104,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new pipe.",
               "type": "boolean",
               "default": false,
@@ -1114,7 +1114,7 @@
               "userAnalytics": 12
             },
             {
-              "name": "skipImport",
+              "name": "skip-import",
               "description": "When true, does not import this pipe into the owning NgModule.",
               "type": "boolean",
               "default": false,
@@ -1144,7 +1144,7 @@
               "userAnalytics": 19
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the pipe.",
               "type": "boolean",
               "default": false,
@@ -1171,7 +1171,7 @@
               "positional": 0
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new resolver.",
               "type": "boolean",
               "default": false,
@@ -1249,7 +1249,7 @@
               "hidden": false
             },
             {
-              "name": "skipTests",
+              "name": "skip-tests",
               "description": "When true, does not create \"spec.ts\" test files for the new service.",
               "type": "boolean",
               "default": false,
@@ -1259,7 +1259,7 @@
               "userAnalytics": 12
             },
             {
-              "name": "lintFix",
+              "name": "lint-fix",
               "description": "When true, applies lint fixes after generating the service.",
               "type": "boolean",
               "required": false,
@@ -1272,7 +1272,7 @@
           "aliases": []
         },
         "serviceWorker": {
-          "name": "serviceWorker",
+          "name": "service-worker",
           "description": "Pass this schematic to the \"run\" command to create a service worker",
           "options": [
             {
@@ -1305,7 +1305,7 @@
           "aliases": []
         },
         "webWorker": {
-          "name": "webWorker",
+          "name": "web-worker",
           "description": "Creates a new generic web worker definition in the given or default project.",
           "options": [
             {
@@ -1377,7 +1377,7 @@
       "hidden": false
     },
     {
-      "name": "dryRun",
+      "name": "dry-run",
       "description": "When true, runs through and reports activity without writing out results.",
       "type": "boolean",
       "default": false,

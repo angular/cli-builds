@@ -49,7 +49,7 @@
       "hidden": false
     },
     {
-      "name": "browserTarget",
+      "name": "browser-target",
       "description": "A browser builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
       "type": "string",
       "required": false,
@@ -75,7 +75,7 @@
       "hidden": false
     },
     {
-      "name": "proxyConfig",
+      "name": "proxy-config",
       "description": "Proxy configuration file.",
       "type": "string",
       "required": false,
@@ -92,7 +92,7 @@
       "hidden": false
     },
     {
-      "name": "sslKey",
+      "name": "ssl-key",
       "description": "SSL key to use for serving HTTPS.",
       "type": "string",
       "required": false,
@@ -100,7 +100,7 @@
       "hidden": false
     },
     {
-      "name": "sslCert",
+      "name": "ssl-cert",
       "description": "SSL certificate to use for serving HTTPS.",
       "type": "string",
       "required": false,
@@ -127,7 +127,7 @@
       "hidden": false
     },
     {
-      "name": "liveReload",
+      "name": "live-reload",
       "description": "Whether to reload the page on change, using live-reload.",
       "type": "boolean",
       "default": true,
@@ -136,7 +136,7 @@
       "hidden": false
     },
     {
-      "name": "publicHost",
+      "name": "public-host",
       "description": "The URL that the browser client (or live-reload client, if enabled) should use to connect to the development server. Use for a complex dev server setup, such as one with reverse proxies.",
       "type": "string",
       "required": false,
@@ -144,7 +144,7 @@
       "hidden": false
     },
     {
-      "name": "allowedHosts",
+      "name": "allowed-hosts",
       "description": "List of hosts that are allowed to access the dev server.",
       "type": "array",
       "required": false,
@@ -152,7 +152,7 @@
       "hidden": false
     },
     {
-      "name": "servePath",
+      "name": "serve-path",
       "description": "The pathname where the app will be served.",
       "type": "string",
       "required": false,
@@ -160,7 +160,7 @@
       "hidden": false
     },
     {
-      "name": "disableHostCheck",
+      "name": "disable-host-check",
       "description": "Don't verify connected clients are part of allowed hosts.",
       "type": "boolean",
       "default": false,
@@ -187,7 +187,7 @@
       "hidden": false
     },
     {
-      "name": "hmrWarning",
+      "name": "hmr-warning",
       "description": "Show a warning when the --hmr option is enabled.",
       "type": "boolean",
       "default": true,
@@ -197,7 +197,7 @@
       "deprecated": "No longer has an effect."
     },
     {
-      "name": "servePathDefaultWarning",
+      "name": "serve-path-default-warning",
       "description": "Show a warning when deploy-url/base-href use unsupported serve path values.",
       "type": "boolean",
       "default": true,
@@ -227,7 +227,7 @@
       "deprecated": "Use the \"aot\" option in the browser builder instead."
     },
     {
-      "name": "sourceMap",
+      "name": "source-map",
       "description": "Output sourcemaps.",
       "type": "boolean",
       "required": false,
@@ -236,7 +236,7 @@
       "deprecated": "Use the \"sourceMap\" option in the browser builder instead."
     },
     {
-      "name": "vendorChunk",
+      "name": "vendor-chunk",
       "description": "Use a separate bundle containing only vendor libraries.",
       "type": "boolean",
       "required": false,
@@ -245,7 +245,7 @@
       "deprecated": "Use the \"vendorChunk\" option in the browser builder instead."
     },
     {
-      "name": "commonChunk",
+      "name": "common-chunk",
       "description": "Use a separate bundle containing code used across multiple bundles.",
       "type": "boolean",
       "required": false,
@@ -254,7 +254,7 @@
       "deprecated": "Use the \"commonChunk\" option in the browser builder instead."
     },
     {
-      "name": "baseHref",
+      "name": "base-href",
       "description": "Base url for the application being built.",
       "type": "string",
       "required": false,
@@ -263,7 +263,7 @@
       "deprecated": "Use the \"baseHref\" option in the browser builder instead."
     },
     {
-      "name": "deployUrl",
+      "name": "deploy-url",
       "description": "URL where files will be deployed.",
       "type": "string",
       "required": false,
