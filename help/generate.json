@@ -1271,7 +1271,7 @@
           ],
           "aliases": []
         },
-        "serviceWorker": {
+        "service-worker": {
           "name": "service-worker",
           "description": "Pass this schematic to the \"run\" command to create a service worker",
           "options": [
@@ -1304,7 +1304,7 @@
           ],
           "aliases": []
         },
-        "webWorker": {
+        "web-worker": {
           "name": "web-worker",
           "description": "Creates a new generic web worker definition in the given or default project.",
           "options": [
