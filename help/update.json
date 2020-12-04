@@ -59,7 +59,7 @@
       "hidden": false
     },
     {
-      "name": "migrate-only",
+      "name": "migrateOnly",
       "description": "Only perform a migration, does not update the installed version.",
       "type": "boolean",
       "types": [
@@ -87,7 +87,7 @@
       "hidden": false
     },
     {
-      "name": "allow-dirty",
+      "name": "allowDirty",
       "description": "Whether to allow updating when the repository contains modified or untracked files.",
       "type": "boolean",
       "required": false,
@@ -104,7 +104,7 @@
       "hidden": false
     },
     {
-      "name": "create-commits",
+      "name": "createCommits",
       "description": "Create source control commits for updates and migrations.",
       "type": "boolean",
       "default": false,

@@ -4,7 +4,7 @@
   "longDescription": "The value of *settingOrProject* is one of the following.\n* \"on\" : Enables analytics gathering and reporting for the user.\n* \"off\" : Disables analytics gathering and reporting for the user.\n* \"ci\" : Enables analytics and configures reporting for use with Continuous Integration,\nwhich uses a common CI user.\n* \"prompt\" : Prompts the user to set the status interactively.\n* \"project\" : Sets the default status for the project to the *projectSetting* value, which can be any of the other values. The *projectSetting* argument is ignored for all other values of *settingOrProject*.",
   "options": [
     {
-      "name": "setting-or-project",
+      "name": "settingOrProject",
       "description": "Directly enables or disables all usage analytics for the user, or prompts the user to set the status interactively, or sets the default status for the project.",
       "type": "string",
       "enum": [
@@ -39,7 +39,7 @@
       "hidden": false
     },
     {
-      "name": "project-setting",
+      "name": "projectSetting",
       "description": "Sets the default analytics enablement status for the project.",
       "type": "string",
       "enum": [
