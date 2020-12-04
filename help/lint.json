@@ -42,7 +42,7 @@
       "hidden": false
     },
     {
-      "name": "tslintConfig",
+      "name": "tslint-config",
       "description": "The name of the TSLint configuration file.",
       "type": "string",
       "required": false,
@@ -50,7 +50,7 @@
       "hidden": false
     },
     {
-      "name": "tsConfig",
+      "name": "ts-config",
       "description": "The name of the TypeScript configuration file.",
       "type": "string",
       "required": false,
@@ -67,7 +67,7 @@
       "hidden": false
     },
     {
-      "name": "typeCheck",
+      "name": "type-check",
       "description": "Controls the type check for linting.",
       "type": "boolean",
       "default": false,

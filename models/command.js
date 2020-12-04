@@ -33,7 +33,10 @@ class Command {
         return 0;
     }
     async printJsonHelp(_options) {
-        this.logger.info(JSON.stringify(this.description));
+        const replacer = (key, value) => key === 'name'
+            ? core_1.strings.dasherize(value)
+            : value;
+        this.logger.info(JSON.stringify(this.description, replacer, 2));
         return 0;
     }
     async printHelpUsage() {
