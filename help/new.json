@@ -44,7 +44,7 @@
       "hidden": false
     },
     {
-      "name": "dry-run",
+      "name": "dryRun",
       "description": "When true, runs through and reports activity without writing out results.",
       "type": "boolean",
       "default": false,
@@ -100,7 +100,7 @@
       "positional": 0
     },
     {
-      "name": "skip-install",
+      "name": "skipInstall",
       "description": "When true, does not install dependency packages.",
       "type": "boolean",
       "default": false,
@@ -109,7 +109,7 @@
       "hidden": false
     },
     {
-      "name": "skip-git",
+      "name": "skipGit",
       "description": "When true, does not initialize a git repository.",
       "type": "boolean",
       "default": false,
@@ -129,7 +129,7 @@
       "hidden": false
     },
     {
-      "name": "new-project-root",
+      "name": "newProjectRoot",
       "description": "The path where new projects will be created, relative to the new workspace root.",
       "type": "string",
       "default": "projects",
@@ -138,7 +138,7 @@
       "hidden": false
     },
     {
-      "name": "inline-style",
+      "name": "inlineStyle",
       "description": "When true, includes styles inline in the component TS file. By default, an external styles file is created and referenced in the component TS file.",
       "type": "boolean",
       "required": false,
@@ -149,7 +149,7 @@
       "userAnalytics": 9
     },
     {
-      "name": "inline-template",
+      "name": "inlineTemplate",
       "description": "When true, includes template inline in the component TS file. By default, an external template file is created and referenced in the component TS file.",
       "type": "boolean",
       "required": false,
@@ -160,7 +160,7 @@
       "userAnalytics": 10
     },
     {
-      "name": "view-encapsulation",
+      "name": "viewEncapsulation",
       "description": "The view encapsulation strategy to use in the initial project.",
       "type": "string",
       "enum": [
@@ -212,7 +212,7 @@
       "userAnalytics": 5
     },
     {
-      "name": "skip-tests",
+      "name": "skipTests",
       "description": "When true, does not generate \"spec.ts\" test files for the new project. ",
       "type": "boolean",
       "default": false,
@@ -224,7 +224,7 @@
       "userAnalytics": 12
     },
     {
-      "name": "create-application",
+      "name": "createApplication",
       "description": "When true (the default), creates a new initial application project in the src folder of the new workspace. When false, creates an empty workspace with no initial app. You can then use the generate application command so that all apps are created in the projects folder.",
       "type": "boolean",
       "default": true,
@@ -253,7 +253,7 @@
       "userAnalytics": 7
     },
     {
-      "name": "legacy-browsers",
+      "name": "legacyBrowsers",
       "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
       "type": "boolean",
       "default": false,
@@ -262,7 +262,7 @@
       "hidden": false
     },
     {
-      "name": "package-manager",
+      "name": "packageManager",
       "description": "The package manager used to install dependencies.",
       "type": "string",
       "enum": [

@@ -49,7 +49,7 @@
       "hidden": false
     },
     {
-      "name": "browser-target",
+      "name": "browserTarget",
       "description": "A browser builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
       "type": "string",
       "required": false,
@@ -74,7 +74,7 @@
       "hidden": false
     },
     {
-      "name": "i18n-format",
+      "name": "i18nFormat",
       "description": "Output format for the generated file.",
       "type": "string",
       "default": "xlf",
@@ -92,7 +92,7 @@
       "deprecated": "Use 'format' option instead."
     },
     {
-      "name": "i18n-locale",
+      "name": "i18nLocale",
       "description": "Specifies the source language of the application.",
       "type": "string",
       "required": false,
@@ -118,7 +118,7 @@
       "hidden": false
     },
     {
-      "name": "output-path",
+      "name": "outputPath",
       "description": "Path where output will be placed.",
       "type": "string",
       "required": false,
@@ -126,7 +126,7 @@
       "hidden": false
     },
     {
-      "name": "out-file",
+      "name": "outFile",
       "description": "Name of the file to output.",
       "type": "string",
       "required": false,
