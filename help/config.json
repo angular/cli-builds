@@ -13,7 +13,7 @@
     },
     {
       "name": "global",
-      "description": "When true, accesses the global configuration in the caller's home directory.",
+      "description": "Access the global configuration in the caller's home directory.",
       "type": "boolean",
       "default": false,
       "required": false,

@@ -18,7 +18,7 @@ export interface Schema {
     help?: HelpUnion;
     /**
      * Shorthand for "--configuration=production".
-     * When true, sets the build configuration to the production target.
+     * Set the build configuration to the production target.
      * By default, the production target is set up in the workspace configuration such that all
      * builds make use of bundling, limited tree-shaking, and also limited dead code elimination.
      */

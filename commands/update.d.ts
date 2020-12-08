@@ -28,7 +28,7 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * Only perform a migration, does not update the installed version.
+     * Only perform a migration, do not update the installed version.
      */
     migrateOnly?: MigrateOnly;
     /**
@@ -59,6 +59,6 @@ export declare enum HelpEnum {
     Json = "json"
 }
 /**
- * Only perform a migration, does not update the installed version.
+ * Only perform a migration, do not update the installed version.
  */
 export declare type MigrateOnly = boolean | string;

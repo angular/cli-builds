@@ -11,7 +11,7 @@
       "hidden": false,
       "positional": 0,
       "subcommands": {
-        "appShell": {
+        "app-shell": {
           "name": "app-shell",
           "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
@@ -108,7 +108,7 @@
             },
             {
               "name": "inline-style",
-              "description": "When true, includes styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
+              "description": "Include styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
               "type": "boolean",
               "required": false,
               "aliases": [
@@ -119,7 +119,7 @@
             },
             {
               "name": "inline-template",
-              "description": "When true, includes template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
+              "description": "Include template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
               "type": "boolean",
               "required": false,
               "aliases": [
@@ -145,7 +145,7 @@
             },
             {
               "name": "routing",
-              "description": "When true, creates a routing NgModule.",
+              "description": "Create a routing NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -184,7 +184,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the application.",
+              "description": "Do not create \"spec.ts\" test files for the application.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -196,7 +196,7 @@
             },
             {
               "name": "skip-package-json",
-              "description": "When true, does not add dependencies to the \"package.json\" file.",
+              "description": "Do not add dependencies to the \"package.json\" file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -205,7 +205,7 @@
             },
             {
               "name": "minimal",
-              "description": "When true, creates a bare-bones project without any testing frameworks. (Use for learning purposes only.)",
+              "description": "Create a bare-bones project without any testing frameworks. (Use for learning purposes only.)",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -224,7 +224,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the application.",
+              "description": "Apply lint fixes after generating the application.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -286,7 +286,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new class.",
+              "description": "Do not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -305,7 +305,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the class.",
+              "description": "Apply lint fixes after generating the class.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -360,7 +360,7 @@
             },
             {
               "name": "inline-style",
-              "description": "When true, includes styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+              "description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -372,7 +372,7 @@
             },
             {
               "name": "inline-template",
-              "description": "When true, includes template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+              "description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -452,7 +452,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new component.",
+              "description": "Do not create \"spec.ts\" test files for the new component.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -462,7 +462,7 @@
             },
             {
               "name": "flat",
-              "description": "When true, creates the new files at the top level of the current project.",
+              "description": "Create the new files at the top level of the current project.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -471,7 +471,7 @@
             },
             {
               "name": "skip-import",
-              "description": "When true, does not import this component into the owning NgModule.",
+              "description": "Do not import this component into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -509,7 +509,7 @@
             },
             {
               "name": "export",
-              "description": "When true, the declaring NgModule exports this component.",
+              "description": "The declaring NgModule exports this component.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -519,7 +519,7 @@
             },
             {
               "name": "entry-component",
-              "description": "When true, the new component is the entry component of the declaring NgModule.",
+              "description": "The new component is the entry component of the declaring NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -529,7 +529,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the component.",
+              "description": "Apply lint fixes after generating the component.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -582,7 +582,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new class.",
+              "description": "Do not create \"spec.ts\" test files for the new class.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -592,7 +592,7 @@
             },
             {
               "name": "skip-import",
-              "description": "When true, does not import this directive into the owning NgModule.",
+              "description": "Do not import this directive into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -630,7 +630,7 @@
             },
             {
               "name": "export",
-              "description": "When true, the declaring NgModule exports this directive.",
+              "description": "The declaring NgModule exports this directive.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -640,7 +640,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the directive.",
+              "description": "Apply lint fixes after generating the directive.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -683,7 +683,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the enum.",
+              "description": "Apply lint fixes after generating the enum.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -709,7 +709,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new guard.",
+              "description": "Do not create \"spec.ts\" test files for the new guard.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -745,7 +745,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the guard.",
+              "description": "Apply lint fixes after generating the guard.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -805,7 +805,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new interceptor.",
+              "description": "Do not create \"spec.ts\" test files for the new interceptor.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -815,7 +815,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the interceptor.",
+              "description": "Apply lint fixes after generating the interceptor.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -867,7 +867,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the interface.",
+              "description": "Apply lint fixes after generating the interface.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -924,7 +924,7 @@
             },
             {
               "name": "skip-package-json",
-              "description": "When true, does not add dependencies to the \"package.json\" file. ",
+              "description": "Do not add dependencies to the \"package.json\" file. ",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -933,7 +933,7 @@
             },
             {
               "name": "skip-install",
-              "description": "When true, does not install dependency packages.",
+              "description": "Do not install dependency packages.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -942,7 +942,7 @@
             },
             {
               "name": "skip-ts-config",
-              "description": "When true, does not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development.",
+              "description": "Do not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -951,7 +951,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the library.",
+              "description": "Apply lint fixes after generating the library.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -994,7 +994,7 @@
             },
             {
               "name": "routing",
-              "description": "When true, creates a routing module.",
+              "description": "Create a routing module.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1025,7 +1025,7 @@
             },
             {
               "name": "flat",
-              "description": "When true, creates the new files at the top level of the current project root. ",
+              "description": "Create the new files at the top level of the current project root. ",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1034,7 +1034,7 @@
             },
             {
               "name": "common-module",
-              "description": "When true, the new NgModule imports \"CommonModule\". ",
+              "description": "The new NgModule imports \"CommonModule\". ",
               "type": "boolean",
               "default": true,
               "required": false,
@@ -1053,7 +1053,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the module.",
+              "description": "Apply lint fixes after generating the module.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -1105,7 +1105,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new pipe.",
+              "description": "Do not create \"spec.ts\" test files for the new pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1115,7 +1115,7 @@
             },
             {
               "name": "skip-import",
-              "description": "When true, does not import this pipe into the owning NgModule.",
+              "description": "Do not import this pipe into the owning NgModule.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1135,7 +1135,7 @@
             },
             {
               "name": "export",
-              "description": "When true, the declaring NgModule exports this pipe.",
+              "description": "The declaring NgModule exports this pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1145,7 +1145,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the pipe.",
+              "description": "Apply lint fixes after generating the pipe.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1172,7 +1172,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new resolver.",
+              "description": "Do not create \"spec.ts\" test files for the new resolver.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1250,7 +1250,7 @@
             },
             {
               "name": "skip-tests",
-              "description": "When true, does not create \"spec.ts\" test files for the new service.",
+              "description": "Do not create \"spec.ts\" test files for the new service.",
               "type": "boolean",
               "default": false,
               "required": false,
@@ -1260,7 +1260,7 @@
             },
             {
               "name": "lint-fix",
-              "description": "When true, applies lint fixes after generating the service.",
+              "description": "Apply lint fixes after generating the service.",
               "type": "boolean",
               "required": false,
               "aliases": [],
@@ -1378,7 +1378,7 @@
     },
     {
       "name": "dry-run",
-      "description": "When true, runs through and reports activity without writing out results.",
+      "description": "Run through and reports activity without writing out results.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -1389,7 +1389,7 @@
     },
     {
       "name": "force",
-      "description": "When true, forces overwriting of existing files.",
+      "description": "Force overwriting of existing files.",
       "type": "boolean",
       "default": false,
       "required": false,
@@ -1400,7 +1400,7 @@
     },
     {
       "name": "interactive",
-      "description": "When false, disables interactive input prompts.",
+      "description": "Enable interactive input prompts.",
       "type": "boolean",
       "required": false,
       "aliases": [],
@@ -1408,7 +1408,7 @@
     },
     {
       "name": "defaults",
-      "description": "When true, disables interactive input prompts for options with a default.",
+      "description": "Disable interactive input prompts for options with a default.",
       "type": "boolean",
       "required": false,
       "aliases": [],

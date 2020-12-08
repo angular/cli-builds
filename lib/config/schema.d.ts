@@ -65,7 +65,7 @@ export interface SchematicOptions {
 }
 export interface SchematicsAngularClass {
     /**
-     * When true, does not create test files.
+     * Do not create test files.
      */
     skipTests?: boolean;
 }
@@ -115,7 +115,7 @@ export interface SchematicsAngularComponent {
      */
     skipImport?: boolean;
     /**
-     * When true, does not create test files.
+     * Do not create test files.
      */
     skipTests?: boolean;
     /**
@@ -179,7 +179,7 @@ export interface SchematicsAngularDirective {
      */
     skipImport?: boolean;
     /**
-     * When true, does not create test files.
+     * Do not create test files.
      */
     skipTests?: boolean;
 }
@@ -230,7 +230,7 @@ export interface SchematicsAngularPipe {
      */
     skipImport?: boolean;
     /**
-     * When true, does not create test files.
+     * Do not create test files.
      */
     skipTests?: boolean;
 }
@@ -240,7 +240,7 @@ export interface SchematicsAngularService {
      */
     flat?: boolean;
     /**
-     * When true, does not create test files.
+     * Do not create test files.
      */
     skipTests?: boolean;
 }

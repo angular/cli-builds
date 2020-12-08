@@ -3,7 +3,7 @@
  */
 export interface Schema {
     /**
-     * When true, accesses the global configuration in the caller's home directory.
+     * Access the global configuration in the caller's home directory.
      */
     global?: boolean;
     /**

@@ -7,7 +7,7 @@ export interface Schema {
      */
     collection?: string;
     /**
-     * When true, disables interactive input prompts for options with a default.
+     * Disable interactive input prompts for options with a default.
      */
     defaults?: boolean;
     /**
@@ -15,7 +15,7 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * When false, disables interactive input prompts.
+     * Enable interactive input prompts.
      */
     interactive?: boolean;
     /**
