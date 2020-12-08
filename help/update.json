@@ -60,7 +60,7 @@
     },
     {
       "name": "migrate-only",
-      "description": "Only perform a migration, does not update the installed version.",
+      "description": "Only perform a migration, do not update the installed version.",
       "type": "boolean",
       "types": [
         "boolean",

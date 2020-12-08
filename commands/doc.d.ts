@@ -12,8 +12,7 @@ export interface Schema {
      */
     keyword?: string;
     /**
-     * When true, searches all of angular.io. Otherwise, searches only API reference
-     * documentation.
+     * Search all of angular.io. Otherwise, searches only API reference documentation.
      */
     search?: boolean;
     /**

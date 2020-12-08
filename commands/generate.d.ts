@@ -3,15 +3,15 @@
  */
 export interface Schema {
     /**
-     * When true, disables interactive input prompts for options with a default.
+     * Disable interactive input prompts for options with a default.
      */
     defaults?: boolean;
     /**
-     * When true, runs through and reports activity without writing out results.
+     * Run through and reports activity without writing out results.
      */
     dryRun?: boolean;
     /**
-     * When true, forces overwriting of existing files.
+     * Force overwriting of existing files.
      */
     force?: boolean;
     /**
@@ -19,7 +19,7 @@ export interface Schema {
      */
     help?: HelpUnion;
     /**
-     * When false, disables interactive input prompts.
+     * Enable interactive input prompts.
      */
     interactive?: boolean;
     /**

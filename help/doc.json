@@ -13,7 +13,7 @@
     },
     {
       "name": "search",
-      "description": "When true, searches all of angular.io. Otherwise, searches only API reference documentation.",
+      "description": "Search all of angular.io. Otherwise, searches only API reference documentation.",
       "type": "boolean",
       "default": false,
       "required": false,
