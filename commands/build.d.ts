@@ -9,7 +9,7 @@ export interface Schema {
      * The builder uses the named configurations to run the given target.
      * For more information, see
      * https://angular.io/guide/workspace-config#alternate-build-configurations.
-     * Setting this explicitly overrides the "--prod" flag
+     * Setting this explicitly overrides the "--prod" flag.
      */
     configuration?: string;
     /**
