@@ -27,7 +27,7 @@ class JSONFile {
             return this._jsonAst;
         }
         const errors = [];
-        this._jsonAst = jsonc_parser_1.parseTree(this.content, errors);
+        this._jsonAst = jsonc_parser_1.parseTree(this.content, errors, { allowTrailingComma: true });
         if (errors.length) {
             formatError(this.path, errors);
         }
@@ -79,7 +79,7 @@ exports.JSONFile = JSONFile;
 // tslint:disable-next-line: no-any
 function readAndParseJson(path) {
     const errors = [];
-    const content = jsonc_parser_1.parse(fs_1.readFileSync(path, 'utf-8'), errors);
+    const content = jsonc_parser_1.parse(fs_1.readFileSync(path, 'utf-8'), errors, { allowTrailingComma: true });
     if (errors.length) {
         formatError(path, errors);
     }
@@ -92,6 +92,6 @@ function formatError(path, errors) {
 }
 // tslint:disable-next-line: no-any
 function parseJson(content) {
-    return jsonc_parser_1.parse(content);
+    return jsonc_parser_1.parse(content, undefined, { allowTrailingComma: true });
 }
 exports.parseJson = parseJson;
