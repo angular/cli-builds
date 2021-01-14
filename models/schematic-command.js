@@ -264,16 +264,6 @@ class SchematicCommand extends command_1.Command {
                                     };
                             });
                             break;
-                        case 'input':
-                            if (definition.propertyTypes.size === 1 &&
-                                (definition.propertyTypes.has('number') ||
-                                    definition.propertyTypes.has('integer'))) {
-                                question.type = 'number';
-                            }
-                            else {
-                                question.type = 'input';
-                            }
-                            break;
                         default:
                             question.type = definition.type;
                             break;
