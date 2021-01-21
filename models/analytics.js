@@ -310,7 +310,7 @@ function setAnalyticsConfig(level, value) {
         throw new Error(`Could not find ${level} workspace.`);
     }
     const cli = config.get(['cli']);
-    if (cli !== undefined && !core_1.json.isJsonObject(cli)) {
+    if (!core_1.json.isJsonObject(cli)) {
         throw new Error(`Invalid config found at ${configPath}. CLI should be an object.`);
     }
     if (value === true) {
