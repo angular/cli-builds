@@ -81,7 +81,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
                         if (typeof value === 'string') {
                             const cafile = path.resolve(path.dirname(location), value);
                             try {
-                                options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/, '\\n');
+                                options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
                             }
                             catch (_a) { }
                         }
