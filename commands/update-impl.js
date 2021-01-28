@@ -16,6 +16,7 @@ const path = require("path");
 const semver = require("semver");
 const schema_1 = require("../lib/config/schema");
 const command_1 = require("../models/command");
+const schematic_engine_host_1 = require("../models/schematic-engine-host");
 const color_1 = require("../utilities/color");
 const install_package_1 = require("../utilities/install-package");
 const log_file_1 = require("../utilities/log-file");
@@ -49,6 +50,7 @@ class UpdateCommand extends command_1.Command {
             // Otherwise, use packages from the active workspace (migrations)
             resolvePaths: [__dirname, this.context.root],
             schemaValidation: true,
+            engineHostCreator: (options) => new schematic_engine_host_1.SchematicEngineHost(options.resolvePaths),
         });
     }
     async executeSchematic(collection, schematic, options = {}) {
@@ -188,24 +190,6 @@ class UpdateCommand extends command_1.Command {
     // tslint:disable-next-line:no-big-function
     async run(options) {
         var _a;
-        // Check if the @angular-devkit/schematics package can be resolved from the workspace root
-        // This works around issues with packages containing migrations that cannot directly depend on the package
-        // This check can be removed once the schematic runtime handles this situation
-        try {
-            require.resolve('@angular-devkit/schematics', { paths: [this.context.root] });
-        }
-        catch (e) {
-            if (e.code === 'MODULE_NOT_FOUND') {
-                this.logger.fatal('The "@angular-devkit/schematics" package cannot be resolved from the workspace root directory. ' +
-                    'This may be due to an unsupported node modules structure.\n' +
-                    'Please remove both the "node_modules" directory and the package lock file; and then reinstall.\n' +
-                    'If this does not correct the problem, ' +
-                    'please temporarily install the "@angular-devkit/schematics" package within the workspace. ' +
-                    'It can be removed once the update is complete.');
-                return 1;
-            }
-            throw e;
-        }
         // Check if the current installed CLI version is older than the latest version.
         if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +

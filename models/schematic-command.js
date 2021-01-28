@@ -21,6 +21,7 @@ const tty_1 = require("../utilities/tty");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser_1 = require("./parser");
+const schematic_engine_host_1 = require("./schematic-engine-host");
 class UnknownCollectionError extends Error {
     constructor(collectionName) {
         super(`Invalid collection (${collectionName}).`);
@@ -176,6 +177,7 @@ class SchematicCommand extends command_1.Command {
                     ...current,
                 }),
             ],
+            engineHostCreator: (options) => new schematic_engine_host_1.SchematicEngineHost(options.resolvePaths),
         });
         const getProjectName = () => {
             if (this.workspace) {
