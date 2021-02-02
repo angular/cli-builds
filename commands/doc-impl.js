@@ -8,8 +8,8 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocCommand = void 0;
+const open = require("open");
 const command_1 = require("../models/command");
-const open = require('open');
 class DocCommand extends command_1.Command {
     async run(options) {
         if (!options.keyword) {
@@ -36,7 +36,7 @@ class DocCommand extends command_1.Command {
             // and use it if we can find it
             try {
                 /* tslint:disable-next-line:no-implicit-dependencies */
-                const currentNgVersion = require('@angular/core').VERSION.major;
+                const currentNgVersion = (await Promise.resolve().then(() => require('@angular/core'))).VERSION.major;
                 domain = `v${currentNgVersion}.angular.io`;
             }
             catch (e) { }
