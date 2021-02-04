@@ -471,10 +471,32 @@ class UpdateCommand extends command_1.Command {
         const migrations = global.externalMigrations;
         if (success && migrations) {
             for (const migration of migrations) {
-                const result = await this.executeMigrations(migration.package, 
-                // Resolve the collection from the workspace root, as otherwise it will be resolved from the temp
+                // Resolve the package from the workspace root, as otherwise it will be resolved from the temp
                 // installed CLI version.
-                require.resolve(migration.collection, { paths: [this.context.root] }), new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
+                const packagePath = require.resolve(migration.package, { paths: [this.context.root] });
+                let migrations;
+                // Check if it is a package-local location
+                const localMigrations = path.join(packagePath, migration.collection);
+                if (fs.existsSync(localMigrations)) {
+                    migrations = localMigrations;
+                }
+                else {
+                    // Try to resolve from package location.
+                    // This avoids issues with package hoisting.
+                    try {
+                        migrations = require.resolve(migration.collection, { paths: [packagePath] });
+                    }
+                    catch (e) {
+                        if (e.code === 'MODULE_NOT_FOUND') {
+                            this.logger.error(`Migrations for package (${migration.package}) were not found.`);
+                        }
+                        else {
+                            this.logger.error(`Unable to resolve migrations for package (${migration.package}).  [${e.message}]`);
+                        }
+                        return 1;
+                    }
+                }
+                const result = await this.executeMigrations(migration.package, migrations, new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
                 if (!result) {
                     return 0;
                 }
