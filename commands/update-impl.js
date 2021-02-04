@@ -190,6 +190,7 @@ class UpdateCommand extends command_1.Command {
     // tslint:disable-next-line:no-big-function
     async run(options) {
         var _a;
+        package_manager_1.ensureCompatibleNpm();
         // Check if the current installed CLI version is older than the latest version.
         if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
             this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
