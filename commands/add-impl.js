@@ -35,7 +35,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     async run(options) {
         var _a;
-        package_manager_1.ensureCompatibleNpm();
+        await package_manager_1.ensureCompatibleNpm(this.context.root);
         if (!options.collection) {
             this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. ` +
                 `${color_1.colors.yellow('ng add [name] ')}. For more details, use "ng help".`);
