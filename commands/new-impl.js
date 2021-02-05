@@ -14,7 +14,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         return super.initialize(options);
     }
     async run(options) {
-        package_manager_1.ensureCompatibleNpm();
+        await package_manager_1.ensureCompatibleNpm(this.context.root);
         // Register the version of the CLI in the registry.
         const packageJson = require('../package.json');
         const version = packageJson.version;
