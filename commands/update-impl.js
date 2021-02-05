@@ -184,6 +184,7 @@ class UpdateCommand extends command_1.Command {
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        await package_manager_1.ensureCompatibleNpm(this.workspace.root);
         // Check if the @angular-devkit/schematics package can be resolved from the workspace root
         // This works around issues with packages containing migrations that cannot directly depend on the package
         // This check can be removed once the schematic runtime handles this situation
