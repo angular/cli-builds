@@ -11,8 +11,6 @@ exports.getProjectDependencies = exports.findPackageJson = exports.readPackageJs
 const fs = require("fs");
 const path_1 = require("path");
 const resolve = require("resolve");
-const util_1 = require("util");
-const readFile = util_1.promisify(fs.readFile);
 function getAllDependencies(pkg) {
     return new Set([
         ...Object.entries(pkg.dependencies || []),
@@ -23,7 +21,7 @@ function getAllDependencies(pkg) {
 }
 async function readPackageJson(packageJsonPath) {
     try {
-        return JSON.parse((await readFile(packageJsonPath)).toString());
+        return JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
     }
     catch (_a) {
         return undefined;
