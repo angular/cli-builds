@@ -1,7 +1,7 @@
 {
   "name": "lint",
   "description": "Runs linting tools on Angular app code in a given project folder.",
-  "longDescription": "Takes the name of the project, as specified in the  `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n\nThe default linting tool is [TSLint](https://palantir.github.io/tslint/), and the default configuration is specified in the project's `tslint.json` file.\n\n**Note**: TSLint has been discontinued and support has been deprecated in the Angular CLI. The options shown below are for the deprecated TSLint builder.\nTo opt-in using the community driven ESLint builder, see [angular-eslint](https://github.com/angular-eslint/angular-eslint#migrating-an-angular-cli-project-from-codelyzer-and-tslint) README.\n",
+  "longDescription": "Takes the name of the project, as specified in the  `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n\nThe default linting tool is [TSLint](https://palantir.github.io/tslint/), and the default configuration is specified in the project's `tslint.json` file.\n\n**Note**: TSLint has been discontinued and support has been deprecated in the Angular CLI. The options shown below are for the deprecated TSLint builder.\nTo opt-in using the community driven ESLint builder, see [angular-eslint](https://github.com/angular-eslint/angular-eslint#migrating-from-codelyzer-and-tslint) README.\n",
   "options": [
     {
       "name": "project",
