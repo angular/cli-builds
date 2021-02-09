@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPackageManager = exports.supportsNpm = exports.supportsYarn = void 0;
+exports.ensureCompatibleNpm = exports.getPackageManager = exports.supportsNpm = exports.supportsYarn = void 0;
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -56,3 +56,28 @@ async function getPackageManager(root) {
     return packageManager || schema_1.PackageManager.Npm;
 }
 exports.getPackageManager = getPackageManager;
+/**
+ * Checks if the npm version is version 6.x.  If not, display a message and exit.
+ */
+async function ensureCompatibleNpm(root) {
+    var _a;
+    if ((await getPackageManager(root)) !== schema_1.PackageManager.Npm) {
+        return;
+    }
+    try {
+        const version = child_process_1.execSync('npm --version', { encoding: 'utf8', stdio: 'pipe' }).trim();
+        const major = Number((_a = version.match(/^(\d+)\./)) === null || _a === void 0 ? void 0 : _a[1]);
+        if (major === 6) {
+            return;
+        }
+        // tslint:disable-next-line: no-console
+        console.error(`npm version ${version} detected.\n` +
+            'The Angular CLI currently requires npm version 6.\n\n' +
+            'Please install a compatible version to proceed (`npm install --global npm@6`).\n');
+        process.exit(3);
+    }
+    catch (_b) {
+        // npm is not installed
+    }
+}
+exports.ensureCompatibleNpm = ensureCompatibleNpm;
