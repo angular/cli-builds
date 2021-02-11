@@ -236,7 +236,7 @@
               "name": "strict",
               "description": "Creates an application with stricter bundle budgets settings.",
               "type": "boolean",
-              "default": false,
+              "default": true,
               "required": false,
               "aliases": [],
               "hidden": false,

@@ -246,7 +246,7 @@
       "name": "strict",
       "description": "Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.io/guide/strict-mode",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false,
