@@ -197,6 +197,11 @@ class UpdateCommand extends command_1.Command {
                 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
+        const logVerbose = (message) => {
+            if (options.verbose) {
+                this.logger.info(message);
+            }
+        };
         if (options.all) {
             const updateCmd = this.packageManager === schema_1.PackageManager.Yarn
                 ? `'yarn upgrade-interactive' or 'yarn upgrade'`
@@ -474,7 +479,22 @@ class UpdateCommand extends command_1.Command {
             for (const migration of migrations) {
                 // Resolve the package from the workspace root, as otherwise it will be resolved from the temp
                 // installed CLI version.
-                const packagePath = require.resolve(migration.package, { paths: [this.context.root] });
+                let packagePath;
+                logVerbose(`Resolving migration package '${migration.package}' from '${this.context.root}'...`);
+                try {
+                    packagePath = require.resolve(migration.package, { paths: [this.context.root] });
+                }
+                catch (e) {
+                    if (e.code === 'MODULE_NOT_FOUND') {
+                        logVerbose(e.toString());
+                        this.logger.error(`Migrations for package (${migration.package}) were not found.` +
+                            ' The package could not be found in the workspace.');
+                    }
+                    else {
+                        this.logger.error(`Unable to resolve migrations for package (${migration.package}).  [${e.message}]`);
+                    }
+                    return 1;
+                }
                 let migrations;
                 // Check if it is a package-local location
                 const localMigrations = path.join(packagePath, migration.collection);
