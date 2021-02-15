@@ -336,7 +336,7 @@ async function promptGlobalAnalytics(force = false) {
                 message: core_1.tags.stripIndents `
           Would you like to share anonymous usage data with the Angular Team at Google under
           Google’s Privacy Policy at https://policies.google.com/privacy? For more details and
-          how to change this setting, see http://angular.io/analytics.
+          how to change this setting, see https://angular.io/analytics.
         `,
                 default: false,
             },
@@ -390,7 +390,7 @@ async function promptProjectAnalytics(force = false) {
                 message: core_1.tags.stripIndents `
           Would you like to share anonymous usage data about this project with the Angular Team at
           Google under Google’s Privacy Policy at https://policies.google.com/privacy? For more
-          details and how to change this setting, see http://angular.io/analytics.
+          details and how to change this setting, see https://angular.io/analytics.
 
         `,
                 default: false,
