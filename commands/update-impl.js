@@ -482,22 +482,7 @@ class UpdateCommand extends command_1.Command {
                 let packagePath;
                 logVerbose(`Resolving migration package '${migration.package}' from '${this.context.root}'...`);
                 try {
-                    try {
-                        packagePath = path.dirname(
-                        // This may fail if the `package.json` is not exported as an entry point
-                        require.resolve(path.join(migration.package, 'package.json'), {
-                            paths: [this.context.root],
-                        }));
-                    }
-                    catch (e) {
-                        if (e.code === 'MODULE_NOT_FOUND') {
-                            // Fallback to trying to resolve the package's main entry point
-                            packagePath = require.resolve(migration.package, { paths: [this.context.root] });
-                        }
-                        else {
-                            throw e;
-                        }
-                    }
+                    packagePath = require.resolve(migration.package, { paths: [this.context.root] });
                 }
                 catch (e) {
                     if (e.code === 'MODULE_NOT_FOUND') {
