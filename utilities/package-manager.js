@@ -11,6 +11,7 @@ exports.ensureCompatibleNpm = exports.getPackageManager = exports.supportsNpm = 
 const child_process_1 = require("child_process");
 const fs_1 = require("fs");
 const path_1 = require("path");
+const semver_1 = require("semver");
 const schema_1 = require("../lib/config/schema");
 const config_1 = require("./config");
 function supports(name) {
@@ -57,26 +58,25 @@ async function getPackageManager(root) {
 }
 exports.getPackageManager = getPackageManager;
 /**
- * Checks if the npm version is version 6.x.  If not, display a message and exit.
+ * Checks if the npm version is a supported 7.x version.  If not, display a warning.
  */
 async function ensureCompatibleNpm(root) {
-    var _a;
     if ((await getPackageManager(root)) !== schema_1.PackageManager.Npm) {
         return;
     }
     try {
-        const version = child_process_1.execSync('npm --version', { encoding: 'utf8', stdio: 'pipe' }).trim();
-        const major = Number((_a = version.match(/^(\d+)\./)) === null || _a === void 0 ? void 0 : _a[1]);
-        if (major === 6) {
+        const versionText = child_process_1.execSync('npm --version', { encoding: 'utf8', stdio: 'pipe' }).trim();
+        const version = semver_1.valid(versionText);
+        if (!version) {
             return;
         }
-        // tslint:disable-next-line: no-console
-        console.error(`npm version ${version} detected.\n` +
-            'The Angular CLI currently requires npm version 6.\n\n' +
-            'Please install a compatible version to proceed (`npm install --global npm@6`).\n');
-        process.exit(3);
+        if (semver_1.satisfies(version, '>=7 <7.5.6')) {
+            // tslint:disable-next-line: no-console
+            console.warn(`npm version ${version} detected.` +
+                ' When using npm 7 with the Angular CLI, npm version 7.5.6 or higher is recommended.');
+        }
     }
-    catch (_b) {
+    catch (_a) {
         // npm is not installed
     }
 }
