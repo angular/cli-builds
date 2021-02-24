@@ -397,6 +397,13 @@ class SchematicCommand extends command_1.Command {
                 error = false;
             }
         });
+        // Temporary compatibility check for NPM 7
+        if (collectionName === '@schematics/angular' && schematicName === 'ng-new') {
+            if (!input.skipInstall &&
+                (input.packageManager === undefined || input.packageManager === 'npm')) {
+                await package_manager_1.ensureCompatibleNpm(this.workspace.root);
+            }
+        }
         return new Promise(resolve => {
             workflow
                 .execute({

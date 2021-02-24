@@ -3,6 +3,6 @@ export declare function supportsYarn(): boolean;
 export declare function supportsNpm(): boolean;
 export declare function getPackageManager(root: string): Promise<PackageManager>;
 /**
- * Checks if the npm version is version 6.x.  If not, display a message and exit.
+ * Checks if the npm version is a supported 7.x version.  If not, display a warning.
  */
 export declare function ensureCompatibleNpm(root: string): Promise<void>;
