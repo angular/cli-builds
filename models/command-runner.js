@@ -198,11 +198,12 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
         const command = new description.impl(context, description, logger);
         // Flush on an interval (if the event loop is waiting).
         let analyticsFlushPromise = Promise.resolve();
-        setInterval(() => {
+        const analyticsFlushInterval = setInterval(() => {
             analyticsFlushPromise = analyticsFlushPromise.then(() => analytics.flush());
         }, 1000);
         const result = await command.validateAndRun(parsedOptions);
         // Flush one last time.
+        clearInterval(analyticsFlushInterval);
         await analyticsFlushPromise.then(() => analytics.flush());
         return result;
     }

@@ -1,11 +1,4 @@
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-import { analytics } from '@angular-devkit/core';
+import { AnalyticsCollector } from './analytics-collector';
 export declare const AnalyticsProperties: {
     AngularCliProd: string;
     AngularCliStaging: string;
@@ -16,30 +9,6 @@ export declare const AnalyticsProperties: {
  */
 export declare const analyticsPackageSafelist: (string | RegExp)[];
 export declare function isPackageNameSafeForAnalytics(name: string): boolean;
-/**
- * Implementation of the Analytics interface for using `universal-analytics` package.
- */
-export declare class UniversalAnalytics implements analytics.Analytics {
-    private _ua;
-    private _dirty;
-    private _metrics;
-    private _dimensions;
-    /**
-     * @param trackingId The Google Analytics ID.
-     * @param uid A User ID.
-     */
-    constructor(trackingId: string, uid: string);
-    /**
-     * Creates the dimension and metrics variables to pass to universal-analytics.
-     * @private
-     */
-    private _customVariables;
-    event(ec: string, ea: string, options?: analytics.EventOptions): void;
-    screenview(cd: string, an: string, options?: analytics.ScreenviewOptions): void;
-    pageview(dp: string, options?: analytics.PageviewOptions): void;
-    timing(utc: string, utv: string, utt: string | number, options?: analytics.TimingOptions): void;
-    flush(): Promise<void>;
-}
 /**
  * Set analytics settings. This does not work if the user is not inside a project.
  * @param level Which config to use. "global" for user-level, and "local" for project-level.
@@ -66,17 +35,17 @@ export declare function hasGlobalAnalyticsConfiguration(): Promise<boolean>;
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-export declare function getGlobalAnalytics(): Promise<UniversalAnalytics | undefined>;
+export declare function getGlobalAnalytics(): Promise<AnalyticsCollector | undefined>;
 export declare function hasWorkspaceAnalyticsConfiguration(): Promise<boolean>;
 /**
- * Get the workspace analytics object for the user. This returns an instance of UniversalAnalytics,
+ * Get the workspace analytics object for the user. This returns an instance of AnalyticsCollector,
  * or undefined if analytics are disabled.
  *
  * If any problem happens, it is considered the user has been opting out of analytics.
  */
-export declare function getWorkspaceAnalytics(): Promise<UniversalAnalytics | undefined>;
+export declare function getWorkspaceAnalytics(): Promise<AnalyticsCollector | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
  */
-export declare function getSharedAnalytics(): Promise<UniversalAnalytics | undefined>;
+export declare function getSharedAnalytics(): Promise<AnalyticsCollector | undefined>;
