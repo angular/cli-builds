@@ -259,6 +259,7 @@ class ArchitectCommand extends command_1.Command {
             if (commandOptions.prod) {
                 // The --prod flag will always be the first configuration, available to be overwritten
                 // by following configurations.
+                this.logger.warn('Option "--prod" is deprecated: Use "--configuration production" instead.');
                 configuration = 'production';
             }
             if (commandOptions.configuration) {

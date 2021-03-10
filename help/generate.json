@@ -1296,10 +1296,10 @@
               "name": "configuration",
               "description": "The configuration to apply service worker to.",
               "type": "string",
-              "default": "production",
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "No longer has an effect."
             }
           ],
           "aliases": []
