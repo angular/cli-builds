@@ -23,12 +23,12 @@ class ArchitectCommand extends command_1.Command {
         this.multiTarget = false;
     }
     async initialize(options) {
-        await super.initialize(options);
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
         this._registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
         if (!this.workspace) {
-            throw new Error('A workspace is required for an architect command.');
+            this.logger.fatal('A workspace is required for this command.');
+            return 1;
         }
         this._architectHost = new node_1.WorkspaceNodeModulesArchitectHost(this.workspace, this.workspace.basePath);
         this._architect = new architect_1.Architect(this._architectHost, this._registry);
@@ -39,13 +39,15 @@ class ArchitectCommand extends command_1.Command {
             }
             const specifier = this._makeTargetSpecifier(options);
             if (!specifier.project || !specifier.target) {
-                throw new Error('Cannot determine project or target for command.');
+                this.logger.fatal('Cannot determine project or target for command.');
+                return 1;
             }
             return;
         }
         let projectName = options.project;
         if (projectName && !this.workspace.projects.has(projectName)) {
-            throw new Error(`Project '${projectName}' does not exist.`);
+            this.logger.fatal(`Project '${projectName}' does not exist.`);
+            return 1;
         }
         const commandLeftovers = options['--'];
         const targetProjectNames = [];
@@ -55,11 +57,13 @@ class ArchitectCommand extends command_1.Command {
             }
         }
         if (targetProjectNames.length === 0) {
-            throw new Error(this.missingTargetError || `No projects support the '${this.target}' target.`);
+            this.logger.fatal(this.missingTargetError || `No projects support the '${this.target}' target.`);
+            return 1;
         }
         if (projectName && !targetProjectNames.includes(projectName)) {
-            throw new Error(this.missingTargetError ||
+            this.logger.fatal(this.missingTargetError ||
                 `Project '${projectName}' does not support the '${this.target}' target.`);
+            return 1;
         }
         if (!projectName && commandLeftovers && commandLeftovers.length > 0) {
             const builderNames = new Set();
@@ -108,11 +112,12 @@ class ArchitectCommand extends command_1.Command {
                 }
             }
             if (!projectName && this.multiTarget && builderNames.size > 1) {
-                throw new Error(core_1.tags.oneLine `
+                this.logger.fatal(core_1.tags.oneLine `
           Architect commands with command line overrides cannot target different builders. The
           '${this.target}' target would run on projects ${targetProjectNames.join()} which have the
           following builders: ${'\n  ' + [...builderNames].join('\n  ')}
         `);
+                return 1;
             }
         }
         if (!projectName && !this.multiTarget) {
@@ -128,7 +133,8 @@ class ArchitectCommand extends command_1.Command {
                 return;
             }
             else {
-                throw new Error(this.missingTargetError || 'Cannot determine project or target for command.');
+                this.logger.fatal(this.missingTargetError || 'Cannot determine project or target for command.');
+                return 1;
             }
         }
         options.project = projectName;

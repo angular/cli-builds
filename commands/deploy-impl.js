@@ -29,9 +29,6 @@ class DeployCommand extends architect_command_1.ArchitectCommand {
         this.target = 'deploy';
         this.missingTargetError = BuilderMissing;
     }
-    async run(options) {
-        return this.runArchitectTarget(options);
-    }
     async initialize(options) {
         if (!options.help) {
             return super.initialize(options);

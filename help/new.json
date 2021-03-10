@@ -259,7 +259,8 @@
       "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
     },
     {
       "name": "package-manager",

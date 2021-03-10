@@ -22,7 +22,7 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     protected static commandMap: () => Promise<CommandDescriptionMap>;
     static setCommandMap(map: () => Promise<CommandDescriptionMap>): void;
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
-    initialize(options: T & Arguments): Promise<void>;
+    initialize(options: T & Arguments): Promise<number | void>;
     printHelp(): Promise<number>;
     printJsonHelp(_options: T & Arguments): Promise<number>;
     protected printHelpUsage(): Promise<void>;

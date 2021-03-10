@@ -24,7 +24,7 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     protected multiTarget: boolean;
     target: string | undefined;
     missingTargetError: string | undefined;
-    initialize(options: T & Arguments): Promise<void>;
+    initialize(options: T & Arguments): Promise<number | void>;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
     protected runSingleTarget(target: Target, targetOptions: string[]): Promise<0 | 1>;
     protected runArchitectTarget(options: ArchitectCommandOptions & Arguments): Promise<number>;

@@ -24,9 +24,7 @@ class Command {
     static setCommandMap(map) {
         this.commandMap = map;
     }
-    async initialize(options) {
-        return;
-    }
+    async initialize(options) { }
     async printHelp() {
         await this.printHelpUsage();
         await this.printHelpOptions();
@@ -124,7 +122,10 @@ class Command {
         if (!(options.help === true || options.help === 'json' || options.help === 'JSON')) {
             await this.validateScope();
         }
-        await this.initialize(options);
+        let result = await this.initialize(options);
+        if (typeof result === 'number' && result !== 0) {
+            return result;
+        }
         if (options.help === true) {
             return this.printHelp();
         }
@@ -136,7 +137,7 @@ class Command {
             if (this.useReportAnalytics) {
                 await this.reportAnalytics([this.description.name], options);
             }
-            const result = await this.run(options);
+            result = await this.run(options);
             const endTime = +new Date();
             this.analytics.timing(this.description.name, 'duration', endTime - startTime);
             return result;
