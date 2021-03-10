@@ -369,15 +369,6 @@
       "hidden": false
     },
     {
-      "name": "lazy-modules",
-      "description": "List of additional NgModule files that will be lazy loaded. Lazy router modules will be discovered automatically.",
-      "type": "array",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "'SystemJsNgModuleLoader' is deprecated, and this is part of its usage. Use 'import()' syntax instead."
-    },
-    {
       "name": "web-worker-ts-config",
       "description": "TypeScript configuration for Web Worker modules.",
       "type": "string",
