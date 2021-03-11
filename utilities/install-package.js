@@ -13,9 +13,9 @@ const fs_1 = require("fs");
 const os_1 = require("os");
 const path_1 = require("path");
 const rimraf = require("rimraf");
-const schema_1 = require("../lib/config/schema");
+const workspace_schema_1 = require("../lib/config/workspace-schema");
 const color_1 = require("../utilities/color");
-function installPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
+function installPackage(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
         packageManagerArgs.install,
@@ -42,7 +42,7 @@ function installPackage(packageName, logger, packageManager = schema_1.PackageMa
     logger === null || logger === void 0 ? void 0 : logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
 exports.installPackage = installPackage;
-function installTempPackage(packageName, logger, packageManager = schema_1.PackageManager.Npm, extraArgs) {
+function installTempPackage(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, extraArgs) {
     const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), 'angular-cli-packages-'));
     // clean up temp directory on process exit
     process.on('exit', () => {
@@ -69,7 +69,7 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const tempNodeModules = path_1.join(tempPath, 'node_modules');
     // Yarn will not append 'node_modules' to the path
-    const prefixPath = packageManager === schema_1.PackageManager.Yarn ? tempNodeModules : tempPath;
+    const prefixPath = packageManager === workspace_schema_1.PackageManager.Yarn ? tempNodeModules : tempPath;
     const installArgs = [
         ...(extraArgs || []),
         `${packageManagerArgs.prefix}="${prefixPath}"`,
@@ -79,7 +79,7 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
     return tempNodeModules;
 }
 exports.installTempPackage = installTempPackage;
-function runTempPackageBin(packageName, logger, packageManager = schema_1.PackageManager.Npm, args = []) {
+function runTempPackageBin(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, args = []) {
     const tempNodeModulesPath = installTempPackage(packageName, logger, packageManager);
     // Remove version/tag etc... from package name
     // Ex: @angular/cli@latest -> @angular/cli
@@ -119,7 +119,7 @@ function runTempPackageBin(packageName, logger, packageManager = schema_1.Packag
 exports.runTempPackageBin = runTempPackageBin;
 function getPackageManagerArguments(packageManager) {
     switch (packageManager) {
-        case schema_1.PackageManager.Yarn:
+        case workspace_schema_1.PackageManager.Yarn:
             return {
                 silent: '--silent',
                 saveDev: '--dev',
@@ -127,7 +127,7 @@ function getPackageManagerArguments(packageManager) {
                 prefix: '--modules-folder',
                 noLockfile: '--no-lockfile',
             };
-        case schema_1.PackageManager.Pnpm:
+        case workspace_schema_1.PackageManager.Pnpm:
             return {
                 silent: '--silent',
                 saveDev: '--save-dev',

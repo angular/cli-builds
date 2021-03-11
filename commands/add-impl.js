@@ -12,7 +12,7 @@ const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const path_1 = require("path");
 const semver_1 = require("semver");
-const schema_1 = require("../lib/config/schema");
+const workspace_schema_1 = require("../lib/config/workspace-schema");
 const analytics_1 = require("../models/analytics");
 const schematic_command_1 = require("../models/schematic-command");
 const color_1 = require("../utilities/color");
@@ -77,7 +77,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         const spinner = new spinner_1.Spinner();
         spinner.start('Determining package manager...');
         const packageManager = await package_manager_1.getPackageManager(this.context.root);
-        const usingYarn = packageManager === schema_1.PackageManager.Yarn;
+        const usingYarn = packageManager === workspace_schema_1.PackageManager.Yarn;
         spinner.info(`Using package manager: ${color_1.colors.grey(packageManager)}`);
         if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version

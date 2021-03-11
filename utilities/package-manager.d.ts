@@ -1,4 +1,4 @@
-import { PackageManager } from '../lib/config/schema';
+import { PackageManager } from '../lib/config/workspace-schema';
 export declare function supportsYarn(): boolean;
 export declare function supportsNpm(): boolean;
 export declare function getPackageManager(root: string): Promise<PackageManager>;

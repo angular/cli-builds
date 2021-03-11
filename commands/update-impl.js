@@ -14,7 +14,7 @@ const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
-const schema_1 = require("../lib/config/schema");
+const workspace_schema_1 = require("../lib/config/workspace-schema");
 const command_1 = require("../models/command");
 const schematic_engine_host_1 = require("../models/schematic-engine-host");
 const color_1 = require("../utilities/color");
@@ -40,7 +40,7 @@ class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
         this.allowMissingWorkspace = true;
-        this.packageManager = schema_1.PackageManager.Npm;
+        this.packageManager = workspace_schema_1.PackageManager.Npm;
     }
     async initialize() {
         this.packageManager = await package_manager_1.getPackageManager(this.context.root);
@@ -203,7 +203,7 @@ class UpdateCommand extends command_1.Command {
             }
         };
         if (options.all) {
-            const updateCmd = this.packageManager === schema_1.PackageManager.Yarn
+            const updateCmd = this.packageManager === workspace_schema_1.PackageManager.Yarn
                 ? `'yarn upgrade-interactive' or 'yarn upgrade'`
                 : `'${this.packageManager} update'`;
             this.logger.warn(`
@@ -608,7 +608,7 @@ class UpdateCommand extends command_1.Command {
         const { version: installedCLIVersion } = require('../package.json');
         const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
-            usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
+            usingYarn: this.packageManager === workspace_schema_1.PackageManager.Yarn,
         });
         return semver.lt(installedCLIVersion, LatestCLIManifest.version);
     }

@@ -12,7 +12,7 @@ const child_process_1 = require("child_process");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const semver_1 = require("semver");
-const schema_1 = require("../lib/config/schema");
+const workspace_schema_1 = require("../lib/config/workspace-schema");
 const config_1 = require("./config");
 function supports(name) {
     try {
@@ -41,27 +41,27 @@ async function getPackageManager(root) {
     const hasNpm = supportsNpm();
     const hasNpmLock = fs_1.existsSync(path_1.join(root, 'package-lock.json'));
     if (hasYarn && hasYarnLock && !hasNpmLock) {
-        packageManager = schema_1.PackageManager.Yarn;
+        packageManager = workspace_schema_1.PackageManager.Yarn;
     }
     else if (hasNpm && hasNpmLock && !hasYarnLock) {
-        packageManager = schema_1.PackageManager.Npm;
+        packageManager = workspace_schema_1.PackageManager.Npm;
     }
     else if (hasYarn && !hasNpm) {
-        packageManager = schema_1.PackageManager.Yarn;
+        packageManager = workspace_schema_1.PackageManager.Yarn;
     }
     else if (hasNpm && !hasYarn) {
-        packageManager = schema_1.PackageManager.Npm;
+        packageManager = workspace_schema_1.PackageManager.Npm;
     }
     // TODO: This should eventually inform the user of ambiguous package manager usage.
     //       Potentially with a prompt to choose and optionally set as the default.
-    return packageManager || schema_1.PackageManager.Npm;
+    return packageManager || workspace_schema_1.PackageManager.Npm;
 }
 exports.getPackageManager = getPackageManager;
 /**
  * Checks if the npm version is a supported 7.x version.  If not, display a warning.
  */
 async function ensureCompatibleNpm(root) {
-    if ((await getPackageManager(root)) !== schema_1.PackageManager.Npm) {
+    if ((await getPackageManager(root)) !== workspace_schema_1.PackageManager.Npm) {
         return;
     }
     try {

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { PackageManager } from '../lib/config/schema';
+import { PackageManager } from '../lib/config/workspace-schema';
 import { NgAddSaveDepedency } from '../utilities/package-metadata';
 export declare function installPackage(packageName: string, logger: logging.Logger | undefined, packageManager?: PackageManager, save?: Exclude<NgAddSaveDepedency, false>, extraArgs?: string[], cwd?: string): void;
 export declare function installTempPackage(packageName: string, logger: logging.Logger | undefined, packageManager?: PackageManager, extraArgs?: string[]): string;
