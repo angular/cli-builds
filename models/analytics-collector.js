@@ -207,6 +207,6 @@ function _getWindowsLanguageCode() {
         // doesn't work.
         return child_process_1.execSync('wmic.exe os get locale').toString().trim();
     }
-    catch (_a) { }
+    catch { }
     return undefined;
 }

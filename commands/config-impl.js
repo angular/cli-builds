@@ -82,7 +82,7 @@ class ConfigCommand extends command_1.Command {
             It has been automatically migrated.`);
                 }
             }
-            catch (_a) { }
+            catch { }
         }
         if (options.value == undefined) {
             if (!config) {

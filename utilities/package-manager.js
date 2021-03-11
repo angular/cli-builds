@@ -19,7 +19,7 @@ function supports(name) {
         child_process_1.execSync(`${name} --version`, { stdio: 'ignore' });
         return true;
     }
-    catch (_a) {
+    catch {
         return false;
     }
 }
@@ -76,7 +76,7 @@ async function ensureCompatibleNpm(root) {
                 ' When using npm 7 with the Angular CLI, npm version 7.5.6 or higher is recommended.');
         }
     }
-    catch (_a) {
+    catch {
         // npm is not installed
     }
 }

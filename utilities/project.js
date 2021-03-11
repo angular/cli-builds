@@ -36,7 +36,7 @@ function findWorkspaceFile(currentDirectory = process.cwd()) {
                 return null;
             }
         }
-        catch (_a) {
+        catch {
             // No or invalid package.json
             return null;
         }

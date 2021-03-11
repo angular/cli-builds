@@ -13,12 +13,12 @@ function ensureNpmrc(logger, usingYarn, verbose) {
         try {
             npmrc = readOptions(logger, false, verbose);
         }
-        catch (_a) { }
+        catch { }
         if (usingYarn) {
             try {
                 npmrc = { ...npmrc, ...readOptions(logger, true, verbose) };
             }
-            catch (_b) { }
+            catch { }
         }
     }
 }
@@ -83,7 +83,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
                             try {
                                 options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
                             }
-                            catch (_a) { }
+                            catch { }
                         }
                         break;
                     default:

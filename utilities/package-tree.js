@@ -23,7 +23,7 @@ async function readPackageJson(packageJsonPath) {
     try {
         return JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
     }
-    catch (_a) {
+    catch {
         return undefined;
     }
 }
@@ -34,7 +34,7 @@ function findPackageJson(workspaceDir, packageName) {
         const packageJsonPath = resolve.sync(`${packageName}/package.json`, { basedir: workspaceDir });
         return packageJsonPath;
     }
-    catch (_a) {
+    catch {
         return undefined;
     }
 }

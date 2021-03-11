@@ -29,7 +29,7 @@ function createWorkspaceHost() {
             try {
                 return fs_1.statSync(path).isDirectory();
             }
-            catch (_a) {
+            catch {
                 return false;
             }
         },
@@ -37,7 +37,7 @@ function createWorkspaceHost() {
             try {
                 return fs_1.statSync(path).isFile();
             }
-            catch (_a) {
+            catch {
                 return false;
             }
         },

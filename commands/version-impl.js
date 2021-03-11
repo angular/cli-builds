@@ -19,7 +19,7 @@ class VersionCommand extends command_1.Command {
         try {
             workspacePackage = require(path.resolve(this.context.root, 'package.json'));
         }
-        catch (_a) { }
+        catch { }
         const patterns = [
             /^@angular\/.*/,
             /^@angular-devkit\/.*/,
@@ -117,14 +117,14 @@ class VersionCommand extends command_1.Command {
         try {
             packagePath = require.resolve(`${moduleName}/package.json`, { paths: [this.context.root] });
         }
-        catch (_a) { }
+        catch { }
         // If not found, try to find within the CLI
         if (!packagePath) {
             try {
                 packagePath = require.resolve(`${moduleName}/package.json`);
                 cliOnly = true;
             }
-            catch (_b) { }
+            catch { }
         }
         let version;
         // If found, attempt to get the version
@@ -132,7 +132,7 @@ class VersionCommand extends command_1.Command {
             try {
                 version = require(packagePath).version + (cliOnly ? ' (cli-only)' : '');
             }
-            catch (_c) { }
+            catch { }
         }
         return version || '<error>';
     }
@@ -143,7 +143,7 @@ class VersionCommand extends command_1.Command {
                 ? 'No'
                 : 'Yes';
         }
-        catch (_a) {
+        catch {
             return '<error>';
         }
     }

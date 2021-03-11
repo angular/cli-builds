@@ -597,7 +597,7 @@ class UpdateCommand extends command_1.Command {
                 }
             }
         }
-        catch (_a) { }
+        catch { }
         return true;
     }
     /**
@@ -642,7 +642,7 @@ function findCurrentGitSha() {
         const hash = child_process_1.execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
         return hash.trim();
     }
-    catch (_a) {
+    catch {
         return null;
     }
 }

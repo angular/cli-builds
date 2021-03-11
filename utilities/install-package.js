@@ -49,7 +49,7 @@ function installTempPackage(packageName, logger, packageManager = schema_1.Packa
         try {
             rimraf.sync(tempPath);
         }
-        catch (_a) { }
+        catch { }
     });
     // NPM will warn when a `package.json` is not found in the install directory
     // Example:

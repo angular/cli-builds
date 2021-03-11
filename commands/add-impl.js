@@ -244,19 +244,19 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 paths: [this.context.root],
             });
         }
-        catch (_a) { }
+        catch { }
         if (installedPackage) {
             try {
                 const installed = await package_metadata_1.fetchPackageManifest(path_1.dirname(installedPackage), this.logger);
                 return installed.version;
             }
-            catch (_b) { }
+            catch { }
         }
         let projectManifest;
         try {
             projectManifest = await package_metadata_1.fetchPackageManifest(this.context.root, this.logger);
         }
-        catch (_c) { }
+        catch { }
         if (projectManifest) {
             const version = projectManifest.dependencies[name] || projectManifest.devDependencies[name];
             if (version) {
@@ -271,7 +271,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             try {
                 peerIdentifier = npa.resolve(peer, manifest.peerDependencies[peer]);
             }
-            catch (_a) {
+            catch {
                 this.logger.warn(`Invalid peer dependency ${peer} found in package.`);
                 continue;
             }
@@ -287,7 +287,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                         return true;
                     }
                 }
-                catch (_b) {
+                catch {
                     // Not found or invalid so ignore
                     continue;
                 }

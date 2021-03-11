@@ -191,7 +191,7 @@ async function hasGlobalAnalyticsConfiguration() {
             return true;
         }
     }
-    catch (_a) { }
+    catch { }
     return false;
 }
 exports.hasGlobalAnalyticsConfiguration = hasGlobalAnalyticsConfiguration;
@@ -261,7 +261,7 @@ async function hasWorkspaceAnalyticsConfiguration() {
             return true;
         }
     }
-    catch (_a) { }
+    catch { }
     return false;
 }
 exports.hasWorkspaceAnalyticsConfiguration = hasWorkspaceAnalyticsConfiguration;
