@@ -19,7 +19,9 @@ const color_1 = require("../utilities/color");
 const install_package_1 = require("../utilities/install-package");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
+const prompt_1 = require("../utilities/prompt");
 const spinner_1 = require("../utilities/spinner");
+const tty_1 = require("../utilities/tty");
 const npa = require('npm-package-arg');
 class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
@@ -154,6 +156,19 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         catch (e) {
             spinner.fail(`Unable to fetch package information for '${packageIdentifier}': ${e.message}`);
             return 1;
+        }
+        if (!options.skipConfirmation) {
+            const confirmationResponse = await prompt_1.askConfirmation(`\nThe package ${color_1.colors.blue(packageIdentifier.raw)} will be installed and executed.\n` +
+                'Would you like to proceed?', true, false);
+            if (!confirmationResponse) {
+                if (!tty_1.isTTY) {
+                    this.logger.error('No terminal detected. ' +
+                        `'--skip-confirmation' can be used to bypass installation confirmation. ` +
+                        `Ensure package name is correct prior to '--skip-confirmation' option usage.`);
+                }
+                this.logger.error('Command aborted.');
+                return 1;
+            }
         }
         try {
             spinner.start('Installing package...');

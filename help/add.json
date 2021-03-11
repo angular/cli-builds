@@ -30,6 +30,15 @@
       "hidden": false
     },
     {
+      "name": "skip-confirmation",
+      "description": "Skip asking a confirmation prompt before installing and executing the package. Ensure package name is correct prior to using this option.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
       "name": "interactive",
       "description": "Enable interactive input prompts.",
       "type": "boolean",
