@@ -1,7 +1,7 @@
 {
   "name": "lint",
   "description": "Runs linting tools on Angular app code in a given project folder.",
-  "longDescription": "Takes the name of the project, as specified in the  `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n\nThe default linting tool is [TSLint](https://palantir.github.io/tslint/), and the default configuration is specified in the project's `tslint.json` file.\n\n**Note**: TSLint has been discontinued and support has been deprecated in the Angular CLI. The options shown below are for the deprecated TSLint builder.\nTo opt-in using the community driven ESLint builder, see [angular-eslint](https://github.com/angular-eslint/angular-eslint#migrating-an-angular-cli-project-from-codelyzer-and-tslint) README.\n",
+  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `lint` builder for the default project.\n\nTo use the `ng lint` command, use `ng add` to add a package that implements linting capabilities. Adding the package automatically updates your workspace configuration, adding a lint [CLI builder](guide/cli-builder).\nFor example:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"lint\": {\n        \"builder\": \"@angular-eslint/builder:lint\",\n        \"options\": {}\n      }\n    }\n  }\n}\n ```",
   "options": [
     {
       "name": "project",
@@ -14,7 +14,7 @@
     },
     {
       "name": "configuration",
-      "description": "The linting configuration to use.",
+      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section of angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations.",
       "type": "string",
       "required": false,
       "aliases": [
@@ -37,83 +37,6 @@
         "json",
         "JSON"
       ],
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "tslint-config",
-      "description": "The name of the TSLint configuration file.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "ts-config",
-      "description": "The name of the TypeScript configuration file.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "fix",
-      "description": "Fixes linting errors (may overwrite linted files).",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "type-check",
-      "description": "Controls the type check for linting.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "force",
-      "description": "Succeeds even if there was linting errors.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "silent",
-      "description": "Show output text.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "format",
-      "description": "Output format (prose, json, stylish, verbose, pmd, msbuild, checkstyle, vso, fileslist).",
-      "type": "string",
-      "default": "stylish",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "exclude",
-      "description": "Files to exclude from linting.",
-      "type": "array",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "files",
-      "description": "Files to include in linting.",
-      "type": "array",
       "required": false,
       "aliases": [],
       "hidden": false

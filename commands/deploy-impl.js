@@ -10,7 +10,6 @@ exports.DeployCommand = void 0;
  */
 const architect_command_1 = require("../models/architect-command");
 const BuilderMissing = `
-
 Cannot find "deploy" target for the specified project.
 
 You should add a package that implements deployment capabilities for your
