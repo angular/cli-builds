@@ -165,7 +165,6 @@
       "type": "string",
       "enum": [
         "Emulated",
-        "Native",
         "None",
         "ShadowDom"
       ],

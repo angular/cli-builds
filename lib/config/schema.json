@@ -601,7 +601,6 @@
           "description": "The view encapsulation strategy to use in the new app.",
           "enum": [
             "Emulated",
-            "Native",
             "None",
             "ShadowDom"
           ],
@@ -804,7 +803,6 @@
           "description": "The view encapsulation strategy to use in the new component.",
           "enum": [
             "Emulated",
-            "Native",
             "None",
             "ShadowDom"
           ],
@@ -1385,7 +1383,6 @@
           "description": "The view encapsulation strategy to use in the initial project.",
           "enum": [
             "Emulated",
-            "Native",
             "None",
             "ShadowDom"
           ],
