@@ -134,7 +134,6 @@
               "type": "string",
               "enum": [
                 "Emulated",
-                "Native",
                 "None",
                 "ShadowDom"
               ],
@@ -388,7 +387,6 @@
               "type": "string",
               "enum": [
                 "Emulated",
-                "Native",
                 "None",
                 "ShadowDom"
               ],
