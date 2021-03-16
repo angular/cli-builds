@@ -293,10 +293,11 @@
       "name": "show-circular-dependencies",
       "description": "Show circular dependency warnings on builds.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "The recommended method to detect circular dependencies in project code is to use a either a lint rule or other external tooling."
     },
     {
       "name": "build-optimizer",
