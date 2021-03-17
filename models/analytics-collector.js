@@ -144,6 +144,8 @@ const osVersionMap = {
         '9.8': '10_5_8',
         '10.0': '10_6_0',
         '10.8': '10_6_8',
+        // We stop here because we try to math out the version for anything greater than 10, and it
+        // works. Those versions are standardized using a calculation now.
     },
     win32: {
         '6.3.9600': 'Windows 8.1',
