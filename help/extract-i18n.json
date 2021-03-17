@@ -70,7 +70,8 @@
         "xlf2",
         "xliff2",
         "json",
-        "arb"
+        "arb",
+        "legacy-migrate"
       ],
       "required": false,
       "aliases": [],
@@ -89,7 +90,8 @@
         "xlf2",
         "xliff2",
         "json",
-        "arb"
+        "arb",
+        "legacy-migrate"
       ],
       "required": false,
       "aliases": [],
