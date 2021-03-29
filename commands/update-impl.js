@@ -28,7 +28,6 @@ const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
 const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
     'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
-const UPDATE_SCHEMATIC_COLLECTION = path.join(__dirname, '../src/commands/update/schematic/collection.json');
 /**
  * Disable CLI version mismatch checks and forces usage of the invoked CLI
  * instead of invoking the local installed version.
@@ -272,7 +271,7 @@ class UpdateCommand extends command_1.Command {
         this.logger.info(`Found ${rootDependencies.size} dependencies.`);
         if (packages.length === 0) {
             // Show status
-            const { success } = await this.executeSchematic(UPDATE_SCHEMATIC_COLLECTION, 'update', {
+            const { success } = await this.executeSchematic('@schematics/update', 'update', {
                 force: options.force || false,
                 next: options.next || false,
                 verbose: options.verbose || false,
@@ -459,7 +458,7 @@ class UpdateCommand extends command_1.Command {
         if (packagesToUpdate.length === 0) {
             return 0;
         }
-        const { success } = await this.executeSchematic(UPDATE_SCHEMATIC_COLLECTION, 'update', {
+        const { success } = await this.executeSchematic('@schematics/update', 'update', {
             verbose: options.verbose || false,
             force: options.force || false,
             next: !!options.next,
