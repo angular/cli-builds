@@ -11,7 +11,6 @@ exports.VersionCommand = void 0;
 const path = require("path");
 const command_1 = require("../models/command");
 const color_1 = require("../utilities/color");
-const json_file_1 = require("../utilities/json-file");
 class VersionCommand extends command_1.Command {
     async run() {
         const cliPackage = require('../package.json');
@@ -100,7 +99,6 @@ class VersionCommand extends command_1.Command {
             return acc;
         }, [])
             .join('\n... ')}
-      Ivy Workspace: ${workspacePackage ? this.getIvyWorkspace() : ''}
 
       Package${namePad.slice(7)}Version
       -------${namePad.replace(/ /g, '-')}------------------
@@ -135,17 +133,6 @@ class VersionCommand extends command_1.Command {
             catch { }
         }
         return version || '<error>';
-    }
-    getIvyWorkspace() {
-        try {
-            const json = new json_file_1.JSONFile(path.resolve(this.context.root, 'tsconfig.json'));
-            return json.get(['angularCompilerOptions', 'enableIvy']) === false
-                ? 'No'
-                : 'Yes';
-        }
-        catch {
-            return '<error>';
-        }
     }
 }
 exports.VersionCommand = VersionCommand;
