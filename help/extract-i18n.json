@@ -108,14 +108,6 @@
       "deprecated": "Use 'i18n' project level sub-option 'sourceLocale' instead."
     },
     {
-      "name": "ivy",
-      "description": "Use Ivy compiler to extract translations. The default for Ivy applications.",
-      "type": "boolean",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "progress",
       "description": "Log progress to the console.",
       "type": "boolean",
