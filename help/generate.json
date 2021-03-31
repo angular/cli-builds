@@ -517,16 +517,6 @@
               "userAnalytics": 19
             },
             {
-              "name": "entry-component",
-              "description": "The new component is the entry component of the declaring NgModule.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Since version 9.0.0 with Ivy, entryComponents is no longer necessary."
-            },
-            {
               "name": "lint-fix",
               "description": "Apply lint fixes after generating the component.",
               "type": "boolean",
