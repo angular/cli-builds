@@ -78,36 +78,6 @@
       "hidden": false
     },
     {
-      "name": "i18n-format",
-      "description": "Output format for the generated file.",
-      "type": "string",
-      "default": "xlf",
-      "enum": [
-        "xmb",
-        "xlf",
-        "xlif",
-        "xliff",
-        "xlf2",
-        "xliff2",
-        "json",
-        "arb",
-        "legacy-migrate"
-      ],
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'format' option instead."
-    },
-    {
-      "name": "i18n-locale",
-      "description": "Specifies the source language of the application.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'i18n' project level sub-option 'sourceLocale' instead."
-    },
-    {
       "name": "progress",
       "description": "Log progress to the console.",
       "type": "boolean",
