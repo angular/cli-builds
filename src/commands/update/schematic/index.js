@@ -113,9 +113,14 @@ function _validateReversePeerDependencies(name, version, infoMap, logger, next) 
                 // that are unmet but we have no effect on.
                 continue;
             }
-            if (installed === '@angular-devkit/build-ng-packagr') {
-                // Ignore peerDependencies mismatches for `@angular-devkit/build-ng-packagr`.
-                // This package is deprecated and is removed via a migration.
+            // Ignore peerDependency mismatches for these packages.
+            // They are deprecated and removed via a migration.
+            const ignoredPackages = [
+                'codelyzer',
+                '@schematics/update',
+                '@angular-devkit/build-ng-packagr',
+            ];
+            if (ignoredPackages.includes(installed)) {
                 continue;
             }
             // Override the peer version range if it's known as a compatible.
