@@ -173,33 +173,6 @@
       "hidden": false
     },
     {
-      "name": "i18n-file",
-      "description": "Localization file to use for i18n.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'locales' object in the project metadata instead."
-    },
-    {
-      "name": "i18n-format",
-      "description": "Format of the localization file specified with --i18n-file.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "No longer needed as the format will be determined automatically."
-    },
-    {
-      "name": "i18n-locale",
-      "description": "Locale to use for i18n.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "Use 'localize' instead."
-    },
-    {
       "name": "i18n-missing-translation",
       "description": "How to handle missing translations for i18n.",
       "type": "string",
