@@ -1636,8 +1636,7 @@
         },
         "main": {
           "type": "string",
-          "description": "The full path for the main entry point to the app, relative to the current workspace.",
-          "$valueDescription": "fileName"
+          "description": "The full path for the main entry point to the app, relative to the current workspace."
         },
         "polyfills": {
           "type": "string",
