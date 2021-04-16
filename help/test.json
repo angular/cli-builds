@@ -83,21 +83,6 @@
       "hidden": false
     },
     {
-      "name": "inline-style-language",
-      "description": "The stylesheet language to use for the application's inline component styles.",
-      "type": "string",
-      "default": "css",
-      "enum": [
-        "css",
-        "less",
-        "sass",
-        "scss"
-      ],
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "include",
       "description": "Globs of files to include, relative to workspace or project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead",
       "type": "array",
