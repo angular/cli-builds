@@ -1636,8 +1636,7 @@
         },
         "main": {
           "type": "string",
-          "description": "The full path for the main entry point to the app, relative to the current workspace.",
-          "$valueDescription": "fileName"
+          "description": "The full path for the main entry point to the app, relative to the current workspace."
         },
         "polyfills": {
           "type": "string",
@@ -1662,6 +1661,17 @@
           "items": {
             "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/extraEntryPoint"
           }
+        },
+        "inlineStyleLanguage": {
+          "description": "The stylesheet language to use for the application's inline component styles.",
+          "type": "string",
+          "default": "css",
+          "enum": [
+            "css",
+            "less",
+            "sass",
+            "scss"
+          ]
         },
         "stylePreprocessorOptions": {
           "description": "Options to pass to style preprocessors.",
@@ -2438,6 +2448,17 @@
             "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema/definitions/extraEntryPoint"
           }
         },
+        "inlineStyleLanguage": {
+          "description": "The stylesheet language to use for the application's inline component styles.",
+          "type": "string",
+          "default": "css",
+          "enum": [
+            "css",
+            "less",
+            "sass",
+            "scss"
+          ]
+        },
         "stylePreprocessorOptions": {
           "description": "Options to pass to style preprocessors",
           "type": "object",
@@ -2701,6 +2722,17 @@
           "type": "string",
           "default": "tsconfig.app.json",
           "description": "The name of the TypeScript configuration file."
+        },
+        "inlineStyleLanguage": {
+          "description": "The stylesheet language to use for the application's inline component styles.",
+          "type": "string",
+          "default": "css",
+          "enum": [
+            "css",
+            "less",
+            "sass",
+            "scss"
+          ]
         },
         "stylePreprocessorOptions": {
           "description": "Options to pass to style preprocessors",
