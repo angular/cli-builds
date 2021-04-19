@@ -137,8 +137,9 @@ class UpdateCommand extends command_1.Command {
     /**
      * @return Whether or not the migrations were performed successfully.
      */
-    async executeMigrations(packageName, collectionPath, range, commit) {
+    async executeMigrations(packageName, collectionPath, from, to, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
+        const migrationRange = new semver.Range('>' + (semver.prerelease(from) ? from.split('-')[0] + '-0' : from) + ' <=' + to);
         const migrations = [];
         for (const name of collection.listSchematicNames()) {
             const schematic = this.workflow.engine.createSchematic(name, collection);
@@ -147,7 +148,7 @@ class UpdateCommand extends command_1.Command {
             if (!description.version) {
                 continue;
             }
-            if (semver.satisfies(description.version, range, { includePrerelease: true })) {
+            if (semver.satisfies(description.version, migrationRange, { includePrerelease: true })) {
                 migrations.push(description);
             }
         }
@@ -356,8 +357,7 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                     return 1;
                 }
-                const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.version));
-                success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+                success = await this.executeMigrations(packageName, migrations, from, options.to || packageNode.version, options.createCommits);
             }
             if (success) {
                 if (packageName === '@angular/core'
@@ -473,7 +473,6 @@ class UpdateCommand extends command_1.Command {
             next: !!options.next,
             packageManager: this.packageManager,
             packages: packagesToUpdate,
-            migrateExternal: true,
         });
         if (success && options.createCommits) {
             const committed = this.commit(`Angular CLI update for packages - ${packagesToUpdate.join(', ')}`);
@@ -541,7 +540,7 @@ class UpdateCommand extends command_1.Command {
                         return 1;
                     }
                 }
-                const result = await this.executeMigrations(migration.package, migrations, new semver.Range('>' + migration.from + ' <=' + migration.to), options.createCommits);
+                const result = await this.executeMigrations(migration.package, migrations, migration.from, migration.to, options.createCommits);
                 if (!result) {
                     return 0;
                 }
