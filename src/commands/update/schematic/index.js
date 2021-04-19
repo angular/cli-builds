@@ -119,6 +119,7 @@ function _validateReversePeerDependencies(name, version, infoMap, logger, next) 
                 'codelyzer',
                 '@schematics/update',
                 '@angular-devkit/build-ng-packagr',
+                'tsickle',
             ];
             if (ignoredPackages.includes(installed)) {
                 continue;
@@ -165,7 +166,7 @@ function _validateUpdatePackages(infoMap, force, next, logger) {
       You can use the '--force' option to ignore incompatible peer dependencies and instead address these warnings later.`);
     }
 }
-function _performUpdate(tree, context, infoMap, logger, migrateOnly, migrateExternal) {
+function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
     const packageJsonContent = tree.read('/package.json');
     if (!packageJsonContent) {
         throw new schematics_1.SchematicsException('Could not find a package.json. Are you in a Node project?');
@@ -216,11 +217,10 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly, migrateExte
     });
     const newContent = JSON.stringify(packageJson, null, 2);
     if (packageJsonContent.toString() != newContent || migrateOnly) {
-        let installTask = [];
         if (!migrateOnly) {
             // If something changed, also hook up the task.
             tree.overwrite('/package.json', JSON.stringify(packageJson, null, 2));
-            installTask = [context.addTask(new tasks_1.NodePackageInstallTask())];
+            context.addTask(new tasks_1.NodePackageInstallTask());
         }
         const externalMigrations = [];
         // Run the migrate schematics with the list of packages to use. The collection contains
@@ -234,45 +234,19 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly, migrateExte
             const collection = (target.updateMetadata.migrations.match(/^[./]/)
                 ? name + '/'
                 : '') + target.updateMetadata.migrations;
-            if (migrateExternal) {
-                externalMigrations.push({
-                    package: name,
-                    collection,
-                    from: installed.version,
-                    to: target.version,
-                });
-                return;
-            }
-            context.addTask(new tasks_1.RunSchematicTask('@schematics/update', 'migrate', {
+            externalMigrations.push({
                 package: name,
                 collection,
                 from: installed.version,
                 to: target.version,
-            }), installTask);
+            });
+            return;
         });
         if (externalMigrations.length > 0) {
             // tslint:disable-next-line: no-any
             global.externalMigrations = externalMigrations;
         }
     }
-}
-function _migrateOnly(info, context, from, to) {
-    if (!info) {
-        return;
-    }
-    const target = info.installed;
-    if (!target || !target.updateMetadata.migrations) {
-        return;
-    }
-    const collection = (target.updateMetadata.migrations.match(/^[./]/)
-        ? info.name + '/'
-        : '') + target.updateMetadata.migrations;
-    context.addTask(new tasks_1.RunSchematicTask('@schematics/update', 'migrate', {
-        package: info.name,
-        collection,
-        from: from,
-        to: to || target.version,
-    }));
 }
 function _getUpdateMetadata(packageJson, logger) {
     const metadata = packageJson['ng-update'];
@@ -673,12 +647,11 @@ function default_1(options) {
         // Now that we have all the information, check the flags.
         if (packages.size > 0) {
             if (options.migrateOnly && options.from && options.packages) {
-                _migrateOnly(packageInfoMap.get(options.packages[0]), context, options.from, options.to);
                 return;
             }
             const sublog = new core_1.logging.LevelCapLogger('validation', logger.createChild(''), 'warn');
             _validateUpdatePackages(packageInfoMap, !!options.force, !!options.next, sublog);
-            _performUpdate(tree, context, packageInfoMap, logger, !!options.migrateOnly, !!options.migrateExternal);
+            _performUpdate(tree, context, packageInfoMap, logger, !!options.migrateOnly);
         }
         else {
             _usageMessage(options, packageInfoMap, logger);
