@@ -179,7 +179,7 @@ export declare enum ViewEncapsulation {
     ShadowDom = "ShadowDom"
 }
 /**
- * Creates a new, generic class definition in the given or default project.
+ * Creates a new generic class definition in the given or default project.
  */
 export interface AngularClassOptionsSchema {
     /**
@@ -209,7 +209,7 @@ export interface AngularClassOptionsSchema {
     type?: string;
 }
 /**
- * Creates a new, generic component definition in the given or default project.
+ * Creates a new generic component definition in the given or default project.
  */
 export interface AngularComponentOptionsSchema {
     /**
@@ -301,7 +301,7 @@ export declare enum ChangeDetection {
     OnPush = "OnPush"
 }
 /**
- * Creates a new, generic directive definition in the given or default project.
+ * Creates a new generic directive definition in the given or default project.
  */
 export interface AngularDirectiveOptionsSchema {
     /**
@@ -446,7 +446,7 @@ export interface AngularInterceptorOptionsSchema {
     skipTests?: boolean;
 }
 /**
- * Creates a new, generic interface definition in the given or default project.
+ * Creates a new generic interface definition in the given or default project.
  */
 export interface AngularInterfaceOptionsSchema {
     /**
@@ -476,7 +476,7 @@ export interface AngularInterfaceOptionsSchema {
     type?: string;
 }
 /**
- * Creates a new, generic library project in the current workspace.
+ * Creates a new generic library project in the current workspace.
  */
 export interface LibraryOptionsSchema {
     /**
@@ -510,9 +510,6 @@ export interface LibraryOptionsSchema {
      */
     skipTsConfig?: boolean;
 }
-/**
- * Creates a new project by combining the workspace and application schematics.
- */
 export interface AngularNgNewOptionsSchema {
     /**
      * Initial git repository commit information.
@@ -613,7 +610,7 @@ export interface CommitObject {
     name: string;
 }
 /**
- * Creates a new, generic pipe definition in the given or default project.
+ * Creates a new generic pipe definition in the given or default project.
  */
 export interface AngularPipeOptionsSchema {
     /**
@@ -711,7 +708,7 @@ export interface AngularServiceOptionsSchema {
     skipTests?: boolean;
 }
 /**
- * Creates a new, generic web worker definition in the given or default project.
+ * Creates a new generic web worker definition in the given or default project.
  */
 export interface AngularWebWorkerOptionsSchema {
     /**
