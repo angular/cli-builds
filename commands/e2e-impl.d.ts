@@ -11,5 +11,6 @@ import { Schema as E2eCommandSchema } from './e2e';
 export declare class E2eCommand extends ArchitectCommand<E2eCommandSchema> {
     readonly target = "e2e";
     readonly multiTarget = true;
-    run(options: E2eCommandSchema & Arguments): Promise<number>;
+    readonly missingTargetError = "\nCannot find \"e2e\" target for the specified project.\n\nYou should add a package that implements end-to-end testing capabilities.\n\nFor example:\n  WebdriverIO: ng add @wdio/schematics\n\nMore options will be added to the list as they become available.\n";
+    initialize(options: E2eCommandSchema & Arguments): Promise<number | void>;
 }

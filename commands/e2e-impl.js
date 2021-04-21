@@ -14,9 +14,21 @@ class E2eCommand extends architect_command_1.ArchitectCommand {
         super(...arguments);
         this.target = 'e2e';
         this.multiTarget = true;
+        this.missingTargetError = `
+Cannot find "e2e" target for the specified project.
+
+You should add a package that implements end-to-end testing capabilities.
+
+For example:
+  WebdriverIO: ng add @wdio/schematics
+
+More options will be added to the list as they become available.
+`;
     }
-    async run(options) {
-        return this.runArchitectTarget(options);
+    async initialize(options) {
+        if (!options.help) {
+            return super.initialize(options);
+        }
     }
 }
 exports.E2eCommand = E2eCommand;

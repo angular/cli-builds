@@ -93,7 +93,7 @@
       "name": "optimization",
       "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false,
@@ -120,7 +120,7 @@
       "name": "aot",
       "description": "Build using Ahead of Time compilation.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false,
@@ -130,7 +130,7 @@
       "name": "source-map",
       "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -139,7 +139,7 @@
       "name": "vendor-chunk",
       "description": "Generate a seperate bundle containing only vendor libraries. This option should only used for development.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -272,7 +272,7 @@
       "name": "extract-licenses",
       "description": "Extract all licenses in a separate file.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -291,7 +291,7 @@
       "name": "build-optimizer",
       "description": "Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.",
       "type": "boolean",
-      "default": false,
+      "default": true,
       "required": false,
       "aliases": [],
       "hidden": false
@@ -300,7 +300,7 @@
       "name": "named-chunks",
       "description": "Use file name for lazy loaded chunks.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "required": false,
       "aliases": [],
       "hidden": false

@@ -1,6 +1,6 @@
 {
   "name": "e2e",
-  "description": "Builds and serves an Angular app, then runs end-to-end tests using Protractor.",
+  "description": "Builds and serves an Angular app, then runs end-to-end tests.",
   "longDescription": "Must be executed from within a workspace directory.\nWhen a project name is not supplied, it will execute for all projects.",
   "options": [
     {
@@ -46,88 +46,6 @@
         "json",
         "JSON"
       ],
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "protractor-config",
-      "description": "The name of the Protractor configuration file.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "dev-server-target",
-      "description": "A dev-server builder target to run tests against in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "grep",
-      "description": "Execute specs whose names match the pattern, which is internally compiled to a RegExp.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "invert-grep",
-      "description": "Invert the selection specified by the 'grep' option.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "specs",
-      "description": "Override specs in the protractor config.",
-      "type": "array",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "suite",
-      "description": "Override suite in the protractor config.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "webdriver-update",
-      "description": "Try to update webdriver.",
-      "type": "boolean",
-      "default": true,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "port",
-      "description": "The port to use to serve the application.",
-      "type": "number",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "host",
-      "description": "Host to listen on.",
-      "type": "string",
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
-      "name": "base-url",
-      "description": "Base URL for protractor to connect to.",
-      "type": "string",
       "required": false,
       "aliases": [],
       "hidden": false
