@@ -629,8 +629,7 @@
             "css",
             "scss",
             "sass",
-            "less",
-            "styl"
+            "less"
           ],
           "x-prompt": {
             "message": "Which stylesheet format would you like to use?",
@@ -651,10 +650,6 @@
               {
                 "value": "less",
                 "label": "Less   [ http://lesscss.org                                             ]"
-              },
-              {
-                "value": "styl",
-                "label": "Stylus [ https://stylus-lang.com                                        ]"
               }
             ]
           },
@@ -842,8 +837,7 @@
             "css",
             "scss",
             "sass",
-            "less",
-            "styl"
+            "less"
           ],
           "x-user-analytics": 5
         },
@@ -1412,8 +1406,7 @@
             "css",
             "scss",
             "sass",
-            "less",
-            "styl"
+            "less"
           ],
           "x-user-analytics": 5
         },
@@ -1692,7 +1685,7 @@
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
           "x-user-analytics": 16,
-          "default": false,
+          "default": true,
           "oneOf": [
             {
               "type": "object",
@@ -1776,11 +1769,11 @@
           "type": "boolean",
           "description": "Build using Ahead of Time compilation.",
           "x-user-analytics": 13,
-          "default": false
+          "default": true
         },
         "sourceMap": {
           "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration.",
-          "default": true,
+          "default": false,
           "oneOf": [
             {
               "type": "object",
@@ -1816,7 +1809,7 @@
         "vendorChunk": {
           "type": "boolean",
           "description": "Generate a seperate bundle containing only vendor libraries. This option should only used for development.",
-          "default": true
+          "default": false
         },
         "commonChunk": {
           "type": "boolean",
@@ -1907,7 +1900,7 @@
         "extractLicenses": {
           "type": "boolean",
           "description": "Extract all licenses in a separate file.",
-          "default": false
+          "default": true
         },
         "showCircularDependencies": {
           "type": "boolean",
@@ -1918,12 +1911,12 @@
         "buildOptimizer": {
           "type": "boolean",
           "description": "Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.",
-          "default": false
+          "default": true
         },
         "namedChunks": {
           "type": "boolean",
           "description": "Use file name for lazy loaded chunks.",
-          "default": true
+          "default": false
         },
         "subresourceIntegrity": {
           "type": "boolean",
@@ -2753,7 +2746,7 @@
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking and dead-code elimination. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
           "x-user-analytics": 16,
-          "default": false,
+          "default": true,
           "oneOf": [
             {
               "type": "object",
@@ -2795,7 +2788,7 @@
         },
         "sourceMap": {
           "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration.",
-          "default": true,
+          "default": false,
           "oneOf": [
             {
               "type": "object",
@@ -2904,7 +2897,7 @@
         "namedChunks": {
           "type": "boolean",
           "description": "Use file name for lazy loaded chunks.",
-          "default": true
+          "default": false
         },
         "bundleDependencies": {
           "description": "Which external dependencies to bundle into the bundle. By default, all of node_modules will be bundled.",

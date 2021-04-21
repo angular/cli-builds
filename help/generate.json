@@ -173,8 +173,7 @@
                 "css",
                 "scss",
                 "sass",
-                "less",
-                "styl"
+                "less"
               ],
               "required": false,
               "aliases": [],
@@ -432,8 +431,7 @@
                 "css",
                 "scss",
                 "sass",
-                "less",
-                "styl"
+                "less"
               ],
               "required": false,
               "aliases": [],
