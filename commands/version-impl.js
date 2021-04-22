@@ -8,9 +8,11 @@ exports.VersionCommand = void 0;
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+const child_process_1 = require("child_process");
 const path = require("path");
 const command_1 = require("../models/command");
 const color_1 = require("../utilities/color");
+const package_manager_1 = require("../utilities/package-manager");
 class VersionCommand extends command_1.Command {
     async run() {
         const cliPackage = require('../package.json');
@@ -80,6 +82,7 @@ class VersionCommand extends command_1.Command {
         this.logger.info(`
       Angular CLI: ${ngCliVersion}
       Node: ${process.versions.node}
+      Package Manager: ${await this.getPackageManager()}
       OS: ${process.platform} ${process.arch}
 
       Angular: ${angularCoreVersion}
@@ -133,6 +136,16 @@ class VersionCommand extends command_1.Command {
             catch { }
         }
         return version || '<error>';
+    }
+    async getPackageManager() {
+        try {
+            const manager = await package_manager_1.getPackageManager(this.context.root);
+            const version = child_process_1.execSync(`${manager} --version`, { encoding: 'utf8', stdio: 'pipe' }).trim();
+            return `${manager} ${version}`;
+        }
+        catch {
+            return '<error>';
+        }
     }
 }
 exports.VersionCommand = VersionCommand;
