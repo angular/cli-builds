@@ -349,15 +349,6 @@
       "hidden": false
     },
     {
-      "name": "fork-type-checker",
-      "description": "Run the TypeScript type checker in a forked process.",
-      "type": "boolean",
-      "default": true,
-      "required": false,
-      "aliases": [],
-      "hidden": false
-    },
-    {
       "name": "web-worker-ts-config",
       "description": "TypeScript configuration for Web Worker modules.",
       "type": "string",
