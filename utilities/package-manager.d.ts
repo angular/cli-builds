@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import { PackageManager } from '../lib/config/workspace-schema';
 export declare function supportsYarn(): boolean;
 export declare function supportsNpm(): boolean;
