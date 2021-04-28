@@ -30,7 +30,7 @@ class Command {
         await this.printHelpOptions();
         return 0;
     }
-    async printJsonHelp(_options) {
+    async printJsonHelp() {
         const replacer = (key, value) => key === 'name'
             ? core_1.strings.dasherize(value)
             : value;
@@ -130,7 +130,7 @@ class Command {
             return this.printHelp();
         }
         else if (options.help === 'json' || options.help === 'JSON') {
-            return this.printJsonHelp(options);
+            return this.printJsonHelp();
         }
         else {
             const startTime = +new Date();

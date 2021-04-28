@@ -14,7 +14,7 @@ class ServeCommand extends architect_command_1.ArchitectCommand {
         super(...arguments);
         this.target = 'serve';
     }
-    validate(_options) {
+    validate() {
         return true;
     }
     async run(options) {
