@@ -31,18 +31,16 @@ class Command {
         return 0;
     }
     async printJsonHelp() {
-        const replacer = (key, value) => key === 'name'
-            ? core_1.strings.dasherize(value)
-            : value;
+        const replacer = (key, value) => key === 'name' ? core_1.strings.dasherize(value) : value;
         this.logger.info(JSON.stringify(this.description, replacer, 2));
         return 0;
     }
     async printHelpUsage() {
         this.logger.info(this.description.description);
         const name = this.description.name;
-        const args = this.description.options.filter(x => x.positional !== undefined);
-        const opts = this.description.options.filter(x => x.positional === undefined);
-        const argDisplay = args && args.length > 0 ? ' ' + args.map(a => `<${a.name}>`).join(' ') : '';
+        const args = this.description.options.filter((x) => x.positional !== undefined);
+        const opts = this.description.options.filter((x) => x.positional === undefined);
+        const argDisplay = args && args.length > 0 ? ' ' + args.map((a) => `<${a.name}>`).join(' ') : '';
         const optionsDisplay = opts && opts.length > 0 ? ` [options]` : ``;
         this.logger.info(`usage: ng ${name}${argDisplay}${optionsDisplay}`);
         this.logger.info('');
@@ -52,12 +50,12 @@ class Command {
         await this.printHelpOptions(subcommand.options);
     }
     async printHelpOptions(options = this.description.options) {
-        const args = options.filter(opt => opt.positional !== undefined);
-        const opts = options.filter(opt => opt.positional === undefined);
+        const args = options.filter((opt) => opt.positional !== undefined);
+        const opts = options.filter((opt) => opt.positional === undefined);
         const formatDescription = (description) => `    ${description.replace(/\n/g, '\n    ')}`;
         if (args.length > 0) {
             this.logger.info(`arguments:`);
-            args.forEach(o => {
+            args.forEach((o) => {
                 this.logger.info(`  ${color_1.colors.cyan(o.name)}`);
                 if (o.description) {
                     this.logger.info(formatDescription(o.description));
@@ -70,11 +68,11 @@ class Command {
             }
             this.logger.info(`options:`);
             opts
-                .filter(o => !o.hidden)
+                .filter((o) => !o.hidden)
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach(o => {
+                .forEach((o) => {
                 const aliases = o.aliases && o.aliases.length > 0
-                    ? '(' + o.aliases.map(a => `-${a}`).join(' ') + ')'
+                    ? '(' + o.aliases.map((a) => `-${a}`).join(' ') + ')'
                     : '';
                 this.logger.info(`  ${color_1.colors.cyan('--' + core_1.strings.dasherize(o.name))} ${aliases}`);
                 if (o.description) {

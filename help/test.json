@@ -1,7 +1,7 @@
 {
   "name": "test",
   "description": "Runs unit tests in a project.",
-  "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.",
+  "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n",
   "options": [
     {
       "name": "project",

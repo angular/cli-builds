@@ -34,9 +34,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
         path.join(globalPrefix, 'etc', baseFilename),
         path.join(os_1.homedir(), dotFilename),
     ];
-    const projectConfigLocations = [
-        path.join(cwd, dotFilename),
-    ];
+    const projectConfigLocations = [path.join(cwd, dotFilename)];
     const root = path.parse(cwd).root;
     for (let curDir = path.dirname(cwd); curDir && curDir !== root; curDir = path.dirname(curDir)) {
         projectConfigLocations.unshift(path.join(curDir, dotFilename));

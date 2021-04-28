@@ -34,14 +34,14 @@ async function parseJsonSchemaToSubCommandDescription(name, jsonPath, registry, 
     const options = await parseJsonSchemaToOptions(registry, schema);
     const aliases = [];
     if (core_1.json.isJsonArray(schema.$aliases)) {
-        schema.$aliases.forEach(value => {
+        schema.$aliases.forEach((value) => {
             if (typeof value == 'string') {
                 aliases.push(value);
             }
         });
     }
     if (core_1.json.isJsonArray(schema.aliases)) {
-        schema.aliases.forEach(value => {
+        schema.aliases.forEach((value) => {
             if (typeof value == 'string') {
                 aliases.push(value);
             }
@@ -131,7 +131,8 @@ async function parseJsonSchemaToOptions(registry, schema) {
             throw new Error('Cannot find type of schema.');
         }
         // We only support number, string or boolean (or array of those), so remove everything else.
-        const types = [...typeSet].filter(x => {
+        const types = [...typeSet]
+            .filter((x) => {
             switch (x) {
                 case 'boolean':
                 case 'number':
@@ -139,22 +140,23 @@ async function parseJsonSchemaToOptions(registry, schema) {
                     return true;
                 case 'array':
                     // Only include arrays if they're boolean, string or number.
-                    if (core_1.json.isJsonObject(current.items)
-                        && typeof current.items.type == 'string'
-                        && ['boolean', 'number', 'string'].includes(current.items.type)) {
+                    if (core_1.json.isJsonObject(current.items) &&
+                        typeof current.items.type == 'string' &&
+                        ['boolean', 'number', 'string'].includes(current.items.type)) {
                         return true;
                     }
                     return false;
                 default:
                     return false;
             }
-        }).map(x => _getEnumFromValue(x, interface_1.OptionType, interface_1.OptionType.String));
+        })
+            .map((x) => _getEnumFromValue(x, interface_1.OptionType, interface_1.OptionType.String));
         if (types.length == 0) {
             // This means it's not usable on the command line. e.g. an Object.
             return;
         }
         // Only keep enum values we support (booleans, numbers and strings).
-        const enumValues = (core_1.json.isJsonArray(current.enum) && current.enum || []).filter(x => {
+        const enumValues = ((core_1.json.isJsonArray(current.enum) && current.enum) || []).filter((x) => {
             switch (typeof x) {
                 case 'boolean':
                 case 'number':
@@ -186,14 +188,16 @@ async function parseJsonSchemaToOptions(registry, schema) {
         }
         const type = types[0];
         const $default = current.$default;
-        const $defaultIndex = (core_1.json.isJsonObject($default) && $default['$source'] == 'argv')
-            ? $default['index'] : undefined;
-        const positional = typeof $defaultIndex == 'number'
-            ? $defaultIndex : undefined;
+        const $defaultIndex = core_1.json.isJsonObject($default) && $default['$source'] == 'argv' ? $default['index'] : undefined;
+        const positional = typeof $defaultIndex == 'number' ? $defaultIndex : undefined;
         const required = core_1.json.isJsonArray(current.required)
-            ? current.required.indexOf(name) != -1 : false;
-        const aliases = core_1.json.isJsonArray(current.aliases) ? [...current.aliases].map(x => '' + x)
-            : current.alias ? ['' + current.alias] : [];
+            ? current.required.indexOf(name) != -1
+            : false;
+        const aliases = core_1.json.isJsonArray(current.aliases)
+            ? [...current.aliases].map((x) => '' + x)
+            : current.alias
+                ? ['' + current.alias]
+                : [];
         const format = typeof current.format == 'string' ? current.format : undefined;
         const visible = current.visible === undefined || current.visible === true;
         const hidden = !!current.hidden || !visible;
@@ -201,21 +205,20 @@ async function parseJsonSchemaToOptions(registry, schema) {
         const userAnalytics = typeof xUserAnalytics == 'number' ? xUserAnalytics : undefined;
         // Deprecated is set only if it's true or a string.
         const xDeprecated = current['x-deprecated'];
-        const deprecated = (xDeprecated === true || typeof xDeprecated === 'string')
-            ? xDeprecated : undefined;
+        const deprecated = xDeprecated === true || typeof xDeprecated === 'string' ? xDeprecated : undefined;
         const option = {
             name,
             description: '' + (current.description === undefined ? '' : current.description),
-            ...types.length == 1 ? { type } : { type, types },
-            ...defaultValue !== undefined ? { default: defaultValue } : {},
-            ...enumValues && enumValues.length > 0 ? { enum: enumValues } : {},
+            ...(types.length == 1 ? { type } : { type, types }),
+            ...(defaultValue !== undefined ? { default: defaultValue } : {}),
+            ...(enumValues && enumValues.length > 0 ? { enum: enumValues } : {}),
             required,
             aliases,
-            ...format !== undefined ? { format } : {},
+            ...(format !== undefined ? { format } : {}),
             hidden,
-            ...userAnalytics ? { userAnalytics } : {},
-            ...deprecated !== undefined ? { deprecated } : {},
-            ...positional !== undefined ? { positional } : {},
+            ...(userAnalytics ? { userAnalytics } : {}),
+            ...(deprecated !== undefined ? { deprecated } : {}),
+            ...(positional !== undefined ? { positional } : {}),
         };
         options.push(option);
     }

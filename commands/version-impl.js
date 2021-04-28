@@ -40,7 +40,7 @@ class VersionCommand extends command_1.Command {
             ...Object.keys((workspacePackage === null || workspacePackage === void 0 ? void 0 : workspacePackage.devDependencies) || {}),
         ];
         const versions = packageNames
-            .filter(x => patterns.some(p => p.test(x)))
+            .filter((x) => patterns.some((p) => p.test(x)))
             .reduce((acc, name) => {
             if (name in acc) {
                 return acc;
@@ -76,7 +76,7 @@ class VersionCommand extends command_1.Command {
                 |___/
     `
             .split('\n')
-            .map(x => color_1.colors.red(x))
+            .map((x) => color_1.colors.red(x))
             .join('\n');
         this.logger.info(asciiArt);
         this.logger.info(`
@@ -106,7 +106,7 @@ class VersionCommand extends command_1.Command {
       Package${namePad.slice(7)}Version
       -------${namePad.replace(/ /g, '-')}------------------
       ${Object.keys(versions)
-            .map(module => `${module}${namePad.slice(module.length)}${versions[module]}`)
+            .map((module) => `${module}${namePad.slice(module.length)}${versions[module]}`)
             .sort()
             .join('\n')}
     `.replace(/^ {6}/gm, ''));

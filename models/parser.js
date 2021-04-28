@@ -84,14 +84,12 @@ function _coerce(str, o, v) {
     }
 }
 function _getOptionFromName(name, options) {
-    const camelName = /(-|_)/.test(name)
-        ? core_1.strings.camelize(name)
-        : name;
+    const camelName = /(-|_)/.test(name) ? core_1.strings.camelize(name) : name;
     for (const option of options) {
         if (option.name === name || option.name === camelName) {
             return option;
         }
-        if (option.aliases.some(x => x === name || x === camelName)) {
+        if (option.aliases.some((x) => x === name || x === camelName)) {
             return option;
         }
     }
@@ -101,7 +99,7 @@ function _removeLeadingDashes(key) {
     const from = key.startsWith('--') ? 2 : key.startsWith('-') ? 1 : 0;
     return key.substr(from);
 }
-function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignored, errors, warnings }) {
+function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignored, errors, warnings, }) {
     const from = arg.startsWith('--') ? 2 : 1;
     let consumedNextArg = false;
     let key = arg.substr(from);
@@ -161,9 +159,9 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
         if (v !== undefined) {
             if (parsedOptions[option.name] !== v) {
                 if (parsedOptions[option.name] !== undefined && option.type !== interface_1.OptionType.Array) {
-                    warnings.push(`Option ${JSON.stringify(option.name)} was already specified with value `
-                        + `${JSON.stringify(parsedOptions[option.name])}. The new value ${JSON.stringify(v)} `
-                        + `will override it.`);
+                    warnings.push(`Option ${JSON.stringify(option.name)} was already specified with value ` +
+                        `${JSON.stringify(parsedOptions[option.name])}. The new value ${JSON.stringify(v)} ` +
+                        `will override it.`);
                 }
                 parsedOptions[option.name] = v;
             }
@@ -171,7 +169,7 @@ function _assignOption(arg, nextArg, { options, parsedOptions, leftovers, ignore
         else {
             let error = `Argument ${key} could not be parsed using value ${JSON.stringify(value)}.`;
             if (option.enum) {
-                error += ` Valid values are: ${option.enum.map(x => JSON.stringify(x)).join(', ')}.`;
+                error += ` Valid values are: ${option.enum.map((x) => JSON.stringify(x)).join(', ')}.`;
             }
             else {
                 error += `Valid type(s) is: ${(option.types || [option.type]).join(', ')}`;
@@ -222,7 +220,7 @@ function parseFreeFormArguments(args) {
             }
         }
         else if (arg.startsWith('-')) {
-            arg.split('').forEach(x => parsedOptions[x] = true);
+            arg.split('').forEach((x) => (parsedOptions[x] = true));
         }
         else {
             leftovers.push(arg);
@@ -341,7 +339,7 @@ function parseArguments(args, options, logger) {
         parsedOptions['--'] = [...positionals, ...leftovers];
     }
     if (warnings.length > 0 && logger) {
-        warnings.forEach(message => logger.warn(message));
+        warnings.forEach((message) => logger.warn(message));
     }
     if (errors.length > 0) {
         throw new ParseArgumentException(errors, parsedOptions, ignored);

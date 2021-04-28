@@ -57,7 +57,7 @@ class UpdateCommand extends command_1.Command {
         let error = false;
         let logs = [];
         const files = new Set();
-        const reporterSubscription = this.workflow.reporter.subscribe(event => {
+        const reporterSubscription = this.workflow.reporter.subscribe((event) => {
             // Strip leading slash to prevent confusion.
             const eventPath = event.path.startsWith('/') ? event.path.substr(1) : event.path;
             switch (event.kind) {
@@ -85,11 +85,11 @@ class UpdateCommand extends command_1.Command {
                     break;
             }
         });
-        const lifecycleSubscription = this.workflow.lifeCycle.subscribe(event => {
+        const lifecycleSubscription = this.workflow.lifeCycle.subscribe((event) => {
             if (event.kind == 'end' || event.kind == 'post-tasks-start') {
                 if (!error) {
                     // Output the logging queue, no error happened.
-                    logs.forEach(log => this.logger.info(`  ${log}`));
+                    logs.forEach((log) => this.logger.info(`  ${log}`));
                     logs = [];
                 }
             }
@@ -125,7 +125,7 @@ class UpdateCommand extends command_1.Command {
      */
     async executeMigration(packageName, collectionPath, migrationName, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
-        const name = collection.listSchematicNames().find(name => name === migrationName);
+        const name = collection.listSchematicNames().find((name) => name === migrationName);
         if (!name) {
             this.logger.error(`Cannot find migration '${migrationName}' in '${packageName}'.`);
             return false;
@@ -162,7 +162,8 @@ class UpdateCommand extends command_1.Command {
     async executePackageMigrations(migrations, packageName, commit = false) {
         for (const migration of migrations) {
             const [title, ...description] = migration.description.split('. ');
-            this.logger.info(color_1.colors.cyan(color_1.colors.symbols.pointer) + ' ' +
+            this.logger.info(color_1.colors.cyan(color_1.colors.symbols.pointer) +
+                ' ' +
                 color_1.colors.bold(title.endsWith('.') ? title : title + '.'));
             if (description.length) {
                 this.logger.info('  ' + description.join('.\n  '));
@@ -193,9 +194,8 @@ class UpdateCommand extends command_1.Command {
         var _a, _b;
         await package_manager_1.ensureCompatibleNpm(this.context.root);
         // Check if the current installed CLI version is older than the latest version.
-        if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
-            this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
-                'Installing a temporary version to perform the update.');
+        if (!disableVersionCheck && (await this.checkCLILatestVersion(options.verbose, options.next))) {
+            this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` + 'Installing a temporary version to perform the update.');
             return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
         }
         const logVerbose = (message) => {
@@ -223,7 +223,7 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`Package '${request}' is not a registry package identifer.`);
                     return 1;
                 }
-                if (packages.some(v => v.name === packageIdentifier.name)) {
+                if (packages.some((v) => v.name === packageIdentifier.name)) {
                     this.logger.error(`Duplicate package '${packageIdentifier.name}' specified.`);
                     return 1;
                 }
@@ -360,10 +360,10 @@ class UpdateCommand extends command_1.Command {
                 success = await this.executeMigrations(packageName, migrations, from, options.to || packageNode.version, options.createCommits);
             }
             if (success) {
-                if (packageName === '@angular/core'
-                    && options.from
-                    && +options.from.split('.')[0] < 9
-                    && (options.to || packageNode.version).split('.')[0] === '9') {
+                if (packageName === '@angular/core' &&
+                    options.from &&
+                    +options.from.split('.')[0] < 9 &&
+                    (options.to || packageNode.version).split('.')[0] === '9') {
                     this.logger.info(NG_VERSION_9_POST_MSG);
                 }
                 return 0;
@@ -545,7 +545,9 @@ class UpdateCommand extends command_1.Command {
                     return 0;
                 }
             }
-            if (migrations.some(m => m.package === '@angular/core' && m.to.split('.')[0] === '9' && +m.from.split('.')[0] < 9)) {
+            if (migrations.some((m) => m.package === '@angular/core' &&
+                m.to.split('.')[0] === '9' &&
+                +m.from.split('.')[0] < 9)) {
                 this.logger.info(NG_VERSION_9_POST_MSG);
             }
         }
@@ -592,7 +594,10 @@ class UpdateCommand extends command_1.Command {
     }
     checkCleanGit() {
         try {
-            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', { encoding: 'utf8', stdio: 'pipe' });
+            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', {
+                encoding: 'utf8',
+                stdio: 'pipe',
+            });
             const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
             if (result.trim().length === 0) {
                 return true;
@@ -611,7 +616,7 @@ class UpdateCommand extends command_1.Command {
     /**
      * Checks if the current installed CLI version is older than the latest version.
      * @returns `true` when the installed version is older.
-    */
+     */
     async checkCLILatestVersion(verbose = false, next = false) {
         const { version: installedCLIVersion } = require('../package.json');
         const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {

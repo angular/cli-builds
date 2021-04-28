@@ -40,7 +40,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
                 subcommands[`${collectionName}:${name}`] = subcommand;
             }
         }
-        this.description.options.forEach(option => {
+        this.description.options.forEach((option) => {
             if (option.name == 'schematic') {
                 option.subcommands = subcommands;
             }
@@ -78,7 +78,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
         await super.printHelp();
         this.logger.info('');
         // Find the generate subcommand.
-        const subcommand = this.description.options.filter(x => x.subcommands)[0];
+        const subcommand = this.description.options.filter((x) => x.subcommands)[0];
         if (Object.keys((subcommand && subcommand.subcommands) || {}).length == 1) {
             this.logger.info(`\nTo see help for a schematic run:`);
             this.logger.info(color_1.colors.cyan(`  ng generate <schematic> --help`));

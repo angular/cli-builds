@@ -32,6 +32,6 @@ export declare class UpdateCommand extends Command<UpdateCommandSchema> {
     /**
      * Checks if the current installed CLI version is older than the latest version.
      * @returns `true` when the installed version is older.
-    */
+     */
     private checkCLILatestVersion;
 }
