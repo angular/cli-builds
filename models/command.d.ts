@@ -24,7 +24,7 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
     initialize(options: T & Arguments): Promise<number | void>;
     printHelp(): Promise<number>;
-    printJsonHelp(_options: T & Arguments): Promise<number>;
+    printJsonHelp(): Promise<number>;
     protected printHelpUsage(): Promise<void>;
     protected printHelpSubcommand(subcommand: SubCommandDescription): Promise<void>;
     protected printHelpOptions(options?: Option[]): Promise<void>;

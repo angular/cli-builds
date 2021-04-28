@@ -161,7 +161,7 @@ class SchematicCommand extends command_1.Command {
             packageRegistry: options.packageRegistry,
             // A schema registry is required to allow customizing addUndefinedDefaults
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
-            resolvePaths: !!this.workspace
+            resolvePaths: this.workspace
                 // Workspace
                 ? this.collectionName === this.defaultCollectionName
                     // Favor __dirname for @schematics/angular to use the build-in version
