@@ -29,10 +29,10 @@ class AnalyticsCommand extends command_1.Command {
                 return 2;
             }
         }
-        else if (options.settingOrProject == analytics_2.SettingOrProject.Project
-            && options.projectSetting === undefined) {
-            this.logger.error(`Argument ${JSON.stringify(options.settingOrProject)} requires a second `
-                + `argument of one of the following value: on, off.`);
+        else if (options.settingOrProject == analytics_2.SettingOrProject.Project &&
+            options.projectSetting === undefined) {
+            this.logger.error(`Argument ${JSON.stringify(options.settingOrProject)} requires a second ` +
+                `argument of one of the following value: on, off.`);
             return 2;
         }
         try {

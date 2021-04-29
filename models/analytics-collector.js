@@ -99,14 +99,14 @@ class AnalyticsCollector {
                 host: 'www.google-analytics.com',
                 method: 'POST',
                 path: data.length > 1 ? '/batch' : '/collect',
-            }, response => {
+            }, (response) => {
                 if (response.statusCode !== 200) {
                     reject(new Error(`Analytics reporting failed with status code: ${response.statusCode}.`));
                     return;
                 }
             });
             request.on('error', reject);
-            const queryParameters = data.map(p => querystring.stringify(p)).join('\n');
+            const queryParameters = data.map((p) => querystring.stringify(p)).join('\n');
             request.write(queryParameters);
             request.end(resolve);
         });
@@ -118,8 +118,8 @@ class AnalyticsCollector {
     customVariables(options) {
         const additionals = {};
         const { dimensions, metrics } = options;
-        dimensions === null || dimensions === void 0 ? void 0 : dimensions.forEach((v, i) => additionals[`cd${i}`] = v);
-        metrics === null || metrics === void 0 ? void 0 : metrics.forEach((v, i) => additionals[`cm${i}`] = v);
+        dimensions === null || dimensions === void 0 ? void 0 : dimensions.forEach((v, i) => (additionals[`cd${i}`] = v));
+        metrics === null || metrics === void 0 ? void 0 : metrics.forEach((v, i) => (additionals[`cm${i}`] = v));
         return additionals;
     }
 }

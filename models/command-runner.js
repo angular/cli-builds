@@ -87,7 +87,9 @@ async function loadCommandDescription(name, path, registry) {
  * @param commands The map of supported commands.
  * @param options Additional options.
  */
-async function runCommand(args, logger, workspace, commands = standardCommands, options = { currentDirectory: process.cwd() }) {
+async function runCommand(args, logger, workspace, commands = standardCommands, options = {
+    currentDirectory: process.cwd(),
+}) {
     var _a;
     // This registry is exclusively used for flattening schemas, and not for validating.
     const registry = new core_1.schema.CoreSchemaRegistry([]);
@@ -151,7 +153,7 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
         for (const name of commandNames) {
             const aliasDesc = await loadCommandDescription(name, commands[name], registry);
             const aliases = aliasDesc.aliases;
-            if (aliases && aliases.some(alias => alias === commandName)) {
+            if (aliases && aliases.some((alias) => alias === commandName)) {
                 commandName = name;
                 description = aliasDesc;
                 break;
@@ -187,8 +189,7 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
             }
             return map;
         });
-        const analytics = options.analytics ||
-            (await _createAnalytics(!!workspace, description.name === 'update'));
+        const analytics = options.analytics || (await _createAnalytics(!!workspace, description.name === 'update'));
         const context = {
             workspace,
             analytics,

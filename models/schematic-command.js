@@ -43,7 +43,7 @@ class SchematicCommand extends command_1.Command {
             const collection = this.getCollection(this.collectionName);
             const schematic = this.getSchematic(collection, this.schematicName, true);
             const options = await json_schema_1.parseJsonSchemaToOptions(this._workflow.registry, schematic.description.schemaJson || {});
-            this.description.options.push(...options.filter(x => !x.hidden));
+            this.description.options.push(...options.filter((x) => !x.hidden));
             // Remove any user analytics from schematics that are NOT part of our safelist.
             for (const o of this.description.options) {
                 if (o.userAnalytics && !analytics_1.isPackageNameSafeForAnalytics(this.collectionName)) {
@@ -55,7 +55,7 @@ class SchematicCommand extends command_1.Command {
     async printHelp() {
         await super.printHelp();
         this.logger.info('');
-        const subCommandOption = this.description.options.filter(x => x.subcommands)[0];
+        const subCommandOption = this.description.options.filter((x) => x.subcommands)[0];
         if (!subCommandOption || !subCommandOption.subcommands) {
             return 0;
         }
@@ -63,7 +63,7 @@ class SchematicCommand extends command_1.Command {
         if (schematicNames.length > 1) {
             this.logger.info('Available Schematics:');
             const namesPerCollection = {};
-            schematicNames.forEach(name => {
+            schematicNames.forEach((name) => {
                 let [collectionName, schematicName] = name.split(/:/, 2);
                 if (!schematicName) {
                     schematicName = collectionName;
@@ -75,10 +75,10 @@ class SchematicCommand extends command_1.Command {
                 namesPerCollection[collectionName].push(schematicName);
             });
             const defaultCollection = await this.getDefaultSchematicCollection();
-            Object.keys(namesPerCollection).forEach(collectionName => {
+            Object.keys(namesPerCollection).forEach((collectionName) => {
                 const isDefault = defaultCollection == collectionName;
                 this.logger.info(`  Collection "${collectionName}"${isDefault ? ' (default)' : ''}:`);
-                namesPerCollection[collectionName].forEach(schematicName => {
+                namesPerCollection[collectionName].forEach((schematicName) => {
                     this.logger.info(`    ${schematicName}`);
                 });
             });
@@ -90,14 +90,14 @@ class SchematicCommand extends command_1.Command {
         return 0;
     }
     async printHelpUsage() {
-        const subCommandOption = this.description.options.filter(x => x.subcommands)[0];
+        const subCommandOption = this.description.options.filter((x) => x.subcommands)[0];
         if (!subCommandOption || !subCommandOption.subcommands) {
             return;
         }
         const schematicNames = Object.keys(subCommandOption.subcommands);
         if (schematicNames.length == 1) {
             this.logger.info(this.description.description);
-            const opts = this.description.options.filter(x => x.positional === undefined);
+            const opts = this.description.options.filter((x) => x.positional === undefined);
             const [collectionName, schematicName] = schematicNames[0].split(/:/)[0];
             // Display <collectionName:schematicName> if this is not the default collectionName,
             // otherwise just show the schematicName.
@@ -105,9 +105,9 @@ class SchematicCommand extends command_1.Command {
                 ? schematicName
                 : schematicNames[0];
             const schematicOptions = subCommandOption.subcommands[schematicNames[0]].options;
-            const schematicArgs = schematicOptions.filter(x => x.positional !== undefined);
+            const schematicArgs = schematicOptions.filter((x) => x.positional !== undefined);
             const argDisplay = schematicArgs.length > 0
-                ? ' ' + schematicArgs.map(a => `<${core_1.strings.dasherize(a.name)}>`).join(' ')
+                ? ' ' + schematicArgs.map((a) => `<${core_1.strings.dasherize(a.name)}>`).join(' ')
                 : '';
             this.logger.info(core_1.tags.oneLine `
         usage: ng ${this.description.name} ${displayName}${argDisplay}
@@ -138,8 +138,8 @@ class SchematicCommand extends command_1.Command {
             return {};
         }
         return options
-            .filter(o => o.format === 'path')
-            .map(o => o.name)
+            .filter((o) => o.format === 'path')
+            .map((o) => o.name)
             .reduce((acc, curr) => {
             acc[curr] = workingDir;
             return acc;
@@ -162,13 +162,13 @@ class SchematicCommand extends command_1.Command {
             // A schema registry is required to allow customizing addUndefinedDefaults
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
             resolvePaths: this.workspace
-                // Workspace
-                ? this.collectionName === this.defaultCollectionName
-                    // Favor __dirname for @schematics/angular to use the build-in version
-                    ? [__dirname, process.cwd(), root]
-                    : [process.cwd(), root, __dirname]
-                // Global
-                : [__dirname, process.cwd()],
+                ? // Workspace
+                    this.collectionName === this.defaultCollectionName
+                        ? // Favor __dirname for @schematics/angular to use the build-in version
+                            [__dirname, process.cwd(), root]
+                        : [process.cwd(), root, __dirname]
+                : // Global
+                    [__dirname, process.cwd()],
             schemaValidation: true,
             optionTransforms: [
                 // Add configuration file defaults
@@ -203,7 +203,7 @@ class SchematicCommand extends command_1.Command {
         };
         workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
         workflow.registry.addSmartDefaultProvider('projectName', getProjectName);
-        workflow.registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
+        workflow.registry.useXDeprecatedProvider((msg) => this.logger.warn(msg));
         let shouldReportAnalytics = true;
         workflow.engineHost.registerOptionsTransform(async (_, options) => {
             if (shouldReportAnalytics) {
@@ -215,8 +215,8 @@ class SchematicCommand extends command_1.Command {
         if (options.interactive !== false && tty_1.isTTY()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions
-                    .filter(definition => !options.defaults || definition.default === undefined)
-                    .map(definition => {
+                    .filter((definition) => !options.defaults || definition.default === undefined)
+                    .map((definition) => {
                     var _a;
                     const question = {
                         name: definition.id,
@@ -225,7 +225,7 @@ class SchematicCommand extends command_1.Command {
                     };
                     const validator = definition.validator;
                     if (validator) {
-                        question.validate = input => validator(input);
+                        question.validate = (input) => validator(input);
                         // Filter allows transformation of the value prior to validation
                         question.filter = async (input) => {
                             for (const type of definition.propertyTypes) {
@@ -257,7 +257,7 @@ class SchematicCommand extends command_1.Command {
                             break;
                         case 'list':
                             question.type = definition.multiselect ? 'checkbox' : 'list';
-                            question.choices = (_a = definition.items) === null || _a === void 0 ? void 0 : _a.map(item => {
+                            question.choices = (_a = definition.items) === null || _a === void 0 ? void 0 : _a.map((item) => {
                                 return typeof item == 'string'
                                     ? item
                                     : {
@@ -327,9 +327,10 @@ class SchematicCommand extends command_1.Command {
             o = await json_schema_1.parseJsonSchemaToOptions(workflow.registry, schematic.description.schemaJson);
             args = await this.parseArguments(schematicOptions || [], o);
         }
-        const allowAdditionalProperties = typeof schematic.description.schemaJson === 'object' && schematic.description.schemaJson.additionalProperties;
+        const allowAdditionalProperties = typeof schematic.description.schemaJson === 'object' &&
+            schematic.description.schemaJson.additionalProperties;
         if (args['--'] && !allowAdditionalProperties) {
-            args['--'].forEach(additional => {
+            args['--'].forEach((additional) => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
             });
             return 1;
@@ -373,11 +374,11 @@ class SchematicCommand extends command_1.Command {
                     break;
             }
         });
-        workflow.lifeCycle.subscribe(event => {
+        workflow.lifeCycle.subscribe((event) => {
             if (event.kind == 'end' || event.kind == 'post-tasks-start') {
                 if (!error) {
                     // Output the logging queue, no error happened.
-                    loggingQueue.forEach(log => this.logger.info(log));
+                    loggingQueue.forEach((log) => this.logger.info(log));
                 }
                 loggingQueue = [];
                 error = false;
@@ -390,7 +391,7 @@ class SchematicCommand extends command_1.Command {
                 await package_manager_1.ensureCompatibleNpm(this.context.root);
             }
         }
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             workflow
                 .execute({
                 collection: collectionName,
@@ -451,7 +452,7 @@ function getProjectsByPath(workspace, path, root) {
     };
     const projects = Array.from(workspace.projects.entries())
         .map(([name, project]) => [systemPath.resolve(root, project.root), name])
-        .filter(tuple => isInside(tuple[0], path))
+        .filter((tuple) => isInside(tuple[0], path))
         // Sort tuples by depth, with the deeper ones first. Since the first member is a path and
         // we filtered all invalid paths, the longest will be the deepest (and in case of equality
         // the sort is stable and the first declared project will win).
@@ -461,7 +462,7 @@ function getProjectsByPath(workspace, path, root) {
     }
     else if (projects.length > 1) {
         const firstPath = projects[0][0];
-        return projects.filter(v => v[0] === firstPath).map(v => v[1]);
+        return projects.filter((v) => v[0] === firstPath).map((v) => v[1]);
     }
     return [];
 }

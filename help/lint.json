@@ -1,7 +1,7 @@
 {
   "name": "lint",
   "description": "Runs linting tools on Angular app code in a given project folder.",
-  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `lint` builder for the default project.\n\nTo use the `ng lint` command, use `ng add` to add a package that implements linting capabilities. Adding the package automatically updates your workspace configuration, adding a lint [CLI builder](guide/cli-builder).\nFor example:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"lint\": {\n        \"builder\": \"@angular-eslint/builder:lint\",\n        \"options\": {}\n      }\n    }\n  }\n}\n ```",
+  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `lint` builder for the default project.\n\nTo use the `ng lint` command, use `ng add` to add a package that implements linting capabilities. Adding the package automatically updates your workspace configuration, adding a lint [CLI builder](guide/cli-builder).\nFor example:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"lint\": {\n        \"builder\": \"@angular-eslint/builder:lint\",\n        \"options\": {}\n      }\n    }\n  }\n}\n```\n",
   "options": [
     {
       "name": "project",

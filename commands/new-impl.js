@@ -16,7 +16,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
         this.schematicName = 'ng-new';
     }
     async initialize(options) {
-        this.collectionName = options.collection || await this.getDefaultSchematicCollection();
+        this.collectionName = options.collection || (await this.getDefaultSchematicCollection());
         return super.initialize(options);
     }
     async run(options) {

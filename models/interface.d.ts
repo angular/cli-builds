@@ -128,7 +128,7 @@ export interface Option {
     /**
      * Deprecation. If this flag is not false a warning will be shown on the console. Either `true`
      * or a string to show the user as a notice.
-    */
+     */
     deprecated?: boolean | string;
 }
 /**

@@ -25,7 +25,7 @@ class ArchitectCommand extends command_1.Command {
     async initialize(options) {
         this._registry = new core_1.json.schema.CoreSchemaRegistry();
         this._registry.addPostTransform(core_1.json.schema.transforms.addUndefinedDefaults);
-        this._registry.useXDeprecatedProvider(msg => this.logger.warn(msg));
+        this._registry.useXDeprecatedProvider((msg) => this.logger.warn(msg));
         if (!this.workspace) {
             this.logger.fatal('A workspace is required for this command.');
             return 1;
@@ -82,7 +82,7 @@ class ArchitectCommand extends command_1.Command {
                 const parsedOptions = parser_1.parseArguments([...commandLeftovers], optionDefs);
                 const builderLeftovers = parsedOptions['--'] || [];
                 leftoverMap.set(name, { optionDefs, parsedOptions });
-                potentialProjectNames = new Set(builderLeftovers.filter(x => potentialProjectNames.has(x)));
+                potentialProjectNames = new Set(builderLeftovers.filter((x) => potentialProjectNames.has(x)));
             }
             if (potentialProjectNames.size === 1) {
                 projectName = [...potentialProjectNames][0];
@@ -164,13 +164,13 @@ class ArchitectCommand extends command_1.Command {
         const overrides = parser_1.parseArguments(targetOptions, targetOptionArray, this.logger);
         const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object' && builderDesc.optionSchema.additionalProperties;
         if (overrides['--'] && !allowAdditionalProperties) {
-            (overrides['--'] || []).forEach(additional => {
+            (overrides['--'] || []).forEach((additional) => {
                 this.logger.fatal(`Unknown option: '${additional.split(/=/)[0]}'`);
             });
             return 1;
         }
         await this.reportAnalytics([this.description.name], {
-            ...await this._architectHost.getOptionsForTarget(target),
+            ...(await this._architectHost.getOptionsForTarget(target)),
             ...overrides,
         });
         const run = await this._architect.scheduleTarget(target, overrides, {
@@ -269,8 +269,7 @@ class ArchitectCommand extends command_1.Command {
                 configuration = 'production';
             }
             if (commandOptions.configuration) {
-                configuration =
-                    `${configuration ? `${configuration},` : ''}${commandOptions.configuration}`;
+                configuration = `${configuration ? `${configuration},` : ''}${commandOptions.configuration}`;
             }
         }
         if (!project) {

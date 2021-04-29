@@ -20,7 +20,7 @@ const validCliPaths = new Map([
     ['cli.packageManager', undefined],
     ['cli.analytics', undefined],
     ['cli.analyticsSharing.tracking', undefined],
-    ['cli.analyticsSharing.uuid', v => v ? `${v}` : uuid_1.v4()],
+    ['cli.analyticsSharing.uuid', (v) => (v ? `${v}` : uuid_1.v4())],
 ]);
 /**
  * Splits a JSON path string into fragments. Fragments can be used to get the value referenced
@@ -47,11 +47,11 @@ function parseJsonPath(path) {
             const indices = match[2]
                 .slice(1, -1)
                 .split('][')
-                .map(x => (/^\d$/.test(x) ? +x : x.replace(/\"|\'/g, '')));
+                .map((x) => (/^\d$/.test(x) ? +x : x.replace(/\"|\'/g, '')));
             result.push(...indices);
         }
     }
-    return result.filter(fragment => fragment != null);
+    return result.filter((fragment) => fragment != null);
 }
 function normalizeValue(value) {
     const valueString = `${value}`.trim();

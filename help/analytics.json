@@ -1,7 +1,7 @@
 {
   "name": "analytics",
   "description": "Configures the gathering of Angular CLI usage metrics. See https://angular.io/cli/usage-analytics-gathering.",
-  "longDescription": "The value of *settingOrProject* is one of the following.\n* \"on\" : Enables analytics gathering and reporting for the user.\n* \"off\" : Disables analytics gathering and reporting for the user.\n* \"ci\" : Enables analytics and configures reporting for use with Continuous Integration,\nwhich uses a common CI user.\n* \"prompt\" : Prompts the user to set the status interactively.\n* \"project\" : Sets the default status for the project to the *projectSetting* value, which can be any of the other values. The *projectSetting* argument is ignored for all other values of *settingOrProject*.",
+  "longDescription": "The value of _settingOrProject_ is one of the following.\n\n- \"on\" : Enables analytics gathering and reporting for the user.\n- \"off\" : Disables analytics gathering and reporting for the user.\n- \"ci\" : Enables analytics and configures reporting for use with Continuous Integration,\n  which uses a common CI user.\n- \"prompt\" : Prompts the user to set the status interactively.\n- \"project\" : Sets the default status for the project to the _projectSetting_ value, which can be any of the other values. The _projectSetting_ argument is ignored for all other values of _settingOrProject_.\n",
   "options": [
     {
       "name": "setting-or-project",

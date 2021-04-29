@@ -141,13 +141,13 @@ function _validateReversePeerDependencies(name, version, infoMap, logger, next) 
 }
 function _validateUpdatePackages(infoMap, force, next, logger) {
     logger.debug('Updating the following packages:');
-    infoMap.forEach(info => {
+    infoMap.forEach((info) => {
         if (info.target) {
             logger.debug(`  ${info.name} => ${info.target.version}`);
         }
     });
     let peerErrors = false;
-    infoMap.forEach(info => {
+    infoMap.forEach((info) => {
         const { name, target } = info;
         if (!target) {
             return;
@@ -155,10 +155,11 @@ function _validateUpdatePackages(infoMap, force, next, logger) {
         const pkgLogger = logger.createChild(name);
         logger.debug(`${name}...`);
         const { peerDependencies = {}, peerDependenciesMeta = {} } = target.packageJson;
-        peerErrors = _validateForwardPeerDependencies(name, infoMap, peerDependencies, peerDependenciesMeta, pkgLogger, next) || peerErrors;
-        peerErrors
-            = _validateReversePeerDependencies(name, target.version, infoMap, pkgLogger, next)
-                || peerErrors;
+        peerErrors =
+            _validateForwardPeerDependencies(name, infoMap, peerDependencies, peerDependenciesMeta, pkgLogger, next) || peerErrors;
+        peerErrors =
+            _validateReversePeerDependencies(name, target.version, infoMap, pkgLogger, next) ||
+                peerErrors;
     });
     if (!force && peerErrors) {
         throw new schematics_1.SchematicsException(core_1.tags.stripIndents `Incompatible peer dependencies found.
@@ -185,14 +186,14 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
         deps[name] = `${execResult ? execResult[0] : ''}${newVersion}`;
     };
     const toInstall = [...infoMap.values()]
-        .map(x => [x.name, x.target, x.installed])
+        .map((x) => [x.name, x.target, x.installed])
         // tslint:disable-next-line:no-non-null-assertion
         .filter(([name, target, installed]) => {
         return !!name && !!target && !!installed;
     });
     toInstall.forEach(([name, target, installed]) => {
-        logger.info(`Updating package.json with dependency ${name} `
-            + `@ ${JSON.stringify(target.version)} (was ${JSON.stringify(installed.version)})...`);
+        logger.info(`Updating package.json with dependency ${name} ` +
+            `@ ${JSON.stringify(target.version)} (was ${JSON.stringify(installed.version)})...`);
         if (packageJson.dependencies && packageJson.dependencies[name]) {
             updateDependency(packageJson.dependencies, name, target.version);
             if (packageJson.devDependencies && packageJson.devDependencies[name]) {
@@ -231,9 +232,8 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
             if (!target.updateMetadata.migrations) {
                 return;
             }
-            const collection = (target.updateMetadata.migrations.match(/^[./]/)
-                ? name + '/'
-                : '') + target.updateMetadata.migrations;
+            const collection = (target.updateMetadata.migrations.match(/^[./]/) ? name + '/' : '') +
+                target.updateMetadata.migrations;
             externalMigrations.push({
                 package: name,
                 collection,
@@ -261,14 +261,15 @@ function _getUpdateMetadata(packageJson, logger) {
         const packageGroup = metadata['packageGroup'];
         // Verify that packageGroup is an array of strings or an map of versions. This is not an error
         // but we still warn the user and ignore the packageGroup keys.
-        if (Array.isArray(packageGroup) && packageGroup.every(x => typeof x == 'string')) {
+        if (Array.isArray(packageGroup) && packageGroup.every((x) => typeof x == 'string')) {
             result.packageGroup = packageGroup.reduce((group, name) => {
                 group[name] = packageJson.version;
                 return group;
             }, result.packageGroup);
         }
-        else if (typeof packageGroup == 'object' && packageGroup
-            && Object.values(packageGroup).every(x => typeof x == 'string')) {
+        else if (typeof packageGroup == 'object' &&
+            packageGroup &&
+            Object.values(packageGroup).every((x) => typeof x == 'string')) {
             result.packageGroup = packageGroup;
         }
         else {
@@ -282,9 +283,9 @@ function _getUpdateMetadata(packageJson, logger) {
     if (metadata['requirements']) {
         const requirements = metadata['requirements'];
         // Verify that requirements are
-        if (typeof requirements != 'object'
-            || Array.isArray(requirements)
-            || Object.keys(requirements).some(name => typeof requirements[name] != 'string')) {
+        if (typeof requirements != 'object' ||
+            Array.isArray(requirements) ||
+            Object.keys(requirements).some((name) => typeof requirements[name] != 'string')) {
             logger.warn(`requirements metadata of package ${packageJson.name} is malformed. Ignoring.`);
         }
         else {
@@ -307,7 +308,10 @@ function _usageMessage(options, infoMap, logger) {
     const packagesToUpdate = [...infoMap.entries()]
         .map(([name, info]) => {
         const tag = options.next
-            ? (info.npmPackageJson['dist-tags']['next'] ? 'next' : 'latest') : 'latest';
+            ? info.npmPackageJson['dist-tags']['next']
+                ? 'next'
+                : 'latest'
+            : 'latest';
         const version = info.npmPackageJson['dist-tags'][tag];
         const target = info.npmPackageJson.versions[version];
         return {
@@ -319,7 +323,7 @@ function _usageMessage(options, infoMap, logger) {
         };
     })
         .filter(({ info, version, target }) => {
-        return (target && semver.compare(info.installed.version, version) < 0);
+        return target && semver.compare(info.installed.version, version) < 0;
     })
         .filter(({ target }) => {
         return target['ng-update'];
@@ -328,8 +332,7 @@ function _usageMessage(options, infoMap, logger) {
         // Look for packageGroup.
         if (target['ng-update'] && target['ng-update']['packageGroup']) {
             const packageGroup = target['ng-update']['packageGroup'];
-            const packageGroupName = target['ng-update']['packageGroupName']
-                || target['ng-update']['packageGroup'][0];
+            const packageGroupName = target['ng-update']['packageGroupName'] || target['ng-update']['packageGroup'][0];
             if (packageGroupName) {
                 if (packageGroups.has(name)) {
                     return null;
@@ -345,30 +348,29 @@ function _usageMessage(options, infoMap, logger) {
         }
         return [name, `${info.installed.version} -> ${version} `, command];
     })
-        .filter(x => x !== null)
-        .sort((a, b) => a && b ? a[0].localeCompare(b[0]) : 0);
+        .filter((x) => x !== null)
+        .sort((a, b) => (a && b ? a[0].localeCompare(b[0]) : 0));
     if (packagesToUpdate.length == 0) {
         logger.info('We analyzed your package.json and everything seems to be in order. Good work!');
         return;
     }
     logger.info('We analyzed your package.json, there are some packages to update:\n');
     // Find the largest name to know the padding needed.
-    let namePad = Math.max(...[...infoMap.keys()].map(x => x.length)) + 2;
+    let namePad = Math.max(...[...infoMap.keys()].map((x) => x.length)) + 2;
     if (!Number.isFinite(namePad)) {
         namePad = 30;
     }
     const pads = [namePad, 25, 0];
-    logger.info('  '
-        + ['Name', 'Version', 'Command to update'].map((x, i) => x.padEnd(pads[i])).join(''));
-    logger.info(' ' + '-'.repeat(pads.reduce((s, x) => s += x, 0) + 20));
-    packagesToUpdate.forEach(fields => {
+    logger.info('  ' + ['Name', 'Version', 'Command to update'].map((x, i) => x.padEnd(pads[i])).join(''));
+    logger.info(' ' + '-'.repeat(pads.reduce((s, x) => (s += x), 0) + 20));
+    packagesToUpdate.forEach((fields) => {
         if (!fields) {
             return;
         }
         logger.info('  ' + fields.map((x, i) => x.padEnd(pads[i])).join(''));
     });
-    logger.info(`\nThere might be additional packages which don't provide 'ng update' capabilities that are outdated.\n`
-        + `You can update the additional packages by running the update command of your package manager.`);
+    logger.info(`\nThere might be additional packages which don't provide 'ng update' capabilities that are outdated.\n` +
+        `You can update the additional packages by running the update command of your package manager.`);
     return;
 }
 function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger) {
@@ -435,9 +437,7 @@ function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logg
 function _buildPackageList(options, projectDeps, logger) {
     // Parse the packages options to set the targeted version.
     const packages = new Map();
-    const commandLinePackages = (options.packages && options.packages.length > 0)
-        ? options.packages
-        : [];
+    const commandLinePackages = options.packages && options.packages.length > 0 ? options.packages : [];
     for (const pkg of commandLinePackages) {
         // Split the version asked on command line.
         const m = pkg.match(/^((?:@[^/]{1,100}\/)?[^@]{1,100})(?:@(.{1,100}))?$/);
@@ -461,9 +461,9 @@ function _addPackageGroup(tree, packages, allDependencies, npmPackageJson, logge
         return;
     }
     const info = _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger);
-    const version = (info.target && info.target.version)
-        || npmPackageJson['dist-tags'][maybePackage]
-        || maybePackage;
+    const version = (info.target && info.target.version) ||
+        npmPackageJson['dist-tags'][maybePackage] ||
+        maybePackage;
     if (!npmPackageJson.versions[version]) {
         return;
     }
@@ -475,23 +475,23 @@ function _addPackageGroup(tree, packages, allDependencies, npmPackageJson, logge
     if (!packageGroup) {
         return;
     }
-    if (Array.isArray(packageGroup) && !packageGroup.some(x => typeof x != 'string')) {
+    if (Array.isArray(packageGroup) && !packageGroup.some((x) => typeof x != 'string')) {
         packageGroup = packageGroup.reduce((acc, curr) => {
             acc[curr] = maybePackage;
             return acc;
         }, {});
     }
     // Only need to check if it's an object because we set it right the time before.
-    if (typeof packageGroup != 'object'
-        || packageGroup === null
-        || Object.values(packageGroup).some(v => typeof v != 'string')) {
+    if (typeof packageGroup != 'object' ||
+        packageGroup === null ||
+        Object.values(packageGroup).some((v) => typeof v != 'string')) {
         logger.warn(`packageGroup metadata of package ${npmPackageJson.name} is malformed.`);
         return;
     }
     Object.keys(packageGroup)
-        .filter(name => !packages.has(name)) // Don't override names from the command line.
-        .filter(name => allDependencies.has(name)) // Remove packages that aren't installed.
-        .forEach(name => {
+        .filter((name) => !packages.has(name)) // Don't override names from the command line.
+        .filter((name) => allDependencies.has(name)) // Remove packages that aren't installed.
+        .forEach((name) => {
         packages.set(name, packageGroup[name]);
     });
 }
@@ -507,9 +507,9 @@ function _addPeerDependencies(tree, packages, allDependencies, npmPackageJson, n
         return;
     }
     const info = _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger);
-    const version = (info.target && info.target.version)
-        || npmPackageJson['dist-tags'][maybePackage]
-        || maybePackage;
+    const version = (info.target && info.target.version) ||
+        npmPackageJson['dist-tags'][maybePackage] ||
+        maybePackage;
     if (!npmPackageJson.versions[version]) {
         return;
     }
@@ -608,7 +608,11 @@ function default_1(options) {
         const packages = _buildPackageList(options, npmDeps, logger);
         // Grab all package.json from the npm repository. This requires a lot of HTTP calls so we
         // try to parallelize as many as possible.
-        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map(depName => npm_1.getNpmPackageJson(depName, logger, { registryUrl: options.registry, usingYarn, verbose: options.verbose })));
+        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => npm_1.getNpmPackageJson(depName, logger, {
+            registryUrl: options.registry,
+            usingYarn,
+            verbose: options.verbose,
+        })));
         // Build a map of all dependencies and their packageJson.
         const npmPackageJsonMap = allPackageMetadata.reduce((acc, npmPackageJson) => {
             // If the package was not found on the registry. It could be private, so we will just
@@ -618,8 +622,8 @@ function default_1(options) {
             // private one, but it's rare enough.
             if (!npmPackageJson.name) {
                 if (npmPackageJson.requestedName && packages.has(npmPackageJson.requestedName)) {
-                    throw new schematics_1.SchematicsException(`Package ${JSON.stringify(npmPackageJson.requestedName)} was not found on the `
-                        + 'registry. Cannot continue as this may be an error.');
+                    throw new schematics_1.SchematicsException(`Package ${JSON.stringify(npmPackageJson.requestedName)} was not found on the ` +
+                        'registry. Cannot continue as this may be an error.');
                 }
             }
             else {

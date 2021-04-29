@@ -47,7 +47,7 @@ exports.analyticsPackageSafelist = [
     '@schematics/angular',
 ];
 function isPackageNameSafeForAnalytics(name) {
-    return exports.analyticsPackageSafelist.some(pattern => {
+    return exports.analyticsPackageSafelist.some((pattern) => {
         if (typeof pattern == 'string') {
             return pattern === name;
         }
@@ -252,9 +252,7 @@ exports.getGlobalAnalytics = getGlobalAnalytics;
 async function hasWorkspaceAnalyticsConfiguration() {
     try {
         const globalWorkspace = await config_1.getWorkspace('local');
-        const analyticsConfig = globalWorkspace
-            && globalWorkspace.getCli()
-            && globalWorkspace.getCli()['analytics'];
+        const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         if (analyticsConfig !== undefined) {
             return true;
         }

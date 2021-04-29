@@ -1,7 +1,7 @@
 {
   "name": "e2e",
   "description": "Builds and serves an Angular app, then runs end-to-end tests.",
-  "longDescription": "Must be executed from within a workspace directory.\nWhen a project name is not supplied, it will execute for all projects.",
+  "longDescription": "Must be executed from within a workspace directory.\nWhen a project name is not supplied, it will execute for all projects.\n",
   "options": [
     {
       "name": "project",
