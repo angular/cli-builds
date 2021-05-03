@@ -7,7 +7,7 @@
  */
 import { analytics, logging } from '@angular-devkit/core';
 import { AngularWorkspace } from '../utilities/config';
-import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, Option, SubCommandDescription } from './interface';
+import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, Option } from './interface';
 export interface BaseCommandOptions {
     help?: boolean | string;
 }
@@ -26,7 +26,6 @@ export declare abstract class Command<T extends BaseCommandOptions = BaseCommand
     printHelp(): Promise<number>;
     printJsonHelp(): Promise<number>;
     protected printHelpUsage(): Promise<void>;
-    protected printHelpSubcommand(subcommand: SubCommandDescription): Promise<void>;
     protected printHelpOptions(options?: Option[]): Promise<void>;
     validateScope(scope?: CommandScope): Promise<void>;
     reportAnalytics(paths: string[], options: Arguments, dimensions?: (boolean | number | string)[], metrics?: (boolean | number | string)[]): Promise<void>;

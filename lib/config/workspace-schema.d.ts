@@ -372,6 +372,10 @@ export interface AngularEnumOptionsSchema {
      * project for the workspace.
      */
     project?: string;
+    /**
+     * Adds a developer-defined type to the filename, in the format "name.type.ts".
+     */
+    type?: string;
 }
 /**
  * Generates a new, generic route guard definition in the given or default project.
