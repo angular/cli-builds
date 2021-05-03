@@ -69,7 +69,7 @@ class JSONFile {
     }
 }
 exports.JSONFile = JSONFile;
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function readAndParseJson(path) {
     const errors = [];
     const content = jsonc_parser_1.parse(fs_1.readFileSync(path, 'utf-8'), errors, { allowTrailingComma: true });
@@ -83,7 +83,7 @@ function formatError(path, errors) {
     const { error, offset } = errors[0];
     throw new Error(`Failed to parse "${path}" as JSON AST Object. ${jsonc_parser_1.printParseErrorCode(error)} at location: ${offset}.`);
 }
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseJson(content) {
     return jsonc_parser_1.parse(content, undefined, { allowTrailingComma: true });
 }

@@ -227,7 +227,7 @@ class ArchitectCommand extends command_1.Command {
     }
     getProjectNamesByTarget(targetName) {
         const allProjectsForTargetName = [];
-        // tslint:disable-next-line: no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         for (const [name, project] of this.workspace.projects) {
             if (project.targets.has(targetName)) {
                 allProjectsForTargetName.push(name);
@@ -240,7 +240,7 @@ class ArchitectCommand extends command_1.Command {
         else {
             // For single target commands, we try the default project first,
             // then the full list if it has a single project, then error out.
-            // tslint:disable-next-line: no-non-null-assertion
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const maybeDefaultProject = this.workspace.extensions['defaultProject'];
             if (maybeDefaultProject && allProjectsForTargetName.includes(maybeDefaultProject)) {
                 return [maybeDefaultProject];

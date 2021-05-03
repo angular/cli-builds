@@ -189,7 +189,7 @@ class UpdateCommand extends command_1.Command {
         }
         return true;
     }
-    // tslint:disable-next-line:no-big-function
+    // eslint-disable-next-line max-lines-per-function
     async run(options) {
         var _a, _b;
         await package_manager_1.ensureCompatibleNpm(this.context.root);
@@ -481,7 +481,7 @@ class UpdateCommand extends command_1.Command {
             }
         }
         // This is a temporary workaround to allow data to be passed back from the update schematic
-        // tslint:disable-next-line: no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const migrations = global.externalMigrations;
         if (success && migrations) {
             for (const migration of migrations) {
