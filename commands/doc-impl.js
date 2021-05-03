@@ -35,7 +35,7 @@ class DocCommand extends command_1.Command {
             // we try to get the current Angular version of the project
             // and use it if we can find it
             try {
-                /* tslint:disable-next-line:no-implicit-dependencies */
+                /* eslint-disable-next-line import/no-extraneous-dependencies */
                 const currentNgVersion = (await Promise.resolve().then(() => require('@angular/core'))).VERSION.major;
                 domain = `v${currentNgVersion}.angular.io`;
             }

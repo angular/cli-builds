@@ -71,7 +71,7 @@ async function ensureCompatibleNpm(root) {
             return;
         }
         if (semver_1.satisfies(version, '>=7 <7.5.6')) {
-            // tslint:disable-next-line: no-console
+            // eslint-disable-next-line no-console
             console.warn(`npm version ${version} detected.` +
                 ' When using npm 7 with the Angular CLI, npm version 7.5.6 or higher is recommended.');
         }

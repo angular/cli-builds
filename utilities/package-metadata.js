@@ -11,8 +11,8 @@ exports.fetchPackageManifest = exports.fetchPackageMetadata = void 0;
 const fs_1 = require("fs");
 const os_1 = require("os");
 const path = require("path");
-const ini = require('ini');
 const lockfile = require('@yarnpkg/lockfile');
+const ini = require('ini');
 const pacote = require('pacote');
 let npmrc;
 function ensureNpmrc(logger, usingYarn, verbose) {

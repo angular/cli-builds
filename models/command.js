@@ -89,6 +89,7 @@ class Command {
             The ${this.description.name} command requires to be run outside of a project, but a
             project definition was found at "${this.workspace.filePath}".
           `);
+                    // eslint-disable-next-line no-throw-literal
                     throw 1;
                 }
                 break;
@@ -98,6 +99,7 @@ class Command {
             The ${this.description.name} command requires to be run in an Angular project, but a
             project definition could not be found.
           `);
+                    // eslint-disable-next-line no-throw-literal
                     throw 1;
                 }
                 break;

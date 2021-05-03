@@ -16,7 +16,7 @@ const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
 const analytics_collector_1 = require("./analytics-collector");
-// tslint:disable: no-console
+/* eslint-disable no-console */
 const analyticsDebug = debug('ng:analytics'); // Generate analytics, including settings and users.
 let _defaultAngularCliPropertyCache;
 exports.AnalyticsProperties = {
