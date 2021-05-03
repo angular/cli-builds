@@ -669,14 +669,6 @@
               "hidden": false
             },
             {
-              "name": "type",
-              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false
-            },
-            {
               "name": "lint-fix",
               "description": "Apply lint fixes after generating the enum.",
               "type": "boolean",
