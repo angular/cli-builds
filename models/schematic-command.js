@@ -43,7 +43,6 @@ class SchematicCommand extends command_1.Command {
             const collection = this.getCollection(this.collectionName);
             const schematic = this.getSchematic(collection, this.schematicName, true);
             const options = await json_schema_1.parseJsonSchemaToOptions(this._workflow.registry, schematic.description.schemaJson || {});
-            this.description.description = schematic.description.description;
             this.description.options.push(...options.filter((x) => !x.hidden));
             // Remove any user analytics from schematics that are NOT part of our safelist.
             for (const o of this.description.options) {
@@ -83,6 +82,10 @@ class SchematicCommand extends command_1.Command {
                     this.logger.info(`    ${schematicName}`);
                 });
             });
+        }
+        else if (schematicNames.length == 1) {
+            this.logger.info('Help for schematic ' + schematicNames[0]);
+            await this.printHelpSubcommand(subCommandOption.subcommands[schematicNames[0]]);
         }
         return 0;
     }

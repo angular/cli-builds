@@ -45,6 +45,10 @@ class Command {
         this.logger.info(`usage: ng ${name}${argDisplay}${optionsDisplay}`);
         this.logger.info('');
     }
+    async printHelpSubcommand(subcommand) {
+        this.logger.info(subcommand.description);
+        await this.printHelpOptions(subcommand.options);
+    }
     async printHelpOptions(options = this.description.options) {
         const args = options.filter((opt) => opt.positional !== undefined);
         const opts = options.filter((opt) => opt.positional === undefined);
