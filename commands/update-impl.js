@@ -196,7 +196,7 @@ class UpdateCommand extends command_1.Command {
         // Check if the current installed CLI version is older than the latest version.
         if (!disableVersionCheck && (await this.checkCLILatestVersion(options.verbose, options.next))) {
             this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` + 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
+            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.packageManager, process.argv.slice(2));
         }
         const logVerbose = (message) => {
             if (options.verbose) {
