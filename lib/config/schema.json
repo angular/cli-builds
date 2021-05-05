@@ -1910,7 +1910,7 @@
           "type": "boolean",
           "description": "Show circular dependency warnings on builds.",
           "default": false,
-          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use a either a lint rule or other external tooling."
+          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use either a lint rule or other external tooling."
         },
         "buildOptimizer": {
           "type": "boolean",
@@ -2891,7 +2891,7 @@
           "type": "boolean",
           "description": "Show circular dependency warnings on builds.",
           "default": false,
-          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use a either a lint rule or other external tooling."
+          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use either a lint rule or other external tooling."
         },
         "namedChunks": {
           "type": "boolean",
