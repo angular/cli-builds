@@ -16,7 +16,7 @@
           "description": "Generates an app shell for running a server-side version of an app.",
           "options": [
             {
-              "name": "project",
+              "name": "client-project",
               "description": "The name of the related client app.",
               "type": "string",
               "required": false,

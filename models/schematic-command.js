@@ -169,15 +169,10 @@ class SchematicCommand extends command_1.Command {
             schemaValidation: true,
             optionTransforms: [
                 // Add configuration file defaults
-                async (schematic, current) => {
-                    const projectName = typeof current.project === 'string'
-                        ? current.project
-                        : getProjectName();
-                    return {
-                        ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, projectName)),
-                        ...current,
-                    };
-                },
+                async (schematic, current) => ({
+                    ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, getProjectName())),
+                    ...current,
+                }),
             ],
             engineHostCreator: (options) => new schematic_engine_host_1.SchematicEngineHost(options.resolvePaths),
         });
@@ -338,9 +333,13 @@ class SchematicCommand extends command_1.Command {
             return 1;
         }
         const pathOptions = o ? this.setPathOptions(o, workingDir) : {};
-        const input = {
-            ...pathOptions,
-            ...args,
+        let input = { ...pathOptions, ...args };
+        // Read the default values from the workspace.
+        const projectName = input.project !== undefined ? '' + input.project : null;
+        const defaults = await config_1.getSchematicDefaults(collectionName, schematicName, projectName);
+        input = {
+            ...defaults,
+            ...input,
             ...options.additionalOptions,
         };
         workflow.reporter.subscribe((event) => {
