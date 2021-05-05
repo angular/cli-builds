@@ -170,25 +170,23 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 return 1;
             }
         }
-        try {
-            spinner.start('Installing package...');
-            if (savePackage === false) {
-                // Temporary packages are located in a different directory
-                // Hence we need to resolve them using the temp path
-                const tempPath = install_package_1.installTempPackage(packageIdentifier.raw, undefined, packageManager, options.registry ? [`--registry="${options.registry}"`] : undefined);
-                const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
-                    paths: [tempPath],
-                });
-                collectionName = path_1.dirname(resolvedCollectionPath);
+        if (savePackage === false) {
+            // Temporary packages are located in a different directory
+            // Hence we need to resolve them using the temp path
+            const { status, tempPath } = await install_package_1.installTempPackage(packageIdentifier.raw, packageManager, options.registry ? [`--registry="${options.registry}"`] : undefined);
+            const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
+                paths: [tempPath],
+            });
+            if (status !== 0) {
+                return status;
             }
-            else {
-                install_package_1.installPackage(packageIdentifier.raw, undefined, packageManager, savePackage, options.registry ? [`--registry="${options.registry}"`] : undefined);
-            }
-            spinner.succeed('Package successfully installed.');
+            collectionName = path_1.dirname(resolvedCollectionPath);
         }
-        catch (error) {
-            spinner.fail(`Package installation failed: ${error.message}`);
-            return 1;
+        else {
+            const status = await install_package_1.installPackage(packageIdentifier.raw, packageManager, savePackage, options.registry ? [`--registry="${options.registry}"`] : undefined);
+            if (status !== 0) {
+                return status;
+            }
         }
         return this.executeSchematic(collectionName, options['--']);
     }

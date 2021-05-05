@@ -14,35 +14,44 @@ const os_1 = require("os");
 const path_1 = require("path");
 const rimraf = require("rimraf");
 const workspace_schema_1 = require("../lib/config/workspace-schema");
-const color_1 = require("../utilities/color");
-function installPackage(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
+const spinner_1 = require("./spinner");
+async function installPackage(packageName, packageManager = workspace_schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
         packageManagerArgs.install,
         packageName,
         packageManagerArgs.silent,
     ];
-    logger === null || logger === void 0 ? void 0 : logger.info(color_1.colors.green(`Installing packages for tooling via ${packageManager}.`));
+    const spinner = new spinner_1.Spinner();
+    spinner.start('Installing package...');
     if (save === 'devDependencies') {
         installArgs.push(packageManagerArgs.saveDev);
     }
-    const { status, stderr, stdout, error } = child_process_1.spawnSync(packageManager, [...installArgs, ...extraArgs], {
-        stdio: 'pipe',
-        shell: true,
-        encoding: 'utf8',
-        cwd,
+    const bufferedOutput = [];
+    return new Promise((resolve, reject) => {
+        var _a, _b;
+        const childProcess = child_process_1.spawn(packageManager, [...installArgs, ...extraArgs], {
+            stdio: 'pipe',
+            shell: true,
+            cwd,
+        }).on('close', (code) => {
+            if (code === 0) {
+                spinner.succeed('Package successfully installed.');
+                resolve(0);
+            }
+            else {
+                spinner.stop();
+                bufferedOutput.forEach(({ stream, data }) => stream.write(data));
+                spinner.fail('Package install failed, see above.');
+                reject(1);
+            }
+        });
+        (_a = childProcess.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => bufferedOutput.push({ stream: process.stdout, data: data }));
+        (_b = childProcess.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => bufferedOutput.push({ stream: process.stderr, data: data }));
     });
-    if (status !== 0) {
-        let errorMessage = ((error && error.message) || stderr || stdout || '').trim();
-        if (errorMessage) {
-            errorMessage += '\n';
-        }
-        throw new Error(errorMessage + `Package install failed${errorMessage ? ', see above' : ''}.`);
-    }
-    logger === null || logger === void 0 ? void 0 : logger.info(color_1.colors.green(`Installed packages for tooling via ${packageManager}.`));
 }
 exports.installPackage = installPackage;
-function installTempPackage(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, extraArgs) {
+async function installTempPackage(packageName, packageManager = workspace_schema_1.PackageManager.Npm, extraArgs) {
     const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), 'angular-cli-packages-'));
     // clean up temp directory on process exit
     process.on('exit', () => {
@@ -75,16 +84,21 @@ function installTempPackage(packageName, logger, packageManager = workspace_sche
         `${packageManagerArgs.prefix}="${prefixPath}"`,
         packageManagerArgs.noLockfile,
     ];
-    installPackage(packageName, logger, packageManager, true, installArgs, tempPath);
-    return tempNodeModules;
+    return {
+        status: await installPackage(packageName, packageManager, true, installArgs, tempPath),
+        tempPath,
+    };
 }
 exports.installTempPackage = installTempPackage;
-function runTempPackageBin(packageName, logger, packageManager = workspace_schema_1.PackageManager.Npm, args = []) {
-    const tempNodeModulesPath = installTempPackage(packageName, logger, packageManager);
+async function runTempPackageBin(packageName, packageManager = workspace_schema_1.PackageManager.Npm, args = []) {
+    const { status: code, tempPath } = await installTempPackage(packageName, packageManager);
+    if (code !== 0) {
+        return code;
+    }
     // Remove version/tag etc... from package name
     // Ex: @angular/cli@latest -> @angular/cli
     const packageNameNoVersion = packageName.substring(0, packageName.lastIndexOf('@'));
-    const pkgLocation = path_1.join(tempNodeModulesPath, packageNameNoVersion);
+    const pkgLocation = path_1.join(tempPath, packageNameNoVersion);
     const packageJsonPath = path_1.join(pkgLocation, 'package.json');
     // Get a binary location for this package
     let binPath;
