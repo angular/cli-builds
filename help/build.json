@@ -285,7 +285,7 @@
       "required": false,
       "aliases": [],
       "hidden": false,
-      "deprecated": "The recommended method to detect circular dependencies in project code is to use a either a lint rule or other external tooling."
+      "deprecated": "The recommended method to detect circular dependencies in project code is to use either a lint rule or other external tooling."
     },
     {
       "name": "build-optimizer",
