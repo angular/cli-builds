@@ -351,12 +351,14 @@
                   }
                 }
               },
+              "additionalProperties": false,
               "required": [
                 "builder"
               ]
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:app-shell"
@@ -378,6 +380,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:browser"
@@ -399,6 +402,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:dev-server"
@@ -420,6 +424,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:extract-i18n"
@@ -441,6 +446,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:karma"
@@ -462,6 +468,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:protractor"
@@ -483,6 +490,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:server"
@@ -504,6 +512,7 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:tslint"
@@ -525,9 +534,14 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "builder": {
                   "const": "@angular-devkit/build-angular:ng-packagr"
+                },
+                "defaultConfiguration": {
+                  "type": "string",
+                  "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
                   "$ref": "#/definitions/AngularDevkitBuildAngularNgPackagrSchema"

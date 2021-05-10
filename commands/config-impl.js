@@ -54,17 +54,22 @@ function parseJsonPath(path) {
     return result.filter((fragment) => fragment != null);
 }
 function normalizeValue(value) {
+    var _a, _b;
     const valueString = `${value}`.trim();
-    if (valueString === 'true') {
-        return true;
+    switch (valueString) {
+        case 'true':
+            return true;
+        case 'false':
+            return false;
+        case 'null':
+            return null;
+        case 'undefined':
+            return undefined;
     }
-    else if (valueString === 'false') {
-        return false;
-    }
-    else if (isFinite(+valueString)) {
+    if (isFinite(+valueString)) {
         return +valueString;
     }
-    return value || undefined;
+    return (_b = (_a = json_file_1.parseJson(valueString)) !== null && _a !== void 0 ? _a : value) !== null && _b !== void 0 ? _b : undefined;
 }
 class ConfigCommand extends command_1.Command {
     async run(options) {
