@@ -15,7 +15,8 @@ export interface Schema {
      */
     createCommits?: boolean;
     /**
-     * If false, will error out if installed packages are incompatible with the update.
+     * Ignore peer dependency version mismatches. Passes the `--force` flag to the package
+     * manager when installing packages.
      */
     force?: boolean;
     /**

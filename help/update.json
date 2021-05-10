@@ -32,7 +32,7 @@
     },
     {
       "name": "force",
-      "description": "If false, will error out if installed packages are incompatible with the update.",
+      "description": "Ignore peer dependency version mismatches. Passes the `--force` flag to the package manager when installing packages.",
       "type": "boolean",
       "default": false,
       "required": false,

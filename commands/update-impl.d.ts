@@ -12,7 +12,7 @@ export declare class UpdateCommand extends Command<UpdateCommandSchema> {
     readonly allowMissingWorkspace = true;
     private workflow;
     private packageManager;
-    initialize(): Promise<void>;
+    initialize(options: UpdateCommandSchema & Arguments): Promise<void>;
     private executeSchematic;
     /**
      * @return Whether or not the migration was performed successfully.

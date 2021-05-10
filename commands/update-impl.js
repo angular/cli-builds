@@ -42,10 +42,11 @@ class UpdateCommand extends command_1.Command {
         this.allowMissingWorkspace = true;
         this.packageManager = workspace_schema_1.PackageManager.Npm;
     }
-    async initialize() {
+    async initialize(options) {
         this.packageManager = await package_manager_1.getPackageManager(this.context.root);
         this.workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: this.packageManager,
+            packageManagerForce: options.force,
             // __dirname -> favor @schematics/update from this package
             // Otherwise, use packages from the active workspace (migrations)
             resolvePaths: [__dirname, this.context.root],
