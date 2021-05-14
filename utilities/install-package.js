@@ -86,19 +86,19 @@ async function installTempPackage(packageName, packageManager = workspace_schema
     ];
     return {
         status: await installPackage(packageName, packageManager, true, installArgs, tempPath),
-        tempPath,
+        tempNodeModules,
     };
 }
 exports.installTempPackage = installTempPackage;
 async function runTempPackageBin(packageName, packageManager = workspace_schema_1.PackageManager.Npm, args = []) {
-    const { status: code, tempPath } = await installTempPackage(packageName, packageManager);
+    const { status: code, tempNodeModules } = await installTempPackage(packageName, packageManager);
     if (code !== 0) {
         return code;
     }
     // Remove version/tag etc... from package name
     // Ex: @angular/cli@latest -> @angular/cli
     const packageNameNoVersion = packageName.substring(0, packageName.lastIndexOf('@'));
-    const pkgLocation = path_1.join(tempPath, packageNameNoVersion);
+    const pkgLocation = path_1.join(tempNodeModules, packageNameNoVersion);
     const packageJsonPath = path_1.join(pkgLocation, 'package.json');
     // Get a binary location for this package
     let binPath;
