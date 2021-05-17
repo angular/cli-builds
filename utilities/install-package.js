@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runTempPackageBin = exports.installTempPackage = exports.installPackage = void 0;
+exports.runTempPackageBin = exports.installTempPackage = exports.installPackage = exports.installAllPackages = void 0;
 const child_process_1 = require("child_process");
 const fs_1 = require("fs");
 const os_1 = require("os");
@@ -15,6 +15,39 @@ const path_1 = require("path");
 const rimraf = require("rimraf");
 const workspace_schema_1 = require("../lib/config/workspace-schema");
 const spinner_1 = require("./spinner");
+async function installAllPackages(packageManager = workspace_schema_1.PackageManager.Npm, extraArgs = [], cwd = process.cwd()) {
+    const packageManagerArgs = getPackageManagerArguments(packageManager);
+    const installArgs = [];
+    if (packageManagerArgs.installAll) {
+        installArgs.push(packageManagerArgs.installAll);
+    }
+    installArgs.push(packageManagerArgs.silent);
+    const spinner = new spinner_1.Spinner();
+    spinner.start('Installing packages...');
+    const bufferedOutput = [];
+    return new Promise((resolve, reject) => {
+        var _a, _b;
+        const childProcess = child_process_1.spawn(packageManager, [...installArgs, ...extraArgs], {
+            stdio: 'pipe',
+            shell: true,
+            cwd,
+        }).on('close', (code) => {
+            if (code === 0) {
+                spinner.succeed('Packages successfully installed.');
+                resolve(0);
+            }
+            else {
+                spinner.stop();
+                bufferedOutput.forEach(({ stream, data }) => stream.write(data));
+                spinner.fail('Package install failed, see above.');
+                reject(1);
+            }
+        });
+        (_a = childProcess.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => bufferedOutput.push({ stream: process.stdout, data: data }));
+        (_b = childProcess.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => bufferedOutput.push({ stream: process.stderr, data: data }));
+    });
+}
+exports.installAllPackages = installAllPackages;
 async function installPackage(packageName, packageManager = workspace_schema_1.PackageManager.Npm, save = true, extraArgs = [], cwd = process.cwd()) {
     const packageManagerArgs = getPackageManagerArguments(packageManager);
     const installArgs = [
@@ -146,6 +179,7 @@ function getPackageManagerArguments(packageManager) {
                 silent: '--silent',
                 saveDev: '--save-dev',
                 install: 'add',
+                installAll: 'install',
                 prefix: '--prefix',
                 noLockfile: '--no-lockfile',
             };
@@ -154,6 +188,7 @@ function getPackageManagerArguments(packageManager) {
                 silent: '--quiet',
                 saveDev: '--save-dev',
                 install: 'install',
+                installAll: 'install',
                 prefix: '--prefix',
                 noLockfile: '--no-package-lock',
             };

@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.angularMajorCompatGuarantee = void 0;
 const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
-const tasks_1 = require("@angular-devkit/schematics/tasks");
 const npa = require("npm-package-arg");
 const semver = require("semver");
 const npm_1 = require("./npm");
@@ -218,9 +217,7 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
     const newContent = JSON.stringify(packageJson, null, 2);
     if (packageJsonContent.toString() != newContent || migrateOnly) {
         if (!migrateOnly) {
-            // If something changed, also hook up the task.
             tree.overwrite('/package.json', JSON.stringify(packageJson, null, 2));
-            context.addTask(new tasks_1.NodePackageInstallTask());
         }
         const externalMigrations = [];
         // Run the migrate schematics with the list of packages to use. The collection contains

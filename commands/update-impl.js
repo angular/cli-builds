@@ -475,6 +475,21 @@ class UpdateCommand extends command_1.Command {
             packageManager: this.packageManager,
             packages: packagesToUpdate,
         });
+        if (success) {
+            try {
+                // Remove existing node modules directory to provide a stronger guarantee that packages
+                // will be hoisted into the correct locations.
+                await fs.promises.rmdir(path.join(this.context.root, 'node_modules'), {
+                    recursive: true,
+                    maxRetries: 3,
+                });
+            }
+            catch { }
+            const result = await install_package_1.installAllPackages(this.packageManager, options.force ? ['--force'] : [], this.context.root);
+            if (result !== 0) {
+                return result;
+            }
+        }
         if (success && options.createCommits) {
             const committed = this.commit(`Angular CLI update for packages - ${packagesToUpdate.join(', ')}`);
             if (!committed) {
