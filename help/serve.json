@@ -77,7 +77,7 @@
     },
     {
       "name": "proxy-config",
-      "description": "Proxy configuration file.",
+      "description": "Proxy configuration file. For more information, see https://angular.io/guide/build#proxying-to-a-backend-server.",
       "type": "string",
       "required": false,
       "aliases": [],
