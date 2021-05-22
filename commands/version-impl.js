@@ -13,6 +13,10 @@ const path = require("path");
 const command_1 = require("../models/command");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
+/**
+ * Major versions of Node.js that are officially supported by Angular.
+ */
+const SUPPORTED_NODE_MAJORS = [12, 14];
 class VersionCommand extends command_1.Command {
     async run() {
         const cliPackage = require('../package.json');
@@ -21,6 +25,8 @@ class VersionCommand extends command_1.Command {
             workspacePackage = require(path.resolve(this.context.root, 'package.json'));
         }
         catch { }
+        const [nodeMajor] = process.versions.node.split('.').map((part) => Number(part));
+        const unsupportedNodeVersion = !SUPPORTED_NODE_MAJORS.includes(nodeMajor);
         const patterns = [
             /^@angular\/.*/,
             /^@angular-devkit\/.*/,
@@ -81,7 +87,7 @@ class VersionCommand extends command_1.Command {
         this.logger.info(asciiArt);
         this.logger.info(`
       Angular CLI: ${ngCliVersion}
-      Node: ${process.versions.node}
+      Node: ${process.versions.node}${unsupportedNodeVersion ? ' (Unsupported)' : ''}
       Package Manager: ${await this.getPackageManager()}
       OS: ${process.platform} ${process.arch}
 
@@ -110,6 +116,9 @@ class VersionCommand extends command_1.Command {
             .sort()
             .join('\n')}
     `.replace(/^ {6}/gm, ''));
+        if (unsupportedNodeVersion) {
+            this.logger.warn(`Warning: The current version of Node (${process.versions.node}) is not supported by Angular.`);
+        }
     }
     getVersion(moduleName) {
         let packagePath;
