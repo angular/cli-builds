@@ -148,7 +148,7 @@ async function runTempPackageBin(packageName, packageManager = workspace_schema_
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const argv = [`'${binPath}'`, ...args];
+    const argv = [binPath, ...args];
     const { status, error } = child_process_1.spawnSync('node', argv, {
         stdio: 'inherit',
         shell: true,
