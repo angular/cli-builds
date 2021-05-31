@@ -185,6 +185,7 @@ class ArchitectCommand extends command_1.Command {
         return success ? 0 : 1;
     }
     async runArchitectTarget(options) {
+        var _a;
         const extra = options['--'] || [];
         try {
             const targetSpec = this._makeTargetSpecifier(options);
@@ -206,7 +207,7 @@ class ArchitectCommand extends command_1.Command {
                 const newErrors = [];
                 for (const schemaError of e.errors) {
                     if (schemaError.keyword === 'additionalProperties') {
-                        const unknownProperty = schemaError.params.additionalProperty;
+                        const unknownProperty = (_a = schemaError.params) === null || _a === void 0 ? void 0 : _a.additionalProperty;
                         if (unknownProperty in options) {
                             const dashes = unknownProperty.length === 1 ? '-' : '--';
                             this.logger.fatal(`Unknown option: '${dashes}${unknownProperty}'`);
