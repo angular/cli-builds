@@ -12,7 +12,6 @@ const child_process_1 = require("child_process");
 const fs_1 = require("fs");
 const os_1 = require("os");
 const path_1 = require("path");
-const rimraf = require("rimraf");
 const workspace_schema_1 = require("../lib/config/workspace-schema");
 const spinner_1 = require("./spinner");
 async function installAllPackages(packageManager = workspace_schema_1.PackageManager.Npm, extraArgs = [], cwd = process.cwd()) {
@@ -89,7 +88,7 @@ async function installTempPackage(packageName, packageManager = workspace_schema
     // clean up temp directory on process exit
     process.on('exit', () => {
         try {
-            rimraf.sync(tempPath);
+            fs_1.rmdirSync(tempPath, { recursive: true, maxRetries: 3 });
         }
         catch { }
     });
