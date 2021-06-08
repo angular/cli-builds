@@ -1327,7 +1327,8 @@
               "default": "build",
               "required": false,
               "aliases": [],
-              "hidden": false
+              "hidden": false,
+              "deprecated": "No longer has an effect."
             },
             {
               "name": "name",
