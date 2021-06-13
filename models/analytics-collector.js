@@ -6,14 +6,36 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsCollector = void 0;
 const core_1 = require("@angular-devkit/core");
 const child_process_1 = require("child_process");
-const debug = require("debug");
-const https = require("https");
-const os = require("os");
-const querystring = require("querystring");
+const debug_1 = __importDefault(require("debug"));
+const https = __importStar(require("https"));
+const os = __importStar(require("os"));
+const querystring = __importStar(require("querystring"));
 const version_1 = require("./version");
 /**
  * See: https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide
@@ -22,7 +44,7 @@ class AnalyticsCollector {
     constructor(trackingId, userId) {
         this.trackingEventsQueue = [];
         this.parameters = {};
-        this.analyticsLogDebug = debug('ng:analytics:log');
+        this.analyticsLogDebug = debug_1.default('ng:analytics:log');
         // API Version
         this.parameters['v'] = '1';
         // User ID
