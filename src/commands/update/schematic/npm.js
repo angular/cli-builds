@@ -17,7 +17,6 @@ const pacote = require('pacote');
 const npmPackageJsonCache = new Map();
 let npmrc;
 function readOptions(logger, yarn = false, showPotentials = false) {
-    var _a;
     const cwd = process.cwd();
     const baseFilename = yarn ? 'yarnrc' : 'npmrc';
     const dotFilename = '.' + baseFilename;
@@ -32,8 +31,8 @@ function readOptions(logger, yarn = false, showPotentials = false) {
         }
     }
     const defaultConfigLocations = [
-        (!yarn && process.env.NPM_CONFIG_GLOBALCONFIG) || path.join(globalPrefix, 'etc', baseFilename),
-        (!yarn && process.env.NPM_CONFIG_USERCONFIG) || path.join(os_1.homedir(), dotFilename),
+        path.join(globalPrefix, 'etc', baseFilename),
+        path.join(os_1.homedir(), dotFilename),
     ];
     const projectConfigLocations = [path.join(cwd, dotFilename)];
     const root = path.parse(cwd).root;
@@ -54,45 +53,27 @@ function readOptions(logger, yarn = false, showPotentials = false) {
             // See: https://github.com/npm/npm-registry-fetch/blob/ebddbe78a5f67118c1f7af2e02c8a22bcaf9e850/index.js#L99-L126
             const rcConfig = yarn ? lockfile.parse(data) : ini.parse(data);
             for (const [key, value] of Object.entries(rcConfig)) {
-                let substitutedValue = value;
-                // Substitute any environment variable references.
-                if (typeof value === 'string') {
-                    substitutedValue = value.replace(/\$\{([^\}]+)\}/, (_, name) => process.env[name] || '');
-                }
                 switch (key) {
-                    // Unless auth options are scope with the registry url it appears that npm-registry-fetch ignores them,
-                    // even though they are documented.
-                    // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/README.md
-                    // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/auth.js#L45-L91
-                    case '_authToken':
-                    case 'token':
-                    case 'username':
-                    case 'password':
-                    case '_auth':
-                    case 'auth':
-                        (_a = options['forceAuth']) !== null && _a !== void 0 ? _a : (options['forceAuth'] = {});
-                        options['forceAuth'][key] = substitutedValue;
-                        break;
                     case 'noproxy':
                     case 'no-proxy':
-                        options['noProxy'] = substitutedValue;
+                        options['noProxy'] = value;
                         break;
                     case 'maxsockets':
-                        options['maxSockets'] = substitutedValue;
+                        options['maxSockets'] = value;
                         break;
                     case 'https-proxy':
                     case 'proxy':
-                        options['proxy'] = substitutedValue;
+                        options['proxy'] = value;
                         break;
                     case 'strict-ssl':
-                        options['strictSSL'] = substitutedValue;
+                        options['strictSSL'] = value;
                         break;
                     case 'local-address':
-                        options['localAddress'] = substitutedValue;
+                        options['localAddress'] = value;
                         break;
                     case 'cafile':
-                        if (typeof substitutedValue === 'string') {
-                            const cafile = path.resolve(path.dirname(location), substitutedValue);
+                        if (typeof value === 'string') {
+                            const cafile = path.resolve(path.dirname(location), value);
                             try {
                                 options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
                             }
@@ -100,10 +81,20 @@ function readOptions(logger, yarn = false, showPotentials = false) {
                         }
                         break;
                     default:
-                        options[key] = substitutedValue;
+                        options[key] = value;
                         break;
                 }
             }
+        }
+        else if (showPotentials) {
+            logger.info(`Trying '${location}'...not found.`);
+        }
+    }
+    // Substitute any environment variable references
+    for (const key in options) {
+        const value = options[key];
+        if (typeof value === 'string') {
+            options[key] = value.replace(/\$\{([^\}]+)\}/, (_, name) => process.env[name] || '');
         }
     }
     return options;
