@@ -31,7 +31,7 @@ const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const npa = __importStar(require("npm-package-arg"));
 const semver = __importStar(require("semver"));
-const npm_1 = require("./npm");
+const package_metadata_1 = require("../../../../utilities/package-metadata");
 // Angular guarantees that a major is compatible with its following major (so packages that depend
 // on Angular 5 are also compatible with Angular 6). This is, in code, represented by verifying
 // that all other packages that have a peer dependency of `"@angular/core": "^5.0.0"` actually
@@ -623,8 +623,8 @@ function default_1(options) {
         const packages = _buildPackageList(options, npmDeps, logger);
         // Grab all package.json from the npm repository. This requires a lot of HTTP calls so we
         // try to parallelize as many as possible.
-        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => npm_1.getNpmPackageJson(depName, logger, {
-            registryUrl: options.registry,
+        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => package_metadata_1.getNpmPackageJson(depName, logger, {
+            registry: options.registry,
             usingYarn,
             verbose: options.verbose,
         })));
