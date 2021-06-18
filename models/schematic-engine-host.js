@@ -33,17 +33,14 @@ function shouldWrapSchematic(schematicFile) {
                 return true;
         }
     }
-    const normalizedSchematicFile = schematicFile.replace(/\\/g, '/');
     // Never wrap the internal update schematic when executed directly
     // It communicates with the update command via `global`
-    // But we still want to redirect schematics located in `@angular/cli/node_modules`.
-    if (normalizedSchematicFile.includes('node_modules/@angular/cli/') &&
-        !normalizedSchematicFile.includes('node_modules/@angular/cli/node_modules/')) {
+    if (/[\/\\]node_modules[\/\\]@angular[\/\\]cli[\/\\]/.test(schematicFile)) {
         return false;
     }
     // Default is only first-party Angular schematic packages
     // Angular schematics are safe to use in the wrapped VM context
-    return /\/node_modules\/@(?:angular|schematics|nguniversal)\//.test(normalizedSchematicFile);
+    return /[\/\\]node_modules[\/\\]@(?:angular|schematics|nguniversal)[\/\\]/.test(schematicFile);
 }
 class SchematicEngineHost extends tools_1.NodeModulesEngineHost {
     _resolveReferenceString(refString, parentPath) {
@@ -97,8 +94,10 @@ const legacyModules = {
  * @param exportName An optional name of a specific export to return. Otherwise, return all exports.
  */
 function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
-    const { createRequire } = require('module');
-    const scopedRequire = createRequire(schematicFile);
+    const { createRequire, createRequireFromPath } = require('module');
+    // Node.js 10.x does not support `createRequire` so fallback to `createRequireFromPath`
+    // `createRequireFromPath` is deprecated in 12+ and can be removed once 10.x support is removed
+    const scopedRequire = (createRequire === null || createRequire === void 0 ? void 0 : createRequire(schematicFile)) || createRequireFromPath(schematicFile);
     const customRequire = function (id) {
         if (legacyModules[id]) {
             // Provide compatibility modules for older versions of @angular/cdk
