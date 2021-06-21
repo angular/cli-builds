@@ -150,7 +150,7 @@ export interface AngularApplicationOptionsSchema {
     /**
      * The file extension or preprocessor to use for style files.
      */
-    style?: Style;
+    style?: SchematicsAngularApplicationStyle;
     /**
      * The view encapsulation strategy to use in the new app.
      */
@@ -159,7 +159,7 @@ export interface AngularApplicationOptionsSchema {
 /**
  * The file extension or preprocessor to use for style files.
  */
-export declare enum Style {
+export declare enum SchematicsAngularApplicationStyle {
     Css = "css",
     Less = "less",
     Sass = "sass",
@@ -280,9 +280,10 @@ export interface AngularComponentOptionsSchema {
      */
     skipTests?: boolean;
     /**
-     * The file extension or preprocessor to use for style files.
+     * The file extension or preprocessor to use for style files, or 'none' to skip generating
+     * the style file.
      */
-    style?: Style;
+    style?: SchematicsAngularComponentStyle;
     /**
      * Adds a developer-defined type to the filename, in the format "name.type.ts".
      */
@@ -298,6 +299,17 @@ export interface AngularComponentOptionsSchema {
 export declare enum ChangeDetection {
     Default = "Default",
     OnPush = "OnPush"
+}
+/**
+ * The file extension or preprocessor to use for style files, or 'none' to skip generating
+ * the style file.
+ */
+export declare enum SchematicsAngularComponentStyle {
+    Css = "css",
+    Less = "less",
+    None = "none",
+    Sass = "sass",
+    Scss = "scss"
 }
 /**
  * Creates a new, generic directive definition in the given or default project.
@@ -596,7 +608,7 @@ export interface AngularNgNewOptionsSchema {
     /**
      * The file extension or preprocessor to use for style files.
      */
-    style?: Style;
+    style?: SchematicsAngularApplicationStyle;
     /**
      * The version of the Angular CLI to use.
      */

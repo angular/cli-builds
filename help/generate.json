@@ -424,14 +424,15 @@
             },
             {
               "name": "style",
-              "description": "The file extension or preprocessor to use for style files.",
+              "description": "The file extension or preprocessor to use for style files, or 'none' to skip generating the style file.",
               "type": "string",
               "default": "css",
               "enum": [
                 "css",
                 "scss",
                 "sass",
-                "less"
+                "less",
+                "none"
               ],
               "required": false,
               "aliases": [],
