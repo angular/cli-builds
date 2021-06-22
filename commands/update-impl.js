@@ -36,6 +36,7 @@ const semver = __importStar(require("semver"));
 const workspace_schema_1 = require("../lib/config/workspace-schema");
 const command_1 = require("../models/command");
 const schematic_engine_host_1 = require("../models/schematic-engine-host");
+const version_1 = require("../models/version");
 const color_1 = require("../utilities/color");
 const install_package_1 = require("../utilities/install-package");
 const log_file_1 = require("../utilities/log-file");
@@ -653,7 +654,7 @@ class UpdateCommand extends command_1.Command {
      * @returns `true` when the installed version is older.
      */
     async checkCLILatestVersion(verbose = false, next = false) {
-        const { version: installedCLIVersion } = require('../package.json');
+        const installedCLIVersion = version_1.VERSION.full;
         const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === workspace_schema_1.PackageManager.Yarn,

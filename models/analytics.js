@@ -34,6 +34,7 @@ const core_1 = require("@angular-devkit/core");
 const debug_1 = __importDefault(require("debug"));
 const inquirer = __importStar(require("inquirer"));
 const uuid_1 = require("uuid");
+const version_1 = require("../models/version");
 const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
@@ -48,7 +49,7 @@ exports.AnalyticsProperties = {
         if (_defaultAngularCliPropertyCache) {
             return _defaultAngularCliPropertyCache;
         }
-        const v = require('../package.json').version;
+        const v = version_1.VERSION.full;
         // The logic is if it's a full version then we should use the prod GA property.
         if (/^\d+\.\d+\.\d+$/.test(v) && v !== '0.0.0') {
             _defaultAngularCliPropertyCache = exports.AnalyticsProperties.AngularCliProd;

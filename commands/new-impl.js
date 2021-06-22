@@ -9,6 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NewCommand = void 0;
 const schematic_command_1 = require("../models/schematic-command");
+const version_1 = require("../models/version");
 class NewCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -21,8 +22,7 @@ class NewCommand extends schematic_command_1.SchematicCommand {
     }
     async run(options) {
         // Register the version of the CLI in the registry.
-        const packageJson = require('../package.json');
-        const version = packageJson.version;
+        const version = version_1.VERSION.full;
         this._workflow.registry.addSmartDefaultProvider('ng-cli-version', () => version);
         return this.runSchematic({
             collectionName: this.collectionName,

@@ -6,6 +6,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SchematicEngineHost = void 0;
@@ -13,6 +16,7 @@ const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const fs_1 = require("fs");
 const jsonc_parser_1 = require("jsonc-parser");
+const module_1 = __importDefault(require("module"));
 const path_1 = require("path");
 const vm_1 = require("vm");
 /**
@@ -97,8 +101,7 @@ const legacyModules = {
  * @param exportName An optional name of a specific export to return. Otherwise, return all exports.
  */
 function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
-    const { createRequire } = require('module');
-    const scopedRequire = createRequire(schematicFile);
+    const scopedRequire = module_1.default.createRequire(schematicFile);
     const customRequire = function (id) {
         if (legacyModules[id]) {
             // Provide compatibility modules for older versions of @angular/cdk
