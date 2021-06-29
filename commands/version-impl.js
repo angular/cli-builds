@@ -168,7 +168,16 @@ class VersionCommand extends command_1.Command {
     async getPackageManager() {
         try {
             const manager = await package_manager_1.getPackageManager(this.context.root);
-            const version = child_process_1.execSync(`${manager} --version`, { encoding: 'utf8', stdio: 'pipe' }).trim();
+            const version = child_process_1.execSync(`${manager} --version`, {
+                encoding: 'utf8',
+                stdio: ['ignore', 'pipe', 'ignore'],
+                env: {
+                    ...process.env,
+                    //  NPM updater notifier will prevents the child process from closing until it timeout after 3 minutes.
+                    NO_UPDATE_NOTIFIER: '1',
+                    NPM_CONFIG_UPDATE_NOTIFIER: 'false',
+                },
+            }).trim();
             return `${manager} ${version}`;
         }
         catch {
