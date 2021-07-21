@@ -50,7 +50,6 @@ function ensureNpmrc(logger, usingYarn, verbose) {
     }
 }
 function readOptions(logger, yarn = false, showPotentials = false) {
-    var _a;
     const cwd = process.cwd();
     const baseFilename = yarn ? 'yarnrc' : 'npmrc';
     const dotFilename = '.' + baseFilename;
@@ -78,7 +77,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
     if (showPotentials) {
         logger.info(`Locating potential ${baseFilename} files:`);
     }
-    const options = {};
+    let rcOptions = {};
     for (const location of [...defaultConfigLocations, ...projectConfigLocations]) {
         if (fs_1.existsSync(location)) {
             if (showPotentials) {
@@ -88,57 +87,84 @@ function readOptions(logger, yarn = false, showPotentials = false) {
             // Normalize RC options that are needed by 'npm-registry-fetch'.
             // See: https://github.com/npm/npm-registry-fetch/blob/ebddbe78a5f67118c1f7af2e02c8a22bcaf9e850/index.js#L99-L126
             const rcConfig = yarn ? lockfile.parse(data) : ini.parse(data);
-            for (const [key, value] of Object.entries(rcConfig)) {
-                let substitutedValue = value;
-                // Substitute any environment variable references.
-                if (typeof value === 'string') {
-                    substitutedValue = value.replace(/\$\{([^\}]+)\}/, (_, name) => process.env[name] || '');
+            rcOptions = normalizeOptions(rcConfig, location);
+        }
+    }
+    const envVariablesOptions = {};
+    for (const [key, value] of Object.entries(process.env)) {
+        if (!value) {
+            continue;
+        }
+        let normalizedName = key.toLowerCase();
+        if (normalizedName.startsWith('npm_config_')) {
+            normalizedName = normalizedName.substring(11);
+        }
+        else if (yarn && normalizedName.startsWith('yarn_')) {
+            normalizedName = normalizedName.substring(5);
+        }
+        else {
+            continue;
+        }
+        normalizedName = normalizedName.replace(/(?!^)_/g, '-'); // don't replace _ at the start of the key.s
+        envVariablesOptions[normalizedName] = value;
+    }
+    return {
+        ...rcOptions,
+        ...normalizeOptions(envVariablesOptions),
+    };
+}
+function normalizeOptions(rawOptions, location = process.cwd()) {
+    var _a;
+    const options = {};
+    for (const [key, value] of Object.entries(rawOptions)) {
+        let substitutedValue = value;
+        // Substitute any environment variable references.
+        if (typeof value === 'string') {
+            substitutedValue = value.replace(/\$\{([^\}]+)\}/, (_, name) => process.env[name] || '');
+        }
+        switch (key) {
+            // Unless auth options are scope with the registry url it appears that npm-registry-fetch ignores them,
+            // even though they are documented.
+            // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/README.md
+            // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/auth.js#L45-L91
+            case '_authToken':
+            case 'token':
+            case 'username':
+            case 'password':
+            case '_auth':
+            case 'auth':
+                (_a = options['forceAuth']) !== null && _a !== void 0 ? _a : (options['forceAuth'] = {});
+                options['forceAuth'][key] = substitutedValue;
+                break;
+            case 'noproxy':
+            case 'no-proxy':
+                options['noProxy'] = substitutedValue;
+                break;
+            case 'maxsockets':
+                options['maxSockets'] = substitutedValue;
+                break;
+            case 'https-proxy':
+            case 'proxy':
+                options['proxy'] = substitutedValue;
+                break;
+            case 'strict-ssl':
+                options['strictSSL'] = substitutedValue;
+                break;
+            case 'local-address':
+                options['localAddress'] = substitutedValue;
+                break;
+            case 'cafile':
+                if (typeof substitutedValue === 'string') {
+                    const cafile = path.resolve(path.dirname(location), substitutedValue);
+                    try {
+                        options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
+                    }
+                    catch { }
                 }
-                switch (key) {
-                    // Unless auth options are scope with the registry url it appears that npm-registry-fetch ignores them,
-                    // even though they are documented.
-                    // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/README.md
-                    // https://github.com/npm/npm-registry-fetch/blob/8954f61d8d703e5eb7f3d93c9b40488f8b1b62ac/auth.js#L45-L91
-                    case '_authToken':
-                    case 'token':
-                    case 'username':
-                    case 'password':
-                    case '_auth':
-                    case 'auth':
-                        (_a = options['forceAuth']) !== null && _a !== void 0 ? _a : (options['forceAuth'] = {});
-                        options['forceAuth'][key] = substitutedValue;
-                        break;
-                    case 'noproxy':
-                    case 'no-proxy':
-                        options['noProxy'] = substitutedValue;
-                        break;
-                    case 'maxsockets':
-                        options['maxSockets'] = substitutedValue;
-                        break;
-                    case 'https-proxy':
-                    case 'proxy':
-                        options['proxy'] = substitutedValue;
-                        break;
-                    case 'strict-ssl':
-                        options['strictSSL'] = substitutedValue;
-                        break;
-                    case 'local-address':
-                        options['localAddress'] = substitutedValue;
-                        break;
-                    case 'cafile':
-                        if (typeof substitutedValue === 'string') {
-                            const cafile = path.resolve(path.dirname(location), substitutedValue);
-                            try {
-                                options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
-                            }
-                            catch { }
-                        }
-                        break;
-                    default:
-                        options[key] = substitutedValue;
-                        break;
-                }
-            }
+                break;
+            default:
+                options[key] = substitutedValue;
+                break;
         }
     }
     return options;
@@ -210,18 +236,7 @@ function getNpmPackageJson(packageName, logger, options = {}) {
         return cachedResponse;
     }
     const { usingYarn = false, verbose = false, registry } = options;
-    if (!npmrc) {
-        try {
-            npmrc = readOptions(logger, false, verbose);
-        }
-        catch { }
-        if (usingYarn) {
-            try {
-                npmrc = { ...npmrc, ...readOptions(logger, true, verbose) };
-            }
-            catch { }
-        }
-    }
+    ensureNpmrc(logger, usingYarn, verbose);
     const resultPromise = pacote.packument(packageName, {
         fullMetadata: true,
         ...npmrc,
