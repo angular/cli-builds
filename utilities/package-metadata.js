@@ -87,7 +87,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
             // Normalize RC options that are needed by 'npm-registry-fetch'.
             // See: https://github.com/npm/npm-registry-fetch/blob/ebddbe78a5f67118c1f7af2e02c8a22bcaf9e850/index.js#L99-L126
             const rcConfig = yarn ? lockfile.parse(data) : ini.parse(data);
-            rcOptions = normalizeOptions(rcConfig, location);
+            rcOptions = normalizeOptions(rcConfig, location, rcOptions);
         }
     }
     const envVariablesOptions = {};
@@ -108,14 +108,11 @@ function readOptions(logger, yarn = false, showPotentials = false) {
         normalizedName = normalizedName.replace(/(?!^)_/g, '-'); // don't replace _ at the start of the key.s
         envVariablesOptions[normalizedName] = value;
     }
-    return {
-        ...rcOptions,
-        ...normalizeOptions(envVariablesOptions),
-    };
+    return normalizeOptions(envVariablesOptions, undefined, rcOptions);
 }
-function normalizeOptions(rawOptions, location = process.cwd()) {
+function normalizeOptions(rawOptions, location = process.cwd(), existingNormalizedOptions = {}) {
     var _a;
-    const options = {};
+    const options = { ...existingNormalizedOptions };
     for (const [key, value] of Object.entries(rawOptions)) {
         let substitutedValue = value;
         // Substitute any environment variable references.
