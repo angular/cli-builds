@@ -25,12 +25,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateCommand = void 0;
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const child_process_1 = require("child_process");
 const fs = __importStar(require("fs"));
+const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const path = __importStar(require("path"));
 const semver = __importStar(require("semver"));
 const workspace_schema_1 = require("../lib/config/workspace-schema");
@@ -43,7 +47,6 @@ const log_file_1 = require("../utilities/log-file");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
-const npa = require('npm-package-arg');
 const pickManifest = require('npm-pick-manifest');
 const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
     'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
@@ -238,7 +241,7 @@ class UpdateCommand extends command_1.Command {
         const packages = [];
         for (const request of options['--'] || []) {
             try {
-                const packageIdentifier = npa(request);
+                const packageIdentifier = npm_package_arg_1.default(request);
                 // only registry identifiers are supported
                 if (!packageIdentifier.registry) {
                     this.logger.error(`Package '${request}' is not a registry package identifer.`);

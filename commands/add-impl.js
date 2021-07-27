@@ -6,10 +6,14 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddCommand = void 0;
 const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
+const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const path_1 = require("path");
 const semver_1 = require("semver");
 const workspace_schema_1 = require("../lib/config/workspace-schema");
@@ -22,7 +26,6 @@ const package_metadata_1 = require("../utilities/package-metadata");
 const prompt_1 = require("../utilities/prompt");
 const spinner_1 = require("../utilities/spinner");
 const tty_1 = require("../utilities/tty");
-const npa = require('npm-package-arg');
 class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -46,28 +49,16 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
         let packageIdentifier;
         try {
-            packageIdentifier = npa(options.collection);
+            packageIdentifier = npm_package_arg_1.default(options.collection);
         }
         catch (e) {
             this.logger.error(e.message);
             return 1;
         }
-        if (packageIdentifier.registry && this.isPackageInstalled(packageIdentifier.name)) {
-            let validVersion = false;
-            const installedVersion = await this.findProjectVersion(packageIdentifier.name);
-            if (installedVersion) {
-                if (packageIdentifier.type === 'range') {
-                    validVersion = semver_1.satisfies(installedVersion, packageIdentifier.fetchSpec);
-                }
-                else if (packageIdentifier.type === 'version') {
-                    const v1 = semver_1.valid(packageIdentifier.fetchSpec);
-                    const v2 = semver_1.valid(installedVersion);
-                    validVersion = v1 !== null && v1 === v2;
-                }
-                else if (!packageIdentifier.rawSpec) {
-                    validVersion = true;
-                }
-            }
+        if (packageIdentifier.name &&
+            packageIdentifier.registry &&
+            this.isPackageInstalled(packageIdentifier.name)) {
+            const validVersion = await this.isProjectVersionValid(packageIdentifier);
             if (validVersion) {
                 // Already installed so just run schematic
                 this.logger.info('Skipping installation: Package already installed');
@@ -79,7 +70,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         const packageManager = await package_manager_1.getPackageManager(this.context.root);
         const usingYarn = packageManager === workspace_schema_1.PackageManager.Yarn;
         spinner.info(`Using package manager: ${color_1.colors.grey(packageManager)}`);
-        if (packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
+        if (packageIdentifier.name && packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
             // only package name provided; search for viable version
             // plus special cases for packages that did not have peer deps setup
             spinner.start('Searching for compatible package version...');
@@ -103,13 +94,13 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     if (version &&
                         ((semver_1.validRange(version) && semver_1.intersects(version, '7', semverOptions)) ||
                             (semver_1.valid(version) && semver_1.satisfies(version, '7', semverOptions)))) {
-                        packageIdentifier = npa.resolve('@angular/pwa', '0.12');
+                        packageIdentifier = npm_package_arg_1.default.resolve('@angular/pwa', '0.12');
                     }
                 }
                 else {
-                    packageIdentifier = npa.resolve(latestManifest.name, latestManifest.version);
+                    packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
                 }
-                spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier)}.`);
+                spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier.toString())}.`);
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
@@ -118,7 +109,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
                     if (!(await this.hasMismatchedPeer(versionManifest))) {
-                        newIdentifier = npa.resolve(packageIdentifier.name, versionManifest.version);
+                        newIdentifier = npm_package_arg_1.default.resolve(packageIdentifier.name, versionManifest.version);
                         break;
                     }
                 }
@@ -127,19 +118,19 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 }
                 else {
                     packageIdentifier = newIdentifier;
-                    spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier)}.`);
+                    spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier.toString())}.`);
                 }
             }
             else {
-                packageIdentifier = npa.resolve(latestManifest.name, latestManifest.version);
-                spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier)}.`);
+                packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
+                spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier.toString())}.`);
             }
         }
         let collectionName = packageIdentifier.name;
         let savePackage;
         try {
             spinner.start('Loading package information from registry...');
-            const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier, this.logger, {
+            const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier.toString(), this.logger, {
                 registry: options.registry,
                 verbose: options.verbose,
                 usingYarn,
@@ -189,6 +180,27 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
         }
         return this.executeSchematic(collectionName, options['--']);
+    }
+    async isProjectVersionValid(packageIdentifier) {
+        if (!packageIdentifier.name) {
+            return false;
+        }
+        let validVersion = false;
+        const installedVersion = await this.findProjectVersion(packageIdentifier.name);
+        if (installedVersion) {
+            if (packageIdentifier.type === 'range' && packageIdentifier.fetchSpec) {
+                validVersion = semver_1.satisfies(installedVersion, packageIdentifier.fetchSpec);
+            }
+            else if (packageIdentifier.type === 'version') {
+                const v1 = semver_1.valid(packageIdentifier.fetchSpec);
+                const v2 = semver_1.valid(installedVersion);
+                validVersion = v1 !== null && v1 === v2;
+            }
+            else if (!packageIdentifier.rawSpec) {
+                validVersion = true;
+            }
+        }
+        return validVersion;
     }
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {
         const collection = options.collection;
@@ -267,7 +279,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         for (const peer in manifest.peerDependencies) {
             let peerIdentifier;
             try {
-                peerIdentifier = npa.resolve(peer, manifest.peerDependencies[peer]);
+                peerIdentifier = npm_package_arg_1.default.resolve(peer, manifest.peerDependencies[peer]);
             }
             catch {
                 this.logger.warn(`Invalid peer dependency ${peer} found in package.`);
