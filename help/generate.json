@@ -221,16 +221,6 @@
               "hidden": false
             },
             {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the application.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
-            },
-            {
               "name": "strict",
               "description": "Creates an application with stricter bundle budgets settings.",
               "type": "boolean",
@@ -239,16 +229,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 7
-            },
-            {
-              "name": "legacy-browsers",
-              "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
             }
           ],
           "aliases": []
@@ -301,17 +281,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the class.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -514,16 +483,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 19
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the component.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -625,16 +584,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 19
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the directive.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -676,16 +625,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the enum.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -738,16 +677,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the guard.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             },
             {
               "name": "implements",
@@ -808,16 +737,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 12
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the interceptor.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -860,16 +779,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the interface.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             },
             {
               "name": "type",
@@ -944,16 +853,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the library.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1046,16 +945,6 @@
                 "m"
               ],
               "hidden": false
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the module.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1138,17 +1027,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 19
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the pipe.",
-              "type": "boolean",
-              "default": false,
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1253,16 +1131,6 @@
               "aliases": [],
               "hidden": false,
               "userAnalytics": 12
-            },
-            {
-              "name": "lint-fix",
-              "description": "Apply lint fixes after generating the service.",
-              "type": "boolean",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "userAnalytics": 15,
-              "deprecated": "Use \"ng lint --fix\" directly instead."
             }
           ],
           "aliases": []
@@ -1287,15 +1155,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "configuration",
-              "description": "The configuration to apply service worker to.",
-              "type": "string",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "No longer has an effect."
             }
           ],
           "aliases": []
@@ -1320,16 +1179,6 @@
               "required": false,
               "aliases": [],
               "hidden": false
-            },
-            {
-              "name": "target",
-              "description": "The target to apply web worker to.",
-              "type": "string",
-              "default": "build",
-              "required": false,
-              "aliases": [],
-              "hidden": false,
-              "deprecated": "No longer has an effect."
             },
             {
               "name": "name",

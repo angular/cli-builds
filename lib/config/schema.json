@@ -692,23 +692,11 @@
           "type": "boolean",
           "default": false
         },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the application.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
-        },
         "strict": {
           "description": "Creates an application with stricter bundle budgets settings.",
           "type": "boolean",
           "default": true,
           "x-user-analytics": 7
-        },
-        "legacyBrowsers": {
-          "type": "boolean",
-          "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
-          "default": false,
-          "x-deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
         }
       }
     },
@@ -750,13 +738,6 @@
           "type": "string",
           "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
           "default": ""
-        },
-        "lintFix": {
-          "type": "boolean",
-          "default": false,
-          "description": "Apply lint fixes after generating the class.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -898,12 +879,6 @@
           "default": false,
           "description": "The declaring NgModule exports this component.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the component.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -981,12 +956,6 @@
           "default": false,
           "description": "The declaring NgModule exports this directive.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the directive.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1021,12 +990,6 @@
         "type": {
           "type": "string",
           "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the enum.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1068,12 +1031,6 @@
           "$default": {
             "$source": "projectName"
           }
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the guard.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         },
         "implements": {
           "type": "array",
@@ -1134,12 +1091,6 @@
           "description": "Do not create \"spec.ts\" test files for the new interceptor.",
           "default": false,
           "x-user-analytics": 12
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the interceptor.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1183,12 +1134,6 @@
             "$source": "argv",
             "index": 1
           }
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the interface.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1235,12 +1180,6 @@
           "type": "boolean",
           "default": false,
           "description": "Do not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development."
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the library.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1299,13 +1238,6 @@
           "default": false,
           "description": "The declaring NgModule exports this pipe.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "default": false,
-          "description": "Apply lint fixes after generating the pipe.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1453,12 +1385,6 @@
           "default": true,
           "x-user-analytics": 7
         },
-        "legacyBrowsers": {
-          "type": "boolean",
-          "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
-          "default": false,
-          "x-deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
-        },
         "packageManager": {
           "description": "The package manager used to install dependencies.",
           "type": "string",
@@ -1550,12 +1476,6 @@
           "description": "Do not create \"spec.ts\" test files for the new service.",
           "default": false,
           "x-user-analytics": 12
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the service.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1577,12 +1497,6 @@
           "$default": {
             "$source": "projectName"
           }
-        },
-        "target": {
-          "type": "string",
-          "description": "The target to apply web worker to.",
-          "default": "build",
-          "x-deprecated": "No longer has an effect."
         },
         "name": {
           "type": "string",
