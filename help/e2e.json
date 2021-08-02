@@ -1,7 +1,7 @@
 {
   "name": "e2e",
   "description": "Builds and serves an Angular app, then runs end-to-end tests.",
-  "longDescription": "Must be executed from within a workspace directory.\nWhen a project name is not supplied, it will execute for all projects.\n",
+  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `e2e` builder for the default project.\n\nTo use the `ng e2e` command, use `ng add` to add a package that implements end-to-end testing capabilities. Adding the package automatically updates your workspace configuration, adding an `e2e` [CLI builder](guide/cli-builder).\n",
   "options": [
     {
       "name": "project",
