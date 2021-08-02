@@ -331,7 +331,6 @@
                       "@angular-devkit/build-angular:karma",
                       "@angular-devkit/build-angular:protractor",
                       "@angular-devkit/build-angular:server",
-                      "@angular-devkit/build-angular:tslint",
                       "@angular-devkit/build-angular:ng-packagr"
                     ]
                   }
@@ -515,28 +514,6 @@
               "additionalProperties": false,
               "properties": {
                 "builder": {
-                  "const": "@angular-devkit/build-angular:tslint"
-                },
-                "defaultConfiguration": {
-                  "type": "string",
-                  "description": "A default named configuration to use when a target configuration is not provided."
-                },
-                "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularTslintSchema"
-                },
-                "configurations": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularTslintSchema"
-                  }
-                }
-              }
-            },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "builder": {
                   "const": "@angular-devkit/build-angular:ng-packagr"
                 },
                 "defaultConfiguration": {
@@ -692,23 +669,11 @@
           "type": "boolean",
           "default": false
         },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the application.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
-        },
         "strict": {
           "description": "Creates an application with stricter bundle budgets settings.",
           "type": "boolean",
           "default": true,
           "x-user-analytics": 7
-        },
-        "legacyBrowsers": {
-          "type": "boolean",
-          "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
-          "default": false,
-          "x-deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
         }
       }
     },
@@ -750,13 +715,6 @@
           "type": "string",
           "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
           "default": ""
-        },
-        "lintFix": {
-          "type": "boolean",
-          "default": false,
-          "description": "Apply lint fixes after generating the class.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -898,12 +856,6 @@
           "default": false,
           "description": "The declaring NgModule exports this component.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the component.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -981,12 +933,6 @@
           "default": false,
           "description": "The declaring NgModule exports this directive.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the directive.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1021,12 +967,6 @@
         "type": {
           "type": "string",
           "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the enum.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1068,12 +1008,6 @@
           "$default": {
             "$source": "projectName"
           }
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the guard.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         },
         "implements": {
           "type": "array",
@@ -1134,12 +1068,6 @@
           "description": "Do not create \"spec.ts\" test files for the new interceptor.",
           "default": false,
           "x-user-analytics": 12
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the interceptor.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1183,12 +1111,6 @@
             "$source": "argv",
             "index": 1
           }
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the interface.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1235,12 +1157,6 @@
           "type": "boolean",
           "default": false,
           "description": "Do not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development."
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the library.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1299,13 +1215,6 @@
           "default": false,
           "description": "The declaring NgModule exports this pipe.",
           "x-user-analytics": 19
-        },
-        "lintFix": {
-          "type": "boolean",
-          "default": false,
-          "description": "Apply lint fixes after generating the pipe.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1453,12 +1362,6 @@
           "default": true,
           "x-user-analytics": 7
         },
-        "legacyBrowsers": {
-          "type": "boolean",
-          "description": "Add support for legacy browsers like Internet Explorer using differential loading.",
-          "default": false,
-          "x-deprecated": "Legacy browsers support is deprecated since version 12. For more information, see https://angular.io/guide/browser-support"
-        },
         "packageManager": {
           "description": "The package manager used to install dependencies.",
           "type": "string",
@@ -1550,12 +1453,6 @@
           "description": "Do not create \"spec.ts\" test files for the new service.",
           "default": false,
           "x-user-analytics": 12
-        },
-        "lintFix": {
-          "type": "boolean",
-          "description": "Apply lint fixes after generating the service.",
-          "x-user-analytics": 15,
-          "x-deprecated": "Use \"ng lint --fix\" directly instead."
         }
       }
     },
@@ -1577,12 +1474,6 @@
           "$default": {
             "$source": "projectName"
           }
-        },
-        "target": {
-          "type": "string",
-          "description": "The target to apply web worker to.",
-          "default": "build",
-          "x-deprecated": "No longer has an effect."
         },
         "name": {
           "type": "string",
@@ -2988,94 +2879,6 @@
           ]
         }
       }
-    },
-    "AngularDevkitBuildAngularTslintSchema": {
-      "title": "TSlint Target",
-      "description": "TSlint target options for Build Facade.",
-      "type": "object",
-      "properties": {
-        "tslintConfig": {
-          "type": "string",
-          "description": "The name of the TSLint configuration file."
-        },
-        "tsConfig": {
-          "description": "The name of the TypeScript configuration file.",
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          ]
-        },
-        "fix": {
-          "type": "boolean",
-          "description": "Fixes linting errors (may overwrite linted files).",
-          "default": false
-        },
-        "typeCheck": {
-          "type": "boolean",
-          "description": "Controls the type check for linting.",
-          "default": false
-        },
-        "force": {
-          "type": "boolean",
-          "description": "Succeeds even if there was linting errors.",
-          "default": false
-        },
-        "silent": {
-          "type": "boolean",
-          "description": "Show output text.",
-          "default": false
-        },
-        "format": {
-          "type": "string",
-          "description": "Output format (prose, json, stylish, verbose, pmd, msbuild, checkstyle, vso, fileslist).",
-          "default": "stylish",
-          "anyOf": [
-            {
-              "enum": [
-                "checkstyle",
-                "codeFrame",
-                "filesList",
-                "json",
-                "junit",
-                "msbuild",
-                "pmd",
-                "prose",
-                "stylish",
-                "tap",
-                "verbose",
-                "vso"
-              ]
-            },
-            {
-              "minLength": 1
-            }
-          ]
-        },
-        "exclude": {
-          "type": "array",
-          "description": "Files to exclude from linting.",
-          "default": [],
-          "items": {
-            "type": "string"
-          }
-        },
-        "files": {
-          "type": "array",
-          "description": "Files to include in linting.",
-          "default": [],
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "additionalProperties": false
     },
     "AngularDevkitBuildAngularNgPackagrSchema": {
       "title": "ng-packagr Target",
