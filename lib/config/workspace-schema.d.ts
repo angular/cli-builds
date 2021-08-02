@@ -100,6 +100,17 @@ export interface AngularApplicationOptionsSchema {
      */
     inlineTemplate?: boolean;
     /**
+     * Add support for legacy browsers like Internet Explorer using differential loading.
+     * @deprecated Legacy browsers support is deprecated since version 12. For more information,
+     * see https://angular.io/guide/browser-support
+     */
+    legacyBrowsers?: boolean;
+    /**
+     * Apply lint fixes after generating the application.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * Create a bare-bones project without any testing frameworks. (Use for learning purposes
      * only.)
      */
@@ -171,6 +182,11 @@ export declare enum ViewEncapsulation {
  */
 export interface AngularClassOptionsSchema {
     /**
+     * Apply lint fixes after generating the class.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The name of the new class.
      */
     name: string;
@@ -221,6 +237,11 @@ export interface AngularComponentOptionsSchema {
      * is created and referenced in the component.ts file.
      */
     inlineTemplate?: boolean;
+    /**
+     * Apply lint fixes after generating the component.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
     /**
      * The declaring NgModule.
      */
@@ -303,6 +324,11 @@ export interface AngularDirectiveOptionsSchema {
      */
     flat?: boolean;
     /**
+     * Apply lint fixes after generating the directive.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The declaring NgModule.
      */
     module?: string;
@@ -341,6 +367,11 @@ export interface AngularDirectiveOptionsSchema {
  */
 export interface AngularEnumOptionsSchema {
     /**
+     * Apply lint fixes after generating the enum.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The name of the enum.
      */
     name: string;
@@ -370,6 +401,11 @@ export interface AngularGuardOptionsSchema {
      * Specifies which interfaces to implement.
      */
     implements?: Implement[];
+    /**
+     * Apply lint fixes after generating the guard.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
     /**
      * The name of the new route guard.
      */
@@ -403,6 +439,11 @@ export interface AngularInterceptorOptionsSchema {
      */
     flat?: boolean;
     /**
+     * Apply lint fixes after generating the interceptor.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The name of the interceptor.
      */
     name: string;
@@ -423,6 +464,11 @@ export interface AngularInterceptorOptionsSchema {
  * Creates a new, generic interface definition in the given or default project.
  */
 export interface AngularInterfaceOptionsSchema {
+    /**
+     * Apply lint fixes after generating the interface.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
     /**
      * The name of the interface.
      */
@@ -452,6 +498,11 @@ export interface LibraryOptionsSchema {
      * The path at which to create the library's public API file, relative to the workspace root.
      */
     entryFile?: string;
+    /**
+     * Apply lint fixes after generating the library.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
     /**
      * The name of the library.
      */
@@ -502,6 +553,12 @@ export interface AngularNgNewOptionsSchema {
      * is created and referenced in the component TypeScript file.
      */
     inlineTemplate?: boolean;
+    /**
+     * Add support for legacy browsers like Internet Explorer using differential loading.
+     * @deprecated Legacy browsers support is deprecated since version 12. For more information,
+     * see https://angular.io/guide/browser-support
+     */
+    legacyBrowsers?: boolean;
     /**
      * Link the CLI to the global version (internal development only).
      */
@@ -583,6 +640,11 @@ export interface AngularPipeOptionsSchema {
      */
     flat?: boolean;
     /**
+     * Apply lint fixes after generating the pipe.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The declaring NgModule.
      */
     module?: string;
@@ -642,6 +704,11 @@ export interface AngularServiceOptionsSchema {
      */
     flat?: boolean;
     /**
+     * Apply lint fixes after generating the service.
+     * @deprecated Use "ng lint --fix" directly instead.
+     */
+    lintFix?: boolean;
+    /**
      * The name of the service.
      */
     name: string;
@@ -678,4 +745,9 @@ export interface AngularWebWorkerOptionsSchema {
      * Add a worker creation snippet in a sibling file of the same name.
      */
     snippet?: boolean;
+    /**
+     * The target to apply web worker to.
+     * @deprecated No longer has an effect.
+     */
+    target?: string;
 }
