@@ -188,26 +188,6 @@
       "hidden": false
     },
     {
-      "name": "hmr-warning",
-      "description": "Show a warning when the --hmr option is enabled.",
-      "type": "boolean",
-      "default": true,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "No longer has an effect."
-    },
-    {
-      "name": "serve-path-default-warning",
-      "description": "Show a warning when deploy-url/base-href use unsupported serve path values.",
-      "type": "boolean",
-      "default": true,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": "No longer has an effect."
-    },
-    {
       "name": "optimization",
       "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, tree-shaking and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
       "type": "boolean",
