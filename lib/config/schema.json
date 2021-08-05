@@ -367,12 +367,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularAppShellSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersAppShellSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularAppShellSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersAppShellSchema"
                   }
                 }
               }
@@ -389,12 +389,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema"
                   }
                 }
               }
@@ -411,12 +411,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularDevServerSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersDevServerSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularDevServerSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersDevServerSchema"
                   }
                 }
               }
@@ -433,12 +433,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularExtractI18nSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersExtractI18nSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularExtractI18nSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersExtractI18nSchema"
                   }
                 }
               }
@@ -455,12 +455,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema"
                   }
                 }
               }
@@ -477,12 +477,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularProtractorSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersProtractorSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularProtractorSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersProtractorSchema"
                   }
                 }
               }
@@ -499,12 +499,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularServerSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersServerSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularServerSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersServerSchema"
                   }
                 }
               }
@@ -521,12 +521,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularNgPackagrSchema"
+                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersNgPackagrSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularNgPackagrSchema"
+                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersNgPackagrSchema"
                   }
                 }
               }
@@ -1491,7 +1491,7 @@
         }
       }
     },
-    "AngularDevkitBuildAngularAppShellSchema": {
+    "AngularDevkitBuildAngularBuildersAppShellSchema": {
       "title": "App Shell Target",
       "description": "App Shell target options for Build Facade.",
       "type": "object",
@@ -1526,7 +1526,7 @@
       },
       "additionalProperties": false
     },
-    "AngularDevkitBuildAngularBrowserSchema": {
+    "AngularDevkitBuildAngularBuildersBrowserSchema": {
       "title": "Webpack browser schema for Build Facade.",
       "description": "Browser target options",
       "type": "object",
@@ -1536,7 +1536,7 @@
           "description": "List of static application assets.",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/assetPattern"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/assetPattern"
           }
         },
         "main": {
@@ -1556,7 +1556,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/extraEntryPoint"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
           }
         },
         "styles": {
@@ -1564,7 +1564,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/extraEntryPoint"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
           }
         },
         "inlineStyleLanguage": {
@@ -1663,7 +1663,7 @@
           "description": "Replace compilation source files with other compilation source files in the build.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/fileReplacement"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/fileReplacement"
           },
           "default": []
         },
@@ -1872,7 +1872,7 @@
           "description": "Budget thresholds to ensure parts of your application stay within boundaries which you set.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBrowserSchema/definitions/budget"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/budget"
           },
           "default": []
         },
@@ -2051,7 +2051,7 @@
         }
       }
     },
-    "AngularDevkitBuildAngularDevServerSchema": {
+    "AngularDevkitBuildAngularBuildersDevServerSchema": {
       "title": "Dev Server Target",
       "description": "Dev Server target options for Build Facade.",
       "type": "object",
@@ -2243,7 +2243,7 @@
       },
       "additionalProperties": false
     },
-    "AngularDevkitBuildAngularExtractI18nSchema": {
+    "AngularDevkitBuildAngularBuildersExtractI18nSchema": {
       "title": "Extract i18n Target",
       "description": "Extract i18n target options for Build Facade.",
       "type": "object",
@@ -2285,7 +2285,7 @@
       },
       "additionalProperties": false
     },
-    "AngularDevkitBuildAngularKarmaSchema": {
+    "AngularDevkitBuildAngularBuildersKarmaSchema": {
       "title": "Karma Target",
       "description": "Karma target options for Build Facade.",
       "type": "object",
@@ -2311,7 +2311,7 @@
           "description": "List of static application assets.",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema/definitions/assetPattern"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/assetPattern"
           }
         },
         "scripts": {
@@ -2319,7 +2319,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema/definitions/extraEntryPoint"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
           }
         },
         "styles": {
@@ -2327,7 +2327,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularKarmaSchema/definitions/extraEntryPoint"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
           }
         },
         "inlineStyleLanguage": {
@@ -2536,7 +2536,7 @@
         }
       }
     },
-    "AngularDevkitBuildAngularProtractorSchema": {
+    "AngularDevkitBuildAngularBuildersProtractorSchema": {
       "title": "Protractor Target",
       "description": "Protractor target options for Build Facade.",
       "type": "object",
@@ -2592,7 +2592,7 @@
       },
       "additionalProperties": false
     },
-    "AngularDevkitBuildAngularServerSchema": {
+    "AngularDevkitBuildAngularBuildersServerSchema": {
       "title": "Universal Target",
       "type": "object",
       "properties": {
@@ -2661,7 +2661,7 @@
           "description": "Replace compilation source files with other compilation source files in the build.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularServerSchema/definitions/fileReplacement"
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersServerSchema/definitions/fileReplacement"
           },
           "default": []
         },
@@ -2862,7 +2862,7 @@
         }
       }
     },
-    "AngularDevkitBuildAngularNgPackagrSchema": {
+    "AngularDevkitBuildAngularBuildersNgPackagrSchema": {
       "title": "ng-packagr Target",
       "description": "ng-packagr target options for Build Architect. Use to build library projects.",
       "type": "object",
