@@ -152,7 +152,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             const confirmationResponse = await prompt_1.askConfirmation(`\nThe package ${color_1.colors.blue(packageIdentifier.raw)} will be installed and executed.\n` +
                 'Would you like to proceed?', true, false);
             if (!confirmationResponse) {
-                if (!tty_1.isTTY) {
+                if (!tty_1.isTTY()) {
                     this.logger.error('No terminal detected. ' +
                         `'--skip-confirmation' can be used to bypass installation confirmation. ` +
                         `Ensure package name is correct prior to '--skip-confirmation' option usage.`);
