@@ -130,7 +130,7 @@
             },
             {
               "name": "view-encapsulation",
-              "description": "The view encapsulation strategy to use in the new app.",
+              "description": "The view encapsulation strategy to use in the new application.",
               "type": "string",
               "enum": [
                 "Emulated",
