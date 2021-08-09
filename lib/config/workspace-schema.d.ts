@@ -152,7 +152,7 @@ export interface AngularApplicationOptionsSchema {
      */
     style?: SchematicsAngularApplicationStyle;
     /**
-     * The view encapsulation strategy to use in the new app.
+     * The view encapsulation strategy to use in the new application.
      */
     viewEncapsulation?: ViewEncapsulation;
 }
@@ -166,7 +166,7 @@ export declare enum SchematicsAngularApplicationStyle {
     Scss = "scss"
 }
 /**
- * The view encapsulation strategy to use in the new app.
+ * The view encapsulation strategy to use in the new application.
  *
  * The view encapsulation strategy to use in the new component.
  *
