@@ -167,7 +167,8 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "hidden": false
+      "hidden": false,
+      "deprecated": "Use \"baseHref\" option, \"APP_BASE_HREF\" DI token or a combination of both instead. For more information, see https://angular.io/guide/deployment#the-deploy-url."
     },
     {
       "name": "verbose",
