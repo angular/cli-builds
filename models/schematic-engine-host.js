@@ -123,7 +123,7 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
                 return cachedModule;
             }
             // Do not wrap vendored third-party packages or JSON files
-            if (!/[\/\\]node_modules[\/\\]@schematics[\/\\]angular[\/\\]third_party[\/\\]/.test(modulePath) &&
+            if (!/[/\\]node_modules[/\\]@schematics[/\\]angular[/\\]third_party[/\\]/.test(modulePath) &&
                 !modulePath.endsWith('.json')) {
                 // Wrap module and save in cache
                 const wrappedModule = wrap(modulePath, path_1.dirname(modulePath), moduleCache)();
