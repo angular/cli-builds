@@ -8,6 +8,8 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VERSION = exports.Version = void 0;
+const fs_1 = require("fs");
+const path_1 = require("path");
 // Same structure as used in framework packages
 class Version {
     constructor(full) {
@@ -18,4 +20,5 @@ class Version {
     }
 }
 exports.Version = Version;
-exports.VERSION = new Version(require('../package.json').version);
+// TODO: Convert this to use build-time version stamping once implemented in the build system
+exports.VERSION = new Version(JSON.parse(fs_1.readFileSync(path_1.resolve(__dirname, '../package.json'), 'utf-8')).version);

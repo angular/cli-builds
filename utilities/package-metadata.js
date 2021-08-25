@@ -27,12 +27,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNpmPackageJson = exports.fetchPackageManifest = exports.fetchPackageMetadata = void 0;
+const lockfile = __importStar(require("@yarnpkg/lockfile"));
 const fs_1 = require("fs");
+const ini = __importStar(require("ini"));
 const os_1 = require("os");
+const pacote = __importStar(require("pacote"));
 const path = __importStar(require("path"));
-const lockfile = require('@yarnpkg/lockfile');
-const ini = require('ini');
-const pacote = require('pacote');
 const npmPackageJsonCache = new Map();
 let npmrc;
 function ensureNpmrc(logger, usingYarn, verbose) {

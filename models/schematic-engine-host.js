@@ -101,7 +101,8 @@ const legacyModules = {
  * @param exportName An optional name of a specific export to return. Otherwise, return all exports.
  */
 function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
-    const scopedRequire = module_1.default.createRequire(schematicFile);
+    const hostRequire = module_1.default.createRequire(__filename);
+    const schematicRequire = module_1.default.createRequire(schematicFile);
     const customRequire = function (id) {
         if (legacyModules[id]) {
             // Provide compatibility modules for older versions of @angular/cdk
@@ -110,13 +111,13 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
         else if (id.startsWith('@angular-devkit/') || id.startsWith('@schematics/')) {
             // Resolve from inside the `@angular/cli` project
             const packagePath = require.resolve(id);
-            return require(packagePath);
+            return hostRequire(packagePath);
         }
         else if (id.startsWith('.') || id.startsWith('@angular/cdk')) {
             // Wrap relative files inside the schematic collection
             // Also wrap `@angular/cdk`, it contains helper utilities that import core schematic packages
             // Resolve from the original file
-            const modulePath = scopedRequire.resolve(id);
+            const modulePath = schematicRequire.resolve(id);
             // Use cached module if available
             const cachedModule = moduleCache.get(modulePath);
             if (cachedModule) {
@@ -132,7 +133,7 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
             }
         }
         // All others are required directly from the original file
-        return scopedRequire(id);
+        return schematicRequire(id);
     };
     // Setup a wrapper function to capture the module's exports
     const schematicCode = fs_1.readFileSync(schematicFile, 'utf8');

@@ -35,6 +35,7 @@ const tools_1 = require("@angular-devkit/schematics/tools");
 const child_process_1 = require("child_process");
 const fs = __importStar(require("fs"));
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
+const npm_pick_manifest_1 = __importDefault(require("npm-pick-manifest"));
 const path = __importStar(require("path"));
 const semver = __importStar(require("semver"));
 const workspace_schema_1 = require("../lib/config/workspace-schema");
@@ -47,7 +48,6 @@ const log_file_1 = require("../utilities/log-file");
 const package_manager_1 = require("../utilities/package-manager");
 const package_metadata_1 = require("../utilities/package-metadata");
 const package_tree_1 = require("../utilities/package-tree");
-const pickManifest = require('npm-pick-manifest');
 const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
     'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
 const UPDATE_SCHEMATIC_COLLECTION = path.join(__dirname, '../src/commands/update/schematic/collection.json');
@@ -435,7 +435,7 @@ class UpdateCommand extends command_1.Command {
                 requestIdentifier.type === 'range' ||
                 requestIdentifier.type === 'tag') {
                 try {
-                    manifest = pickManifest(metadata, requestIdentifier.fetchSpec);
+                    manifest = npm_pick_manifest_1.default(metadata, requestIdentifier.fetchSpec);
                 }
                 catch (e) {
                     if (e.code === 'ETARGET') {
@@ -445,7 +445,7 @@ class UpdateCommand extends command_1.Command {
                             requestIdentifier.fetchSpec === 'next' &&
                             !requestIdentifier.rawSpec) {
                             try {
-                                manifest = pickManifest(metadata, 'latest');
+                                manifest = npm_pick_manifest_1.default(metadata, 'latest');
                             }
                             catch (e) {
                                 if (e.code !== 'ETARGET' && e.code !== 'ENOVERSIONS') {

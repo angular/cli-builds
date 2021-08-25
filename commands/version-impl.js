@@ -6,29 +6,13 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VersionCommand = void 0;
 const child_process_1 = require("child_process");
-const path = __importStar(require("path"));
+const module_1 = __importDefault(require("module"));
 const command_1 = require("../models/command");
 const color_1 = require("../utilities/color");
 const package_manager_1 = require("../utilities/package-manager");
@@ -37,11 +21,17 @@ const package_manager_1 = require("../utilities/package-manager");
  */
 const SUPPORTED_NODE_MAJORS = [12, 14];
 class VersionCommand extends command_1.Command {
+    constructor() {
+        super(...arguments);
+        this.localRequire = module_1.default.createRequire(__filename);
+        // Trailing slash is used to allow the path to be treated as a directory
+        this.workspaceRequire = module_1.default.createRequire(this.context.root + '/');
+    }
     async run() {
-        const cliPackage = require('../package.json');
+        const cliPackage = this.localRequire('../package.json');
         let workspacePackage;
         try {
-            workspacePackage = require(path.resolve(this.context.root, 'package.json'));
+            workspacePackage = this.workspaceRequire('./package.json');
         }
         catch { }
         const [nodeMajor] = process.versions.node.split('.').map((part) => Number(part));
@@ -140,26 +130,26 @@ class VersionCommand extends command_1.Command {
         }
     }
     getVersion(moduleName) {
-        let packagePath;
+        let packageInfo;
         let cliOnly = false;
         // Try to find the package in the workspace
         try {
-            packagePath = require.resolve(`${moduleName}/package.json`, { paths: [this.context.root] });
+            packageInfo = this.workspaceRequire(`${moduleName}/package.json`);
         }
         catch { }
         // If not found, try to find within the CLI
-        if (!packagePath) {
+        if (!packageInfo) {
             try {
-                packagePath = require.resolve(`${moduleName}/package.json`);
+                packageInfo = this.localRequire(`${moduleName}/package.json`);
                 cliOnly = true;
             }
             catch { }
         }
         let version;
         // If found, attempt to get the version
-        if (packagePath) {
+        if (packageInfo) {
             try {
-                version = require(packagePath).version + (cliOnly ? ' (cli-only)' : '');
+                version = packageInfo.version + (cliOnly ? ' (cli-only)' : '');
             }
             catch { }
         }

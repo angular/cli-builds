@@ -9,6 +9,8 @@ import { Command } from '../models/command';
 import { Schema as VersionCommandSchema } from './version';
 export declare class VersionCommand extends Command<VersionCommandSchema> {
     static aliases: string[];
+    private readonly localRequire;
+    private readonly workspaceRequire;
     run(): Promise<void>;
     private getVersion;
     private getPackageManager;
