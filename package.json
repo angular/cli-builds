@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#0e7277c63",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#0e7277c63",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#0e7277c63",
-    "@schematics/angular": "github:angular/schematics-angular-builds#0e7277c63",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#a02f48d6f",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#a02f48d6f",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#a02f48d6f",
+    "@schematics/angular": "github:angular/schematics-angular-builds#a02f48d6f",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.1",
     "debug": "4.3.2",
@@ -51,12 +51,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#0e7277c63",
-      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#0e7277c63",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#0e7277c63",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#0e7277c63",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#0e7277c63",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#0e7277c63"
+      "@angular/cli": "github:angular/cli-builds#a02f48d6f",
+      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#a02f48d6f",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#a02f48d6f",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#a02f48d6f",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#a02f48d6f",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#a02f48d6f"
     }
   },
   "engines": {
