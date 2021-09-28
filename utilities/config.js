@@ -39,14 +39,14 @@ function isJsonObject(value) {
 function createWorkspaceHost() {
     return {
         async readFile(path) {
-            return fs_1.readFileSync(path, 'utf-8');
+            return (0, fs_1.readFileSync)(path, 'utf-8');
         },
         async writeFile(path, data) {
-            fs_1.writeFileSync(path, data);
+            (0, fs_1.writeFileSync)(path, data);
         },
         async isDirectory(path) {
             try {
-                return fs_1.statSync(path).isDirectory();
+                return (0, fs_1.statSync)(path).isDirectory();
             }
             catch {
                 return false;
@@ -54,7 +54,7 @@ function createWorkspaceHost() {
         },
         async isFile(path) {
             try {
-                return fs_1.statSync(path).isFile();
+                return (0, fs_1.statSync)(path).isFile();
             }
             catch {
                 return false;
@@ -84,9 +84,9 @@ function xdgConfigHomeOld(home) {
 function projectFilePath(projectPath) {
     // Find the configuration, either where specified, in the Angular CLI project
     // (if it's in node_modules) or from the current process.
-    return ((projectPath && find_up_1.findUp(configNames, projectPath)) ||
-        find_up_1.findUp(configNames, process.cwd()) ||
-        find_up_1.findUp(configNames, __dirname));
+    return ((projectPath && (0, find_up_1.findUp)(configNames, projectPath)) ||
+        (0, find_up_1.findUp)(configNames, process.cwd()) ||
+        (0, find_up_1.findUp)(configNames, __dirname));
 }
 function globalFilePath() {
     const home = os.homedir();
@@ -98,20 +98,20 @@ function globalFilePath() {
     // global file in home directory, with this user will have
     // choice to move change its location to meet XDG convention
     const xdgConfig = xdgConfigHome(home, 'config.json');
-    if (fs_1.existsSync(xdgConfig)) {
+    if ((0, fs_1.existsSync)(xdgConfig)) {
         return xdgConfig;
     }
     // NOTE: This check is for the old configuration location, for more
     // information see https://github.com/angular/angular-cli/pull/20556
     const xdgConfigOld = xdgConfigHomeOld(home);
-    if (fs_1.existsSync(xdgConfigOld)) {
+    if ((0, fs_1.existsSync)(xdgConfigOld)) {
         /* eslint-disable no-console */
         console.warn(`Old configuration location detected: ${xdgConfigOld}\n` +
             `Please move the file to the new location ~/.config/angular/config.json`);
         return xdgConfigOld;
     }
     const p = path.join(home, globalFileName);
-    if (fs_1.existsSync(p)) {
+    if ((0, fs_1.existsSync)(p)) {
         return p;
     }
     return null;
@@ -178,7 +178,7 @@ function createGlobalSettings() {
         throw new Error('No home directory found.');
     }
     const globalPath = path.join(home, globalFileName);
-    fs_1.writeFileSync(globalPath, JSON.stringify({ version: 1 }));
+    (0, fs_1.writeFileSync)(globalPath, JSON.stringify({ version: 1 }));
     return globalPath;
 }
 exports.createGlobalSettings = createGlobalSettings;
@@ -196,7 +196,7 @@ function getWorkspaceRaw(level = 'local') {
 }
 exports.getWorkspaceRaw = getWorkspaceRaw;
 async function validateWorkspace(data) {
-    const schema = json_file_1.readAndParseJson(path.join(__dirname, '../lib/config/schema.json'));
+    const schema = (0, json_file_1.readAndParseJson)(path.join(__dirname, '../lib/config/schema.json'));
     const { formats } = await Promise.resolve().then(() => __importStar(require('@angular-devkit/schematics')));
     const registry = new core_1.json.schema.CoreSchemaRegistry(formats.standardFormats);
     const validator = await registry.compile(schema).toPromise();
@@ -294,8 +294,8 @@ function migrateLegacyGlobalConfig() {
     const homeDir = os.homedir();
     if (homeDir) {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
-        if (fs_1.existsSync(legacyGlobalConfigPath)) {
-            const legacy = json_file_1.readAndParseJson(legacyGlobalConfigPath);
+        if ((0, fs_1.existsSync)(legacyGlobalConfigPath)) {
+            const legacy = (0, json_file_1.readAndParseJson)(legacyGlobalConfigPath);
             if (!isJsonObject(legacy)) {
                 return false;
             }
@@ -321,7 +321,7 @@ function migrateLegacyGlobalConfig() {
             }
             if (Object.getOwnPropertyNames(cli).length > 0) {
                 const globalPath = path.join(homeDir, globalFileName);
-                fs_1.writeFileSync(globalPath, JSON.stringify({ version: 1, cli }, null, 2));
+                (0, fs_1.writeFileSync)(globalPath, JSON.stringify({ version: 1, cli }, null, 2));
                 return true;
             }
         }
@@ -334,8 +334,8 @@ function getLegacyPackageManager() {
     const homeDir = os.homedir();
     if (homeDir) {
         const legacyGlobalConfigPath = path.join(homeDir, '.angular-cli.json');
-        if (fs_1.existsSync(legacyGlobalConfigPath)) {
-            const legacy = json_file_1.readAndParseJson(legacyGlobalConfigPath);
+        if ((0, fs_1.existsSync)(legacyGlobalConfigPath)) {
+            const legacy = (0, json_file_1.readAndParseJson)(legacyGlobalConfigPath);
             if (!isJsonObject(legacy)) {
                 return null;
             }

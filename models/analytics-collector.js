@@ -44,7 +44,7 @@ class AnalyticsCollector {
     constructor(trackingId, userId) {
         this.trackingEventsQueue = [];
         this.parameters = {};
-        this.analyticsLogDebug = debug_1.default('ng:analytics:log');
+        this.analyticsLogDebug = (0, debug_1.default)('ng:analytics:log');
         // API Version
         this.parameters['v'] = '1';
         // User ID
@@ -228,7 +228,7 @@ function _getWindowsLanguageCode() {
     try {
         // This is true on Windows XP, 7, 8 and 10 AFAIK. Would return empty string or fail if it
         // doesn't work.
-        return child_process_1.execSync('wmic.exe os get locale').toString().trim();
+        return (0, child_process_1.execSync)('wmic.exe os get locale').toString().trim();
     }
     catch { }
     return undefined;

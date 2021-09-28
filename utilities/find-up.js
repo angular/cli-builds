@@ -38,7 +38,7 @@ function findUp(names, from) {
     while (currentDir && currentDir !== root) {
         for (const name of names) {
             const p = path.join(currentDir, name);
-            if (fs_1.existsSync(p)) {
+            if ((0, fs_1.existsSync)(p)) {
                 return p;
             }
         }

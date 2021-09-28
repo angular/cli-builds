@@ -30,7 +30,7 @@ exports.askConfirmation = void 0;
 const inquirer = __importStar(require("inquirer"));
 const tty_1 = require("./tty");
 async function askConfirmation(message, defaultResponse, noTTYResponse) {
-    if (!tty_1.isTTY()) {
+    if (!(0, tty_1.isTTY)()) {
         return noTTYResponse !== null && noTTYResponse !== void 0 ? noTTYResponse : defaultResponse;
     }
     const question = {

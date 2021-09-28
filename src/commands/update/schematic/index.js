@@ -623,7 +623,7 @@ function default_1(options) {
         const packages = _buildPackageList(options, npmDeps, logger);
         // Grab all package.json from the npm repository. This requires a lot of HTTP calls so we
         // try to parallelize as many as possible.
-        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => package_metadata_1.getNpmPackageJson(depName, logger, {
+        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => (0, package_metadata_1.getNpmPackageJson)(depName, logger, {
             registry: options.registry,
             usingYarn,
             verbose: options.verbose,

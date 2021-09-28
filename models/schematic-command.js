@@ -61,12 +61,12 @@ class SchematicCommand extends command_1.Command {
             // Set the options.
             const collection = this.getCollection(this.collectionName);
             const schematic = this.getSchematic(collection, this.schematicName, true);
-            const options = await json_schema_1.parseJsonSchemaToOptions(this._workflow.registry, schematic.description.schemaJson || {});
+            const options = await (0, json_schema_1.parseJsonSchemaToOptions)(this._workflow.registry, schematic.description.schemaJson || {});
             this.description.description = schematic.description.description;
             this.description.options.push(...options.filter((x) => !x.hidden));
             // Remove any user analytics from schematics that are NOT part of our safelist.
             for (const o of this.description.options) {
-                if (o.userAnalytics && !analytics_1.isPackageNameSafeForAnalytics(this.collectionName)) {
+                if (o.userAnalytics && !(0, analytics_1.isPackageNameSafeForAnalytics)(this.collectionName)) {
                     o.userAnalytics = undefined;
                 }
             }
@@ -173,7 +173,7 @@ class SchematicCommand extends command_1.Command {
         const workflow = new tools_1.NodeWorkflow(root, {
             force,
             dryRun,
-            packageManager: await package_manager_1.getPackageManager(root),
+            packageManager: await (0, package_manager_1.getPackageManager)(root),
             packageRegistry: options.packageRegistry,
             // A schema registry is required to allow customizing addUndefinedDefaults
             registry: new core_1.schema.CoreSchemaRegistry(schematics_1.formats.standardFormats),
@@ -193,7 +193,7 @@ class SchematicCommand extends command_1.Command {
                         ? current.project
                         : getProjectName();
                     return {
-                        ...(await config_1.getSchematicDefaults(schematic.collection.name, schematic.name, projectName)),
+                        ...(await (0, config_1.getSchematicDefaults)(schematic.collection.name, schematic.name, projectName)),
                         ...current,
                     };
                 },
@@ -233,7 +233,7 @@ class SchematicCommand extends command_1.Command {
             }
             return options;
         });
-        if (options.interactive !== false && tty_1.isTTY()) {
+        if (options.interactive !== false && (0, tty_1.isTTY)()) {
             workflow.registry.usePromptProvider((definitions) => {
                 const questions = definitions
                     .filter((definition) => !options.defaults || definition.default === undefined)
@@ -299,9 +299,9 @@ class SchematicCommand extends command_1.Command {
         return (this._workflow = workflow);
     }
     async getDefaultSchematicCollection() {
-        let workspace = await config_1.getWorkspace('local');
+        let workspace = await (0, config_1.getWorkspace)('local');
         if (workspace) {
-            const project = config_1.getProjectByCwd(workspace);
+            const project = (0, config_1.getProjectByCwd)(workspace);
             if (project && workspace.getProjectCli(project)) {
                 const value = workspace.getProjectCli(project)['defaultCollection'];
                 if (typeof value == 'string') {
@@ -315,7 +315,7 @@ class SchematicCommand extends command_1.Command {
                 }
             }
         }
-        workspace = await config_1.getWorkspace('global');
+        workspace = await (0, config_1.getWorkspace)('global');
         if (workspace && workspace.getCli()) {
             const value = workspace.getCli()['defaultCollection'];
             if (typeof value == 'string') {
@@ -331,7 +331,7 @@ class SchematicCommand extends command_1.Command {
         let loggingQueue = [];
         let error = false;
         const workflow = this._workflow;
-        const workingDir = core_1.normalize(systemPath.relative(this.context.root, process.cwd()));
+        const workingDir = (0, core_1.normalize)(systemPath.relative(this.context.root, process.cwd()));
         // Get the option object from the schematic schema.
         const schematic = this.getSchematic(this.getCollection(collectionName), schematicName, this.allowPrivateSchematics);
         // Update the schematic and collection name in case they're not the same as the ones we
@@ -345,7 +345,7 @@ class SchematicCommand extends command_1.Command {
             args = await this.parseFreeFormArguments(schematicOptions || []);
         }
         else {
-            o = await json_schema_1.parseJsonSchemaToOptions(workflow.registry, schematic.description.schemaJson);
+            o = await (0, json_schema_1.parseJsonSchemaToOptions)(workflow.registry, schematic.description.schemaJson);
             args = await this.parseArguments(schematicOptions || [], o);
         }
         const allowAdditionalProperties = typeof schematic.description.schemaJson === 'object' &&
@@ -405,7 +405,7 @@ class SchematicCommand extends command_1.Command {
         if (collectionName === '@schematics/angular' && schematicName === 'ng-new') {
             if (!input.skipInstall &&
                 (input.packageManager === undefined || input.packageManager === 'npm')) {
-                await package_manager_1.ensureCompatibleNpm(this.context.root);
+                await (0, package_manager_1.ensureCompatibleNpm)(this.context.root);
             }
         }
         return new Promise((resolve) => {
@@ -447,10 +447,10 @@ class SchematicCommand extends command_1.Command {
         });
     }
     async parseFreeFormArguments(schematicOptions) {
-        return parser_1.parseFreeFormArguments(schematicOptions);
+        return (0, parser_1.parseFreeFormArguments)(schematicOptions);
     }
     async parseArguments(schematicOptions, options) {
-        return parser_1.parseArguments(schematicOptions, options, this.logger);
+        return (0, parser_1.parseArguments)(schematicOptions, options, this.logger);
     }
 }
 exports.SchematicCommand = SchematicCommand;

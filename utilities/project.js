@@ -39,13 +39,13 @@ function findWorkspaceFile(currentDirectory = process.cwd()) {
         'angular-cli.json',
         '.angular-cli.json',
     ];
-    const configFilePath = find_up_1.findUp(possibleConfigFiles, currentDirectory);
+    const configFilePath = (0, find_up_1.findUp)(possibleConfigFiles, currentDirectory);
     if (configFilePath === null) {
         return null;
     }
     const possibleDir = path.dirname(configFilePath);
     const homedir = os.homedir();
-    if (core_1.normalize(possibleDir) === core_1.normalize(homedir)) {
+    if ((0, core_1.normalize)(possibleDir) === (0, core_1.normalize)(homedir)) {
         const packageJsonPath = path.join(possibleDir, 'package.json');
         try {
             const packageJsonText = fs.readFileSync(packageJsonPath, 'utf-8');

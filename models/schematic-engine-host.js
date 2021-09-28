@@ -53,10 +53,10 @@ class SchematicEngineHost extends tools_1.NodeModulesEngineHost {
     _resolveReferenceString(refString, parentPath) {
         const [path, name] = refString.split('#', 2);
         // Mimic behavior of ExportStringRef class used in default behavior
-        const fullPath = path[0] === '.' ? path_1.resolve(parentPath !== null && parentPath !== void 0 ? parentPath : process.cwd(), path) : path;
+        const fullPath = path[0] === '.' ? (0, path_1.resolve)(parentPath !== null && parentPath !== void 0 ? parentPath : process.cwd(), path) : path;
         const schematicFile = require.resolve(fullPath, { paths: [parentPath] });
         if (shouldWrapSchematic(schematicFile)) {
-            const schematicPath = path_1.dirname(schematicFile);
+            const schematicPath = (0, path_1.dirname)(schematicFile);
             const moduleCache = new Map();
             const factoryInitializer = wrap(schematicFile, schematicPath, moduleCache, name || 'default');
             const factory = factoryInitializer();
@@ -81,7 +81,7 @@ const legacyModules = {
             if (!data) {
                 throw new schematics_1.SchematicsException(`Could not find (${path})`);
             }
-            return jsonc_parser_1.parse(data.toString(), [], { allowTrailingComma: true });
+            return (0, jsonc_parser_1.parse)(data.toString(), [], { allowTrailingComma: true });
         },
     },
     '@schematics/angular/utility/project': {
@@ -127,7 +127,7 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
             if (!/[/\\]node_modules[/\\]@schematics[/\\]angular[/\\]third_party[/\\]/.test(modulePath) &&
                 !modulePath.endsWith('.json')) {
                 // Wrap module and save in cache
-                const wrappedModule = wrap(modulePath, path_1.dirname(modulePath), moduleCache)();
+                const wrappedModule = wrap(modulePath, (0, path_1.dirname)(modulePath), moduleCache)();
                 moduleCache.set(modulePath, wrappedModule);
                 return wrappedModule;
             }
@@ -136,7 +136,7 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
         return schematicRequire(id);
     };
     // Setup a wrapper function to capture the module's exports
-    const schematicCode = fs_1.readFileSync(schematicFile, 'utf8');
+    const schematicCode = (0, fs_1.readFileSync)(schematicFile, 'utf8');
     // `module` is required due to @angular/localize ng-add being in UMD format
     const headerCode = '(function() {\nvar exports = {};\nvar module = { exports };\n';
     const footerCode = exportName ? `\nreturn exports['${exportName}'];});` : '\nreturn exports;});';

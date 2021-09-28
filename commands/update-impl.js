@@ -66,7 +66,7 @@ class UpdateCommand extends command_1.Command {
         this.packageManager = workspace_schema_1.PackageManager.Npm;
     }
     async initialize(options) {
-        this.packageManager = await package_manager_1.getPackageManager(this.context.root);
+        this.packageManager = await (0, package_manager_1.getPackageManager)(this.context.root);
         this.workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: this.packageManager,
             packageManagerForce: options.force,
@@ -137,7 +137,7 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
             }
             else {
-                const logPath = log_file_1.writeErrorToLogFile(e);
+                const logPath = (0, log_file_1.writeErrorToLogFile)(e);
                 this.logger.fatal(`${color_1.colors.symbols.cross} Migration failed: ${e.message}\n` +
                     `  See "${logPath}" for further details.\n`);
             }
@@ -216,11 +216,11 @@ class UpdateCommand extends command_1.Command {
     // eslint-disable-next-line max-lines-per-function
     async run(options) {
         var _a, _b;
-        await package_manager_1.ensureCompatibleNpm(this.context.root);
+        await (0, package_manager_1.ensureCompatibleNpm)(this.context.root);
         // Check if the current installed CLI version is older than the latest version.
         if (!disableVersionCheck && (await this.checkCLILatestVersion(options.verbose, options.next))) {
             this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` + 'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.packageManager, process.argv.slice(2));
+            return (0, install_package_1.runTempPackageBin)(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.packageManager, process.argv.slice(2));
         }
         const logVerbose = (message) => {
             if (options.verbose) {
@@ -241,7 +241,7 @@ class UpdateCommand extends command_1.Command {
         const packages = [];
         for (const request of options['--'] || []) {
             try {
-                const packageIdentifier = npm_package_arg_1.default(request);
+                const packageIdentifier = (0, npm_package_arg_1.default)(request);
                 // only registry identifiers are supported
                 if (!packageIdentifier.registry) {
                     this.logger.error(`Package '${request}' is not a registry package identifer.`);
@@ -282,7 +282,7 @@ class UpdateCommand extends command_1.Command {
         }
         this.logger.info(`Using package manager: '${this.packageManager}'`);
         this.logger.info('Collecting installed dependencies...');
-        const rootDependencies = await package_tree_1.getProjectDependencies(this.context.root);
+        const rootDependencies = await (0, package_tree_1.getProjectDependencies)(this.context.root);
         this.logger.info(`Found ${rootDependencies.size} dependencies.`);
         if (packages.length === 0) {
             // Show status
@@ -319,10 +319,10 @@ class UpdateCommand extends command_1.Command {
                 // Allow running migrations on transitively installed dependencies
                 // There can technically be nested multiple versions
                 // TODO: If multiple, this should find all versions and ask which one to use
-                const packageJson = package_tree_1.findPackageJson(this.context.root, packageName);
+                const packageJson = (0, package_tree_1.findPackageJson)(this.context.root, packageName);
                 if (packageJson) {
                     packagePath = path.dirname(packageJson);
-                    packageNode = await package_tree_1.readPackageJson(packageJson);
+                    packageNode = await (0, package_tree_1.readPackageJson)(packageJson);
                 }
             }
             if (!packageNode || !packagePath) {
@@ -420,7 +420,7 @@ class UpdateCommand extends command_1.Command {
             try {
                 // Metadata requests are internally cached; multiple requests for same name
                 // does not result in additional network traffic
-                metadata = await package_metadata_1.fetchPackageMetadata(packageName, this.logger, {
+                metadata = await (0, package_metadata_1.fetchPackageMetadata)(packageName, this.logger, {
                     verbose: options.verbose,
                 });
             }
@@ -435,7 +435,7 @@ class UpdateCommand extends command_1.Command {
                 requestIdentifier.type === 'range' ||
                 requestIdentifier.type === 'tag') {
                 try {
-                    manifest = npm_pick_manifest_1.default(metadata, requestIdentifier.fetchSpec);
+                    manifest = (0, npm_pick_manifest_1.default)(metadata, requestIdentifier.fetchSpec);
                 }
                 catch (e) {
                     if (e.code === 'ETARGET') {
@@ -445,7 +445,7 @@ class UpdateCommand extends command_1.Command {
                             requestIdentifier.fetchSpec === 'next' &&
                             !requestIdentifier.rawSpec) {
                             try {
-                                manifest = npm_pick_manifest_1.default(metadata, 'latest');
+                                manifest = (0, npm_pick_manifest_1.default)(metadata, 'latest');
                             }
                             catch (e) {
                                 if (e.code !== 'ETARGET' && e.code !== 'ENOVERSIONS') {
@@ -509,7 +509,7 @@ class UpdateCommand extends command_1.Command {
                 });
             }
             catch { }
-            const result = await install_package_1.installAllPackages(this.packageManager, options.force ? ['--force'] : [], this.context.root);
+            const result = await (0, install_package_1.installAllPackages)(this.packageManager, options.force ? ['--force'] : [], this.context.root);
             if (result !== 0) {
                 return result;
             }
@@ -634,11 +634,11 @@ class UpdateCommand extends command_1.Command {
     }
     checkCleanGit() {
         try {
-            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', {
+            const topLevel = (0, child_process_1.execSync)('git rev-parse --show-toplevel', {
                 encoding: 'utf8',
                 stdio: 'pipe',
             });
-            const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
+            const result = (0, child_process_1.execSync)('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
             if (result.trim().length === 0) {
                 return true;
             }
@@ -659,7 +659,7 @@ class UpdateCommand extends command_1.Command {
      */
     async checkCLILatestVersion(verbose = false, next = false) {
         const installedCLIVersion = version_1.VERSION.full;
-        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
+        const LatestCLIManifest = await (0, package_metadata_1.fetchPackageManifest)(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === workspace_schema_1.PackageManager.Yarn,
         });
@@ -672,7 +672,7 @@ exports.UpdateCommand = UpdateCommand;
  */
 function hasChangesToCommit() {
     // List all modified files not covered by .gitignore.
-    const files = child_process_1.execSync('git ls-files -m -d -o --exclude-standard').toString();
+    const files = (0, child_process_1.execSync)('git ls-files -m -d -o --exclude-standard').toString();
     // If any files are returned, then there must be something to commit.
     return files !== '';
 }
@@ -683,16 +683,16 @@ function hasChangesToCommit() {
  */
 function createCommit(message) {
     // Stage entire working tree for commit.
-    child_process_1.execSync('git add -A', { encoding: 'utf8', stdio: 'pipe' });
+    (0, child_process_1.execSync)('git add -A', { encoding: 'utf8', stdio: 'pipe' });
     // Commit with the message passed via stdin to avoid bash escaping issues.
-    child_process_1.execSync('git commit --no-verify -F -', { encoding: 'utf8', stdio: 'pipe', input: message });
+    (0, child_process_1.execSync)('git commit --no-verify -F -', { encoding: 'utf8', stdio: 'pipe', input: message });
 }
 /**
  * @return The Git SHA hash of the HEAD commit. Returns null if unable to retrieve the hash.
  */
 function findCurrentGitSha() {
     try {
-        const hash = child_process_1.execSync('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
+        const hash = (0, child_process_1.execSync)('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' });
         return hash.trim();
     }
     catch {

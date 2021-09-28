@@ -16,7 +16,7 @@ const workspace_schema_1 = require("../lib/config/workspace-schema");
 const config_1 = require("./config");
 function supports(name) {
     try {
-        child_process_1.execSync(`${name} --version`, { stdio: 'ignore' });
+        (0, child_process_1.execSync)(`${name} --version`, { stdio: 'ignore' });
         return true;
     }
     catch {
@@ -32,14 +32,14 @@ function supportsNpm() {
 }
 exports.supportsNpm = supportsNpm;
 async function getPackageManager(root) {
-    let packageManager = (await config_1.getConfiguredPackageManager());
+    let packageManager = (await (0, config_1.getConfiguredPackageManager)());
     if (packageManager) {
         return packageManager;
     }
     const hasYarn = supportsYarn();
-    const hasYarnLock = fs_1.existsSync(path_1.join(root, 'yarn.lock'));
+    const hasYarnLock = (0, fs_1.existsSync)((0, path_1.join)(root, 'yarn.lock'));
     const hasNpm = supportsNpm();
-    const hasNpmLock = fs_1.existsSync(path_1.join(root, 'package-lock.json'));
+    const hasNpmLock = (0, fs_1.existsSync)((0, path_1.join)(root, 'package-lock.json'));
     if (hasYarn && hasYarnLock && !hasNpmLock) {
         packageManager = workspace_schema_1.PackageManager.Yarn;
     }
@@ -65,12 +65,12 @@ async function ensureCompatibleNpm(root) {
         return;
     }
     try {
-        const versionText = child_process_1.execSync('npm --version', { encoding: 'utf8', stdio: 'pipe' }).trim();
-        const version = semver_1.valid(versionText);
+        const versionText = (0, child_process_1.execSync)('npm --version', { encoding: 'utf8', stdio: 'pipe' }).trim();
+        const version = (0, semver_1.valid)(versionText);
         if (!version) {
             return;
         }
-        if (semver_1.satisfies(version, '>=7 <7.5.6')) {
+        if ((0, semver_1.satisfies)(version, '>=7 <7.5.6')) {
             // eslint-disable-next-line no-console
             console.warn(`npm version ${version} detected.` +
                 ' When using npm 7 with the Angular CLI, npm version 7.5.6 or higher is recommended.');

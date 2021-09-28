@@ -28,7 +28,7 @@ class GenerateCommand extends schematic_command_1.SchematicCommand {
             this.longSchematicName = schematic.description.name;
             let subcommand;
             if (schematic.description.schemaJson) {
-                subcommand = await json_schema_1.parseJsonSchemaToSubCommandDescription(name, schematic.description.path, this._workflow.registry, schematic.description.schemaJson);
+                subcommand = await (0, json_schema_1.parseJsonSchemaToSubCommandDescription)(name, schematic.description.path, this._workflow.registry, schematic.description.schemaJson);
             }
             else {
                 continue;

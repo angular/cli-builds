@@ -19,10 +19,10 @@ let logPath;
  */
 function writeErrorToLogFile(error) {
     if (!logPath) {
-        const tempDirectory = fs_1.mkdtempSync(fs_1.realpathSync(os_1.tmpdir()) + '/ng-');
-        logPath = path_1.normalize(tempDirectory + '/angular-errors.log');
+        const tempDirectory = (0, fs_1.mkdtempSync)((0, fs_1.realpathSync)((0, os_1.tmpdir)()) + '/ng-');
+        logPath = (0, path_1.normalize)(tempDirectory + '/angular-errors.log');
     }
-    fs_1.appendFileSync(logPath, '[error] ' + (error.stack || error) + '\n\n');
+    (0, fs_1.appendFileSync)(logPath, '[error] ' + (error.stack || error) + '\n\n');
     return logPath;
 }
 exports.writeErrorToLogFile = writeErrorToLogFile;

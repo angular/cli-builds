@@ -157,8 +157,8 @@ class VersionCommand extends command_1.Command {
     }
     async getPackageManager() {
         try {
-            const manager = await package_manager_1.getPackageManager(this.context.root);
-            const version = child_process_1.execSync(`${manager} --version`, {
+            const manager = await (0, package_manager_1.getPackageManager)(this.context.root);
+            const version = (0, child_process_1.execSync)(`${manager} --version`, {
                 encoding: 'utf8',
                 stdio: ['ignore', 'pipe', 'ignore'],
                 env: {

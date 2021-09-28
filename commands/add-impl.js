@@ -41,7 +41,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     async run(options) {
         var _a;
-        await package_manager_1.ensureCompatibleNpm(this.context.root);
+        await (0, package_manager_1.ensureCompatibleNpm)(this.context.root);
         if (!options.collection) {
             this.logger.fatal(`The "ng add" command requires a name argument to be specified eg. ` +
                 `${color_1.colors.yellow('ng add [name] ')}. For more details, use "ng help".`);
@@ -49,7 +49,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
         let packageIdentifier;
         try {
-            packageIdentifier = npm_package_arg_1.default(options.collection);
+            packageIdentifier = (0, npm_package_arg_1.default)(options.collection);
         }
         catch (e) {
             this.logger.error(e.message);
@@ -67,7 +67,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         }
         const spinner = new spinner_1.Spinner();
         spinner.start('Determining package manager...');
-        const packageManager = await package_manager_1.getPackageManager(this.context.root);
+        const packageManager = await (0, package_manager_1.getPackageManager)(this.context.root);
         const usingYarn = packageManager === workspace_schema_1.PackageManager.Yarn;
         spinner.info(`Using package manager: ${color_1.colors.grey(packageManager)}`);
         if (packageIdentifier.name && packageIdentifier.type === 'tag' && !packageIdentifier.rawSpec) {
@@ -76,7 +76,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             spinner.start('Searching for compatible package version...');
             let packageMetadata;
             try {
-                packageMetadata = await package_metadata_1.fetchPackageMetadata(packageIdentifier.name, this.logger, {
+                packageMetadata = await (0, package_metadata_1.fetchPackageMetadata)(packageIdentifier.name, this.logger, {
                     registry: options.registry,
                     usingYarn,
                     verbose: options.verbose,
@@ -92,8 +92,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     const version = await this.findProjectVersion('@angular/cli');
                     const semverOptions = { includePrerelease: true };
                     if (version &&
-                        ((semver_1.validRange(version) && semver_1.intersects(version, '7', semverOptions)) ||
-                            (semver_1.valid(version) && semver_1.satisfies(version, '7', semverOptions)))) {
+                        (((0, semver_1.validRange)(version) && (0, semver_1.intersects)(version, '7', semverOptions)) ||
+                            ((0, semver_1.valid)(version) && (0, semver_1.satisfies)(version, '7', semverOptions)))) {
                         packageIdentifier = npm_package_arg_1.default.resolve('@angular/pwa', '0.12');
                     }
                 }
@@ -104,8 +104,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
-                const versionManifests = Object.values(packageMetadata.versions).filter((value) => !semver_1.prerelease(value.version) && !value.deprecated);
-                versionManifests.sort((a, b) => semver_1.rcompare(a.version, b.version, true));
+                const versionManifests = Object.values(packageMetadata.versions).filter((value) => !(0, semver_1.prerelease)(value.version) && !value.deprecated);
+                versionManifests.sort((a, b) => (0, semver_1.rcompare)(a.version, b.version, true));
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
                     if (!(await this.hasMismatchedPeer(versionManifest))) {
@@ -130,7 +130,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         let savePackage;
         try {
             spinner.start('Loading package information from registry...');
-            const manifest = await package_metadata_1.fetchPackageManifest(packageIdentifier.toString(), this.logger, {
+            const manifest = await (0, package_metadata_1.fetchPackageManifest)(packageIdentifier.toString(), this.logger, {
                 registry: options.registry,
                 verbose: options.verbose,
                 usingYarn,
@@ -149,10 +149,10 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             return 1;
         }
         if (!options.skipConfirmation) {
-            const confirmationResponse = await prompt_1.askConfirmation(`\nThe package ${color_1.colors.blue(packageIdentifier.raw)} will be installed and executed.\n` +
+            const confirmationResponse = await (0, prompt_1.askConfirmation)(`\nThe package ${color_1.colors.blue(packageIdentifier.raw)} will be installed and executed.\n` +
                 'Would you like to proceed?', true, false);
             if (!confirmationResponse) {
-                if (!tty_1.isTTY()) {
+                if (!(0, tty_1.isTTY)()) {
                     this.logger.error('No terminal detected. ' +
                         `'--skip-confirmation' can be used to bypass installation confirmation. ` +
                         `Ensure package name is correct prior to '--skip-confirmation' option usage.`);
@@ -164,17 +164,17 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         if (savePackage === false) {
             // Temporary packages are located in a different directory
             // Hence we need to resolve them using the temp path
-            const { status, tempNodeModules } = await install_package_1.installTempPackage(packageIdentifier.raw, packageManager, options.registry ? [`--registry="${options.registry}"`] : undefined);
-            const resolvedCollectionPath = require.resolve(path_1.join(collectionName, 'package.json'), {
+            const { status, tempNodeModules } = await (0, install_package_1.installTempPackage)(packageIdentifier.raw, packageManager, options.registry ? [`--registry="${options.registry}"`] : undefined);
+            const resolvedCollectionPath = require.resolve((0, path_1.join)(collectionName, 'package.json'), {
                 paths: [tempNodeModules],
             });
             if (status !== 0) {
                 return status;
             }
-            collectionName = path_1.dirname(resolvedCollectionPath);
+            collectionName = (0, path_1.dirname)(resolvedCollectionPath);
         }
         else {
-            const status = await install_package_1.installPackage(packageIdentifier.raw, packageManager, savePackage, options.registry ? [`--registry="${options.registry}"`] : undefined);
+            const status = await (0, install_package_1.installPackage)(packageIdentifier.raw, packageManager, savePackage, options.registry ? [`--registry="${options.registry}"`] : undefined);
             if (status !== 0) {
                 return status;
             }
@@ -189,11 +189,11 @@ class AddCommand extends schematic_command_1.SchematicCommand {
         const installedVersion = await this.findProjectVersion(packageIdentifier.name);
         if (installedVersion) {
             if (packageIdentifier.type === 'range' && packageIdentifier.fetchSpec) {
-                validVersion = semver_1.satisfies(installedVersion, packageIdentifier.fetchSpec);
+                validVersion = (0, semver_1.satisfies)(installedVersion, packageIdentifier.fetchSpec);
             }
             else if (packageIdentifier.type === 'version') {
-                const v1 = semver_1.valid(packageIdentifier.fetchSpec);
-                const v2 = semver_1.valid(installedVersion);
+                const v1 = (0, semver_1.valid)(packageIdentifier.fetchSpec);
+                const v2 = (0, semver_1.valid)(installedVersion);
                 validVersion = v1 !== null && v1 === v2;
             }
             else if (!packageIdentifier.rawSpec) {
@@ -205,7 +205,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     async reportAnalytics(paths, options, dimensions = [], metrics = []) {
         const collection = options.collection;
         // Add the collection if it's safe listed.
-        if (collection && analytics_1.isPackageNameSafeForAnalytics(collection)) {
+        if (collection && (0, analytics_1.isPackageNameSafeForAnalytics)(collection)) {
             dimensions[core_1.analytics.NgCliAnalyticsDimensions.NgAddCollection] = collection;
         }
         else {
@@ -215,7 +215,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     }
     isPackageInstalled(name) {
         try {
-            require.resolve(path_1.join(name, 'package.json'), { paths: [this.context.root] });
+            require.resolve((0, path_1.join)(name, 'package.json'), { paths: [this.context.root] });
             return true;
         }
         catch (e) {
@@ -250,21 +250,21 @@ class AddCommand extends schematic_command_1.SchematicCommand {
     async findProjectVersion(name) {
         let installedPackage;
         try {
-            installedPackage = require.resolve(path_1.join(name, 'package.json'), {
+            installedPackage = require.resolve((0, path_1.join)(name, 'package.json'), {
                 paths: [this.context.root],
             });
         }
         catch { }
         if (installedPackage) {
             try {
-                const installed = await package_metadata_1.fetchPackageManifest(path_1.dirname(installedPackage), this.logger);
+                const installed = await (0, package_metadata_1.fetchPackageManifest)((0, path_1.dirname)(installedPackage), this.logger);
                 return installed.version;
             }
             catch { }
         }
         let projectManifest;
         try {
-            projectManifest = await package_metadata_1.fetchPackageManifest(this.context.root, this.logger);
+            projectManifest = await (0, package_metadata_1.fetchPackageManifest)(this.context.root, this.logger);
         }
         catch { }
         if (projectManifest) {
@@ -292,8 +292,8 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                         continue;
                     }
                     const options = { includePrerelease: true };
-                    if (!semver_1.intersects(version, peerIdentifier.rawSpec, options) &&
-                        !semver_1.satisfies(version, peerIdentifier.rawSpec, options)) {
+                    if (!(0, semver_1.intersects)(version, peerIdentifier.rawSpec, options) &&
+                        !(0, semver_1.satisfies)(version, peerIdentifier.rawSpec, options)) {
                         return true;
                     }
                 }
