@@ -65,7 +65,7 @@ function readOptions(logger, yarn = false, showPotentials = false) {
     }
     const defaultConfigLocations = [
         (!yarn && process.env.NPM_CONFIG_GLOBALCONFIG) || path.join(globalPrefix, 'etc', baseFilename),
-        (!yarn && process.env.NPM_CONFIG_USERCONFIG) || path.join(os_1.homedir(), dotFilename),
+        (!yarn && process.env.NPM_CONFIG_USERCONFIG) || path.join((0, os_1.homedir)(), dotFilename),
     ];
     const projectConfigLocations = [path.join(cwd, dotFilename)];
     if (yarn) {
@@ -79,11 +79,11 @@ function readOptions(logger, yarn = false, showPotentials = false) {
     }
     let rcOptions = {};
     for (const location of [...defaultConfigLocations, ...projectConfigLocations]) {
-        if (fs_1.existsSync(location)) {
+        if ((0, fs_1.existsSync)(location)) {
             if (showPotentials) {
                 logger.info(`Trying '${location}'...found.`);
             }
-            const data = fs_1.readFileSync(location, 'utf8');
+            const data = (0, fs_1.readFileSync)(location, 'utf8');
             // Normalize RC options that are needed by 'npm-registry-fetch'.
             // See: https://github.com/npm/npm-registry-fetch/blob/ebddbe78a5f67118c1f7af2e02c8a22bcaf9e850/index.js#L99-L126
             const rcConfig = yarn ? lockfile.parse(data) : ini.parse(data);
@@ -154,7 +154,7 @@ function normalizeOptions(rawOptions, location = process.cwd(), existingNormaliz
                 if (typeof substitutedValue === 'string') {
                     const cafile = path.resolve(path.dirname(location), substitutedValue);
                     try {
-                        options['ca'] = fs_1.readFileSync(cafile, 'utf8').replace(/\r?\n/g, '\n');
+                        options['ca'] = (0, fs_1.readFileSync)(cafile, 'utf8').replace(/\r?\n/g, '\n');
                     }
                     catch { }
                 }

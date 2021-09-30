@@ -26,7 +26,7 @@ async function installAllPackages(packageManager = workspace_schema_1.PackageMan
     const bufferedOutput = [];
     return new Promise((resolve, reject) => {
         var _a, _b;
-        const childProcess = child_process_1.spawn(packageManager, [...installArgs, ...extraArgs], {
+        const childProcess = (0, child_process_1.spawn)(packageManager, [...installArgs, ...extraArgs], {
             stdio: 'pipe',
             shell: true,
             cwd,
@@ -62,7 +62,7 @@ async function installPackage(packageName, packageManager = workspace_schema_1.P
     const bufferedOutput = [];
     return new Promise((resolve, reject) => {
         var _a, _b;
-        const childProcess = child_process_1.spawn(packageManager, [...installArgs, ...extraArgs], {
+        const childProcess = (0, child_process_1.spawn)(packageManager, [...installArgs, ...extraArgs], {
             stdio: 'pipe',
             shell: true,
             cwd,
@@ -84,11 +84,11 @@ async function installPackage(packageName, packageManager = workspace_schema_1.P
 }
 exports.installPackage = installPackage;
 async function installTempPackage(packageName, packageManager = workspace_schema_1.PackageManager.Npm, extraArgs) {
-    const tempPath = fs_1.mkdtempSync(path_1.join(fs_1.realpathSync(os_1.tmpdir()), 'angular-cli-packages-'));
+    const tempPath = (0, fs_1.mkdtempSync)((0, path_1.join)((0, fs_1.realpathSync)((0, os_1.tmpdir)()), 'angular-cli-packages-'));
     // clean up temp directory on process exit
     process.on('exit', () => {
         try {
-            fs_1.rmdirSync(tempPath, { recursive: true, maxRetries: 3 });
+            (0, fs_1.rmdirSync)(tempPath, { recursive: true, maxRetries: 3 });
         }
         catch { }
     });
@@ -100,7 +100,7 @@ async function installTempPackage(packageName, packageManager = workspace_schema
     // npm WARN .ng-temp-packages-84Qi7y No license field.
     // While we can use `npm init -y` we will end up needing to update the 'package.json' anyways
     // because of missing fields.
-    fs_1.writeFileSync(path_1.join(tempPath, 'package.json'), JSON.stringify({
+    (0, fs_1.writeFileSync)((0, path_1.join)(tempPath, 'package.json'), JSON.stringify({
         name: 'temp-cli-install',
         description: 'temp-cli-install',
         repository: 'temp-cli-install',
@@ -108,7 +108,7 @@ async function installTempPackage(packageName, packageManager = workspace_schema
     }));
     // setup prefix/global modules path
     const packageManagerArgs = getPackageManagerArguments(packageManager);
-    const tempNodeModules = path_1.join(tempPath, 'node_modules');
+    const tempNodeModules = (0, path_1.join)(tempPath, 'node_modules');
     // Yarn will not append 'node_modules' to the path
     const prefixPath = packageManager === workspace_schema_1.PackageManager.Yarn ? tempNodeModules : tempPath;
     const installArgs = [
@@ -130,24 +130,24 @@ async function runTempPackageBin(packageName, packageManager = workspace_schema_
     // Remove version/tag etc... from package name
     // Ex: @angular/cli@latest -> @angular/cli
     const packageNameNoVersion = packageName.substring(0, packageName.lastIndexOf('@'));
-    const pkgLocation = path_1.join(tempNodeModules, packageNameNoVersion);
-    const packageJsonPath = path_1.join(pkgLocation, 'package.json');
+    const pkgLocation = (0, path_1.join)(tempNodeModules, packageNameNoVersion);
+    const packageJsonPath = (0, path_1.join)(pkgLocation, 'package.json');
     // Get a binary location for this package
     let binPath;
-    if (fs_1.existsSync(packageJsonPath)) {
-        const content = fs_1.readFileSync(packageJsonPath, 'utf-8');
+    if ((0, fs_1.existsSync)(packageJsonPath)) {
+        const content = (0, fs_1.readFileSync)(packageJsonPath, 'utf-8');
         if (content) {
             const { bin = {} } = JSON.parse(content);
             const binKeys = Object.keys(bin);
             if (binKeys.length) {
-                binPath = path_1.resolve(pkgLocation, bin[binKeys[0]]);
+                binPath = (0, path_1.resolve)(pkgLocation, bin[binKeys[0]]);
             }
         }
     }
     if (!binPath) {
         throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
     }
-    const { status, error } = child_process_1.spawnSync(process.execPath, [binPath, ...args], {
+    const { status, error } = (0, child_process_1.spawnSync)(process.execPath, [binPath, ...args], {
         stdio: 'inherit',
         env: {
             ...process.env,

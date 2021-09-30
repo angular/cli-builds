@@ -78,8 +78,8 @@ class ArchitectCommand extends command_1.Command {
                     builderNames.add(builderName);
                 }
                 const builderDesc = await this._architectHost.resolveBuilder(builderName);
-                const optionDefs = await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema);
-                const parsedOptions = parser_1.parseArguments([...commandLeftovers], optionDefs);
+                const optionDefs = await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema);
+                const parsedOptions = (0, parser_1.parseArguments)([...commandLeftovers], optionDefs);
                 const builderLeftovers = parsedOptions['--'] || [];
                 leftoverMap.set(name, { optionDefs, parsedOptions });
                 potentialProjectNames = new Set(builderLeftovers.filter((x) => potentialProjectNames.has(x)));
@@ -102,7 +102,7 @@ class ArchitectCommand extends command_1.Command {
                     for (const location of locations) {
                         const tempLeftovers = [...commandLeftovers];
                         tempLeftovers.splice(location, 1);
-                        const tempArgs = parser_1.parseArguments([...tempLeftovers], optionInfo.optionDefs);
+                        const tempArgs = (0, parser_1.parseArguments)([...tempLeftovers], optionInfo.optionDefs);
                         delete tempArgs['--'];
                         if (JSON.stringify(optionInfo.parsedOptions) === JSON.stringify(tempArgs)) {
                             options['--'] = tempLeftovers;
@@ -143,10 +143,10 @@ class ArchitectCommand extends command_1.Command {
             target: this.target,
         });
         const builderDesc = await this._architectHost.resolveBuilder(builderConf);
-        this.description.options.push(...(await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema)));
+        this.description.options.push(...(await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema)));
         // Update options to remove analytics from options if the builder isn't safelisted.
         for (const o of this.description.options) {
-            if (o.userAnalytics && !analytics_1.isPackageNameSafeForAnalytics(builderConf)) {
+            if (o.userAnalytics && !(0, analytics_1.isPackageNameSafeForAnalytics)(builderConf)) {
                 o.userAnalytics = undefined;
             }
         }
@@ -160,8 +160,8 @@ class ArchitectCommand extends command_1.Command {
         // overrides).
         const builderConf = await this._architectHost.getBuilderNameForTarget(target);
         const builderDesc = await this._architectHost.resolveBuilder(builderConf);
-        const targetOptionArray = await json_schema_1.parseJsonSchemaToOptions(this._registry, builderDesc.optionSchema);
-        const overrides = parser_1.parseArguments(targetOptions, targetOptionArray, this.logger);
+        const targetOptionArray = await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema);
+        const overrides = (0, parser_1.parseArguments)(targetOptions, targetOptionArray, this.logger);
         const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object' && builderDesc.optionSchema.additionalProperties;
         if (overrides['--'] && !allowAdditionalProperties) {
             (overrides['--'] || []).forEach((additional) => {
@@ -175,7 +175,7 @@ class ArchitectCommand extends command_1.Command {
         });
         const run = await this._architect.scheduleTarget(target, overrides, {
             logger: this.logger,
-            analytics: analytics_1.isPackageNameSafeForAnalytics(builderConf) ? this.analytics : undefined,
+            analytics: (0, analytics_1.isPackageNameSafeForAnalytics)(builderConf) ? this.analytics : undefined,
         });
         const { error, success } = await run.output.toPromise();
         await run.stop();

@@ -61,7 +61,7 @@ const standardCommands = {
  * @private
  */
 async function _createAnalytics(workspace, skipPrompt = false) {
-    let config = await analytics_1.getGlobalAnalytics();
+    let config = await (0, analytics_1.getGlobalAnalytics)();
     // If in workspace and global analytics is enabled, defer to workspace level
     if (workspace && config) {
         const skipAnalytics = skipPrompt ||
@@ -71,12 +71,12 @@ async function _createAnalytics(workspace, skipPrompt = false) {
         // TODO: This should honor the `no-interactive` option.
         //       It is currently not an `ng` option but rather only an option for specific commands.
         //       The concept of `ng`-wide options are needed to cleanly handle this.
-        if (!skipAnalytics && !(await analytics_1.hasWorkspaceAnalyticsConfiguration())) {
-            await analytics_1.promptProjectAnalytics();
+        if (!skipAnalytics && !(await (0, analytics_1.hasWorkspaceAnalyticsConfiguration)())) {
+            await (0, analytics_1.promptProjectAnalytics)();
         }
-        config = await analytics_1.getWorkspaceAnalytics();
+        config = await (0, analytics_1.getWorkspaceAnalytics)();
     }
-    const maybeSharedAnalytics = await analytics_1.getSharedAnalytics();
+    const maybeSharedAnalytics = await (0, analytics_1.getSharedAnalytics)();
     if (config && maybeSharedAnalytics) {
         return new core_1.analytics.MultiAnalytics([config, maybeSharedAnalytics]);
     }
@@ -91,12 +91,12 @@ async function _createAnalytics(workspace, skipPrompt = false) {
     }
 }
 async function loadCommandDescription(name, path, registry) {
-    const schemaPath = path_1.resolve(__dirname, path);
-    const schema = json_file_1.readAndParseJson(schemaPath);
-    if (!core_1.isJsonObject(schema)) {
+    const schemaPath = (0, path_1.resolve)(__dirname, path);
+    const schema = (0, json_file_1.readAndParseJson)(schemaPath);
+    if (!(0, core_1.isJsonObject)(schema)) {
         throw new Error('Invalid command JSON loaded from ' + JSON.stringify(schemaPath));
     }
-    return json_schema_1.parseJsonSchemaToCommandDescription(name, schemaPath, registry, schema);
+    return (0, json_schema_1.parseJsonSchemaToCommandDescription)(name, schemaPath, registry, schema);
 }
 /**
  * Run a command.
@@ -114,7 +114,7 @@ async function runCommand(args, logger, workspace, commands = standardCommands, 
     const registry = new core_1.schema.CoreSchemaRegistry([]);
     registry.registerUriHandler((uri) => {
         if (uri.startsWith('ng-cli://')) {
-            const content = fs_1.readFileSync(path_1.join(__dirname, '..', uri.substr('ng-cli://'.length)), 'utf-8');
+            const content = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', uri.substr('ng-cli://'.length)), 'utf-8');
             return Promise.resolve(JSON.parse(content));
         }
         else {

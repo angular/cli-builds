@@ -52,9 +52,9 @@ async function parseJsonSchemaToSubCommandDescription(name, jsonPath, registry, 
     }
     let longDescription = '';
     if (typeof schema.$longDescription == 'string' && schema.$longDescription) {
-        const ldPath = path_1.resolve(path_1.dirname(jsonPath), schema.$longDescription);
+        const ldPath = (0, path_1.resolve)((0, path_1.dirname)(jsonPath), schema.$longDescription);
         try {
-            longDescription = fs_1.readFileSync(ldPath, 'utf-8');
+            longDescription = (0, fs_1.readFileSync)(ldPath, 'utf-8');
         }
         catch (e) {
             throw new CommandJsonPathException(ldPath, name);
@@ -62,9 +62,9 @@ async function parseJsonSchemaToSubCommandDescription(name, jsonPath, registry, 
     }
     let usageNotes = '';
     if (typeof schema.$usageNotes == 'string' && schema.$usageNotes) {
-        const unPath = path_1.resolve(path_1.dirname(jsonPath), schema.$usageNotes);
+        const unPath = (0, path_1.resolve)((0, path_1.dirname)(jsonPath), schema.$usageNotes);
         try {
-            usageNotes = fs_1.readFileSync(unPath, 'utf-8');
+            usageNotes = (0, fs_1.readFileSync)(unPath, 'utf-8');
         }
         catch (e) {
             throw new CommandJsonPathException(unPath, name);
@@ -87,7 +87,7 @@ async function parseJsonSchemaToCommandDescription(name, jsonPath, registry, sch
     if (typeof schema.$impl != 'string') {
         throw new Error(`Command ${name} has an invalid implementation.`);
     }
-    const ref = new tools_1.ExportStringRef(schema.$impl, path_1.dirname(jsonPath));
+    const ref = new tools_1.ExportStringRef(schema.$impl, (0, path_1.dirname)(jsonPath));
     const impl = ref.ref;
     if (impl === undefined || typeof impl !== 'function') {
         throw new Error(`Command ${name} has an invalid implementation.`);

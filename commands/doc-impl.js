@@ -67,7 +67,7 @@ class DocCommand extends command_1.Command {
         if (options.search) {
             searchUrl = `https://${domain}/docs?search=${options.keyword}`;
         }
-        await open_1.default(searchUrl, {
+        await (0, open_1.default)(searchUrl, {
             wait: false,
         });
     }

@@ -59,7 +59,7 @@ function findPackageJson(workspaceDir, packageName) {
 }
 exports.findPackageJson = findPackageJson;
 async function getProjectDependencies(dir) {
-    const pkg = await readPackageJson(path_1.join(dir, 'package.json'));
+    const pkg = await readPackageJson((0, path_1.join)(dir, 'package.json'));
     if (!pkg) {
         throw new Error('Could not find package.json');
     }
@@ -72,7 +72,7 @@ async function getProjectDependencies(dir) {
         results.set(name, {
             name,
             version,
-            path: path_1.dirname(packageJsonPath),
+            path: (0, path_1.dirname)(packageJsonPath),
             package: await readPackageJson(packageJsonPath),
         });
     }

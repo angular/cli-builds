@@ -21,4 +21,4 @@ class Version {
 }
 exports.Version = Version;
 // TODO: Convert this to use build-time version stamping once implemented in the build system
-exports.VERSION = new Version(JSON.parse(fs_1.readFileSync(path_1.resolve(__dirname, '../package.json'), 'utf-8')).version);
+exports.VERSION = new Version(JSON.parse((0, fs_1.readFileSync)((0, path_1.resolve)(__dirname, '../package.json'), 'utf-8')).version);

@@ -40,7 +40,7 @@ const config_1 = require("../utilities/config");
 const tty_1 = require("../utilities/tty");
 const analytics_collector_1 = require("./analytics-collector");
 /* eslint-disable no-console */
-const analyticsDebug = debug_1.default('ng:analytics'); // Generate analytics, including settings and users.
+const analyticsDebug = (0, debug_1.default)('ng:analytics'); // Generate analytics, including settings and users.
 let _defaultAngularCliPropertyCache;
 exports.AnalyticsProperties = {
     AngularCliProd: 'UA-8594346-29',
@@ -87,7 +87,7 @@ exports.isPackageNameSafeForAnalytics = isPackageNameSafeForAnalytics;
  */
 function setAnalyticsConfig(level, value) {
     analyticsDebug('setting %s level analytics to: %s', level, value);
-    const [config, configPath] = config_1.getWorkspaceRaw(level);
+    const [config, configPath] = (0, config_1.getWorkspaceRaw)(level);
     if (!config || !configPath) {
         throw new Error(`Could not find ${level} workspace.`);
     }
@@ -96,7 +96,7 @@ function setAnalyticsConfig(level, value) {
         throw new Error(`Invalid config found at ${configPath}. CLI should be an object.`);
     }
     if (value === true) {
-        value = uuid_1.v4();
+        value = (0, uuid_1.v4)();
     }
     config.modify(['cli', 'analytics'], value);
     config.save();
@@ -110,7 +110,7 @@ exports.setAnalyticsConfig = setAnalyticsConfig;
  */
 async function promptGlobalAnalytics(force = false) {
     analyticsDebug('prompting global analytics.');
-    if (force || tty_1.isTTY()) {
+    if (force || (0, tty_1.isTTY)()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -160,11 +160,11 @@ exports.promptGlobalAnalytics = promptGlobalAnalytics;
  */
 async function promptProjectAnalytics(force = false) {
     analyticsDebug('prompting user');
-    const [config, configPath] = config_1.getWorkspaceRaw('local');
+    const [config, configPath] = (0, config_1.getWorkspaceRaw)('local');
     if (!config || !configPath) {
         throw new Error(`Could not find a local workspace. Are you in a project?`);
     }
-    if (force || tty_1.isTTY()) {
+    if (force || (0, tty_1.isTTY)()) {
         const answers = await inquirer.prompt([
             {
                 type: 'confirm',
@@ -206,7 +206,7 @@ async function promptProjectAnalytics(force = false) {
 exports.promptProjectAnalytics = promptProjectAnalytics;
 async function hasGlobalAnalyticsConfiguration() {
     try {
-        const globalWorkspace = await config_1.getWorkspace('global');
+        const globalWorkspace = await (0, config_1.getWorkspace)('global');
         const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         if (analyticsConfig !== null && analyticsConfig !== undefined) {
             return true;
@@ -237,7 +237,7 @@ async function getGlobalAnalytics() {
     }
     // If anything happens we just keep the NOOP analytics.
     try {
-        const globalWorkspace = await config_1.getWorkspace('global');
+        const globalWorkspace = await (0, config_1.getWorkspace)('global');
         const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         analyticsDebug('Client Analytics config found: %j', analyticsConfig);
         if (analyticsConfig === false) {
@@ -274,7 +274,7 @@ async function getGlobalAnalytics() {
 exports.getGlobalAnalytics = getGlobalAnalytics;
 async function hasWorkspaceAnalyticsConfiguration() {
     try {
-        const globalWorkspace = await config_1.getWorkspace('local');
+        const globalWorkspace = await (0, config_1.getWorkspace)('local');
         const analyticsConfig = globalWorkspace && globalWorkspace.getCli() && globalWorkspace.getCli()['analytics'];
         if (analyticsConfig !== undefined) {
             return true;
@@ -293,7 +293,7 @@ exports.hasWorkspaceAnalyticsConfiguration = hasWorkspaceAnalyticsConfiguration;
 async function getWorkspaceAnalytics() {
     analyticsDebug('getWorkspaceAnalytics');
     try {
-        const globalWorkspace = await config_1.getWorkspace('local');
+        const globalWorkspace = await (0, config_1.getWorkspace)('local');
         const analyticsConfig = globalWorkspace === null || globalWorkspace === void 0 ? void 0 : globalWorkspace.getCli()['analytics'];
         analyticsDebug('Workspace Analytics config found: %j', analyticsConfig);
         if (analyticsConfig === false) {
@@ -340,7 +340,7 @@ async function getSharedAnalytics() {
     }
     // If anything happens we just keep the NOOP analytics.
     try {
-        const globalWorkspace = await config_1.getWorkspace('global');
+        const globalWorkspace = await (0, config_1.getWorkspace)('global');
         const analyticsConfig = globalWorkspace === null || globalWorkspace === void 0 ? void 0 : globalWorkspace.getCli()['analyticsSharing'];
         if (!analyticsConfig || !analyticsConfig.tracking || !analyticsConfig.uuid) {
             return undefined;

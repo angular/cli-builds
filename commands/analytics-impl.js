@@ -38,24 +38,24 @@ class AnalyticsCommand extends command_1.Command {
         try {
             switch (options.settingOrProject) {
                 case analytics_2.SettingOrProject.Off:
-                    analytics_1.setAnalyticsConfig('global', false);
+                    (0, analytics_1.setAnalyticsConfig)('global', false);
                     break;
                 case analytics_2.SettingOrProject.On:
-                    analytics_1.setAnalyticsConfig('global', true);
+                    (0, analytics_1.setAnalyticsConfig)('global', true);
                     break;
                 case analytics_2.SettingOrProject.Ci:
-                    analytics_1.setAnalyticsConfig('global', 'ci');
+                    (0, analytics_1.setAnalyticsConfig)('global', 'ci');
                     break;
                 case analytics_2.SettingOrProject.Project:
                     switch (options.projectSetting) {
                         case analytics_2.ProjectSetting.Off:
-                            analytics_1.setAnalyticsConfig('local', false);
+                            (0, analytics_1.setAnalyticsConfig)('local', false);
                             break;
                         case analytics_2.ProjectSetting.On:
-                            analytics_1.setAnalyticsConfig('local', true);
+                            (0, analytics_1.setAnalyticsConfig)('local', true);
                             break;
                         case analytics_2.ProjectSetting.Prompt:
-                            await analytics_1.promptProjectAnalytics(true);
+                            await (0, analytics_1.promptProjectAnalytics)(true);
                             break;
                         default:
                             await this.printHelp();
@@ -63,7 +63,7 @@ class AnalyticsCommand extends command_1.Command {
                     }
                     break;
                 case analytics_2.SettingOrProject.Prompt:
-                    await analytics_1.promptGlobalAnalytics(true);
+                    await (0, analytics_1.promptGlobalAnalytics)(true);
                     break;
                 default:
                     await this.printHelp();
