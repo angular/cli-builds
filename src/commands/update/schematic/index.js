@@ -247,11 +247,9 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
             if (!target.updateMetadata.migrations) {
                 return;
             }
-            const collection = (target.updateMetadata.migrations.match(/^[./]/) ? name + '/' : '') +
-                target.updateMetadata.migrations;
             externalMigrations.push({
                 package: name,
-                collection,
+                collection: target.updateMetadata.migrations,
                 from: installed.version,
                 to: target.version,
             });
