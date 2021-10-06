@@ -19,7 +19,7 @@ const package_manager_1 = require("../utilities/package-manager");
 /**
  * Major versions of Node.js that are officially supported by Angular.
  */
-const SUPPORTED_NODE_MAJORS = [12, 14];
+const SUPPORTED_NODE_MAJORS = [12, 14, 16];
 class VersionCommand extends command_1.Command {
     constructor() {
         super(...arguments);

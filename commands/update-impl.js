@@ -503,10 +503,21 @@ class UpdateCommand extends command_1.Command {
             try {
                 // Remove existing node modules directory to provide a stronger guarantee that packages
                 // will be hoisted into the correct locations.
-                await fs.promises.rmdir(path.join(this.context.root, 'node_modules'), {
-                    recursive: true,
-                    maxRetries: 3,
-                });
+                // The below should be removed and replaced with just `rm` when support for Node.Js 12 is removed.
+                const { rm, rmdir } = fs.promises;
+                if (rm) {
+                    await rm(path.join(this.context.root, 'node_modules'), {
+                        force: true,
+                        recursive: true,
+                        maxRetries: 3,
+                    });
+                }
+                else {
+                    await rmdir(path.join(this.context.root, 'node_modules'), {
+                        recursive: true,
+                        maxRetries: 3,
+                    });
+                }
             }
             catch { }
             const result = await (0, install_package_1.installAllPackages)(this.packageManager, options.force ? ['--force'] : [], this.context.root);
