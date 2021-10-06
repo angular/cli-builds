@@ -21,6 +21,9 @@ const validCliPaths = new Map([
     ['cli.analytics', undefined],
     ['cli.analyticsSharing.tracking', undefined],
     ['cli.analyticsSharing.uuid', (v) => (v ? `${v}` : (0, uuid_1.v4)())],
+    ['cli.cache.enabled', undefined],
+    ['cli.cache.environment', undefined],
+    ['cli.cache.path', undefined],
 ]);
 /**
  * Splits a JSON path string into fragments. Fragments can be used to get the value referenced

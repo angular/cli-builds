@@ -20,6 +20,10 @@ export interface CliOptions {
     analytics?: Analytics;
     analyticsSharing?: AnalyticsSharing;
     /**
+     * Control disk cache.
+     */
+    cache?: Cache;
+    /**
      * The default schematics collection to use.
      */
     defaultCollection?: string;
@@ -45,6 +49,31 @@ export interface AnalyticsSharing {
      * Analytics sharing info universally unique identifier.
      */
     uuid?: string;
+}
+/**
+ * Control disk cache.
+ */
+export interface Cache {
+    /**
+     * Configure whether disk caching is enabled.
+     */
+    enabled?: boolean;
+    /**
+     * Configure in which environment disk cache is enabled.
+     */
+    environment?: Environment;
+    /**
+     * Cache base path.
+     */
+    path?: string;
+}
+/**
+ * Configure in which environment disk cache is enabled.
+ */
+export declare enum Environment {
+    All = "all",
+    Ci = "ci",
+    Local = "local"
 }
 /**
  * Specify which package manager tool to use.
