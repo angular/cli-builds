@@ -20,7 +20,7 @@ const validCliPaths = new Map([
     ['cli.packageManager', undefined],
     ['cli.analytics', undefined],
     ['cli.analyticsSharing.tracking', undefined],
-    ['cli.analyticsSharing.uuid', (v) => (v ? `${v}` : uuid_1.v4())],
+    ['cli.analyticsSharing.uuid', (v) => (v === '' ? uuid_1.v4() : `${v}`)],
 ]);
 /**
  * Splits a JSON path string into fragments. Fragments can be used to get the value referenced
@@ -54,7 +54,6 @@ function parseJsonPath(path) {
     return result.filter((fragment) => fragment != null);
 }
 function normalizeValue(value) {
-    var _a, _b;
     const valueString = `${value}`.trim();
     switch (valueString) {
         case 'true':
@@ -69,7 +68,16 @@ function normalizeValue(value) {
     if (isFinite(+valueString)) {
         return +valueString;
     }
-    return (_b = (_a = json_file_1.parseJson(valueString)) !== null && _a !== void 0 ? _a : value) !== null && _b !== void 0 ? _b : undefined;
+    try {
+        // We use `JSON.parse` instead of `parseJson` because the latter will parse UUIDs
+        // and convert them into a numberic entities.
+        // Example: 73b61974-182c-48e4-b4c6-30ddf08c5c98 -> 73.
+        // These values should never contain comments, therefore using `JSON.parse` is safe.
+        return JSON.parse(valueString);
+    }
+    catch {
+        return value;
+    }
 }
 class ConfigCommand extends command_1.Command {
     async run(options) {
