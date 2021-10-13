@@ -83,8 +83,7 @@
             },
             "uuid": {
               "description": "Analytics sharing info universally unique identifier.",
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
         },
