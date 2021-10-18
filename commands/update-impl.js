@@ -163,7 +163,7 @@ class UpdateCommand extends command_1.Command {
      */
     async executeMigrations(packageName, collectionPath, from, to, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
-        const migrationRange = new semver.Range('>' + (semver.prerelease(from) ? from.split('-')[0] + '-0' : from) + ' <=' + to);
+        const migrationRange = new semver.Range('>' + (semver.prerelease(from) ? from.split('-')[0] + '-0' : from) + ' <=' + to.split('-')[0]);
         const migrations = [];
         for (const name of collection.listSchematicNames()) {
             const schematic = this.workflow.engine.createSchematic(name, collection);
