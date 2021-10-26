@@ -215,7 +215,7 @@ class UpdateCommand extends command_1.Command {
     }
     // eslint-disable-next-line max-lines-per-function
     async run(options) {
-        var _a, _b;
+        var _a;
         await (0, package_manager_1.ensureCompatibleNpm)(this.context.root);
         // Check if the current installed CLI version is older than the latest version.
         if (!disableVersionCheck && (await this.checkCLILatestVersion(options.verbose, options.next))) {
@@ -463,29 +463,31 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if (((_a = node.package) === null || _a === void 0 ? void 0 : _a.name) === '@angular/cli') {
-                // Migrations for non LTS versions of Angular CLI are no longer included in @schematics/angular v12.
-                const toBeInstalledMajorVersion = +manifest.version.split('.')[0];
-                const currentMajorVersion = +node.package.version.split('.')[0];
-                if (currentMajorVersion < 10 && toBeInstalledMajorVersion >= 12) {
-                    const updateVersions = {
-                        1: 6,
-                        6: 7,
-                        7: 8,
-                        8: 9,
-                        9: 10,
-                    };
-                    const updateTo = updateVersions[currentMajorVersion];
-                    this.logger.error('Updating multiple major versions at once is not recommended. ' +
-                        `Run 'ng update @angular/cli@${updateTo}' in your workspace directory ` +
-                        `to update to latest '${updateTo}.x' version of '@angular/cli'.\n\n` +
-                        'For more information about the update process, see https://update.angular.io/.');
-                    return 1;
-                }
-            }
-            if (manifest.version === ((_b = node.package) === null || _b === void 0 ? void 0 : _b.version)) {
+            if (manifest.version === ((_a = node.package) === null || _a === void 0 ? void 0 : _a.version)) {
                 this.logger.info(`Package '${packageName}' is already up to date.`);
                 continue;
+            }
+            if (node.package && /^@(?:angular|nguniversal)\//.test(node.package.name)) {
+                const { name, version } = node.package;
+                const toBeInstalledMajorVersion = +manifest.version.split('.')[0];
+                const currentMajorVersion = +version.split('.')[0];
+                if (toBeInstalledMajorVersion - currentMajorVersion > 1) {
+                    // Only allow updating a single version at a time.
+                    if (currentMajorVersion < 6) {
+                        // Before version 6, the major versions were not always sequential.
+                        // Example @angular/core skipped version 3, @angular/cli skipped versions 2-5.
+                        this.logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
+                            `For more information about the update process, see https://update.angular.io/.`);
+                    }
+                    else {
+                        const nextMajorVersionFromCurrent = currentMajorVersion + 1;
+                        this.logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
+                            `Run 'ng update ${name}@${nextMajorVersionFromCurrent}' in your workspace directory ` +
+                            `to update to latest '${nextMajorVersionFromCurrent}.x' version of '${name}'.\n\n` +
+                            `For more information about the update process, see https://update.angular.io/?v=${currentMajorVersion}.0-${nextMajorVersionFromCurrent}.0`);
+                    }
+                    return 1;
+                }
             }
             packagesToUpdate.push(requestIdentifier.toString());
         }
