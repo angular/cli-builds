@@ -40,7 +40,7 @@ class Spinner {
         this.spinner.fail(text && color_1.colors.redBright(text));
     }
     warn(text) {
-        this.spinner.fail(text && color_1.colors.yellowBright(text));
+        this.spinner.warn(text && color_1.colors.yellowBright(text));
     }
     stop() {
         this.spinner.stop();
