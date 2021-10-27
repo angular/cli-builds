@@ -26,6 +26,15 @@ const package_metadata_1 = require("../utilities/package-metadata");
 const prompt_1 = require("../utilities/prompt");
 const spinner_1 = require("../utilities/spinner");
 const tty_1 = require("../utilities/tty");
+/**
+ * The set of packages that should have certain versions excluded from consideration
+ * when attempting to find a compatible version for a package.
+ * The key is a package name and the value is a SemVer range of versions to exclude.
+ */
+const packageVersionExclusions = {
+    // @angular/localize@9.x versions do not have peer dependencies setup
+    '@angular/localize': '9.x',
+};
 class AddCommand extends schematic_command_1.SchematicCommand {
     constructor() {
         super(...arguments);
@@ -39,6 +48,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
             return super.initialize(options);
         }
     }
+    // eslint-disable-next-line max-lines-per-function
     async run(options) {
         var _a;
         await (0, package_manager_1.ensureCompatibleNpm)(this.context.root);
@@ -86,7 +96,12 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 spinner.fail('Unable to load package information from registry: ' + e.message);
                 return 1;
             }
+            // Start with the version tagged as `latest` if it exists
             const latestManifest = packageMetadata.tags['latest'];
+            if (latestManifest) {
+                packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
+            }
+            // Adjust the version based on name and peer dependencies
             if (latestManifest && Object.keys(latestManifest.peerDependencies).length === 0) {
                 if (latestManifest.name === '@angular/pwa') {
                     const version = await this.findProjectVersion('@angular/cli');
@@ -97,24 +112,36 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                         packageIdentifier = npm_package_arg_1.default.resolve('@angular/pwa', '0.12');
                     }
                 }
-                else {
-                    packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
-                }
                 spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier.toString())}.`);
             }
             else if (!latestManifest || (await this.hasMismatchedPeer(latestManifest))) {
                 // 'latest' is invalid so search for most recent matching package
-                const versionManifests = Object.values(packageMetadata.versions).filter((value) => !(0, semver_1.prerelease)(value.version) && !value.deprecated);
+                const versionExclusions = packageVersionExclusions[packageMetadata.name];
+                const versionManifests = Object.values(packageMetadata.versions).filter((value) => {
+                    // Prerelease versions are not stable and should not be considered by default
+                    if ((0, semver_1.prerelease)(value.version)) {
+                        return false;
+                    }
+                    // Deprecated versions should not be used or considered
+                    if (value.deprecated) {
+                        return false;
+                    }
+                    // Excluded package versions should not be considered
+                    if (versionExclusions && (0, semver_1.satisfies)(value.version, versionExclusions)) {
+                        return false;
+                    }
+                    return true;
+                });
                 versionManifests.sort((a, b) => (0, semver_1.rcompare)(a.version, b.version, true));
                 let newIdentifier;
                 for (const versionManifest of versionManifests) {
                     if (!(await this.hasMismatchedPeer(versionManifest))) {
-                        newIdentifier = npm_package_arg_1.default.resolve(packageIdentifier.name, versionManifest.version);
+                        newIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
                         break;
                     }
                 }
                 if (!newIdentifier) {
-                    spinner.warn("Unable to find compatible package.  Using 'latest'.");
+                    spinner.warn("Unable to find compatible package.  Using 'latest' tag.");
                 }
                 else {
                     packageIdentifier = newIdentifier;
@@ -122,7 +149,6 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                 }
             }
             else {
-                packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
                 spinner.succeed(`Found compatible package version: ${color_1.colors.grey(packageIdentifier.toString())}.`);
             }
         }
