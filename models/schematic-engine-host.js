@@ -109,9 +109,21 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
             return legacyModules[id];
         }
         else if (id.startsWith('@angular-devkit/') || id.startsWith('@schematics/')) {
+            // Files should not redirect `@angular/core` and instead use the direct
+            // dependency if available. This allows old major version migrations to continue to function
+            // even though the latest major version may have breaking changes in `@angular/core`.
+            if (id.startsWith('@angular-devkit/core')) {
+                try {
+                    return schematicRequire(id);
+                }
+                catch (e) {
+                    if (e.code !== 'MODULE_NOT_FOUND') {
+                        throw e;
+                    }
+                }
+            }
             // Resolve from inside the `@angular/cli` project
-            const packagePath = require.resolve(id);
-            return hostRequire(packagePath);
+            return hostRequire(id);
         }
         else if (id.startsWith('.') || id.startsWith('@angular/cdk')) {
             // Wrap relative files inside the schematic collection
