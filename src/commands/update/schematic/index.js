@@ -356,18 +356,13 @@ function _usageMessage(options, infoMap, logger) {
             target,
         };
     })
-        .filter(({ info, version, target }) => {
-        return target && semver.compare(info.installed.version, version) < 0;
-    })
-        .filter(({ target }) => {
-        return target['ng-update'];
-    })
+        .filter(({ info, version, target }) => (target === null || target === void 0 ? void 0 : target['ng-update']) && semver.compare(info.installed.version, version) < 0)
         .map(({ name, info, version, tag, target }) => {
-        var _a, _b;
+        var _a;
         // Look for packageGroup.
-        const packageGroup = (_a = target['ng-update']) === null || _a === void 0 ? void 0 : _a['packageGroup'];
+        const packageGroup = target['ng-update']['packageGroup'];
         if (packageGroup) {
-            const packageGroupName = packageGroup === null || packageGroup === void 0 ? void 0 : packageGroup[0];
+            const packageGroupName = target['ng-update']['packageGroupName'] || packageGroup[0];
             if (packageGroupName) {
                 if (packageGroups.has(name)) {
                     return null;
@@ -379,7 +374,7 @@ function _usageMessage(options, infoMap, logger) {
         }
         let command = `ng update ${name}`;
         if (!tag) {
-            command += `@${((_b = semver.parse(version)) === null || _b === void 0 ? void 0 : _b.major) || version}`;
+            command += `@${((_a = semver.parse(version)) === null || _a === void 0 ? void 0 : _a.major) || version}`;
         }
         else if (tag == 'next') {
             command += ' --next';
