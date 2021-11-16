@@ -597,6 +597,7 @@
         "name": {
           "description": "The name of the new app.",
           "type": "string",
+          "pattern": "^(?:@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/)?[a-zA-Z0-9-~][a-zA-Z0-9-._~]*$",
           "$default": {
             "$source": "argv",
             "index": 0
@@ -1151,6 +1152,7 @@
         "name": {
           "type": "string",
           "description": "The name of the library.",
+          "pattern": "^(?:@[a-zA-Z0-9-*~][a-zA-Z0-9-*._~]*/)?[a-zA-Z0-9-~][a-zA-Z0-9-._~]*$",
           "$default": {
             "$source": "argv",
             "index": 0
@@ -1258,7 +1260,6 @@
         "name": {
           "description": "The name of the new workspace and initial project.",
           "type": "string",
-          "format": "html-selector",
           "$default": {
             "$source": "argv",
             "index": 0

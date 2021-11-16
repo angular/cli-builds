@@ -95,7 +95,6 @@
       "type": "string",
       "required": false,
       "aliases": [],
-      "format": "html-selector",
       "hidden": false,
       "positional": 0
     },
