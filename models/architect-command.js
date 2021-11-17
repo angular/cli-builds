@@ -6,12 +6,34 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArchitectCommand = void 0;
 const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
+const fs_1 = require("fs");
+const path = __importStar(require("path"));
 const json_schema_1 = require("../utilities/json-schema");
+const package_manager_1 = require("../utilities/package-manager");
 const analytics_1 = require("./analytics");
 const command_1 = require("./command");
 const parser_1 = require("./parser");
@@ -77,7 +99,18 @@ class ArchitectCommand extends command_1.Command {
                 if (this.multiTarget) {
                     builderNames.add(builderName);
                 }
-                const builderDesc = await this._architectHost.resolveBuilder(builderName);
+                let builderDesc;
+                try {
+                    builderDesc = await this._architectHost.resolveBuilder(builderName);
+                }
+                catch (e) {
+                    if (e.code === 'MODULE_NOT_FOUND') {
+                        await this.warnOnMissingNodeModules(this.workspace.basePath);
+                        this.logger.fatal(`Could not find the '${builderName}' builder's node package.`);
+                        return 1;
+                    }
+                    throw e;
+                }
                 const optionDefs = await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema);
                 const parsedOptions = (0, parser_1.parseArguments)([...commandLeftovers], optionDefs);
                 const builderLeftovers = parsedOptions['--'] || [];
@@ -142,7 +175,18 @@ class ArchitectCommand extends command_1.Command {
             project: projectName || (targetProjectNames.length > 0 ? targetProjectNames[0] : ''),
             target: this.target,
         });
-        const builderDesc = await this._architectHost.resolveBuilder(builderConf);
+        let builderDesc;
+        try {
+            builderDesc = await this._architectHost.resolveBuilder(builderConf);
+        }
+        catch (e) {
+            if (e.code === 'MODULE_NOT_FOUND') {
+                await this.warnOnMissingNodeModules(this.workspace.basePath);
+                this.logger.fatal(`Could not find the '${builderConf}' builder's node package.`);
+                return 1;
+            }
+            throw e;
+        }
         this.description.options.push(...(await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema)));
         // Update options to remove analytics from options if the builder isn't safelisted.
         for (const o of this.description.options) {
@@ -150,6 +194,32 @@ class ArchitectCommand extends command_1.Command {
                 o.userAnalytics = undefined;
             }
         }
+    }
+    async warnOnMissingNodeModules(basePath) {
+        // Check for a `node_modules` directory (npm, yarn non-PnP, etc.)
+        if ((0, fs_1.existsSync)(path.resolve(basePath, 'node_modules'))) {
+            return;
+        }
+        // Check for yarn PnP files
+        if ((0, fs_1.existsSync)(path.resolve(basePath, '.pnp.js')) ||
+            (0, fs_1.existsSync)(path.resolve(basePath, '.pnp.cjs')) ||
+            (0, fs_1.existsSync)(path.resolve(basePath, '.pnp.mjs'))) {
+            return;
+        }
+        const packageManager = await (0, package_manager_1.getPackageManager)(basePath);
+        let installSuggestion = 'Try installing with ';
+        switch (packageManager) {
+            case 'npm':
+                installSuggestion += `'npm install'`;
+                break;
+            case 'yarn':
+                installSuggestion += `'yarn'`;
+                break;
+            default:
+                installSuggestion += `the project's package manager`;
+                break;
+        }
+        this.logger.warn(`Node packages may not be installed. ${installSuggestion}.`);
     }
     async run(options) {
         return await this.runArchitectTarget(options);
@@ -159,7 +229,19 @@ class ArchitectCommand extends command_1.Command {
         // overrides separately (getting the configuration builds the whole project, including
         // overrides).
         const builderConf = await this._architectHost.getBuilderNameForTarget(target);
-        const builderDesc = await this._architectHost.resolveBuilder(builderConf);
+        let builderDesc;
+        try {
+            builderDesc = await this._architectHost.resolveBuilder(builderConf);
+        }
+        catch (e) {
+            if (e.code === 'MODULE_NOT_FOUND') {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                await this.warnOnMissingNodeModules(this.workspace.basePath);
+                this.logger.fatal(`Could not find the '${builderConf}' builder's node package.`);
+                return 1;
+            }
+            throw e;
+        }
         const targetOptionArray = await (0, json_schema_1.parseJsonSchemaToOptions)(this._registry, builderDesc.optionSchema);
         const overrides = (0, parser_1.parseArguments)(targetOptions, targetOptionArray, this.logger);
         const allowAdditionalProperties = typeof builderDesc.optionSchema === 'object' && builderDesc.optionSchema.additionalProperties;
