@@ -11,6 +11,6 @@ import { Schema as LintCommandSchema } from './lint';
 export declare class LintCommand extends ArchitectCommand<LintCommandSchema> {
     readonly target = "lint";
     readonly multiTarget = true;
-    readonly missingTargetError = "\nCannot find \"lint\" target for the specified project.\n\nYou should add a package that implements linting capabilities.\n\nFor example:\n  ng add @angular-eslint/schematics\n";
     initialize(options: LintCommandSchema & Arguments): Promise<number | void>;
+    onMissingTarget(): Promise<void | number>;
 }

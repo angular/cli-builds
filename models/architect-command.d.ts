@@ -24,6 +24,7 @@ export declare abstract class ArchitectCommand<T extends ArchitectCommandOptions
     protected multiTarget: boolean;
     target: string | undefined;
     missingTargetError: string | undefined;
+    protected onMissingTarget(projectName?: string): Promise<void | number>;
     initialize(options: T & Arguments): Promise<number | void>;
     private warnOnMissingNodeModules;
     run(options: ArchitectCommandOptions & Arguments): Promise<number>;
