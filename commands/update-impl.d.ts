@@ -23,8 +23,9 @@ export declare class UpdateCommand extends Command<UpdateCommandSchema> {
     private commit;
     private checkCleanGit;
     /**
-     * Checks if the current installed CLI version is older than the latest version.
-     * @returns `true` when the installed version is older.
-    */
-    private checkCLILatestVersion;
+     * Checks if the current installed CLI version is older or newer than a compatible version.
+     * @returns the version to install or null when there is no update to install.
+     */
+    private checkCLIVersion;
+    private getCLIUpdateRunnerVersion;
 }

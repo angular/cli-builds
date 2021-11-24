@@ -16,6 +16,7 @@ const child_process_1 = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
+const cli_1 = require("../lib/cli");
 const schema_1 = require("../lib/config/schema");
 const command_1 = require("../models/command");
 const install_package_1 = require("../tasks/install-package");
@@ -27,8 +28,6 @@ const package_tree_1 = require("../utilities/package-tree");
 const npa = require('npm-package-arg');
 const pickManifest = require('npm-pick-manifest');
 const oldConfigFileNames = ['.angular-cli.json', 'angular-cli.json'];
-const NG_VERSION_9_POST_MSG = color_1.colors.cyan('\nYour project has been updated to Angular version 9!\n' +
-    'For more info, please see: https://v9.angular.io/guide/updating-to-version-9');
 /**
  * Disable CLI version mismatch checks and forces usage of the invoked CLI
  * instead of invoking the local installed version.
@@ -37,6 +36,7 @@ const disableVersionCheckEnv = process.env['NG_DISABLE_VERSION_CHECK'];
 const disableVersionCheck = disableVersionCheckEnv !== undefined &&
     disableVersionCheckEnv !== '0' &&
     disableVersionCheckEnv.toLowerCase() !== 'false';
+const ANGULAR_PACKAGES_REGEXP = /^@(?:angular|nguniversal)\//;
 class UpdateCommand extends command_1.Command {
     constructor() {
         super(...arguments);
@@ -58,7 +58,7 @@ class UpdateCommand extends command_1.Command {
         let error = false;
         let logs = [];
         const files = new Set();
-        const reporterSubscription = this.workflow.reporter.subscribe(event => {
+        const reporterSubscription = this.workflow.reporter.subscribe((event) => {
             // Strip leading slash to prevent confusion.
             const eventPath = event.path.startsWith('/') ? event.path.substr(1) : event.path;
             switch (event.kind) {
@@ -86,11 +86,11 @@ class UpdateCommand extends command_1.Command {
                     break;
             }
         });
-        const lifecycleSubscription = this.workflow.lifeCycle.subscribe(event => {
+        const lifecycleSubscription = this.workflow.lifeCycle.subscribe((event) => {
             if (event.kind == 'end' || event.kind == 'post-tasks-start') {
                 if (!error) {
                     // Output the logging queue, no error happened.
-                    logs.forEach(log => this.logger.info(log));
+                    logs.forEach((log) => this.logger.info(log));
                     logs = [];
                 }
             }
@@ -126,7 +126,7 @@ class UpdateCommand extends command_1.Command {
      */
     async executeMigration(packageName, collectionPath, migrationName, commit) {
         const collection = this.workflow.engine.createCollection(collectionPath);
-        const name = collection.listSchematicNames().find(name => name === migrationName);
+        const name = collection.listSchematicNames().find((name) => name === migrationName);
         if (!name) {
             this.logger.error(`Cannot find migration '${migrationName}' in '${packageName}'.`);
             return false;
@@ -185,6 +185,7 @@ class UpdateCommand extends command_1.Command {
     }
     // tslint:disable-next-line:no-big-function
     async run(options) {
+        var _a;
         await package_manager_1.ensureCompatibleNpm(this.workspace.root);
         // Check if the @angular-devkit/schematics package can be resolved from the workspace root
         // This works around issues with packages containing migrations that cannot directly depend on the package
@@ -204,11 +205,14 @@ class UpdateCommand extends command_1.Command {
             }
             throw e;
         }
-        // Check if the current installed CLI version is older than the latest version.
-        if (!disableVersionCheck && await this.checkCLILatestVersion(options.verbose, options.next)) {
-            this.logger.warn(`The installed local Angular CLI version is older than the latest ${options.next ? 'pre-release' : 'stable'} version.\n` +
-                'Installing a temporary version to perform the update.');
-            return install_package_1.runTempPackageBin(`@angular/cli@${options.next ? 'next' : 'latest'}`, this.logger, this.packageManager, process.argv.slice(2));
+        // Check if the current installed CLI version is older than the latest compatible version.
+        if (!disableVersionCheck) {
+            const cliVersionToInstall = await this.checkCLIVersion(options['--'], options.verbose, options.next);
+            if (cliVersionToInstall) {
+                this.logger.warn('The installed Angular CLI version is outdated.\n' +
+                    `Installing a temporary Angular CLI versioned ${cliVersionToInstall} to perform the update.`);
+                return install_package_1.runTempPackageBin(`@angular/cli@${cliVersionToInstall}`, this.logger, this.packageManager, process.argv.slice(2));
+            }
         }
         const packages = [];
         for (const request of options['--'] || []) {
@@ -219,7 +223,7 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`Package '${request}' is not a registry package identifer.`);
                     return 1;
                 }
-                if (packages.some(v => v.name === packageIdentifier.name)) {
+                if (packages.some((v) => v.name === packageIdentifier.name)) {
                     this.logger.error(`Duplicate package '${packageIdentifier.name}' specified.`);
                     return 1;
                 }
@@ -322,7 +326,7 @@ class UpdateCommand extends command_1.Command {
                 // Allow running migrations on transitively installed dependencies
                 // There can technically be nested multiple versions
                 // TODO: If multiple, this should find all versions and ask which one to use
-                const child = packageTree.children.find(c => c.name === packageName);
+                const child = packageTree.children.find((c) => c.name === packageName);
                 if (child) {
                     packageNode = child;
                 }
@@ -348,8 +352,7 @@ class UpdateCommand extends command_1.Command {
             // Normalize slashes
             migrations = migrations.replace(/\\/g, '/');
             if (migrations.startsWith('../')) {
-                this.logger.error('Package contains an invalid migrations field. ' +
-                    'Paths outside the package root are not permitted.');
+                this.logger.error('Package contains an invalid migrations field. Paths outside the package root are not permitted.');
                 return 1;
             }
             // Check if it is a package-local location
@@ -373,9 +376,9 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
             }
-            let success = false;
+            let result;
             if (typeof options.migrateOnly == 'string') {
-                success = await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
+                result = await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
             }
             else {
                 const from = coerceVersionNumber(options.from);
@@ -384,18 +387,9 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
                 const migrationRange = new semver.Range('>' + from + ' <=' + (options.to || packageNode.package.version));
-                success = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
+                result = await this.executeMigrations(packageName, migrations, migrationRange, options.createCommits);
             }
-            if (success) {
-                if (packageName === '@angular/core'
-                    && options.from
-                    && +options.from.split('.')[0] < 9
-                    && (options.to || packageNode.package.version).split('.')[0] === '9') {
-                    this.logger.info(NG_VERSION_9_POST_MSG);
-                }
-                return 0;
-            }
-            return 1;
+            return result ? 0 : 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
@@ -466,9 +460,31 @@ class UpdateCommand extends command_1.Command {
                 this.logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if (manifest.version === node.package.version) {
+            if (manifest.version === ((_a = node.package) === null || _a === void 0 ? void 0 : _a.version)) {
                 this.logger.info(`Package '${packageName}' is already up to date.`);
                 continue;
+            }
+            if (node.package && ANGULAR_PACKAGES_REGEXP.test(node.package.name)) {
+                const { name, version } = node.package;
+                const toBeInstalledMajorVersion = +manifest.version.split('.')[0];
+                const currentMajorVersion = +version.split('.')[0];
+                if (toBeInstalledMajorVersion - currentMajorVersion > 1) {
+                    // Only allow updating a single version at a time.
+                    if (currentMajorVersion < 6) {
+                        // Before version 6, the major versions were not always sequential.
+                        // Example @angular/core skipped version 3, @angular/cli skipped versions 2-5.
+                        this.logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
+                            `For more information about the update process, see https://update.angular.io/.`);
+                    }
+                    else {
+                        const nextMajorVersionFromCurrent = currentMajorVersion + 1;
+                        this.logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
+                            `Run 'ng update ${name}@${nextMajorVersionFromCurrent}' in your workspace directory ` +
+                            `to update to latest '${nextMajorVersionFromCurrent}.x' version of '${name}'.\n\n` +
+                            `For more information about the update process, see https://update.angular.io/?v=${currentMajorVersion}.0-${nextMajorVersionFromCurrent}.0`);
+                    }
+                    return 1;
+                }
             }
             packagesToUpdate.push(requestIdentifier.toString());
         }
@@ -501,9 +517,6 @@ class UpdateCommand extends command_1.Command {
                 if (!result) {
                     return 0;
                 }
-            }
-            if (migrations.some(m => m.package === '@angular/core' && m.to.split('.')[0] === '9' && +m.from.split('.')[0] < 9)) {
-                this.logger.info(NG_VERSION_9_POST_MSG);
             }
         }
         return success ? 0 : 1;
@@ -549,7 +562,10 @@ class UpdateCommand extends command_1.Command {
     }
     checkCleanGit() {
         try {
-            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', { encoding: 'utf8', stdio: 'pipe' });
+            const topLevel = child_process_1.execSync('git rev-parse --show-toplevel', {
+                encoding: 'utf8',
+                stdio: 'pipe',
+            });
             const result = child_process_1.execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
             if (result.trim().length === 0) {
                 return true;
@@ -566,16 +582,38 @@ class UpdateCommand extends command_1.Command {
         return true;
     }
     /**
-     * Checks if the current installed CLI version is older than the latest version.
-     * @returns `true` when the installed version is older.
-    */
-    async checkCLILatestVersion(verbose = false, next = false) {
-        const { version: installedCLIVersion } = require('../package.json');
-        const LatestCLIManifest = await package_metadata_1.fetchPackageManifest(`@angular/cli@${next ? 'next' : 'latest'}`, this.logger, {
+     * Checks if the current installed CLI version is older or newer than a compatible version.
+     * @returns the version to install or null when there is no update to install.
+     */
+    async checkCLIVersion(packagesToUpdate, verbose = false, next = false) {
+        const { version } = await package_metadata_1.fetchPackageManifest(`@angular/cli@${this.getCLIUpdateRunnerVersion(packagesToUpdate, next)}`, this.logger, {
             verbose,
             usingYarn: this.packageManager === schema_1.PackageManager.Yarn,
         });
-        return semver.lt(installedCLIVersion, LatestCLIManifest.version);
+        return cli_1.VERSION.full === version ? null : version;
+    }
+    getCLIUpdateRunnerVersion(packagesToUpdate, next) {
+        var _a, _b;
+        if (next) {
+            return 'next';
+        }
+        const updatingAngularPackage = packagesToUpdate === null || packagesToUpdate === void 0 ? void 0 : packagesToUpdate.find((r) => ANGULAR_PACKAGES_REGEXP.test(r));
+        if (updatingAngularPackage) {
+            // If we are updating any Angular package we can update the CLI to the target version because
+            // migrations for @angular/core@13 can be executed using Angular/cli@13.
+            // This is same behaviour as `npx @angular/cli@13 update @angular/core@13`.
+            // `@angular/cli@13` -> ['', 'angular/cli', '13']
+            // `@angular/cli` -> ['', 'angular/cli']
+            const tempVersion = coerceVersionNumber(updatingAngularPackage.split('@')[2]);
+            return (_b = (_a = semver.parse(tempVersion)) === null || _a === void 0 ? void 0 : _a.major) !== null && _b !== void 0 ? _b : 'latest';
+        }
+        // When not updating an Angular package we cannot determine which schematic runtime the migration should to be executed in.
+        // Typically, we can assume that the `@angular/cli` was updated previously.
+        // Example: Angular official packages are typically updated prior to NGRX etc...
+        // Therefore, we only update to the latest patch version of the installed major version of the Angular CLI.
+        // This is important because we might end up in a scenario where locally Angular v12 is installed, updating NGRX from 11 to 12.
+        // We end up using Angular ClI v13 to run the migrations if we run the migrations using the CLI installed major version + 1 logic.
+        return cli_1.VERSION.major;
     }
 }
 exports.UpdateCommand = UpdateCommand;
