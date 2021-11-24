@@ -373,8 +373,9 @@ class UpdateCommand extends command_1.Command {
                     return 1;
                 }
             }
+            let result;
             if (typeof options.migrateOnly == 'string') {
-                await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
+                result = await this.executeMigration(packageName, migrations, options.migrateOnly, options.createCommits);
             }
             else {
                 const from = coerceVersionNumber(options.from);
@@ -382,9 +383,9 @@ class UpdateCommand extends command_1.Command {
                     this.logger.error(`"from" value [${options.from}] is not a valid version.`);
                     return 1;
                 }
-                await this.executeMigrations(packageName, migrations, from, options.to || packageNode.version, options.createCommits);
+                result = await this.executeMigrations(packageName, migrations, from, options.to || packageNode.version, options.createCommits);
             }
-            return 1;
+            return result ? 0 : 1;
         }
         const requests = [];
         // Validate packages actually are part of the workspace
