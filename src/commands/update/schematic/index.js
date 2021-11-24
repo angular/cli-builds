@@ -322,13 +322,34 @@ function _usageMessage(options, infoMap, logger) {
     const packageGroups = new Map();
     const packagesToUpdate = [...infoMap.entries()]
         .map(([name, info]) => {
-        const tag = options.next
+        var _a, _b;
+        let tag = options.next
             ? info.npmPackageJson['dist-tags']['next']
                 ? 'next'
                 : 'latest'
             : 'latest';
-        const version = info.npmPackageJson['dist-tags'][tag];
-        const target = info.npmPackageJson.versions[version];
+        let version = info.npmPackageJson['dist-tags'][tag];
+        let target = info.npmPackageJson.versions[version];
+        const versionDiff = semver.diff(info.installed.version, version);
+        if (versionDiff !== 'patch' &&
+            versionDiff !== 'minor' &&
+            /^@(?:angular|nguniversal)\//.test(name)) {
+            const installedMajorVersion = (_a = semver.parse(info.installed.version)) === null || _a === void 0 ? void 0 : _a.major;
+            const toInstallMajorVersion = (_b = semver.parse(version)) === null || _b === void 0 ? void 0 : _b.major;
+            if (installedMajorVersion !== undefined &&
+                toInstallMajorVersion !== undefined &&
+                installedMajorVersion < toInstallMajorVersion - 1) {
+                const nextMajorVersion = `${installedMajorVersion + 1}.`;
+                const nextMajorVersions = Object.keys(info.npmPackageJson.versions)
+                    .filter((v) => v.startsWith(nextMajorVersion))
+                    .sort((a, b) => (a > b ? -1 : 1));
+                if (nextMajorVersions.length) {
+                    version = nextMajorVersions[0];
+                    target = info.npmPackageJson.versions[version];
+                    tag = '';
+                }
+            }
+        }
         return {
             name,
             info,
@@ -344,6 +365,7 @@ function _usageMessage(options, infoMap, logger) {
         return target['ng-update'];
     })
         .map(({ name, info, version, tag, target }) => {
+        var _a;
         // Look for packageGroup.
         if (target['ng-update'] && target['ng-update']['packageGroup']) {
             const packageGroup = target['ng-update']['packageGroup'];
@@ -358,7 +380,10 @@ function _usageMessage(options, infoMap, logger) {
             }
         }
         let command = `ng update ${name}`;
-        if (tag == 'next') {
+        if (!tag) {
+            command += `@${((_a = semver.parse(version)) === null || _a === void 0 ? void 0 : _a.major) || version}`;
+        }
+        else if (tag == 'next') {
             command += ' --next';
         }
         return [name, `${info.installed.version} -> ${version} `, command];
