@@ -61,15 +61,11 @@ class DocCommand extends command_1.Command {
                 const currentNgVersion = (await Promise.resolve().then(() => __importStar(require('@angular/core')))).VERSION.major;
                 domain = `v${currentNgVersion}.angular.io`;
             }
-            catch (e) { }
+            catch { }
         }
-        let searchUrl = `https://${domain}/api?query=${options.keyword}`;
-        if (options.search) {
-            searchUrl = `https://${domain}/docs?search=${options.keyword}`;
-        }
-        await (0, open_1.default)(searchUrl, {
-            wait: false,
-        });
+        await (0, open_1.default)(options.search
+            ? `https://${domain}/api?query=${options.keyword}`
+            : `https://${domain}/docs?search=${options.keyword}`);
     }
 }
 exports.DocCommand = DocCommand;
