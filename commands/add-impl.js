@@ -141,7 +141,7 @@ class AddCommand extends schematic_command_1.SchematicCommand {
                     }
                 }
                 if (!newIdentifier) {
-                    spinner.warn("Unable to find compatible package.  Using 'latest' tag.");
+                    spinner.warn("Unable to find compatible package. Using 'latest' tag.");
                 }
                 else {
                     packageIdentifier = newIdentifier;
