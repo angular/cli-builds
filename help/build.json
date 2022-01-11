@@ -203,6 +203,20 @@
       "hidden": false
     },
     {
+      "name": "i18n-duplicate-translation",
+      "description": "How to handle duplicate translations for i18n.",
+      "type": "string",
+      "default": "warning",
+      "enum": [
+        "warning",
+        "error",
+        "ignore"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
       "name": "localize",
       "description": "Translate the bundles in one or more locales.",
       "type": "boolean",

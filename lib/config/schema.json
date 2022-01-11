@@ -1784,6 +1784,16 @@
           ],
           "default": "warning"
         },
+        "i18nDuplicateTranslation": {
+          "type": "string",
+          "description": "How to handle duplicate translations for i18n.",
+          "enum": [
+            "warning",
+            "error",
+            "ignore"
+          ],
+          "default": "warning"
+        },
         "localize": {
           "description": "Translate the bundles in one or more locales.",
           "oneOf": [
@@ -2664,6 +2674,16 @@
         "i18nMissingTranslation": {
           "type": "string",
           "description": "How to handle missing translations for i18n.",
+          "enum": [
+            "warning",
+            "error",
+            "ignore"
+          ],
+          "default": "warning"
+        },
+        "i18nDuplicateTranslation": {
+          "type": "string",
+          "description": "How to handle duplicate translations for i18n.",
           "enum": [
             "warning",
             "error",
