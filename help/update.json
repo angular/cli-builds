@@ -40,16 +40,6 @@
       "hidden": false
     },
     {
-      "name": "all",
-      "description": "Whether to update all packages in package.json.",
-      "type": "boolean",
-      "default": false,
-      "required": false,
-      "aliases": [],
-      "hidden": false,
-      "deprecated": true
-    },
-    {
       "name": "next",
       "description": "Use the prerelease version, including beta and RCs.",
       "type": "boolean",

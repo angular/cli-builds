@@ -3,10 +3,6 @@
  */
 export interface Schema {
     /**
-     * Whether to update all packages in package.json.
-     */
-    all?: boolean;
-    /**
      * Whether to allow updating when the repository contains modified or untracked files.
      */
     allowDirty?: boolean;

@@ -650,9 +650,7 @@ function default_1(options) {
         const npmPackageJsonMap = allPackageMetadata.reduce((acc, npmPackageJson) => {
             // If the package was not found on the registry. It could be private, so we will just
             // ignore. If the package was part of the list, we will error out, but will simply ignore
-            // if it's either not requested (so just part of package.json. silently) or if it's a
-            // `--all` situation. There is an edge case here where a public package peer depends on a
-            // private one, but it's rare enough.
+            // if it's either not requested (so just part of package.json. silently).
             if (!npmPackageJson.name) {
                 if (npmPackageJson.requestedName && packages.has(npmPackageJson.requestedName)) {
                     throw new schematics_1.SchematicsException(`Package ${JSON.stringify(npmPackageJson.requestedName)} was not found on the ` +
