@@ -346,7 +346,6 @@ class ArchitectCommand extends command_1.Command {
         }
     }
     _makeTargetSpecifier(commandOptions) {
-        var _a, _b, _c;
         let project, target, configuration;
         if (commandOptions.target) {
             [project, target, configuration] = commandOptions.target.split(':');
@@ -357,17 +356,6 @@ class ArchitectCommand extends command_1.Command {
         else {
             project = commandOptions.project;
             target = this.target;
-            if (commandOptions.prod) {
-                const defaultConfig = project &&
-                    target &&
-                    ((_c = (_b = (_a = this.workspace) === null || _a === void 0 ? void 0 : _a.projects.get(project)) === null || _b === void 0 ? void 0 : _b.targets.get(target)) === null || _c === void 0 ? void 0 : _c.defaultConfiguration);
-                this.logger.warn(defaultConfig === 'production'
-                    ? 'Option "--prod" is deprecated: No need to use this option as this builder defaults to configuration "production".'
-                    : 'Option "--prod" is deprecated: Use "--configuration production" instead.');
-                // The --prod flag will always be the first configuration, available to be overwritten
-                // by following configurations.
-                configuration = 'production';
-            }
             if (commandOptions.configuration) {
                 configuration = `${configuration ? `${configuration},` : ''}${commandOptions.configuration}`;
             }
