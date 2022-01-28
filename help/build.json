@@ -294,7 +294,7 @@
     },
     {
       "name": "build-optimizer",
-      "description": "Enables advanced build optimizations when using the 'aot' option.",
+      "description": "Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.",
       "type": "boolean",
       "default": true,
       "required": false,
