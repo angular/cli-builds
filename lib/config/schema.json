@@ -1584,7 +1584,34 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string",
+                    "description": "The file to include.",
+                    "pattern": "\\.[cm]?jsx?$"
+                  },
+                  "bundleName": {
+                    "type": "string",
+                    "pattern": "^[\\w\\-.]*$",
+                    "description": "The bundle name for this extra entry point."
+                  },
+                  "inject": {
+                    "type": "boolean",
+                    "description": "If the bundle will be referenced in the HTML file.",
+                    "default": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.[cm]?jsx?$"
+              }
+            ]
           }
         },
         "styles": {
@@ -1592,7 +1619,34 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string",
+                    "description": "The file to include.",
+                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
+                  },
+                  "bundleName": {
+                    "type": "string",
+                    "pattern": "^[\\w\\-.]*$",
+                    "description": "The bundle name for this extra entry point."
+                  },
+                  "inject": {
+                    "type": "boolean",
+                    "description": "If the bundle will be referenced in the HTML file.",
+                    "default": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.(?:css|scss|sass|less|styl)$"
+              }
+            ]
           }
         },
         "inlineStyleLanguage": {
@@ -2009,34 +2063,6 @@
             }
           ]
         },
-        "extraEntryPoint": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "input": {
-                  "type": "string",
-                  "description": "The file to include."
-                },
-                "bundleName": {
-                  "type": "string",
-                  "pattern": "^[\\w\\-.]*$",
-                  "description": "The bundle name for this extra entry point."
-                },
-                "inject": {
-                  "type": "boolean",
-                  "description": "If the bundle will be referenced in the HTML file.",
-                  "default": true
-                }
-              },
-              "additionalProperties": false
-            },
-            {
-              "type": "string",
-              "description": "The file to include."
-            }
-          ]
-        },
         "budget": {
           "type": "object",
           "properties": {
@@ -2266,7 +2292,34 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string",
+                    "description": "The file to include.",
+                    "pattern": "\\.[cm]?jsx?$"
+                  },
+                  "bundleName": {
+                    "type": "string",
+                    "pattern": "^[\\w\\-.]*$",
+                    "description": "The bundle name for this extra entry point."
+                  },
+                  "inject": {
+                    "type": "boolean",
+                    "description": "If the bundle will be referenced in the HTML file.",
+                    "default": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.[cm]?jsx?$"
+              }
+            ]
           }
         },
         "styles": {
@@ -2274,7 +2327,34 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string",
+                    "description": "The file to include.",
+                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
+                  },
+                  "bundleName": {
+                    "type": "string",
+                    "pattern": "^[\\w\\-.]*$",
+                    "description": "The bundle name for this extra entry point."
+                  },
+                  "inject": {
+                    "type": "boolean",
+                    "description": "If the bundle will be referenced in the HTML file.",
+                    "default": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "description": "The file to include.",
+                "pattern": "\\.(?:css|scss|sass|less|styl)$"
+              }
+            ]
           }
         },
         "inlineStyleLanguage": {
@@ -2450,34 +2530,6 @@
             },
             {
               "type": "string"
-            }
-          ]
-        },
-        "extraEntryPoint": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "input": {
-                  "type": "string",
-                  "description": "The file to include."
-                },
-                "bundleName": {
-                  "type": "string",
-                  "pattern": "^[\\w\\-.]*$",
-                  "description": "The bundle name for this extra entry point."
-                },
-                "inject": {
-                  "type": "boolean",
-                  "description": "If the bundle will be referenced in the HTML file.",
-                  "default": true
-                }
-              },
-              "additionalProperties": false
-            },
-            {
-              "type": "string",
-              "description": "The file to include."
             }
           ]
         }
