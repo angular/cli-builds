@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { json, workspaces } from '@angular-devkit/core';
+import { PackageManager } from '../lib/config/workspace-schema';
 import { JSONFile } from './json-file';
 export declare const workspaceSchemaPath: string;
 export declare class AngularWorkspace {
@@ -24,7 +25,6 @@ export declare function createGlobalSettings(): string;
 export declare function getWorkspaceRaw(level?: 'local' | 'global'): [JSONFile | null, string | null];
 export declare function validateWorkspace(data: json.JsonObject): Promise<void>;
 export declare function getProjectByCwd(workspace: AngularWorkspace): string | null;
-export declare function getConfiguredPackageManager(): Promise<string | null>;
-export declare function migrateLegacyGlobalConfig(): boolean;
+export declare function getConfiguredPackageManager(): Promise<PackageManager | null>;
 export declare function getSchematicDefaults(collection: string, schematic: string, project?: string | null): Promise<{}>;
 export declare function isWarningEnabled(warning: string): Promise<boolean>;
