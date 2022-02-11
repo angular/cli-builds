@@ -94,10 +94,7 @@
       "hidden": false
     }
   ],
-  "aliases": [
-    "i18n-extract",
-    "xi18n"
-  ],
+  "aliases": [],
   "scope": "in",
   "hidden": false
 }
