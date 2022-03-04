@@ -741,8 +741,7 @@
         },
         "type": {
           "type": "string",
-          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
-          "default": ""
+          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
         }
       }
     },
@@ -1129,7 +1128,6 @@
         },
         "prefix": {
           "type": "string",
-          "default": "",
           "description": "A prefix to apply to generated selectors."
         },
         "type": {
@@ -1701,8 +1699,7 @@
         },
         "resourcesOutputPath": {
           "type": "string",
-          "description": "The path where style resources will be placed, relative to outputPath.",
-          "default": ""
+          "description": "The path where style resources will be placed, relative to outputPath."
         },
         "aot": {
           "type": "boolean",
@@ -2618,8 +2615,7 @@
         },
         "resourcesOutputPath": {
           "type": "string",
-          "description": "The path where style resources will be placed, relative to outputPath.",
-          "default": ""
+          "description": "The path where style resources will be placed, relative to outputPath."
         },
         "sourceMap": {
           "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration.",

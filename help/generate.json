@@ -277,7 +277,6 @@
               "name": "type",
               "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
               "type": "string",
-              "default": "",
               "required": false,
               "aliases": [],
               "hidden": false
@@ -775,7 +774,6 @@
               "name": "prefix",
               "description": "A prefix to apply to generated selectors.",
               "type": "string",
-              "default": "",
               "required": false,
               "aliases": [],
               "hidden": false

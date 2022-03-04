@@ -111,7 +111,6 @@
       "name": "resources-output-path",
       "description": "The path where style resources will be placed, relative to outputPath.",
       "type": "string",
-      "default": "",
       "required": false,
       "aliases": [],
       "hidden": false
