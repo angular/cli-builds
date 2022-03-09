@@ -1,0 +1,82 @@
+{
+  "name": "update",
+  "command": "ng update [packages..]",
+  "description": "{\"describe\":\"Updates your workspace and its dependencies. See https://update.angular.io/.\"}",
+  "aliases": [],
+  "deprecated": false,
+  "shortDescription": "Updates your workspace and its dependencies. See https://update.angular.io/.",
+  "options": [
+    {
+      "name": "allow-dirty",
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to allow updating when the repository contains modified or untracked files."
+    },
+    {
+      "name": "create-commits",
+      "type": "boolean",
+      "aliases": [
+        "C"
+      ],
+      "default": false,
+      "description": "Create source control commits for updates and migrations."
+    },
+    {
+      "name": "force",
+      "type": "boolean",
+      "default": false,
+      "description": "Ignore peer dependency version mismatches. Passes the `--force` flag to the package manager when installing packages."
+    },
+    {
+      "name": "from",
+      "type": "string",
+      "description": "Version from which to migrate from. Only available with a single package being updated, and only on migration only."
+    },
+    {
+      "name": "help",
+      "type": "boolean",
+      "description": "Shows a help message for this command in the console."
+    },
+    {
+      "name": "migrate-only",
+      "type": "boolean",
+      "description": "Only perform a migration, do not update the installed version."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "The name of the migration to run."
+    },
+    {
+      "name": "next",
+      "type": "boolean",
+      "default": false,
+      "description": "Use the prerelease version, including beta and RCs."
+    },
+    {
+      "name": "packages",
+      "type": "array",
+      "default": [],
+      "description": "The names of package(s) to update.",
+      "positional": 0
+    },
+    {
+      "name": "packages",
+      "type": "string",
+      "default": [],
+      "description": "The names of package(s) to update.",
+      "positional": 0
+    },
+    {
+      "name": "to",
+      "type": "string",
+      "description": "Version up to which to apply migrations. Only available with a single package being updated, and only on migrations only. Requires from to be specified. Default to the installed version detected."
+    },
+    {
+      "name": "verbose",
+      "type": "boolean",
+      "default": false,
+      "description": "Display additional details about internal operations during execution."
+    }
+  ]
+}

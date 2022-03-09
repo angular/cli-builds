@@ -1,0 +1,17 @@
+{
+  "name": "version",
+  "command": "ng version",
+  "description": "{\"describe\":\"Outputs Angular CLI version.\"}",
+  "aliases": [
+    "v"
+  ],
+  "deprecated": false,
+  "shortDescription": "Outputs Angular CLI version.",
+  "options": [
+    {
+      "name": "help",
+      "type": "boolean",
+      "description": "Shows a help message for this command in the console."
+    }
+  ]
+}
