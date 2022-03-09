@@ -1,0 +1,23 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { Architect, Target } from '@angular-devkit/architect';
+import { WorkspaceNodeModulesArchitectHost } from '@angular-devkit/architect/node';
+import { CommandModule, CommandModuleImplementation, CommandScope, OtherOptions } from './command-module';
+import { Option } from './utilities/json-schema';
+export declare abstract class ArchitectBaseCommandModule<T> extends CommandModule<T> implements CommandModuleImplementation<T> {
+    static scope: CommandScope;
+    protected shouldReportAnalytics: boolean;
+    protected readonly missingErrorTarget: string | undefined;
+    protected runSingleTarget(target: Target, options: OtherOptions): Promise<number>;
+    private _architectHost;
+    protected getArchitectHost(): WorkspaceNodeModulesArchitectHost;
+    private _architect;
+    protected getArchitect(): Architect;
+    protected getArchitectTargetOptions(target: Target): Promise<Option[]>;
+    private warnOnMissingNodeModules;
+}

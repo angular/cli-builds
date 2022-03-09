@@ -12,7 +12,7 @@ declare module 'ini' {
     function parse(data: string): Record<string, any>;
 }
 declare module 'npm-pick-manifest' {
-    function pickManifest(metadata: import('../utilities/package-metadata').PackageMetadata, selector: string): import('../utilities/package-metadata').PackageManifest;
+    function pickManifest(metadata: import('./utilities/package-metadata').PackageMetadata, selector: string): import('./utilities/package-metadata').PackageManifest;
     export = pickManifest;
 }
 declare module 'pacote' {
@@ -20,5 +20,5 @@ declare module 'pacote' {
         name: string;
         version: string;
     }>;
-    function packument(specifier: string, options: Record<string, unknown>): Promise<import('../utilities/package-metadata').NpmRepositoryPackageJson>;
+    function packument(specifier: string, options: Record<string, unknown>): Promise<import('./utilities/package-metadata').NpmRepositoryPackageJson>;
 }

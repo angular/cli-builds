@@ -6,29 +6,24 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { analytics, logging } from '@angular-devkit/core';
-import { AngularWorkspace } from '../utilities/config';
-import { Arguments, CommandContext, CommandDescription, CommandDescriptionMap, CommandScope, Option } from './interface';
+import { Option } from '../src/command-builder/utilities/json-schema';
+import { AngularWorkspace } from '../src/utilities/config';
+import { CommandContext } from './interface';
 export interface BaseCommandOptions {
-    help?: boolean | string;
+    jsonHelp?: boolean;
 }
-export declare abstract class Command<T extends BaseCommandOptions = BaseCommandOptions> {
+export declare abstract class Command<T = {}> {
     protected readonly context: CommandContext;
-    readonly description: CommandDescription;
-    protected readonly logger: logging.Logger;
+    protected readonly commandName: string;
     protected allowMissingWorkspace: boolean;
     protected useReportAnalytics: boolean;
     readonly workspace?: AngularWorkspace;
-    readonly analytics: analytics.Analytics;
-    protected static commandMap: () => Promise<CommandDescriptionMap>;
-    static setCommandMap(map: () => Promise<CommandDescriptionMap>): void;
-    constructor(context: CommandContext, description: CommandDescription, logger: logging.Logger);
-    initialize(options: T & Arguments): Promise<number | void>;
-    printHelp(): Promise<number>;
-    printJsonHelp(): Promise<number>;
-    protected printHelpUsage(): Promise<void>;
-    protected printHelpOptions(options?: Option[]): Promise<void>;
-    validateScope(scope?: CommandScope): Promise<void>;
-    reportAnalytics(paths: string[], options: Arguments, dimensions?: (boolean | number | string)[], metrics?: (boolean | number | string)[]): Promise<void>;
-    abstract run(options: T & Arguments): Promise<number | void>;
-    validateAndRun(options: T & Arguments): Promise<number | void>;
+    protected readonly analytics: analytics.Analytics;
+    protected readonly commandOptions: Option[];
+    protected readonly logger: logging.Logger;
+    constructor(context: CommandContext, commandName: string);
+    initialize(options: T): Promise<number | void>;
+    reportAnalytics(paths: string[], options: T, dimensions?: (boolean | number | string)[], metrics?: (boolean | number | string)[]): Promise<void>;
+    abstract run(options: T): Promise<number | void>;
+    validateAndRun(options: T): Promise<number | void>;
 }
