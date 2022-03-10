@@ -1,14 +1,13 @@
 {
   "name": "test",
   "command": "ng test [project]",
-  "description": "{\"describe\":\"Runs unit tests in a project.\",\"longDescriptionRelativePath\":\"@angular/cli/src/commands/test/long-description.md\",\"longDescription\":\"Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\\nWhen a project name is not supplied, it will execute for all projects.\\n\"}",
+  "shortDescription": "Runs unit tests in a project.",
+  "longDescriptionRelativePath": "@angular/cli/src/commands/test/long-description.md",
+  "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n",
   "aliases": [
     "t"
   ],
   "deprecated": false,
-  "shortDescription": "Runs unit tests in a project.",
-  "longDescriptionRelativePath": "@angular/cli/src/commands/test/long-description.md",
-  "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n",
   "options": [
     {
       "name": "browsers",
