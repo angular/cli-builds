@@ -1,9 +1,10 @@
 {
   "name": "extract-i18n",
   "command": "ng extract-i18n [project]",
-  "shortDescription": "Extracts i18n messages from source code.",
+  "description": "{\"describe\":\"Extracts i18n messages from source code.\"}",
   "aliases": [],
   "deprecated": false,
+  "shortDescription": "Extracts i18n messages from source code.",
   "options": [
     {
       "name": "browser-target",

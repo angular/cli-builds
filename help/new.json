@@ -1,11 +1,12 @@
 {
   "name": "new",
   "command": "ng new [name]",
-  "shortDescription": "Creates a new Angular workspace.",
+  "description": "{\"describe\":\"Creates a new Angular workspace.\"}",
   "aliases": [
     "n"
   ],
   "deprecated": false,
+  "shortDescription": "Creates a new Angular workspace.",
   "options": [
     {
       "name": "collection",

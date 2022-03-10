@@ -1,11 +1,12 @@
 {
   "name": "doc",
   "command": "ng doc <keyword>",
-  "shortDescription": "Opens the official Angular documentation (angular.io) in a browser, and searches for a given keyword.",
+  "description": "{\"describe\":\"Opens the official Angular documentation (angular.io) in a browser, and searches for a given keyword.\"}",
   "aliases": [
     "d"
   ],
   "deprecated": false,
+  "shortDescription": "Opens the official Angular documentation (angular.io) in a browser, and searches for a given keyword.",
   "options": [
     {
       "name": "help",

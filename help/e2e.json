@@ -1,11 +1,12 @@
 {
   "name": "e2e",
   "command": "ng e2e [project]",
-  "shortDescription": "Builds and serves an Angular application, then runs end-to-end tests.",
+  "description": "{\"describe\":\"Builds and serves an Angular application, then runs end-to-end tests.\"}",
   "aliases": [
     "e"
   ],
   "deprecated": false,
+  "shortDescription": "Builds and serves an Angular application, then runs end-to-end tests.",
   "options": [
     {
       "name": "configuration",

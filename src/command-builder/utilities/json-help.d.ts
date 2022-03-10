@@ -5,6 +5,20 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+export interface JsonHelp {
+    name: string;
+    shortDescription?: string;
+    command: string;
+    longDescription?: string;
+    longDescriptionRelativePath?: string;
+    options: JsonHelpOption[];
+    subcommands?: {
+        name: string;
+        description: string;
+        aliases: string[];
+        deprecated: string | boolean;
+    }[];
+}
 interface JsonHelpOption {
     name: string;
     type?: string;
@@ -15,22 +29,6 @@ interface JsonHelpOption {
     positional?: number;
     enum?: string[];
     description?: string;
-}
-interface JsonHelpDescription {
-    shortDescription?: string;
-    longDescription?: string;
-    longDescriptionRelativePath?: string;
-}
-interface JsonHelpSubcommand extends JsonHelpDescription {
-    name: string;
-    aliases: string[];
-    deprecated: string | boolean;
-}
-export interface JsonHelp extends JsonHelpDescription {
-    name: string;
-    command: string;
-    options: JsonHelpOption[];
-    subcommands?: JsonHelpSubcommand[];
 }
 export declare function jsonHelpUsage(): string;
 export {};
