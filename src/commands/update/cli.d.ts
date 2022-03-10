@@ -23,7 +23,7 @@ export declare class UpdateCommandModule extends CommandModule<UpdateCommandArgs
     static scope: CommandScope;
     command: string;
     describe: string;
-    longDescriptionPath?: string | undefined;
+    longDescriptionPath: string;
     builder(localYargs: Argv): Argv<UpdateCommandArgs>;
     run(options: Options<UpdateCommandArgs> & OtherOptions): Promise<number | void>;
 }

@@ -1,12 +1,11 @@
 {
   "name": "serve",
   "command": "ng serve [project]",
-  "description": "{\"describe\":\"Builds and serves your application, rebuilding on file changes.\"}",
+  "shortDescription": "Builds and serves your application, rebuilding on file changes.",
   "aliases": [
     "s"
   ],
   "deprecated": false,
-  "shortDescription": "Builds and serves your application, rebuilding on file changes.",
   "options": [
     {
       "name": "allowed-hosts",
