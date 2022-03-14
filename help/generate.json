@@ -47,7 +47,7 @@
     {
       "name": "app-shell",
       "command": "app-shell",
-      "shortDescription": "Generates an app shell for running a server-side version of an app.",
+      "shortDescription": "Generates an application shell for running a server-side version of an app.",
       "options": [
         {
           "name": "app-dir",
@@ -59,7 +59,7 @@
           "name": "app-id",
           "type": "string",
           "default": "serverApp",
-          "description": "The app ID to use in withServerTransition()."
+          "description": "The application ID to use in withServerTransition()."
         },
         {
           "name": "main",
@@ -88,7 +88,7 @@
           "name": "route",
           "type": "string",
           "default": "shell",
-          "description": "Route path used to produce the app shell."
+          "description": "Route path used to produce the application shell."
         }
       ],
       "aliases": [],
@@ -97,7 +97,7 @@
     {
       "name": "application",
       "command": "application [name]",
-      "shortDescription": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
+      "shortDescription": "Generates a new basic application definition in the \"projects\" subfolder of the workspace.",
       "options": [
         {
           "name": "inline-style",

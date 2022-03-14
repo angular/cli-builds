@@ -93,7 +93,7 @@
     {
       "name": "serve-path",
       "type": "string",
-      "description": "The pathname where the app will be served."
+      "description": "The pathname where the application will be served."
     },
     {
       "name": "ssl",

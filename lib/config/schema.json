@@ -586,7 +586,7 @@
     "SchematicsAngularApplicationSchema": {
       "title": "Angular Application Options Schema",
       "type": "object",
-      "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
+      "description": "Generates a new basic application definition in the \"projects\" subfolder of the workspace.",
       "additionalProperties": false,
       "properties": {
         "projectRoot": {
@@ -1524,12 +1524,12 @@
       "properties": {
         "browserTarget": {
           "type": "string",
-          "description": "A browser builder target use for rendering the app shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "description": "A browser builder target use for rendering the application shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "serverTarget": {
           "type": "string",
-          "description": "A server builder target use for rendering the app shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "description": "A server builder target use for rendering the application shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "appModuleBundle": {
@@ -2183,7 +2183,7 @@
         },
         "servePath": {
           "type": "string",
-          "description": "The pathname where the app will be served."
+          "description": "The pathname where the application will be served."
         },
         "disableHostCheck": {
           "type": "boolean",
