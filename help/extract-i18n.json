@@ -1,25 +1,65 @@
 {
   "name": "extract-i18n",
-  "command": "ng extract-i18n [project]",
-  "shortDescription": "Extracts i18n messages from source code.",
-  "aliases": [],
-  "deprecated": false,
+  "description": "Extracts i18n messages from source code.",
   "options": [
     {
-      "name": "browser-target",
+      "name": "project",
+      "description": "The name of the project to build. Can be an application or a library.",
       "type": "string",
-      "description": "A browser builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`."
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
     },
     {
       "name": "configuration",
+      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section of angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations.\nSetting this explicitly overrides the \"--prod\" flag.",
       "type": "string",
+      "required": false,
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations."
+      "hidden": false
+    },
+    {
+      "name": "prod",
+      "description": "Shorthand for \"--configuration=production\".\nSet the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "deprecated": "Use `--configuration production` instead."
+    },
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "browser-target",
+      "description": "A browser builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "format",
+      "description": "Output format for the generated file.",
       "type": "string",
       "default": "xlf",
       "enum": [
@@ -33,34 +73,40 @@
         "arb",
         "legacy-migrate"
       ],
-      "description": "Output format for the generated file."
-    },
-    {
-      "name": "help",
-      "type": "boolean",
-      "description": "Shows a help message for this command in the console."
-    },
-    {
-      "name": "out-file",
-      "type": "string",
-      "description": "Name of the file to output."
-    },
-    {
-      "name": "output-path",
-      "type": "string",
-      "description": "Path where output will be placed."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "progress",
+      "description": "Log progress to the console.",
       "type": "boolean",
       "default": true,
-      "description": "Log progress to the console."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "project",
+      "name": "output-path",
+      "description": "Path where output will be placed.",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
-      "positional": 0
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "out-file",
+      "description": "Name of the file to output.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "i18n-extract",
+    "xi18n"
+  ],
+  "scope": "in",
+  "hidden": false
 }

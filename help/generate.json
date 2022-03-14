@@ -1,852 +1,1267 @@
 {
   "name": "generate",
-  "command": "ng generate [schematic]",
-  "shortDescription": "Generates and/or modifies files based on a schematic.",
-  "aliases": [
-    "g"
-  ],
-  "deprecated": false,
+  "description": "Generates and/or modifies files based on a schematic.",
   "options": [
     {
-      "name": "defaults",
-      "type": "boolean",
-      "default": false,
-      "description": "Disable interactive input prompts for options with a default."
-    },
-    {
-      "name": "dry-run",
-      "type": "boolean",
-      "default": false,
-      "description": "Run through and reports activity without writing out results."
-    },
-    {
-      "name": "force",
-      "type": "boolean",
-      "default": false,
-      "description": "Force overwriting of existing files."
+      "name": "schematic",
+      "description": "The schematic or collection:schematic to generate.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0,
+      "subcommands": {
+        "app-shell": {
+          "name": "app-shell",
+          "description": "Generates an application shell for running a server-side version of an app.",
+          "options": [
+            {
+              "name": "project",
+              "description": "The name of the related client app.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "route",
+              "description": "Route path used to produce the application shell.",
+              "type": "string",
+              "default": "shell",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "app-id",
+              "description": "The application ID to use in withServerTransition().",
+              "type": "string",
+              "default": "serverApp",
+              "required": false,
+              "aliases": [],
+              "format": "html-selector",
+              "hidden": false
+            },
+            {
+              "name": "main",
+              "description": "The name of the main entry-point file.",
+              "type": "string",
+              "default": "main.server.ts",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": false
+            },
+            {
+              "name": "app-dir",
+              "description": "The name of the application directory.",
+              "type": "string",
+              "default": "app",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": false
+            },
+            {
+              "name": "root-module-file-name",
+              "description": "The name of the root module file",
+              "type": "string",
+              "default": "app.server.module.ts",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": false
+            },
+            {
+              "name": "root-module-class-name",
+              "description": "The name of the root module class.",
+              "type": "string",
+              "default": "AppServerModule",
+              "required": false,
+              "aliases": [],
+              "format": "html-selector",
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "application": {
+          "name": "application",
+          "description": "Generates a new basic application definition in the \"projects\" subfolder of the workspace.",
+          "options": [
+            {
+              "name": "project-root",
+              "description": "The root directory of the new app.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": true
+            },
+            {
+              "name": "name",
+              "description": "The name of the new app.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "inline-style",
+              "description": "Include styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
+              "type": "boolean",
+              "required": false,
+              "aliases": [
+                "s"
+              ],
+              "hidden": false,
+              "userAnalytics": 9
+            },
+            {
+              "name": "inline-template",
+              "description": "Include template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
+              "type": "boolean",
+              "required": false,
+              "aliases": [
+                "t"
+              ],
+              "hidden": false,
+              "userAnalytics": 10
+            },
+            {
+              "name": "view-encapsulation",
+              "description": "The view encapsulation strategy to use in the new application.",
+              "type": "string",
+              "enum": [
+                "Emulated",
+                "None",
+                "ShadowDom"
+              ],
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 11
+            },
+            {
+              "name": "routing",
+              "description": "Create a routing NgModule.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 17
+            },
+            {
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
+              "type": "string",
+              "default": "app",
+              "required": false,
+              "aliases": [
+                "p"
+              ],
+              "format": "html-selector",
+              "hidden": false
+            },
+            {
+              "name": "style",
+              "description": "The file extension or preprocessor to use for style files.",
+              "type": "string",
+              "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less"
+              ],
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 5
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the application.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [
+                "S"
+              ],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "skip-package-json",
+              "description": "Do not add dependencies to the \"package.json\" file.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "minimal",
+              "description": "Create a bare-bones project without any testing frameworks. (Use for learning purposes only.)",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 14
+            },
+            {
+              "name": "skip-install",
+              "description": "Skip installing dependency packages.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "strict",
+              "description": "Creates an application with stricter bundle budgets settings.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 7
+            }
+          ],
+          "aliases": []
+        },
+        "class": {
+          "name": "class",
+          "description": "Creates a new, generic class definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the new class.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the class, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new class.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "type",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "component": {
+          "name": "component",
+          "description": "Creates a new, generic component definition in the given or default project.",
+          "options": [
+            {
+              "name": "path",
+              "description": "The path at which to create the component file, relative to the current workspace. Default is a folder with the same name as the component in the project root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "name",
+              "description": "The name of the component.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "display-block",
+              "description": "Specifies if the style will contain `:host { display: block; }`.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [
+                "b"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "inline-style",
+              "description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [
+                "s"
+              ],
+              "hidden": false,
+              "userAnalytics": 9
+            },
+            {
+              "name": "inline-template",
+              "description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [
+                "t"
+              ],
+              "hidden": false,
+              "userAnalytics": 10
+            },
+            {
+              "name": "view-encapsulation",
+              "description": "The view encapsulation strategy to use in the new component.",
+              "type": "string",
+              "enum": [
+                "Emulated",
+                "None",
+                "ShadowDom"
+              ],
+              "required": false,
+              "aliases": [
+                "v"
+              ],
+              "hidden": false,
+              "userAnalytics": 11
+            },
+            {
+              "name": "change-detection",
+              "description": "The change detection strategy to use in the new component.",
+              "type": "string",
+              "default": "Default",
+              "enum": [
+                "Default",
+                "OnPush"
+              ],
+              "required": false,
+              "aliases": [
+                "c"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "prefix",
+              "description": "The prefix to apply to the generated component selector.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "p"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "style",
+              "description": "The file extension or preprocessor to use for style files, or 'none' to skip generating the style file.",
+              "type": "string",
+              "default": "css",
+              "enum": [
+                "css",
+                "scss",
+                "sass",
+                "less",
+                "none"
+              ],
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 5
+            },
+            {
+              "name": "type",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
+              "type": "string",
+              "default": "Component",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new component.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "flat",
+              "description": "Create the new files at the top level of the current project.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-import",
+              "description": "Do not import this component into the owning NgModule.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 18
+            },
+            {
+              "name": "selector",
+              "description": "The HTML selector to use for this component.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "html-selector",
+              "hidden": false
+            },
+            {
+              "name": "skip-selector",
+              "description": "Specifies if the component should have a selector or not.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "module",
+              "description": "The declaring NgModule.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "m"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "export",
+              "description": "The declaring NgModule exports this component.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 19
+            }
+          ],
+          "aliases": []
+        },
+        "directive": {
+          "name": "directive",
+          "description": "Creates a new, generic directive definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the new directive.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the directive, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "p"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new class.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "skip-import",
+              "description": "Do not import this directive into the owning NgModule.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 18
+            },
+            {
+              "name": "selector",
+              "description": "The HTML selector to use for this directive.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "html-selector",
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "module",
+              "description": "The declaring NgModule.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "m"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "export",
+              "description": "The declaring NgModule exports this directive.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 19
+            }
+          ],
+          "aliases": []
+        },
+        "enum": {
+          "name": "enum",
+          "description": "Generates a new, generic enum definition for the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the enum.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the enum definition, relative to the current workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project in which to create the enum. Default is the configured default project for the workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "type",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "guard": {
+          "name": "guard",
+          "description": "Generates a new, generic route guard definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the new route guard.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new guard.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the guard, relative to the current workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "implements",
+              "description": "Specifies which interfaces to implement.",
+              "type": "array",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "interceptor": {
+          "name": "interceptor",
+          "description": "Creates a new, generic interceptor definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the interceptor.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interceptor, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates files at the top level of the project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new interceptor.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            }
+          ],
+          "aliases": []
+        },
+        "interface": {
+          "name": "interface",
+          "description": "Creates a new, generic interface definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the interface.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "type",
+              "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 1
+            }
+          ],
+          "aliases": []
+        },
+        "library": {
+          "name": "library",
+          "description": "Creates a new, generic library project in the current workspace.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the library.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "entry-file",
+              "description": "The path at which to create the library's public API file, relative to the workspace root.",
+              "type": "string",
+              "default": "public-api",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": false
+            },
+            {
+              "name": "prefix",
+              "description": "A prefix to apply to generated selectors.",
+              "type": "string",
+              "default": "lib",
+              "required": false,
+              "aliases": [
+                "p"
+              ],
+              "format": "html-selector",
+              "hidden": false
+            },
+            {
+              "name": "skip-package-json",
+              "description": "Do not add dependencies to the \"package.json\" file. ",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-install",
+              "description": "Do not install dependency packages.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-ts-config",
+              "description": "Do not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "module": {
+          "name": "module",
+          "description": "Creates a new, generic NgModule definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the NgModule.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the NgModule, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "routing",
+              "description": "Create a routing module.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 17
+            },
+            {
+              "name": "routing-scope",
+              "description": "The scope for the new routing module.",
+              "type": "string",
+              "default": "Child",
+              "enum": [
+                "Child",
+                "Root"
+              ],
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "route",
+              "description": "The route path for a lazy-loaded module. When supplied, creates a component in the new module, and adds the route to that component in the `Routes` array declared in the module provided in the `--module` option.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "Create the new files at the top level of the current project root. ",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "common-module",
+              "description": "The new NgModule imports \"CommonModule\". ",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": true
+            },
+            {
+              "name": "module",
+              "description": "The declaring NgModule.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "m"
+              ],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "pipe": {
+          "name": "pipe",
+          "description": "Creates a new, generic pipe definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the pipe.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the pipe, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default) creates files at the top level of the project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new pipe.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "skip-import",
+              "description": "Do not import this pipe into the owning NgModule.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 18
+            },
+            {
+              "name": "module",
+              "description": "The declaring NgModule.",
+              "type": "string",
+              "required": false,
+              "aliases": [
+                "m"
+              ],
+              "hidden": false
+            },
+            {
+              "name": "export",
+              "description": "The declaring NgModule exports this pipe.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 19
+            }
+          ],
+          "aliases": []
+        },
+        "resolver": {
+          "name": "resolver",
+          "description": "Generates a new, generic resolver definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the new resolver.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new resolver.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates the new files at the top level of the current project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the interface that defines the resolver, relative to the current workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "service": {
+          "name": "service",
+          "description": "Creates a new, generic service definition in the given or default project.",
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the service.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "path",
+              "description": "The path at which to create the service, relative to the workspace root.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "flat",
+              "description": "When true (the default), creates files at the top level of the project.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "skip-tests",
+              "description": "Do not create \"spec.ts\" test files for the new service.",
+              "type": "boolean",
+              "default": false,
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "userAnalytics": 12
+            }
+          ],
+          "aliases": []
+        },
+        "service-worker": {
+          "name": "service-worker",
+          "description": "Pass this schematic to the \"run\" command to create a service worker",
+          "options": [
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "target",
+              "description": "The target to apply service worker to.",
+              "type": "string",
+              "default": "build",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        },
+        "web-worker": {
+          "name": "web-worker",
+          "description": "Creates a new, generic web worker definition in the given or default project.",
+          "options": [
+            {
+              "name": "path",
+              "description": "The path at which to create the worker file, relative to the current workspace.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "format": "path",
+              "hidden": true
+            },
+            {
+              "name": "project",
+              "description": "The name of the project.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            },
+            {
+              "name": "name",
+              "description": "The name of the worker.",
+              "type": "string",
+              "required": false,
+              "aliases": [],
+              "hidden": false,
+              "positional": 0
+            },
+            {
+              "name": "snippet",
+              "description": "Add a worker creation snippet in a sibling file of the same name.",
+              "type": "boolean",
+              "default": true,
+              "required": false,
+              "aliases": [],
+              "hidden": false
+            }
+          ],
+          "aliases": []
+        }
+      }
     },
     {
       "name": "help",
+      "description": "Shows a help message for this command in the console.",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
-    },
-    {
-      "name": "interactive",
-      "type": "boolean",
-      "default": true,
-      "description": "Enable interactive input prompts."
-    },
-    {
-      "name": "schematic",
-      "type": "string",
-      "description": "The schematic or collection:schematic to generate.",
-      "positional": 0
-    }
-  ],
-  "subcommands": [
-    {
-      "name": "app-shell",
-      "command": "app-shell",
-      "shortDescription": "Generates an app shell for running a server-side version of an app.",
-      "options": [
-        {
-          "name": "app-dir",
-          "type": "string",
-          "default": "app",
-          "description": "The name of the application directory."
-        },
-        {
-          "name": "app-id",
-          "type": "string",
-          "default": "serverApp",
-          "description": "The app ID to use in withServerTransition()."
-        },
-        {
-          "name": "main",
-          "type": "string",
-          "default": "main.server.ts",
-          "description": "The name of the main entry-point file."
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the related client app."
-        },
-        {
-          "name": "root-module-class-name",
-          "type": "string",
-          "default": "AppServerModule",
-          "description": "The name of the root module class."
-        },
-        {
-          "name": "root-module-file-name",
-          "type": "string",
-          "default": "app.server.module.ts",
-          "description": "The name of the root module file"
-        },
-        {
-          "name": "route",
-          "type": "string",
-          "default": "shell",
-          "description": "Route path used to produce the app shell."
-        }
+      "types": [
+        "boolean",
+        "string"
       ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
       "aliases": [],
-      "deprecated": false
+      "hidden": false
     },
     {
-      "name": "application",
-      "command": "application [name]",
-      "shortDescription": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
-      "options": [
-        {
-          "name": "inline-style",
-          "type": "boolean",
-          "aliases": [
-            "s"
-          ],
-          "description": "Include styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file."
-        },
-        {
-          "name": "inline-template",
-          "type": "boolean",
-          "aliases": [
-            "t"
-          ],
-          "description": "Include template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. "
-        },
-        {
-          "name": "minimal",
-          "type": "boolean",
-          "default": false,
-          "description": "Create a bare-bones project without any testing frameworks. (Use for learning purposes only.)"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the new app.",
-          "positional": 0
-        },
-        {
-          "name": "prefix",
-          "type": "string",
-          "aliases": [
-            "p"
-          ],
-          "default": "app",
-          "description": "A prefix to apply to generated selectors."
-        },
-        {
-          "name": "routing",
-          "type": "boolean",
-          "default": false,
-          "description": "Create a routing NgModule."
-        },
-        {
-          "name": "skip-install",
-          "type": "boolean",
-          "default": false,
-          "description": "Skip installing dependency packages."
-        },
-        {
-          "name": "skip-package-json",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not add dependencies to the \"package.json\" file."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "aliases": [
-            "S"
-          ],
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the application."
-        },
-        {
-          "name": "strict",
-          "type": "boolean",
-          "default": true,
-          "description": "Creates an application with stricter bundle budgets settings."
-        },
-        {
-          "name": "style",
-          "type": "string",
-          "default": "css",
-          "enum": [
-            "css",
-            "scss",
-            "sass",
-            "less"
-          ],
-          "description": "The file extension or preprocessor to use for style files."
-        },
-        {
-          "name": "view-encapsulation",
-          "type": "string",
-          "enum": [
-            "Emulated",
-            "None",
-            "ShadowDom"
-          ],
-          "description": "The view encapsulation strategy to use in the new application."
-        }
-      ],
-      "aliases": [
-        "app"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "class",
-      "command": "class [name]",
-      "shortDescription": "Creates a new, generic class definition in the given or default project.",
-      "options": [
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the new class.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new class."
-        },
-        {
-          "name": "type",
-          "type": "string",
-          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
-        }
-      ],
-      "aliases": [
-        "cl"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "component",
-      "command": "component [name]",
-      "shortDescription": "Creates a new, generic component definition in the given or default project.",
-      "options": [
-        {
-          "name": "change-detection",
-          "type": "string",
-          "aliases": [
-            "c"
-          ],
-          "default": "Default",
-          "enum": [
-            "Default",
-            "OnPush"
-          ],
-          "description": "The change detection strategy to use in the new component."
-        },
-        {
-          "name": "display-block",
-          "type": "boolean",
-          "aliases": [
-            "b"
-          ],
-          "default": false,
-          "description": "Specifies if the style will contain `:host { display: block; }`."
-        },
-        {
-          "name": "export",
-          "type": "boolean",
-          "default": false,
-          "description": "The declaring NgModule exports this component."
-        },
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": false,
-          "description": "Create the new files at the top level of the current project."
-        },
-        {
-          "name": "inline-style",
-          "type": "boolean",
-          "aliases": [
-            "s"
-          ],
-          "default": false,
-          "description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file."
-        },
-        {
-          "name": "inline-template",
-          "type": "boolean",
-          "aliases": [
-            "t"
-          ],
-          "default": false,
-          "description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file."
-        },
-        {
-          "name": "module",
-          "type": "string",
-          "aliases": [
-            "m"
-          ],
-          "description": "The declaring NgModule."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the component.",
-          "positional": 0
-        },
-        {
-          "name": "prefix",
-          "type": "string",
-          "aliases": [
-            "p"
-          ],
-          "description": "The prefix to apply to the generated component selector."
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "selector",
-          "type": "string",
-          "description": "The HTML selector to use for this component."
-        },
-        {
-          "name": "skip-import",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not import this component into the owning NgModule."
-        },
-        {
-          "name": "skip-selector",
-          "type": "boolean",
-          "default": false,
-          "description": "Specifies if the component should have a selector or not."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new component."
-        },
-        {
-          "name": "style",
-          "type": "string",
-          "default": "css",
-          "enum": [
-            "css",
-            "scss",
-            "sass",
-            "less",
-            "none"
-          ],
-          "description": "The file extension or preprocessor to use for style files, or 'none' to skip generating the style file."
-        },
-        {
-          "name": "type",
-          "type": "string",
-          "default": "Component",
-          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
-        },
-        {
-          "name": "view-encapsulation",
-          "type": "string",
-          "aliases": [
-            "v"
-          ],
-          "enum": [
-            "Emulated",
-            "None",
-            "ShadowDom"
-          ],
-          "description": "The view encapsulation strategy to use in the new component."
-        }
-      ],
-      "aliases": [
-        "c"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "directive",
-      "command": "directive [name]",
-      "shortDescription": "Creates a new, generic directive definition in the given or default project.",
-      "options": [
-        {
-          "name": "export",
-          "type": "boolean",
-          "default": false,
-          "description": "The declaring NgModule exports this directive."
-        },
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default), creates the new files at the top level of the current project."
-        },
-        {
-          "name": "module",
-          "type": "string",
-          "aliases": [
-            "m"
-          ],
-          "description": "The declaring NgModule."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the new directive.",
-          "positional": 0
-        },
-        {
-          "name": "prefix",
-          "type": "string",
-          "aliases": [
-            "p"
-          ],
-          "description": "A prefix to apply to generated selectors."
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "selector",
-          "type": "string",
-          "description": "The HTML selector to use for this directive."
-        },
-        {
-          "name": "skip-import",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not import this directive into the owning NgModule."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new class."
-        }
-      ],
+      "name": "dry-run",
+      "description": "Run through and reports activity without writing out results.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
       "aliases": [
         "d"
       ],
-      "deprecated": false
+      "hidden": false
     },
     {
-      "name": "enum",
-      "command": "enum [name]",
-      "shortDescription": "Generates a new, generic enum definition for the given or default project.",
-      "options": [
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the enum.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project in which to create the enum. Default is the configured default project for the workspace."
-        },
-        {
-          "name": "type",
-          "type": "string",
-          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\"."
-        }
-      ],
+      "name": "force",
+      "description": "Force overwriting of existing files.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
       "aliases": [
-        "e"
+        "f"
       ],
-      "deprecated": false
+      "hidden": false
     },
     {
-      "name": "guard",
-      "command": "guard [name]",
-      "shortDescription": "Generates a new, generic route guard definition in the given or default project.",
-      "options": [
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default), creates the new files at the top level of the current project."
-        },
-        {
-          "name": "implements",
-          "type": "array",
-          "description": "Specifies which interfaces to implement."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the new route guard.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new guard."
-        }
-      ],
-      "aliases": [
-        "g"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "interceptor",
-      "command": "interceptor [name]",
-      "shortDescription": "Creates a new, generic interceptor definition in the given or default project.",
-      "options": [
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default), creates files at the top level of the project."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the interceptor.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new interceptor."
-        }
-      ],
+      "name": "interactive",
+      "description": "Enable interactive input prompts.",
+      "type": "boolean",
+      "required": false,
       "aliases": [],
-      "deprecated": false
+      "hidden": false
     },
     {
-      "name": "interface",
-      "command": "interface [name] [type]",
-      "shortDescription": "Creates a new, generic interface definition in the given or default project.",
-      "options": [
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the interface.",
-          "positional": 0
-        },
-        {
-          "name": "prefix",
-          "type": "string",
-          "description": "A prefix to apply to generated selectors."
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "type",
-          "type": "string",
-          "description": "Adds a developer-defined type to the filename, in the format \"name.type.ts\".",
-          "positional": 1
-        }
-      ],
-      "aliases": [
-        "i"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "library",
-      "command": "library [name]",
-      "shortDescription": "Creates a new, generic library project in the current workspace.",
-      "options": [
-        {
-          "name": "entry-file",
-          "type": "string",
-          "default": "public-api",
-          "description": "The path at which to create the library's public API file, relative to the workspace root."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the library.",
-          "positional": 0
-        },
-        {
-          "name": "prefix",
-          "type": "string",
-          "aliases": [
-            "p"
-          ],
-          "default": "lib",
-          "description": "A prefix to apply to generated selectors."
-        },
-        {
-          "name": "skip-install",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not install dependency packages."
-        },
-        {
-          "name": "skip-package-json",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not add dependencies to the \"package.json\" file. "
-        },
-        {
-          "name": "skip-ts-config",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not update \"tsconfig.json\" to add a path mapping for the new library. The path mapping is needed to use the library in an app, but can be disabled here to simplify development."
-        }
-      ],
-      "aliases": [
-        "lib"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "module",
-      "command": "module [name]",
-      "shortDescription": "Creates a new, generic NgModule definition in the given or default project.",
-      "options": [
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": false,
-          "description": "Create the new files at the top level of the current project root. "
-        },
-        {
-          "name": "module",
-          "type": "string",
-          "aliases": [
-            "m"
-          ],
-          "description": "The declaring NgModule."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the NgModule.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "route",
-          "type": "string",
-          "description": "The route path for a lazy-loaded module. When supplied, creates a component in the new module, and adds the route to that component in the `Routes` array declared in the module provided in the `--module` option."
-        },
-        {
-          "name": "routing",
-          "type": "boolean",
-          "default": false,
-          "description": "Create a routing module."
-        },
-        {
-          "name": "routing-scope",
-          "type": "string",
-          "default": "Child",
-          "enum": [
-            "Child",
-            "Root"
-          ],
-          "description": "The scope for the new routing module."
-        }
-      ],
-      "aliases": [
-        "m"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "pipe",
-      "command": "pipe [name]",
-      "shortDescription": "Creates a new, generic pipe definition in the given or default project.",
-      "options": [
-        {
-          "name": "export",
-          "type": "boolean",
-          "default": false,
-          "description": "The declaring NgModule exports this pipe."
-        },
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default) creates files at the top level of the project."
-        },
-        {
-          "name": "module",
-          "type": "string",
-          "aliases": [
-            "m"
-          ],
-          "description": "The declaring NgModule."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the pipe.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-import",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not import this pipe into the owning NgModule."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new pipe."
-        }
-      ],
-      "aliases": [
-        "p"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "resolver",
-      "command": "resolver [name]",
-      "shortDescription": "Generates a new, generic resolver definition in the given or default project.",
-      "options": [
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default), creates the new files at the top level of the current project."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the new resolver.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new resolver."
-        }
-      ],
-      "aliases": [
-        "r"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "service",
-      "command": "service [name]",
-      "shortDescription": "Creates a new, generic service definition in the given or default project.",
-      "options": [
-        {
-          "name": "flat",
-          "type": "boolean",
-          "default": true,
-          "description": "When true (the default), creates files at the top level of the project."
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the service.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "skip-tests",
-          "type": "boolean",
-          "default": false,
-          "description": "Do not create \"spec.ts\" test files for the new service."
-        }
-      ],
-      "aliases": [
-        "s"
-      ],
-      "deprecated": false
-    },
-    {
-      "name": "service-worker",
-      "command": "service-worker",
-      "shortDescription": "Pass this schematic to the \"run\" command to create a service worker",
-      "options": [
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "target",
-          "type": "string",
-          "default": "build",
-          "description": "The target to apply service worker to."
-        }
-      ],
+      "name": "defaults",
+      "description": "Disable interactive input prompts for options with a default.",
+      "type": "boolean",
+      "required": false,
       "aliases": [],
-      "deprecated": false
-    },
-    {
-      "name": "web-worker",
-      "command": "web-worker [name]",
-      "shortDescription": "Creates a new, generic web worker definition in the given or default project.",
-      "options": [
-        {
-          "name": "name",
-          "type": "string",
-          "description": "The name of the worker.",
-          "positional": 0
-        },
-        {
-          "name": "project",
-          "type": "string",
-          "description": "The name of the project."
-        },
-        {
-          "name": "snippet",
-          "type": "boolean",
-          "default": true,
-          "description": "Add a worker creation snippet in a sibling file of the same name."
-        }
-      ],
-      "aliases": [],
-      "deprecated": false
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "g"
+  ],
+  "scope": "in",
+  "hidden": false
 }

@@ -586,7 +586,7 @@
     "SchematicsAngularApplicationSchema": {
       "title": "Angular Application Options Schema",
       "type": "object",
-      "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
+      "description": "Generates a new basic application definition in the \"projects\" subfolder of the workspace.",
       "additionalProperties": false,
       "properties": {
         "projectRoot": {
@@ -1524,12 +1524,12 @@
       "properties": {
         "browserTarget": {
           "type": "string",
-          "description": "A browser builder target use for rendering the app shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "description": "A browser builder target use for rendering the application shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "serverTarget": {
           "type": "string",
-          "description": "A server builder target use for rendering the app shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "description": "A server builder target use for rendering the application shell in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "appModuleBundle": {
@@ -1582,34 +1582,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "input": {
-                    "type": "string",
-                    "description": "The file to include.",
-                    "pattern": "\\.[cm]?jsx?$"
-                  },
-                  "bundleName": {
-                    "type": "string",
-                    "pattern": "^[\\w\\-.]*$",
-                    "description": "The bundle name for this extra entry point."
-                  },
-                  "inject": {
-                    "type": "boolean",
-                    "description": "If the bundle will be referenced in the HTML file.",
-                    "default": true
-                  }
-                },
-                "additionalProperties": false
-              },
-              {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.[cm]?jsx?$"
-              }
-            ]
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
           }
         },
         "styles": {
@@ -1617,34 +1590,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "input": {
-                    "type": "string",
-                    "description": "The file to include.",
-                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
-                  },
-                  "bundleName": {
-                    "type": "string",
-                    "pattern": "^[\\w\\-.]*$",
-                    "description": "The bundle name for this extra entry point."
-                  },
-                  "inject": {
-                    "type": "boolean",
-                    "description": "If the bundle will be referenced in the HTML file.",
-                    "default": true
-                  }
-                },
-                "additionalProperties": false
-              },
-              {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less|styl)$"
-              }
-            ]
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersBrowserSchema/definitions/extraEntryPoint"
           }
         },
         "inlineStyleLanguage": {
@@ -1749,7 +1695,7 @@
         },
         "outputPath": {
           "type": "string",
-          "description": "The full path for the new output directory, relative to the current workspace.\nBy default, writes output to a folder named dist/ in the current project."
+          "description": "The full path for the new output directory, relative to the current workspace.\n\nBy default, writes output to a folder named dist/ in the current project."
         },
         "resourcesOutputPath": {
           "type": "string",
@@ -1897,9 +1843,15 @@
           "description": "Extract all licenses in a separate file.",
           "default": true
         },
+        "showCircularDependencies": {
+          "type": "boolean",
+          "description": "Show circular dependency warnings on builds.",
+          "default": false,
+          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use either a lint rule or other external tooling."
+        },
         "buildOptimizer": {
           "type": "boolean",
-          "description": "Enables advanced build optimizations when using the 'aot' option.",
+          "description": "Enables '@angular-devkit/build-optimizer' optimizations when using the 'aot' option.",
           "default": true
         },
         "namedChunks": {
@@ -2054,6 +2006,34 @@
             }
           ]
         },
+        "extraEntryPoint": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "string",
+                  "description": "The file to include."
+                },
+                "bundleName": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-.]*$",
+                  "description": "The bundle name for this extra entry point."
+                },
+                "inject": {
+                  "type": "boolean",
+                  "description": "If the bundle will be referenced in the HTML file.",
+                  "default": true
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "string",
+              "description": "The file to include."
+            }
+          ]
+        },
         "budget": {
           "type": "object",
           "properties": {
@@ -2183,7 +2163,7 @@
         },
         "servePath": {
           "type": "string",
-          "description": "The pathname where the app will be served."
+          "description": "The pathname where the application will be served."
         },
         "disableHostCheck": {
           "type": "boolean",
@@ -2283,34 +2263,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "input": {
-                    "type": "string",
-                    "description": "The file to include.",
-                    "pattern": "\\.[cm]?jsx?$"
-                  },
-                  "bundleName": {
-                    "type": "string",
-                    "pattern": "^[\\w\\-.]*$",
-                    "description": "The bundle name for this extra entry point."
-                  },
-                  "inject": {
-                    "type": "boolean",
-                    "description": "If the bundle will be referenced in the HTML file.",
-                    "default": true
-                  }
-                },
-                "additionalProperties": false
-              },
-              {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.[cm]?jsx?$"
-              }
-            ]
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
           }
         },
         "styles": {
@@ -2318,34 +2271,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "input": {
-                    "type": "string",
-                    "description": "The file to include.",
-                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
-                  },
-                  "bundleName": {
-                    "type": "string",
-                    "pattern": "^[\\w\\-.]*$",
-                    "description": "The bundle name for this extra entry point."
-                  },
-                  "inject": {
-                    "type": "boolean",
-                    "description": "If the bundle will be referenced in the HTML file.",
-                    "default": true
-                  }
-                },
-                "additionalProperties": false
-              },
-              {
-                "type": "string",
-                "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less|styl)$"
-              }
-            ]
+            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersKarmaSchema/definitions/extraEntryPoint"
           }
         },
         "inlineStyleLanguage": {
@@ -2521,6 +2447,34 @@
             },
             {
               "type": "string"
+            }
+          ]
+        },
+        "extraEntryPoint": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": "string",
+                  "description": "The file to include."
+                },
+                "bundleName": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-.]*$",
+                  "description": "The bundle name for this extra entry point."
+                },
+                "inject": {
+                  "type": "boolean",
+                  "description": "If the bundle will be referenced in the HTML file.",
+                  "default": true
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "string",
+              "description": "The file to include."
             }
           ]
         }
@@ -2775,6 +2729,12 @@
           "type": "boolean",
           "description": "Extract all licenses in a separate file, in the case of production builds only.",
           "default": true
+        },
+        "showCircularDependencies": {
+          "type": "boolean",
+          "description": "Show circular dependency warnings on builds.",
+          "default": false,
+          "x-deprecated": "The recommended method to detect circular dependencies in project code is to use either a lint rule or other external tooling."
         },
         "namedChunks": {
           "type": "boolean",

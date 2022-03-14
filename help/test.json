@@ -1,50 +1,90 @@
 {
   "name": "test",
-  "command": "ng test [project]",
-  "shortDescription": "Runs unit tests in a project.",
-  "longDescriptionRelativePath": "@angular/cli/src/commands/test/long-description.md",
+  "description": "Runs unit tests in a project.",
   "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n",
-  "aliases": [
-    "t"
-  ],
-  "deprecated": false,
   "options": [
     {
-      "name": "browsers",
+      "name": "project",
+      "description": "The name of the project to build. Can be an application or a library.",
       "type": "string",
-      "description": "Override which browsers tests are run against."
-    },
-    {
-      "name": "code-coverage",
-      "type": "boolean",
-      "default": false,
-      "description": "Output a code coverage report."
-    },
-    {
-      "name": "code-coverage-exclude",
-      "type": "array",
-      "description": "Globs to exclude from code coverage."
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
     },
     {
       "name": "configuration",
+      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section of angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations.\nSetting this explicitly overrides the \"--prod\" flag.",
       "type": "string",
+      "required": false,
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations."
+      "hidden": false
+    },
+    {
+      "name": "prod",
+      "description": "Shorthand for \"--configuration=production\".\nSet the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "deprecated": "Use `--configuration production` instead."
     },
     {
       "name": "help",
+      "description": "Shows a help message for this command in the console.",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "include",
-      "type": "array",
-      "description": "Globs of files to include, relative to workspace or project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
+      "name": "main",
+      "description": "The name of the main entry-point file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "ts-config",
+      "description": "The name of the TypeScript configuration file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "karma-config",
+      "description": "The name of the Karma configuration file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "polyfills",
+      "description": "The name of the polyfills file.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "inline-style-language",
+      "description": "The stylesheet language to use for the application's inline component styles.",
       "type": "string",
       "default": "css",
       "enum": [
@@ -53,70 +93,105 @@
         "sass",
         "scss"
       ],
-      "description": "The stylesheet language to use for the application's inline component styles."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "karma-config",
-      "type": "string",
-      "description": "The name of the Karma configuration file."
-    },
-    {
-      "name": "main",
-      "type": "string",
-      "description": "The name of the main entry-point file."
-    },
-    {
-      "name": "poll",
-      "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
-    },
-    {
-      "name": "polyfills",
-      "type": "string",
-      "description": "The name of the polyfills file."
-    },
-    {
-      "name": "preserve-symlinks",
-      "type": "boolean",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
-    },
-    {
-      "name": "progress",
-      "type": "boolean",
-      "default": true,
-      "description": "Log progress to the console while building."
-    },
-    {
-      "name": "project",
-      "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
-      "positional": 0
-    },
-    {
-      "name": "reporters",
+      "name": "include",
+      "description": "Globs of files to include, relative to workspace or project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead.",
       "type": "array",
-      "description": "Karma reporters to use. Directly passed to the karma runner."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "source-map",
+      "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration.",
       "type": "boolean",
       "default": true,
-      "description": "Output source maps for scripts and styles. For more information, see https://angular.io/guide/workspace-config#source-map-configuration."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "ts-config",
-      "type": "string",
-      "description": "The name of the TypeScript configuration file."
+      "name": "progress",
+      "description": "Log progress to the console while building.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "watch",
+      "description": "Run build when files change.",
       "type": "boolean",
-      "description": "Run build when files change."
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "poll",
+      "description": "Enable and define the file watching poll time period in milliseconds.",
+      "type": "number",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "preserve-symlinks",
+      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "browsers",
+      "description": "Override which browsers tests are run against.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "code-coverage",
+      "description": "Output a code coverage report.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "code-coverage-exclude",
+      "description": "Globs to exclude from code coverage.",
+      "type": "array",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "reporters",
+      "description": "Karma reporters to use. Directly passed to the karma runner.",
+      "type": "array",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "web-worker-ts-config",
+      "description": "TypeScript configuration for Web Worker modules.",
       "type": "string",
-      "description": "TypeScript configuration for Web Worker modules."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "t"
+  ],
+  "scope": "in",
+  "hidden": false
 }

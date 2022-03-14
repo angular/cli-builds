@@ -1,0 +1,23 @@
+"use strict";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TestCommand = void 0;
+const architect_command_1 = require("../models/architect-command");
+class TestCommand extends architect_command_1.ArchitectCommand {
+    constructor() {
+        super(...arguments);
+        this.target = 'test';
+        this.multiTarget = true;
+    }
+    async run(options) {
+        return this.runArchitectTarget(options);
+    }
+}
+exports.TestCommand = TestCommand;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdC1pbXBsLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vLi4vLi4vcGFja2FnZXMvYW5ndWxhci9jbGkvY29tbWFuZHMvdGVzdC1pbXBsLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQTs7Ozs7O0dBTUc7OztBQUVILG1FQUF3RjtBQUl4RixNQUFhLFdBQVksU0FBUSxvQ0FBbUM7SUFBcEU7O1FBQzJCLFdBQU0sR0FBRyxNQUFNLENBQUM7UUFDaEIsZ0JBQVcsR0FBRyxJQUFJLENBQUM7SUFLOUMsQ0FBQztJQUhpQixLQUFLLENBQUMsR0FBRyxDQUFDLE9BQTRDO1FBQ3BFLE9BQU8sSUFBSSxDQUFDLGtCQUFrQixDQUFDLE9BQU8sQ0FBQyxDQUFDO0lBQzFDLENBQUM7Q0FDRjtBQVBELGtDQU9DIiwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBAbGljZW5zZVxuICogQ29weXJpZ2h0IEdvb2dsZSBMTEMgQWxsIFJpZ2h0cyBSZXNlcnZlZC5cbiAqXG4gKiBVc2Ugb2YgdGhpcyBzb3VyY2UgY29kZSBpcyBnb3Zlcm5lZCBieSBhbiBNSVQtc3R5bGUgbGljZW5zZSB0aGF0IGNhbiBiZVxuICogZm91bmQgaW4gdGhlIExJQ0VOU0UgZmlsZSBhdCBodHRwczovL2FuZ3VsYXIuaW8vbGljZW5zZVxuICovXG5cbmltcG9ydCB7IEFyY2hpdGVjdENvbW1hbmQsIEFyY2hpdGVjdENvbW1hbmRPcHRpb25zIH0gZnJvbSAnLi4vbW9kZWxzL2FyY2hpdGVjdC1jb21tYW5kJztcbmltcG9ydCB7IEFyZ3VtZW50cyB9IGZyb20gJy4uL21vZGVscy9pbnRlcmZhY2UnO1xuaW1wb3J0IHsgU2NoZW1hIGFzIFRlc3RDb21tYW5kU2NoZW1hIH0gZnJvbSAnLi90ZXN0JztcblxuZXhwb3J0IGNsYXNzIFRlc3RDb21tYW5kIGV4dGVuZHMgQXJjaGl0ZWN0Q29tbWFuZDxUZXN0Q29tbWFuZFNjaGVtYT4ge1xuICBwdWJsaWMgb3ZlcnJpZGUgcmVhZG9ubHkgdGFyZ2V0ID0gJ3Rlc3QnO1xuICBwdWJsaWMgb3ZlcnJpZGUgcmVhZG9ubHkgbXVsdGlUYXJnZXQgPSB0cnVlO1xuXG4gIHB1YmxpYyBvdmVycmlkZSBhc3luYyBydW4ob3B0aW9uczogQXJjaGl0ZWN0Q29tbWFuZE9wdGlvbnMgJiBBcmd1bWVudHMpIHtcbiAgICByZXR1cm4gdGhpcy5ydW5BcmNoaXRlY3RUYXJnZXQob3B0aW9ucyk7XG4gIH1cbn1cbiJdfQ==

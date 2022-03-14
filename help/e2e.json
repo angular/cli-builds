@@ -1,30 +1,59 @@
 {
   "name": "e2e",
-  "command": "ng e2e [project]",
-  "shortDescription": "Builds and serves an Angular application, then runs end-to-end tests.",
-  "aliases": [
-    "e"
-  ],
-  "deprecated": false,
+  "description": "Builds and serves an Angular app, then runs end-to-end tests.",
+  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `e2e` builder for the default project.\n\nTo use the `ng e2e` command, use `ng add` to add a package that implements end-to-end testing capabilities. Adding the package automatically updates your workspace configuration, adding an `e2e` [CLI builder](guide/cli-builder).\n",
   "options": [
     {
-      "name": "configuration",
+      "name": "project",
+      "description": "The name of the project to build. Can be an application or a library.",
       "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "positional": 0
+    },
+    {
+      "name": "configuration",
+      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section of angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations.\nSetting this explicitly overrides the \"--prod\" flag.",
+      "type": "string",
+      "required": false,
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.io/guide/workspace-config#alternate-build-configurations."
+      "hidden": false
+    },
+    {
+      "name": "prod",
+      "description": "Shorthand for \"--configuration=production\".\nSet the build configuration to the production target.\nBy default, the production target is set up in the workspace configuration such that all builds make use of bundling, limited tree-shaking, and also limited dead code elimination.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "deprecated": "Use `--configuration production` instead."
     },
     {
       "name": "help",
+      "description": "Shows a help message for this command in the console.",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
-    },
-    {
-      "name": "project",
-      "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
-      "positional": 0
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "e"
+  ],
+  "scope": "in",
+  "hidden": false
 }

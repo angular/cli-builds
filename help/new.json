@@ -1,157 +1,201 @@
 {
   "name": "new",
-  "command": "ng new [name]",
-  "shortDescription": "Creates a new Angular workspace.",
-  "aliases": [
-    "n"
-  ],
-  "deprecated": false,
+  "description": "Create an Angular workspace.",
+  "longDescription": "Creates and initializes a new Angular application that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n- The new workspace folder is given the specified project name, and contains configuration files at the top level.\n\n- By default, the files for a new initial application (with the same name as the workspace) are placed in the `src/` subfolder.\n\n- The new application's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.\n\n- Subsequent applications that you generate in the workspace reside in the `projects/` subfolder.\n\nIf you plan to have multiple applications in the workspace, you can create an empty workspace by setting the `--create-application` option to false.\nYou can then use `ng generate application` to create an initial application.\nThis allows a workspace name different from the initial app name, and ensures that all applications reside in the `/projects` subfolder, matching the structure of the configuration file.\n",
   "options": [
     {
       "name": "collection",
+      "description": "A collection of schematics to use in generating the initial application.",
       "type": "string",
+      "required": false,
       "aliases": [
         "c"
       ],
-      "description": "A collection of schematics to use in generating the initial application."
+      "hidden": false
     },
     {
-      "name": "commit",
-      "type": "boolean",
-      "default": true,
-      "description": "Initial git repository commit information."
-    },
-    {
-      "name": "create-application",
-      "type": "boolean",
-      "default": true,
-      "description": "Create a new initial application project in the 'src' folder of the new workspace. When false, creates an empty workspace with no initial application. You can then use the generate application command so that all applications are created in the projects folder."
-    },
-    {
-      "name": "defaults",
+      "name": "verbose",
+      "description": "Add more details to output logging.",
       "type": "boolean",
       "default": false,
-      "description": "Disable interactive input prompts for options with a default."
-    },
-    {
-      "name": "directory",
-      "type": "string",
-      "description": "The directory name to create the workspace in."
-    },
-    {
-      "name": "dry-run",
-      "type": "boolean",
-      "default": false,
-      "description": "Run through and reports activity without writing out results."
-    },
-    {
-      "name": "force",
-      "type": "boolean",
-      "default": false,
-      "description": "Force overwriting of existing files."
+      "required": false,
+      "aliases": [
+        "v"
+      ],
+      "hidden": false
     },
     {
       "name": "help",
+      "description": "Shows a help message for this command in the console.",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "inline-style",
+      "name": "dry-run",
+      "description": "Run through and reports activity without writing out results.",
       "type": "boolean",
+      "default": false,
+      "required": false,
       "aliases": [
-        "s"
+        "d"
       ],
-      "description": "Include styles inline in the component TS file. By default, an external styles file is created and referenced in the component TypeScript file."
+      "hidden": false
     },
     {
-      "name": "inline-template",
+      "name": "force",
+      "description": "Force overwriting of existing files.",
       "type": "boolean",
+      "default": false,
+      "required": false,
       "aliases": [
-        "t"
+        "f"
       ],
-      "description": "Include template inline in the component TS file. By default, an external template file is created and referenced in the component TypeScript file."
+      "hidden": false
     },
     {
       "name": "interactive",
+      "description": "Enable interactive input prompts.",
       "type": "boolean",
-      "default": true,
-      "description": "Enable interactive input prompts."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
-      "name": "minimal",
+      "name": "defaults",
+      "description": "Disable interactive input prompts for options with a default.",
       "type": "boolean",
-      "default": false,
-      "description": "Create a workspace without any testing frameworks. (Use for learning purposes only.)"
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "directory",
+      "description": "The directory name to create the workspace in.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "name",
-      "type": "string",
       "description": "The name of the new workspace and initial project.",
+      "type": "string",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
       "positional": 0
     },
     {
-      "name": "new-project-root",
-      "type": "string",
-      "default": "projects",
-      "description": "The path where new projects will be created, relative to the new workspace root."
-    },
-    {
-      "name": "package-manager",
-      "type": "string",
-      "enum": [
-        "npm",
-        "yarn",
-        "pnpm",
-        "cnpm"
-      ],
-      "description": "The package manager used to install dependencies."
-    },
-    {
-      "name": "prefix",
-      "type": "string",
-      "aliases": [
-        "p"
-      ],
-      "default": "app",
-      "description": "The prefix to apply to generated selectors for the initial project."
-    },
-    {
-      "name": "routing",
+      "name": "skip-install",
+      "description": "Do not install dependency packages.",
       "type": "boolean",
-      "description": "Generate a routing module for the initial project."
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false
     },
     {
       "name": "skip-git",
+      "description": "Do not initialize a git repository.",
       "type": "boolean",
+      "default": false,
+      "required": false,
       "aliases": [
         "g"
       ],
-      "default": false,
-      "description": "Do not initialize a git repository."
+      "hidden": false
     },
     {
-      "name": "skip-install",
-      "type": "boolean",
-      "default": false,
-      "description": "Do not install dependency packages."
-    },
-    {
-      "name": "skip-tests",
-      "type": "boolean",
-      "aliases": [
-        "S"
-      ],
-      "default": false,
-      "description": "Do not generate \"spec.ts\" test files for the new project."
-    },
-    {
-      "name": "strict",
+      "name": "commit",
+      "description": "Initial git repository commit information.",
       "type": "boolean",
       "default": true,
-      "description": "Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.io/guide/strict-mode"
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "new-project-root",
+      "description": "The path where new projects will be created, relative to the new workspace root.",
+      "type": "string",
+      "default": "projects",
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "inline-style",
+      "description": "Include styles inline in the component TS file. By default, an external styles file is created and referenced in the component TypeScript file.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [
+        "s"
+      ],
+      "hidden": false,
+      "userAnalytics": 9
+    },
+    {
+      "name": "inline-template",
+      "description": "Include template inline in the component TS file. By default, an external template file is created and referenced in the component TypeScript file.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [
+        "t"
+      ],
+      "hidden": false,
+      "userAnalytics": 10
+    },
+    {
+      "name": "view-encapsulation",
+      "description": "The view encapsulation strategy to use in the initial project.",
+      "type": "string",
+      "enum": [
+        "Emulated",
+        "None",
+        "ShadowDom"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "userAnalytics": 11
+    },
+    {
+      "name": "routing",
+      "description": "Generate a routing module for the initial project.",
+      "type": "boolean",
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "userAnalytics": 17
+    },
+    {
+      "name": "prefix",
+      "description": "The prefix to apply to generated selectors for the initial project.",
+      "type": "string",
+      "default": "app",
+      "required": false,
+      "aliases": [
+        "p"
+      ],
+      "format": "html-selector",
+      "hidden": false
     },
     {
       "name": "style",
+      "description": "The file extension or preprocessor to use for style files.",
       "type": "string",
       "enum": [
         "css",
@@ -159,17 +203,70 @@
         "sass",
         "less"
       ],
-      "description": "The file extension or preprocessor to use for style files."
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "userAnalytics": 5
     },
     {
-      "name": "view-encapsulation",
+      "name": "skip-tests",
+      "description": "Do not generate \"spec.ts\" test files for the new project.",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [
+        "S"
+      ],
+      "hidden": false,
+      "userAnalytics": 12
+    },
+    {
+      "name": "create-application",
+      "description": "Create a new initial application project in the 'src' folder of the new workspace. When false, creates an empty workspace with no initial application. You can then use the generate application command so that all applications are created in the projects folder.",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    },
+    {
+      "name": "minimal",
+      "description": "Create a workspace without any testing frameworks. (Use for learning purposes only.)",
+      "type": "boolean",
+      "default": false,
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "userAnalytics": 14
+    },
+    {
+      "name": "strict",
+      "description": "Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.io/guide/strict-mode",
+      "type": "boolean",
+      "default": true,
+      "required": false,
+      "aliases": [],
+      "hidden": false,
+      "userAnalytics": 7
+    },
+    {
+      "name": "package-manager",
+      "description": "The package manager used to install dependencies.",
       "type": "string",
       "enum": [
-        "Emulated",
-        "None",
-        "ShadowDom"
+        "npm",
+        "yarn",
+        "pnpm",
+        "cnpm"
       ],
-      "description": "The view encapsulation strategy to use in the initial project."
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "n"
+  ],
+  "scope": "out",
+  "hidden": false
 }

@@ -1,0 +1,29 @@
+{
+  "name": "help",
+  "description": "Lists available commands and their short descriptions.",
+  "longDescription": "For help with individual commands, use the `--help` or `-h` option with the command.\n\nFor example,\n\n```sh\nng help serve\n```\n",
+  "options": [
+    {
+      "name": "help",
+      "description": "Shows a help message for this command in the console.",
+      "type": "boolean",
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
+    }
+  ],
+  "aliases": [],
+  "scope": "all",
+  "hidden": false
+}

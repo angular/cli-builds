@@ -1,16 +1,30 @@
 {
   "name": "version",
-  "command": "ng version",
-  "shortDescription": "Outputs Angular CLI version.",
-  "aliases": [
-    "v"
-  ],
-  "deprecated": false,
+  "description": "Outputs Angular CLI version.",
   "options": [
     {
       "name": "help",
+      "description": "Shows a help message for this command in the console.",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "types": [
+        "boolean",
+        "string"
+      ],
+      "default": false,
+      "enum": [
+        true,
+        false,
+        "json",
+        "JSON"
+      ],
+      "required": false,
+      "aliases": [],
+      "hidden": false
     }
-  ]
+  ],
+  "aliases": [
+    "v"
+  ],
+  "scope": "all",
+  "hidden": false
 }

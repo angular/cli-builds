@@ -1,0 +1,22 @@
+"use strict";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuildCommand = void 0;
+const architect_command_1 = require("../models/architect-command");
+class BuildCommand extends architect_command_1.ArchitectCommand {
+    constructor() {
+        super(...arguments);
+        this.target = 'build';
+    }
+    async run(options) {
+        return this.runArchitectTarget(options);
+    }
+}
+exports.BuildCommand = BuildCommand;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYnVpbGQtaW1wbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uLy4uL3BhY2thZ2VzL2FuZ3VsYXIvY2xpL2NvbW1hbmRzL2J1aWxkLWltcGwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBOzs7Ozs7R0FNRzs7O0FBRUgsbUVBQXdGO0FBSXhGLE1BQWEsWUFBYSxTQUFRLG9DQUFvQztJQUF0RTs7UUFDMkIsV0FBTSxHQUFHLE9BQU8sQ0FBQztJQUs1QyxDQUFDO0lBSGlCLEtBQUssQ0FBQyxHQUFHLENBQUMsT0FBNEM7UUFDcEUsT0FBTyxJQUFJLENBQUMsa0JBQWtCLENBQUMsT0FBTyxDQUFDLENBQUM7SUFDMUMsQ0FBQztDQUNGO0FBTkQsb0NBTUMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEBsaWNlbnNlXG4gKiBDb3B5cmlnaHQgR29vZ2xlIExMQyBBbGwgUmlnaHRzIFJlc2VydmVkLlxuICpcbiAqIFVzZSBvZiB0aGlzIHNvdXJjZSBjb2RlIGlzIGdvdmVybmVkIGJ5IGFuIE1JVC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlXG4gKiBmb3VuZCBpbiB0aGUgTElDRU5TRSBmaWxlIGF0IGh0dHBzOi8vYW5ndWxhci5pby9saWNlbnNlXG4gKi9cblxuaW1wb3J0IHsgQXJjaGl0ZWN0Q29tbWFuZCwgQXJjaGl0ZWN0Q29tbWFuZE9wdGlvbnMgfSBmcm9tICcuLi9tb2RlbHMvYXJjaGl0ZWN0LWNvbW1hbmQnO1xuaW1wb3J0IHsgQXJndW1lbnRzIH0gZnJvbSAnLi4vbW9kZWxzL2ludGVyZmFjZSc7XG5pbXBvcnQgeyBTY2hlbWEgYXMgQnVpbGRDb21tYW5kU2NoZW1hIH0gZnJvbSAnLi9idWlsZCc7XG5cbmV4cG9ydCBjbGFzcyBCdWlsZENvbW1hbmQgZXh0ZW5kcyBBcmNoaXRlY3RDb21tYW5kPEJ1aWxkQ29tbWFuZFNjaGVtYT4ge1xuICBwdWJsaWMgb3ZlcnJpZGUgcmVhZG9ubHkgdGFyZ2V0ID0gJ2J1aWxkJztcblxuICBwdWJsaWMgb3ZlcnJpZGUgYXN5bmMgcnVuKG9wdGlvbnM6IEFyY2hpdGVjdENvbW1hbmRPcHRpb25zICYgQXJndW1lbnRzKSB7XG4gICAgcmV0dXJuIHRoaXMucnVuQXJjaGl0ZWN0VGFyZ2V0KG9wdGlvbnMpO1xuICB9XG59XG4iXX0=

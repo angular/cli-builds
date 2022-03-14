@@ -1,0 +1,37 @@
+"use strict";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeployCommand = void 0;
+const architect_command_1 = require("../models/architect-command");
+const BuilderMissing = `
+Cannot find "deploy" target for the specified project.
+
+You should add a package that implements deployment capabilities for your
+favorite platform.
+
+For example:
+  ng add @angular/fire
+  ng add @azure/ng-deploy
+
+Find more packages on npm https://www.npmjs.com/search?q=ng%20deploy
+`;
+class DeployCommand extends architect_command_1.ArchitectCommand {
+    constructor() {
+        super(...arguments);
+        this.target = 'deploy';
+        this.missingTargetError = BuilderMissing;
+    }
+    async initialize(options) {
+        if (!options.help) {
+            return super.initialize(options);
+        }
+    }
+}
+exports.DeployCommand = DeployCommand;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGVwbG95LWltcGwuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi8uLi8uLi9wYWNrYWdlcy9hbmd1bGFyL2NsaS9jb21tYW5kcy9kZXBsb3ktaW1wbC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUE7Ozs7OztHQU1HOzs7QUFFSCxtRUFBK0Q7QUFJL0QsTUFBTSxjQUFjLEdBQUc7Ozs7Ozs7Ozs7O0NBV3RCLENBQUM7QUFFRixNQUFhLGFBQWMsU0FBUSxvQ0FBcUM7SUFBeEU7O1FBQzJCLFdBQU0sR0FBRyxRQUFRLENBQUM7UUFDbEIsdUJBQWtCLEdBQUcsY0FBYyxDQUFDO0lBUy9ELENBQUM7SUFQaUIsS0FBSyxDQUFDLFVBQVUsQ0FDOUIsT0FBd0M7UUFFeEMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLEVBQUU7WUFDakIsT0FBTyxLQUFLLENBQUMsVUFBVSxDQUFDLE9BQU8sQ0FBQyxDQUFDO1NBQ2xDO0lBQ0gsQ0FBQztDQUNGO0FBWEQsc0NBV0MiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEBsaWNlbnNlXG4gKiBDb3B5cmlnaHQgR29vZ2xlIExMQyBBbGwgUmlnaHRzIFJlc2VydmVkLlxuICpcbiAqIFVzZSBvZiB0aGlzIHNvdXJjZSBjb2RlIGlzIGdvdmVybmVkIGJ5IGFuIE1JVC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlXG4gKiBmb3VuZCBpbiB0aGUgTElDRU5TRSBmaWxlIGF0IGh0dHBzOi8vYW5ndWxhci5pby9saWNlbnNlXG4gKi9cblxuaW1wb3J0IHsgQXJjaGl0ZWN0Q29tbWFuZCB9IGZyb20gJy4uL21vZGVscy9hcmNoaXRlY3QtY29tbWFuZCc7XG5pbXBvcnQgeyBBcmd1bWVudHMgfSBmcm9tICcuLi9tb2RlbHMvaW50ZXJmYWNlJztcbmltcG9ydCB7IFNjaGVtYSBhcyBEZXBsb3lDb21tYW5kU2NoZW1hIH0gZnJvbSAnLi9kZXBsb3knO1xuXG5jb25zdCBCdWlsZGVyTWlzc2luZyA9IGBcbkNhbm5vdCBmaW5kIFwiZGVwbG95XCIgdGFyZ2V0IGZvciB0aGUgc3BlY2lmaWVkIHByb2plY3QuXG5cbllvdSBzaG91bGQgYWRkIGEgcGFja2FnZSB0aGF0IGltcGxlbWVudHMgZGVwbG95bWVudCBjYXBhYmlsaXRpZXMgZm9yIHlvdXJcbmZhdm9yaXRlIHBsYXRmb3JtLlxuXG5Gb3IgZXhhbXBsZTpcbiAgbmcgYWRkIEBhbmd1bGFyL2ZpcmVcbiAgbmcgYWRkIEBhenVyZS9uZy1kZXBsb3lcblxuRmluZCBtb3JlIHBhY2thZ2VzIG9uIG5wbSBodHRwczovL3d3dy5ucG1qcy5jb20vc2VhcmNoP3E9bmclMjBkZXBsb3lcbmA7XG5cbmV4cG9ydCBjbGFzcyBEZXBsb3lDb21tYW5kIGV4dGVuZHMgQXJjaGl0ZWN0Q29tbWFuZDxEZXBsb3lDb21tYW5kU2NoZW1hPiB7XG4gIHB1YmxpYyBvdmVycmlkZSByZWFkb25seSB0YXJnZXQgPSAnZGVwbG95JztcbiAgcHVibGljIG92ZXJyaWRlIHJlYWRvbmx5IG1pc3NpbmdUYXJnZXRFcnJvciA9IEJ1aWxkZXJNaXNzaW5nO1xuXG4gIHB1YmxpYyBvdmVycmlkZSBhc3luYyBpbml0aWFsaXplKFxuICAgIG9wdGlvbnM6IERlcGxveUNvbW1hbmRTY2hlbWEgJiBBcmd1bWVudHMsXG4gICk6IFByb21pc2U8bnVtYmVyIHwgdm9pZD4ge1xuICAgIGlmICghb3B0aW9ucy5oZWxwKSB7XG4gICAgICByZXR1cm4gc3VwZXIuaW5pdGlhbGl6ZShvcHRpb25zKTtcbiAgICB9XG4gIH1cbn1cbiJdfQ==
