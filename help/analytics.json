@@ -1,9 +1,7 @@
 {
   "name": "analytics",
-  "command": "ng analytics <setting-or-project>",
-  "shortDescription": "Configures the gathering of Angular CLI usage metrics.",
-  "longDescriptionRelativePath": "@angular/cli/src/commands/analytics/long-description.md",
-  "longDescription": "The value of `setting-or-project` is one of the following.\n\n- `on`: Enables analytics gathering and reporting for the user.\n- `off`: Disables analytics gathering and reporting for the user.\n- `ci`: Enables analytics and configures reporting for use with Continuous Integration,\n  which uses a common CI user.\n- `prompt`: Prompts the user to set the status interactively.\n- `project`: Sets the default status for the project to the `project-setting` value, which can be any of the other values. The `project-setting` argument is ignored for all other values of `setting_or_project`.\n\nFor further details, see [Gathering an Viewing CLI Usage Analytics](cli/usage-analytics-gathering).\n",
+  "command": "ng analytics",
+  "shortDescription": "Configures the gathering of Angular CLI usage metrics. See https://angular.io/cli/usage-analytics-gathering",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -11,29 +9,74 @@
       "name": "help",
       "type": "boolean",
       "description": "Shows a help message for this command in the console."
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "disable",
+      "command": "disable",
+      "shortDescription": "Disables analytics gathering and reporting for the user.",
+      "options": [
+        {
+          "name": "global",
+          "type": "boolean",
+          "aliases": [
+            "g"
+          ],
+          "default": false,
+          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+        }
+      ],
+      "aliases": [
+        "off"
+      ],
+      "deprecated": false
     },
     {
-      "name": "project-setting",
-      "type": "string",
-      "enum": [
-        "on",
-        "off",
-        "prompt"
+      "name": "enable",
+      "command": "enable",
+      "shortDescription": "Enables analytics gathering and reporting for the user.",
+      "options": [
+        {
+          "name": "global",
+          "type": "boolean",
+          "aliases": [
+            "g"
+          ],
+          "default": false,
+          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+        }
       ],
-      "description": "Sets the default analytics enablement status for the project.",
-      "positional": 1
+      "aliases": [
+        "on"
+      ],
+      "deprecated": false
     },
     {
-      "name": "setting-or-project",
-      "type": "string",
-      "enum": [
-        "on",
-        "off",
-        "ci",
-        "prompt"
+      "name": "info",
+      "command": "info",
+      "shortDescription": "Prints analytics gathering and reporting configuration in the console.",
+      "options": [],
+      "aliases": [],
+      "deprecated": false
+    },
+    {
+      "name": "prompt",
+      "command": "prompt",
+      "shortDescription": "Prompts the user to set the analytics gathering status interactively.",
+      "options": [
+        {
+          "name": "global",
+          "type": "boolean",
+          "aliases": [
+            "g"
+          ],
+          "default": false,
+          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+        }
       ],
-      "description": "Directly enables or disables all usage analytics for the user, or prompts the user to set the status interactively, or sets the default status for the project.",
-      "positional": 0
+      "aliases": [],
+      "deprecated": false
     }
   ]
 }

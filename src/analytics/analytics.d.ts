@@ -19,42 +19,25 @@ export declare const analyticsPackageSafelist: (string | RegExp)[];
 export declare function isPackageNameSafeForAnalytics(name: string): boolean;
 /**
  * Set analytics settings. This does not work if the user is not inside a project.
- * @param level Which config to use. "global" for user-level, and "local" for project-level.
+ * @param global Which config to use. "global" for user-level, and "local" for project-level.
  * @param value Either a user ID, true to generate a new User ID, or false to disable analytics.
  */
-export declare function setAnalyticsConfig(level: 'global' | 'local', value: string | boolean): void;
+export declare function setAnalyticsConfig(global: boolean, value: string | boolean): void;
 /**
  * Prompt the user for usage gathering permission.
  * @param force Whether to ask regardless of whether or not the user is using an interactive shell.
  * @return Whether or not the user was shown a prompt.
  */
-export declare function promptGlobalAnalytics(force?: boolean): Promise<boolean>;
+export declare function promptAnalytics(global: boolean, force?: boolean): Promise<boolean>;
 /**
- * Prompt the user for usage gathering permission for the local project. Fails if there is no
- * local workspace.
- * @param force Whether to ask regardless of whether or not the user is using an interactive shell.
- * @return Whether or not the user was shown a prompt.
+ * Get the analytics object for the user.
  */
-export declare function promptProjectAnalytics(force?: boolean): Promise<boolean>;
-export declare function hasGlobalAnalyticsConfiguration(): Promise<boolean>;
-/**
- * Get the global analytics object for the user. This returns an instance of UniversalAnalytics,
- * or undefined if analytics are disabled.
- *
- * If any problem happens, it is considered the user has been opting out of analytics.
- */
-export declare function getGlobalAnalytics(): Promise<AnalyticsCollector | undefined>;
-export declare function hasWorkspaceAnalyticsConfiguration(): Promise<boolean>;
-/**
- * Get the workspace analytics object for the user. This returns an instance of AnalyticsCollector,
- * or undefined if analytics are disabled.
- *
- * If any problem happens, it is considered the user has been opting out of analytics.
- */
-export declare function getWorkspaceAnalytics(): Promise<AnalyticsCollector | undefined>;
+export declare function getAnalytics(level: 'local' | 'global'): Promise<AnalyticsCollector | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
  */
 export declare function getSharedAnalytics(): Promise<AnalyticsCollector | undefined>;
 export declare function createAnalytics(workspace: boolean, skipPrompt?: boolean): Promise<analytics.Analytics>;
+export declare function getAnalyticsInfoString(): Promise<string>;
+export declare function hasAnalyticsConfig(level: 'local' | 'global'): Promise<boolean>;

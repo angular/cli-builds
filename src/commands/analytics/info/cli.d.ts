@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Argv } from 'yargs';
-import { CommandModule, CommandModuleImplementation, Options } from '../../command-builder/command-module';
-export declare class AnalyticsCommandModule extends CommandModule implements CommandModuleImplementation {
+import { CommandModule, CommandModuleImplementation, Options } from '../../../command-builder/command-module';
+export declare class AnalyticsInfoCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
     longDescriptionPath?: string | undefined;
     builder(localYargs: Argv): Argv;
-    run(_options: Options<{}>): void;
+    run(_options: Options<{}>): Promise<void>;
 }
