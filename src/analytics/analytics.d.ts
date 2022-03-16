@@ -31,8 +31,13 @@ export declare function setAnalyticsConfig(global: boolean, value: string | bool
 export declare function promptAnalytics(global: boolean, force?: boolean): Promise<boolean>;
 /**
  * Get the analytics object for the user.
+ *
+ * @returns
+ * - `AnalyticsCollector` when enabled.
+ * - `analytics.NoopAnalytics` when disabled.
+ * - `undefined` when not configured.
  */
-export declare function getAnalytics(level: 'local' | 'global'): Promise<AnalyticsCollector | undefined>;
+export declare function getAnalytics(level: 'local' | 'global'): Promise<AnalyticsCollector | analytics.NoopAnalytics | undefined>;
 /**
  * Return the usage analytics sharing setting, which is either a property string (GA-XXXXXXX-XX),
  * or undefined if no sharing.
@@ -40,4 +45,3 @@ export declare function getAnalytics(level: 'local' | 'global'): Promise<Analyti
 export declare function getSharedAnalytics(): Promise<AnalyticsCollector | undefined>;
 export declare function createAnalytics(workspace: boolean, skipPrompt?: boolean): Promise<analytics.Analytics>;
 export declare function getAnalyticsInfoString(): Promise<string>;
-export declare function hasAnalyticsConfig(level: 'local' | 'global'): Promise<boolean>;
