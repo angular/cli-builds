@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { Argv } from 'yargs';
-import { CommandModule, CommandScope, Options, OtherOptions } from '../../command-builder/command-module';
-export interface UpdateCommandArgs {
-    packages?: string | string[];
+import { CommandModule, CommandScope, Options } from '../../command-builder/command-module';
+interface UpdateCommandArgs {
+    packages?: string[];
     force: boolean;
     next: boolean;
     'migrate-only'?: boolean;
@@ -21,9 +21,34 @@ export interface UpdateCommandArgs {
 }
 export declare class UpdateCommandModule extends CommandModule<UpdateCommandArgs> {
     static scope: CommandScope;
+    protected shouldReportAnalytics: boolean;
     command: string;
     describe: string;
     longDescriptionPath: string;
     builder(localYargs: Argv): Argv<UpdateCommandArgs>;
-    run(options: Options<UpdateCommandArgs> & OtherOptions): Promise<number | void>;
+    run(options: Options<UpdateCommandArgs>): Promise<number | void>;
+    private executeSchematic;
+    /**
+     * @return Whether or not the migration was performed successfully.
+     */
+    private executeMigration;
+    /**
+     * @return Whether or not the migrations were performed successfully.
+     */
+    private executeMigrations;
+    private executePackageMigrations;
+    private migrateOnly;
+    private updatePackagesAndMigrate;
+    /**
+     * @return Whether or not the commit was successful.
+     */
+    private commit;
+    private checkCleanGit;
+    /**
+     * Checks if the current installed CLI version is older or newer than a compatible version.
+     * @returns the version to install or null when there is no update to install.
+     */
+    private checkCLIVersion;
+    private getCLIUpdateRunnerVersion;
 }
+export {};

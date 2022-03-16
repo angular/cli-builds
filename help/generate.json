@@ -1,6 +1,6 @@
 {
   "name": "generate",
-  "command": "ng generate [schematic]",
+  "command": "ng generate <schematic>",
   "shortDescription": "Generates and/or modifies files based on a schematic.",
   "aliases": [
     "g"
@@ -39,7 +39,7 @@
     {
       "name": "schematic",
       "type": "string",
-      "description": "The schematic or collection:schematic to generate.",
+      "description": "The [collection:schematic] to run.",
       "positional": 0
     }
   ],

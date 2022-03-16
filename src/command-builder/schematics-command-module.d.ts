@@ -8,7 +8,7 @@
 import { Collection } from '@angular-devkit/schematics';
 import { FileSystemCollectionDescription, FileSystemSchematicDescription, NodeWorkflow } from '@angular-devkit/schematics/tools';
 import { Argv } from 'yargs';
-import { CommandModule, CommandModuleImplementation, CommandScope } from './command-module';
+import { CommandModule, CommandModuleImplementation, CommandScope, Options, OtherOptions } from './command-module';
 import { Option } from './utilities/json-schema';
 export interface SchematicsCommandArgs {
     interactive: boolean;
@@ -16,16 +16,29 @@ export interface SchematicsCommandArgs {
     'dry-run': boolean;
     defaults: boolean;
 }
+export interface SchematicsExecutionOptions extends Options<SchematicsCommandArgs> {
+    packageRegistry?: string;
+}
 export declare abstract class SchematicsCommandModule extends CommandModule<SchematicsCommandArgs> implements CommandModuleImplementation<SchematicsCommandArgs> {
     static scope: CommandScope;
-    protected readonly schematicName: string | undefined;
+    protected readonly allowPrivateSchematics: boolean;
+    protected readonly shouldReportAnalytics = false;
     builder(argv: Argv): Promise<Argv<SchematicsCommandArgs>>;
     /** Get schematic schema options.*/
     protected getSchematicOptions(collection: Collection<FileSystemCollectionDescription, FileSystemSchematicDescription>, schematicName: string, workflow: NodeWorkflow): Promise<Option[]>;
-    protected getCollectionName(): Promise<string>;
-    private _workflow;
-    protected getOrCreateWorkflow(collectionName: string): NodeWorkflow;
+    private _workflowForBuilder;
+    protected getOrCreateWorkflowForBuilder(collectionName: string): NodeWorkflow;
+    private _workflowForExecution;
+    protected getOrCreateWorkflowForExecution(collectionName: string, options: SchematicsExecutionOptions): Promise<NodeWorkflow>;
     private _defaultSchematicCollection;
     protected getDefaultSchematicCollection(): Promise<string>;
     protected parseSchematicInfo(schematic: string | undefined): [collectionName: string | undefined, schematicName: string | undefined];
+    protected runSchematic(options: {
+        executionOptions: SchematicsExecutionOptions;
+        schematicOptions: OtherOptions;
+        collectionName: string;
+        schematicName: string;
+    }): Promise<number>;
+    private getProjectName;
+    private getResolvePaths;
 }

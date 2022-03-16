@@ -8,7 +8,7 @@
 import { Argv } from 'yargs';
 import { CommandModuleImplementation, Options, OtherOptions } from '../../command-builder/command-module';
 import { SchematicsCommandArgs, SchematicsCommandModule } from '../../command-builder/schematics-command-module';
-export interface AddCommandArgs extends SchematicsCommandArgs {
+interface AddCommandArgs extends SchematicsCommandArgs {
     collection: string;
     verbose?: boolean;
     registry?: string;
@@ -18,6 +18,16 @@ export declare class AddCommandModule extends SchematicsCommandModule implements
     command: string;
     describe: string;
     longDescriptionPath: string;
+    protected allowPrivateSchematics: boolean;
+    private readonly schematicName;
     builder(argv: Argv): Promise<Argv<AddCommandArgs>>;
     run(options: Options<AddCommandArgs> & OtherOptions): Promise<number | void>;
+    private isProjectVersionValid;
+    reportAnalytics(options: OtherOptions, paths: string[]): Promise<void>;
+    private getCollectionName;
+    private isPackageInstalled;
+    private executeSchematic;
+    private findProjectVersion;
+    private hasMismatchedPeer;
 }
+export {};

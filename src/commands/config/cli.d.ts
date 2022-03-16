@@ -7,7 +7,7 @@
  */
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation, Options } from '../../command-builder/command-module';
-export interface ConfigCommandArgs {
+interface ConfigCommandArgs {
     'json-path': string;
     value?: string;
     global?: boolean;
@@ -18,4 +18,7 @@ export declare class ConfigCommandModule extends CommandModule<ConfigCommandArgs
     longDescriptionPath: string;
     builder(localYargs: Argv): Argv<ConfigCommandArgs>;
     run(options: Options<ConfigCommandArgs>): Promise<number | void>;
+    private get;
+    private set;
 }
+export {};

@@ -8,7 +8,7 @@
 import { Argv } from 'yargs';
 import { CommandModuleImplementation, Options, OtherOptions } from '../../command-builder/command-module';
 import { SchematicsCommandArgs, SchematicsCommandModule } from '../../command-builder/schematics-command-module';
-export interface GenerateCommandArgs extends SchematicsCommandArgs {
+interface GenerateCommandArgs extends SchematicsCommandArgs {
     schematic?: string;
 }
 export declare class GenerateCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<GenerateCommandArgs> {
@@ -17,7 +17,8 @@ export declare class GenerateCommandModule extends SchematicsCommandModule imple
     describe: string;
     longDescriptionPath?: string | undefined;
     builder(argv: Argv): Promise<Argv<GenerateCommandArgs>>;
-    run(options: Options<GenerateCommandArgs> & OtherOptions): number | void | Promise<number | void>;
+    run(options: Options<GenerateCommandArgs> & OtherOptions): Promise<number | void>;
+    private getCollectionName;
     /**
      * Generate a command string to be passed to the command builder.
      *
@@ -25,3 +26,4 @@ export declare class GenerateCommandModule extends SchematicsCommandModule imple
      */
     private generateCommandString;
 }
+export {};

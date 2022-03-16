@@ -7,6 +7,7 @@
  */
 import { analytics, logging } from '@angular-devkit/core';
 import { ArgumentsCamelCase, Argv, CamelCaseKey, CommandModule as YargsCommandModule } from 'yargs';
+import { PackageManager } from '../../lib/config/workspace-schema';
 import { AngularWorkspace } from '../utilities/config';
 import { Option } from './utilities/json-schema';
 export declare type Options<T> = {
@@ -25,6 +26,7 @@ export interface CommandContext {
     root: string;
     workspace?: AngularWorkspace;
     logger: logging.Logger;
+    packageManager: PackageManager;
     /** Arguments parsed in free-from without parser configuration. */
     args: {
         positional: string[];
@@ -53,7 +55,7 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
     abstract readonly command: string;
     abstract readonly describe: string | false;
     abstract readonly longDescriptionPath?: string;
-    protected shouldReportAnalytics: boolean;
+    protected readonly shouldReportAnalytics: boolean;
     static scope: CommandScope;
     private readonly optionsWithAnalytics;
     constructor(context: CommandContext);
