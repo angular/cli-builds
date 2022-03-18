@@ -8,7 +8,7 @@
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation, Options } from '../../command-builder/command-module';
 interface ConfigCommandArgs {
-    'json-path'?: string;
+    'json-path': string;
     value?: string;
     global?: boolean;
 }
