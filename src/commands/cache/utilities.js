@@ -1,0 +1,51 @@
+"use strict";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getCacheConfig = exports.updateCacheConfig = void 0;
+const core_1 = require("@angular-devkit/core");
+const path_1 = require("path");
+const workspace_schema_1 = require("../../../lib/config/workspace-schema");
+const config_1 = require("../../utilities/config");
+function updateCacheConfig(key, value) {
+    const [localWorkspace] = (0, config_1.getWorkspaceRaw)('local');
+    if (!localWorkspace) {
+        throw new Error('Cannot find workspace configuration file.');
+    }
+    localWorkspace.modify(['cli', 'cache', key], value);
+    localWorkspace.save();
+}
+exports.updateCacheConfig = updateCacheConfig;
+function getCacheConfig(workspace) {
+    if (!workspace) {
+        throw new Error(`Cannot retrieve cache configuration as workspace is not defined.`);
+    }
+    const defaultSettings = {
+        path: (0, path_1.resolve)(workspace.basePath, '.angular/cache'),
+        environment: workspace_schema_1.Environment.Local,
+        enabled: true,
+    };
+    const cliSetting = workspace.extensions['cli'];
+    if (!cliSetting || !(0, core_1.isJsonObject)(cliSetting)) {
+        return defaultSettings;
+    }
+    const cacheSettings = cliSetting['cache'];
+    if (!(0, core_1.isJsonObject)(cacheSettings)) {
+        return defaultSettings;
+    }
+    const { path = defaultSettings.path, environment = defaultSettings.environment, enabled = defaultSettings.enabled,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     } = cacheSettings;
+    return {
+        path: (0, path_1.resolve)(workspace.basePath, path),
+        environment,
+        enabled,
+    };
+}
+exports.getCacheConfig = getCacheConfig;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXRpbGl0aWVzLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vLi4vLi4vLi4vLi4vcGFja2FnZXMvYW5ndWxhci9jbGkvc3JjL2NvbW1hbmRzL2NhY2hlL3V0aWxpdGllcy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUE7Ozs7OztHQU1HOzs7QUFFSCwrQ0FBb0Q7QUFDcEQsK0JBQStCO0FBQy9CLDJFQUEwRTtBQUMxRSxtREFBMkU7QUFFM0UsU0FBZ0IsaUJBQWlCLENBQXdCLEdBQU0sRUFBRSxLQUFlO0lBQzlFLE1BQU0sQ0FBQyxjQUFjLENBQUMsR0FBRyxJQUFBLHdCQUFlLEVBQUMsT0FBTyxDQUFDLENBQUM7SUFDbEQsSUFBSSxDQUFDLGNBQWMsRUFBRTtRQUNuQixNQUFNLElBQUksS0FBSyxDQUFDLDJDQUEyQyxDQUFDLENBQUM7S0FDOUQ7SUFFRCxjQUFjLENBQUMsTUFBTSxDQUFDLENBQUMsS0FBSyxFQUFFLE9BQU8sRUFBRSxHQUFHLENBQUMsRUFBRSxLQUFLLENBQUMsQ0FBQztJQUNwRCxjQUFjLENBQUMsSUFBSSxFQUFFLENBQUM7QUFDeEIsQ0FBQztBQVJELDhDQVFDO0FBRUQsU0FBZ0IsY0FBYyxDQUFDLFNBQXVDO0lBQ3BFLElBQUksQ0FBQyxTQUFTLEVBQUU7UUFDZCxNQUFNLElBQUksS0FBSyxDQUFDLGtFQUFrRSxDQUFDLENBQUM7S0FDckY7SUFFRCxNQUFNLGVBQWUsR0FBb0I7UUFDdkMsSUFBSSxFQUFFLElBQUEsY0FBTyxFQUFDLFNBQVMsQ0FBQyxRQUFRLEVBQUUsZ0JBQWdCLENBQUM7UUFDbkQsV0FBVyxFQUFFLDhCQUFXLENBQUMsS0FBSztRQUM5QixPQUFPLEVBQUUsSUFBSTtLQUNkLENBQUM7SUFFRixNQUFNLFVBQVUsR0FBRyxTQUFTLENBQUMsVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDO0lBQy9DLElBQUksQ0FBQyxVQUFVLElBQUksQ0FBQyxJQUFBLG1CQUFZLEVBQUMsVUFBVSxDQUFDLEVBQUU7UUFDNUMsT0FBTyxlQUFlLENBQUM7S0FDeEI7SUFFRCxNQUFNLGFBQWEsR0FBRyxVQUFVLENBQUMsT0FBTyxDQUFDLENBQUM7SUFDMUMsSUFBSSxDQUFDLElBQUEsbUJBQVksRUFBQyxhQUFhLENBQUMsRUFBRTtRQUNoQyxPQUFPLGVBQWUsQ0FBQztLQUN4QjtJQUVELE1BQU0sRUFDSixJQUFJLEdBQUcsZUFBZSxDQUFDLElBQUksRUFDM0IsV0FBVyxHQUFHLGVBQWUsQ0FBQyxXQUFXLEVBQ3pDLE9BQU8sR0FBRyxlQUFlLENBQUMsT0FBTztJQUNqQyw4REFBOEQ7TUFDL0QsR0FBRyxhQUFvQyxDQUFDO0lBRXpDLE9BQU87UUFDTCxJQUFJLEVBQUUsSUFBQSxjQUFPLEVBQUMsU0FBUyxDQUFDLFFBQVEsRUFBRSxJQUFJLENBQUM7UUFDdkMsV0FBVztRQUNYLE9BQU87S0FDUixDQUFDO0FBQ0osQ0FBQztBQWpDRCx3Q0FpQ0MiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEBsaWNlbnNlXG4gKiBDb3B5cmlnaHQgR29vZ2xlIExMQyBBbGwgUmlnaHRzIFJlc2VydmVkLlxuICpcbiAqIFVzZSBvZiB0aGlzIHNvdXJjZSBjb2RlIGlzIGdvdmVybmVkIGJ5IGFuIE1JVC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlXG4gKiBmb3VuZCBpbiB0aGUgTElDRU5TRSBmaWxlIGF0IGh0dHBzOi8vYW5ndWxhci5pby9saWNlbnNlXG4gKi9cblxuaW1wb3J0IHsgaXNKc29uT2JqZWN0IH0gZnJvbSAnQGFuZ3VsYXItZGV2a2l0L2NvcmUnO1xuaW1wb3J0IHsgcmVzb2x2ZSB9IGZyb20gJ3BhdGgnO1xuaW1wb3J0IHsgQ2FjaGUsIEVudmlyb25tZW50IH0gZnJvbSAnLi4vLi4vLi4vbGliL2NvbmZpZy93b3Jrc3BhY2Utc2NoZW1hJztcbmltcG9ydCB7IEFuZ3VsYXJXb3Jrc3BhY2UsIGdldFdvcmtzcGFjZVJhdyB9IGZyb20gJy4uLy4uL3V0aWxpdGllcy9jb25maWcnO1xuXG5leHBvcnQgZnVuY3Rpb24gdXBkYXRlQ2FjaGVDb25maWc8SyBleHRlbmRzIGtleW9mIENhY2hlPihrZXk6IEssIHZhbHVlOiBDYWNoZVtLXSk6IHZvaWQge1xuICBjb25zdCBbbG9jYWxXb3Jrc3BhY2VdID0gZ2V0V29ya3NwYWNlUmF3KCdsb2NhbCcpO1xuICBpZiAoIWxvY2FsV29ya3NwYWNlKSB7XG4gICAgdGhyb3cgbmV3IEVycm9yKCdDYW5ub3QgZmluZCB3b3Jrc3BhY2UgY29uZmlndXJhdGlvbiBmaWxlLicpO1xuICB9XG5cbiAgbG9jYWxXb3Jrc3BhY2UubW9kaWZ5KFsnY2xpJywgJ2NhY2hlJywga2V5XSwgdmFsdWUpO1xuICBsb2NhbFdvcmtzcGFjZS5zYXZlKCk7XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBnZXRDYWNoZUNvbmZpZyh3b3Jrc3BhY2U6IEFuZ3VsYXJXb3Jrc3BhY2UgfCB1bmRlZmluZWQpOiBSZXF1aXJlZDxDYWNoZT4ge1xuICBpZiAoIXdvcmtzcGFjZSkge1xuICAgIHRocm93IG5ldyBFcnJvcihgQ2Fubm90IHJldHJpZXZlIGNhY2hlIGNvbmZpZ3VyYXRpb24gYXMgd29ya3NwYWNlIGlzIG5vdCBkZWZpbmVkLmApO1xuICB9XG5cbiAgY29uc3QgZGVmYXVsdFNldHRpbmdzOiBSZXF1aXJlZDxDYWNoZT4gPSB7XG4gICAgcGF0aDogcmVzb2x2ZSh3b3Jrc3BhY2UuYmFzZVBhdGgsICcuYW5ndWxhci9jYWNoZScpLFxuICAgIGVudmlyb25tZW50OiBFbnZpcm9ubWVudC5Mb2NhbCxcbiAgICBlbmFibGVkOiB0cnVlLFxuICB9O1xuXG4gIGNvbnN0IGNsaVNldHRpbmcgPSB3b3Jrc3BhY2UuZXh0ZW5zaW9uc1snY2xpJ107XG4gIGlmICghY2xpU2V0dGluZyB8fCAhaXNKc29uT2JqZWN0KGNsaVNldHRpbmcpKSB7XG4gICAgcmV0dXJuIGRlZmF1bHRTZXR0aW5ncztcbiAgfVxuXG4gIGNvbnN0IGNhY2hlU2V0dGluZ3MgPSBjbGlTZXR0aW5nWydjYWNoZSddO1xuICBpZiAoIWlzSnNvbk9iamVjdChjYWNoZVNldHRpbmdzKSkge1xuICAgIHJldHVybiBkZWZhdWx0U2V0dGluZ3M7XG4gIH1cblxuICBjb25zdCB7XG4gICAgcGF0aCA9IGRlZmF1bHRTZXR0aW5ncy5wYXRoLFxuICAgIGVudmlyb25tZW50ID0gZGVmYXVsdFNldHRpbmdzLmVudmlyb25tZW50LFxuICAgIGVuYWJsZWQgPSBkZWZhdWx0U2V0dGluZ3MuZW5hYmxlZCxcbiAgICAvLyBlc2xpbnQtZGlzYWJsZS1uZXh0LWxpbmUgQHR5cGVzY3JpcHQtZXNsaW50L25vLWV4cGxpY2l0LWFueVxuICB9ID0gY2FjaGVTZXR0aW5ncyBhcyBSZWNvcmQ8c3RyaW5nLCBhbnk+O1xuXG4gIHJldHVybiB7XG4gICAgcGF0aDogcmVzb2x2ZSh3b3Jrc3BhY2UuYmFzZVBhdGgsIHBhdGgpLFxuICAgIGVudmlyb25tZW50LFxuICAgIGVuYWJsZWQsXG4gIH07XG59XG4iXX0=
