@@ -3,6 +3,7 @@ export interface Schema {
     cli?: CliOptions;
     /**
      * Default project name used in commands.
+     * @deprecated The project to use will be determined from the current working directory.
      */
     defaultProject?: string;
     /**
