@@ -10,6 +10,7 @@ import { FileSystemCollectionDescription, FileSystemSchematicDescription, NodeWo
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation, CommandScope, Options, OtherOptions } from './command-module';
 import { Option } from './utilities/json-schema';
+export declare const DEFAULT_SCHEMATICS_COLLECTION = "@schematics/angular";
 export interface SchematicsCommandArgs {
     interactive: boolean;
     force: boolean;
@@ -30,8 +31,8 @@ export declare abstract class SchematicsCommandModule extends CommandModule<Sche
     protected getOrCreateWorkflowForBuilder(collectionName: string): NodeWorkflow;
     private _workflowForExecution;
     protected getOrCreateWorkflowForExecution(collectionName: string, options: SchematicsExecutionOptions): Promise<NodeWorkflow>;
-    private _defaultSchematicCollection;
-    protected getDefaultSchematicCollection(): Promise<string>;
+    private _schematicCollections;
+    protected getSchematicCollections(): Promise<Set<string>>;
     protected parseSchematicInfo(schematic: string | undefined): [collectionName: string | undefined, schematicName: string | undefined];
     protected runSchematic(options: {
         executionOptions: SchematicsExecutionOptions;

@@ -33,6 +33,10 @@ export interface CliOptions {
      */
     packageManager?: PackageManager;
     /**
+     * The list of schematic collections to use.
+     */
+    schematicCollections?: string[];
+    /**
      * Control CLI specific console warnings
      */
     warnings?: Warnings;

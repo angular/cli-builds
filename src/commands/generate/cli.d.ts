@@ -18,12 +18,22 @@ export declare class GenerateCommandModule extends SchematicsCommandModule imple
     longDescriptionPath?: string | undefined;
     builder(argv: Argv): Promise<Argv<GenerateCommandArgs>>;
     run(options: Options<GenerateCommandArgs> & OtherOptions): Promise<number | void>;
-    private getCollectionName;
+    private getCollectionNames;
     /**
      * Generate a command string to be passed to the command builder.
      *
      * @example `component [name]` or `@schematics/angular:component [name]`.
      */
     private generateCommandString;
+    /**
+     * Get schematics that can to be registered as subcommands.
+     */
+    private getSchematics;
+    /**
+     * Get schematics that should to be registered as subcommands.
+     *
+     * @returns a sorted list of schematic that needs to be registered as subcommands.
+     */
+    private getSchematicsToRegister;
 }
 export {};

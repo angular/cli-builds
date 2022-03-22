@@ -45,7 +45,16 @@
       "properties": {
         "defaultCollection": {
           "description": "The default schematics collection to use.",
-          "type": "string"
+          "type": "string",
+          "x-deprecated": "Use 'schematicCollections' instead."
+        },
+        "schematicCollections": {
+          "type": "array",
+          "description": "The list of schematic collections to use.",
+          "items": {
+            "type": "string",
+            "uniqueItems": true
+          }
         },
         "packageManager": {
           "description": "Specify which package manager tool to use.",
@@ -176,7 +185,16 @@
         "cli": {
           "defaultCollection": {
             "description": "The default schematics collection to use.",
-            "type": "string"
+            "type": "string",
+            "x-deprecated": "Use 'schematicCollections' instead."
+          },
+          "schematicCollections": {
+            "type": "array",
+            "description": "The list of schematic collections to use.",
+            "items": {
+              "type": "string",
+              "uniqueItems": true
+            }
           }
         },
         "schematics": {
