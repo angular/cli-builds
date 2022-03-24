@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { NgAddSaveDepedency } from './package-metadata';
+import { NgAddSaveDependency } from './package-metadata';
 interface PackageJson {
     name: string;
     version: string;
@@ -17,7 +17,7 @@ interface PackageJson {
         migrations?: string;
     };
     'ng-add'?: {
-        save?: NgAddSaveDepedency;
+        save?: NgAddSaveDependency;
     };
 }
 export interface PackageTreeNode {

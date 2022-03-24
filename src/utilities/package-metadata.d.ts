@@ -6,24 +6,15 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { JsonSchemaForNpmPackageJsonFiles } from './package-json';
-export interface NpmRepositoryPackageJson {
-    name: string;
-    requestedName: string;
-    description: string;
-    'dist-tags': {
-        [name: string]: string;
-    };
-    versions: {
-        [version: string]: JsonSchemaForNpmPackageJsonFiles;
-    };
-    time: {
-        modified: string;
-        created: string;
-        [version: string]: string;
-    };
+import type { Manifest, Packument } from 'pacote';
+export interface PackageMetadata extends Packument, NgPackageManifestProperties {
+    tags: Record<string, PackageManifest>;
+    versions: Record<string, PackageManifest>;
 }
-export declare type NgAddSaveDepedency = 'dependencies' | 'devDependencies' | boolean;
+export interface NpmRepositoryPackageJson extends PackageMetadata {
+    requestedName?: string;
+}
+export declare type NgAddSaveDependency = 'dependencies' | 'devDependencies' | boolean;
 export interface PackageIdentifier {
     type: 'git' | 'tag' | 'version' | 'range' | 'file' | 'directory' | 'remote';
     name: string;
@@ -33,31 +24,18 @@ export interface PackageIdentifier {
     fetchSpec: string;
     rawSpec: string;
 }
-export interface PackageManifest {
-    name: string;
-    version: string;
-    license?: string;
-    private?: boolean;
-    deprecated?: boolean;
-    dependencies: Record<string, string>;
-    devDependencies: Record<string, string>;
-    peerDependencies: Record<string, string>;
-    optionalDependencies: Record<string, string>;
+export interface NgPackageManifestProperties {
     'ng-add'?: {
-        save?: NgAddSaveDepedency;
+        save?: NgAddSaveDependency;
     };
     'ng-update'?: {
-        migrations: string;
-        packageGroup: Record<string, string>;
+        migrations?: string;
+        packageGroup?: string[] | Record<string, string>;
+        packageGroupName?: string;
+        requirements?: string[] | Record<string, string>;
     };
 }
-export interface PackageMetadata {
-    name: string;
-    tags: {
-        [tag: string]: PackageManifest | undefined;
-    };
-    versions: Record<string, PackageManifest>;
-    'dist-tags'?: unknown;
+export interface PackageManifest extends Manifest, NgPackageManifestProperties {
 }
 export declare function fetchPackageMetadata(name: string, logger: logging.LoggerApi, options?: {
     registry?: string;
