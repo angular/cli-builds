@@ -7,8 +7,8 @@
  */
 import { analytics, logging } from '@angular-devkit/core';
 import { ArgumentsCamelCase, Argv, CamelCaseKey, CommandModule as YargsCommandModule } from 'yargs';
-import { PackageManager } from '../../lib/config/workspace-schema';
 import { AngularWorkspace } from '../utilities/config';
+import { PackageManagerUtils } from '../utilities/package-manager';
 import { Option } from './utilities/json-schema';
 export declare type Options<T> = {
     [key in keyof T as CamelCaseKey<key>]: T[key];
@@ -25,8 +25,9 @@ export interface CommandContext {
     currentDirectory: string;
     root: string;
     workspace?: AngularWorkspace;
+    globalConfiguration?: AngularWorkspace;
     logger: logging.Logger;
-    packageManager: PackageManager;
+    packageManager: PackageManagerUtils;
     /** Arguments parsed in free-from without parser configuration. */
     args: {
         positional: string[];

@@ -6,5 +6,4 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { logging } from '@angular-devkit/core';
-import { AngularWorkspace } from '../utilities/config';
-export declare function runCommand(args: string[], logger: logging.Logger, workspace: AngularWorkspace | undefined): Promise<number>;
+export declare function runCommand(args: string[], logger: logging.Logger): Promise<number>;

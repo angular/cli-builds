@@ -15,5 +15,4 @@ export declare class VersionCommandModule extends CommandModule implements Comma
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;
     private getVersion;
-    private getPackageManagerVersion;
 }
