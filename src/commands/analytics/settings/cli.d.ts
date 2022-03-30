@@ -11,7 +11,7 @@ interface AnalyticsCommandArgs {
     global: boolean;
 }
 declare abstract class AnalyticsSettingModule extends CommandModule<AnalyticsCommandArgs> implements CommandModuleImplementation<AnalyticsCommandArgs> {
-    longDescriptionPath?: string | undefined;
+    longDescriptionPath?: string;
     builder(localYargs: Argv): Argv<AnalyticsCommandArgs>;
     abstract run({ global }: Options<AnalyticsCommandArgs>): Promise<void>;
 }

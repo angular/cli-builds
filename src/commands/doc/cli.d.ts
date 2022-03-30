@@ -16,7 +16,7 @@ export declare class DocCommandModule extends CommandModule<DocCommandArgs> impl
     command: string;
     aliases: string[];
     describe: string;
-    longDescriptionPath?: string | undefined;
+    longDescriptionPath?: string;
     builder(localYargs: Argv): Argv<DocCommandArgs>;
     run(options: Options<DocCommandArgs>): Promise<number | void>;
 }

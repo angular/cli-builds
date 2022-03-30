@@ -13,5 +13,5 @@ export declare class E2eCommandModule extends ArchitectCommandModule implements 
     command: string;
     aliases: string[];
     describe: string;
-    longDescriptionPath?: string | undefined;
+    longDescriptionPath?: string;
 }
