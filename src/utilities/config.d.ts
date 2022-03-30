@@ -28,4 +28,3 @@ export declare function getProjectByCwd(workspace: AngularWorkspace): string | n
 export declare function getConfiguredPackageManager(): Promise<PackageManager | null>;
 export declare function getSchematicDefaults(collection: string, schematic: string, project?: string | null): Promise<{}>;
 export declare function isWarningEnabled(warning: string): Promise<boolean>;
-export declare function getProjectsByPath(workspace: workspaces.WorkspaceDefinition, cwd: string, root: string): string[];

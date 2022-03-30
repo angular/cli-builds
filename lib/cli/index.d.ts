@@ -7,6 +7,5 @@
  */
 export { VERSION } from '../../src/utilities/version';
 export default function (options: {
-    testing?: boolean;
     cliArgs: string[];
 }): Promise<number>;
