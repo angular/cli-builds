@@ -27,11 +27,8 @@ export declare abstract class SchematicsCommandModule extends CommandModule<Sche
     builder(argv: Argv): Promise<Argv<SchematicsCommandArgs>>;
     /** Get schematic schema options.*/
     protected getSchematicOptions(collection: Collection<FileSystemCollectionDescription, FileSystemSchematicDescription>, schematicName: string, workflow: NodeWorkflow): Promise<Option[]>;
-    private _workflowForBuilder;
     protected getOrCreateWorkflowForBuilder(collectionName: string): NodeWorkflow;
-    private _workflowForExecution;
     protected getOrCreateWorkflowForExecution(collectionName: string, options: SchematicsExecutionOptions): Promise<NodeWorkflow>;
-    private _schematicCollections;
     protected getSchematicCollections(): Promise<Set<string>>;
     protected parseSchematicInfo(schematic: string | undefined): [collectionName: string | undefined, schematicName: string | undefined];
     protected runSchematic(options: {

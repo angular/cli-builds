@@ -72,7 +72,6 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
     abstract run(options: Options<T> & OtherOptions): Promise<number | void> | number | void;
     handler(args: ArgumentsCamelCase<T> & OtherOptions): Promise<void>;
     reportAnalytics(options: (Options<T> & OtherOptions) | OtherOptions, paths?: string[], dimensions?: (boolean | number | string)[]): Promise<void>;
-    private _analytics;
     protected getAnalytics(): Promise<analytics.Analytics>;
     /**
      * Adds schema options to a command also this keeps track of options that are required for analytics.
