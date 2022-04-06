@@ -17,6 +17,5 @@ export declare abstract class ArchitectCommandModule extends ArchitectBaseComman
     builder(argv: Argv): Promise<Argv<ArchitectCommandArgs>>;
     run(options: Options<ArchitectCommandArgs> & OtherOptions): Promise<number | void>;
     private getArchitectProject;
-    private getArchitectTarget;
     private getProjectNamesByTarget;
 }
