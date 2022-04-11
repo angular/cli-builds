@@ -10,14 +10,15 @@ import { PackageManager } from '../../lib/config/workspace-schema';
 import { JSONFile } from './json-file';
 export declare const workspaceSchemaPath: string;
 export declare class AngularWorkspace {
-    private workspace;
+    private readonly workspace;
     readonly filePath: string;
     readonly basePath: string;
     constructor(workspace: workspaces.WorkspaceDefinition, filePath: string);
     get extensions(): Record<string, json.JsonValue | undefined>;
     get projects(): workspaces.ProjectDefinitionCollection;
-    getCli(): Record<string, any>;
-    getProjectCli(projectName: string): Record<string, any>;
+    getCli(): Record<string, any> | undefined;
+    getProjectCli(projectName: string): Record<string, any> | undefined;
+    save(): Promise<void>;
     static load(workspaceFilePath: string): Promise<AngularWorkspace>;
 }
 export declare function getWorkspace(level?: 'local' | 'global'): Promise<AngularWorkspace | undefined>;

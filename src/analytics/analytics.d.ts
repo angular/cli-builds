@@ -22,7 +22,7 @@ export declare function isPackageNameSafeForAnalytics(name: string): boolean;
  * @param global Which config to use. "global" for user-level, and "local" for project-level.
  * @param value Either a user ID, true to generate a new User ID, or false to disable analytics.
  */
-export declare function setAnalyticsConfig(global: boolean, value: string | boolean): void;
+export declare function setAnalyticsConfig(global: boolean, value: string | boolean): Promise<void>;
 /**
  * Prompt the user for usage gathering permission.
  * @param force Whether to ask regardless of whether or not the user is using an interactive shell.

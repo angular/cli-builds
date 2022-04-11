@@ -7,5 +7,5 @@
  */
 import { Cache } from '../../../lib/config/workspace-schema';
 import { AngularWorkspace } from '../../utilities/config';
-export declare function updateCacheConfig<K extends keyof Cache>(key: K, value: Cache[K]): void;
+export declare function updateCacheConfig<K extends keyof Cache>(workspace: AngularWorkspace, key: K, value: Cache[K]): Promise<void>;
 export declare function getCacheConfig(workspace: AngularWorkspace | undefined): Required<Cache>;

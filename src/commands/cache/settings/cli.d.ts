@@ -14,7 +14,7 @@ export declare class CacheDisableModule extends CommandModule implements Command
     longDescriptionPath: string | undefined;
     static scope: CommandScope.In;
     builder(localYargs: Argv): Argv;
-    run(): void;
+    run(): Promise<void>;
 }
 export declare class CacheEnableModule extends CommandModule implements CommandModuleImplementation {
     command: string;
@@ -23,5 +23,5 @@ export declare class CacheEnableModule extends CommandModule implements CommandM
     longDescriptionPath: string | undefined;
     static scope: CommandScope.In;
     builder(localYargs: Argv): Argv;
-    run(): void;
+    run(): Promise<void>;
 }
