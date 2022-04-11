@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { RuleFactory } from '@angular-devkit/schematics';
-import { NodeModulesEngineHost } from '@angular-devkit/schematics/tools';
+import { FileSystemCollectionDesc, NodeModulesEngineHost } from '@angular-devkit/schematics/tools';
 export declare class SchematicEngineHost extends NodeModulesEngineHost {
-    protected _resolveReferenceString(refString: string, parentPath: string): {
+    protected _resolveReferenceString(refString: string, parentPath: string, collectionDescription?: FileSystemCollectionDesc): {
         ref: RuleFactory<{}>;
         path: string;
     } | null;
