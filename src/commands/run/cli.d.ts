@@ -20,4 +20,6 @@ export declare class RunCommandModule extends ArchitectBaseCommandModule<RunComm
     builder(argv: Argv): Promise<Argv<RunCommandArgs>>;
     run(options: Options<RunCommandArgs> & OtherOptions): Promise<number>;
     protected makeTargetSpecifier(options?: Options<RunCommandArgs>): Target | undefined;
+    /** @returns a sorted list of target specifiers to be used for auto completion. */
+    private getTargetChoices;
 }

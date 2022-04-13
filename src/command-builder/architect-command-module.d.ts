@@ -18,4 +18,8 @@ export declare abstract class ArchitectCommandModule extends ArchitectBaseComman
     run(options: Options<ArchitectCommandArgs> & OtherOptions): Promise<number | void>;
     private getArchitectProject;
     private getProjectNamesByTarget;
+    /** @returns a sorted list of project names to be used for auto completion. */
+    private getProjectChoices;
+    /** @returns a sorted list of configuration names to be used for auto completion. */
+    private getConfigurationChoices;
 }
