@@ -338,6 +338,12 @@
           "description": "Do not create \"spec.ts\" test files for the new component."
         },
         {
+          "name": "standalone",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the generated component is standalone."
+        },
+        {
           "name": "style",
           "type": "string",
           "default": "css",
@@ -435,6 +441,12 @@
           "type": "boolean",
           "default": false,
           "description": "Do not create \"spec.ts\" test files for the new class."
+        },
+        {
+          "name": "standalone",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the generated directive is standalone."
         }
       ],
       "aliases": [
@@ -727,6 +739,12 @@
           "type": "boolean",
           "default": false,
           "description": "Do not create \"spec.ts\" test files for the new pipe."
+        },
+        {
+          "name": "standalone",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the generated pipe is standalone."
         }
       ],
       "aliases": [

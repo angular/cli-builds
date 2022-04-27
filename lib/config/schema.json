@@ -812,6 +812,12 @@
           "alias": "t",
           "x-user-analytics": 10
         },
+        "standalone": {
+          "description": "Whether the generated component is standalone.",
+          "type": "boolean",
+          "default": false,
+          "x-user-analytics": 15
+        },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the new component.",
           "enum": [
@@ -963,6 +969,12 @@
           "type": "string",
           "format": "html-selector",
           "description": "The HTML selector to use for this directive."
+        },
+        "standalone": {
+          "description": "Whether the generated directive is standalone.",
+          "type": "boolean",
+          "default": false,
+          "x-user-analytics": 15
         },
         "flat": {
           "type": "boolean",
@@ -1250,6 +1262,12 @@
           "default": false,
           "description": "Do not import this pipe into the owning NgModule.",
           "x-user-analytics": 18
+        },
+        "standalone": {
+          "description": "Whether the generated pipe is standalone.",
+          "type": "boolean",
+          "default": false,
+          "x-user-analytics": 15
         },
         "module": {
           "type": "string",

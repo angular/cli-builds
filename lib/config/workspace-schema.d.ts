@@ -293,6 +293,10 @@ export interface AngularComponentOptionsSchema {
      */
     skipTests?: boolean;
     /**
+     * Whether the generated component is standalone.
+     */
+    standalone?: boolean;
+    /**
      * The file extension or preprocessor to use for style files, or 'none' to skip generating
      * the style file.
      */
@@ -369,6 +373,10 @@ export interface AngularDirectiveOptionsSchema {
      * Do not create "spec.ts" test files for the new class.
      */
     skipTests?: boolean;
+    /**
+     * Whether the generated directive is standalone.
+     */
+    standalone?: boolean;
 }
 /**
  * Generates a new, generic enum definition for the given or default project.
@@ -640,6 +648,10 @@ export interface AngularPipeOptionsSchema {
      * Do not create "spec.ts" test files for the new pipe.
      */
     skipTests?: boolean;
+    /**
+     * Whether the generated pipe is standalone.
+     */
+    standalone?: boolean;
 }
 /**
  * Generates a new, generic resolver definition in the given or default project.
