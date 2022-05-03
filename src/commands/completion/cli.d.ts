@@ -12,5 +12,5 @@ export declare class CompletionCommandModule extends CommandModule implements Co
     describe: string;
     longDescriptionPath: string;
     builder(localYargs: Argv): Argv;
-    run(): void;
+    run(): Promise<number>;
 }

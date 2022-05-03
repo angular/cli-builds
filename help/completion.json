@@ -1,9 +1,9 @@
 {
   "name": "completion",
   "command": "ng completion",
-  "shortDescription": "Generate a bash and zsh real-time type-ahead autocompletion script.",
+  "shortDescription": "Set up Angular CLI autocompletion for your terminal.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/completion/long-description.md",
-  "longDescription": "To enable bash and zsh real-time type-ahead autocompletion, copy and paste the generated script to your `.bashrc`, `.bash_profile`, `.zshrc` or `.zsh_profile`.\n",
+  "longDescription": "To enable Bash and Zsh real-time type-ahead autocompletion, run\n`ng completion` and restart your terminal.\n\nAlternatively, append `source <(ng completion script)` to the appropriate `.bashrc`,\n`.bash_profile`, `.zshrc`, `.zsh_profile`, or `.profile` file.\n",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -11,6 +11,16 @@
       "name": "help",
       "type": "boolean",
       "description": "Shows a help message for this command in the console."
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "script",
+      "command": "script",
+      "shortDescription": "Generate a bash and zsh real-time type-ahead autocompletion script.",
+      "options": [],
+      "aliases": [],
+      "deprecated": false
     }
   ]
 }

@@ -10,3 +10,4 @@ export declare const analyticsShareDisabled: boolean;
 export declare const isCI: boolean;
 export declare const disableVersionCheck: boolean;
 export declare const ngDebug: boolean;
+export declare const forceAutocomplete: boolean | undefined;
