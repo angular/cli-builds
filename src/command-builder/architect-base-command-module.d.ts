@@ -13,7 +13,7 @@ export interface MissingTargetChoice {
     name: string;
     value: string;
 }
-export declare abstract class ArchitectBaseCommandModule<T> extends CommandModule<T> implements CommandModuleImplementation<T> {
+export declare abstract class ArchitectBaseCommandModule<T extends object> extends CommandModule<T> implements CommandModuleImplementation<T> {
     static scope: CommandScope;
     protected shouldReportAnalytics: boolean;
     protected readonly missingTargetChoices: MissingTargetChoice[] | undefined;
