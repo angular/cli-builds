@@ -20,3 +20,11 @@ export declare function considerSettingUpAutocompletion(command: string, logger:
  * @return The full path of the configuration file modified.
  */
 export declare function initializeAutocomplete(): Promise<string>;
+/**
+ * Returns whether the user has a global CLI install or `undefined` if this can't be determined.
+ * Execution from `npx` is *not* considered a global CLI install.
+ *
+ * This does *not* mean the current execution is from a global CLI install, only that a global
+ * install exists on the system.
+ */
+export declare function hasGlobalCliInstall(): Promise<boolean | undefined>;
