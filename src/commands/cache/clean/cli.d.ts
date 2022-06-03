@@ -11,7 +11,7 @@ export declare class CacheCleanModule extends CommandModule implements CommandMo
     command: string;
     describe: string;
     longDescriptionPath: string | undefined;
-    static scope: CommandScope;
+    static scope: CommandScope.In;
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;
 }
