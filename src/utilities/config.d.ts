@@ -21,16 +21,9 @@ export declare class AngularWorkspace {
     save(): Promise<void>;
     static load(workspaceFilePath: string): Promise<AngularWorkspace>;
 }
-export declare function getWorkspace(level: 'global'): Promise<AngularWorkspace>;
-export declare function getWorkspace(level: 'local'): Promise<AngularWorkspace | undefined>;
-export declare function getWorkspace(level: 'local' | 'global'): Promise<AngularWorkspace | undefined>;
-/**
- * This method will load the workspace configuration in raw JSON format.
- * When `level` is `global` and file doesn't exists, it will be created.
- *
- * NB: This method is intended to be used only for `ng config`.
- */
-export declare function getWorkspaceRaw(level?: 'local' | 'global'): Promise<[JSONFile | null, string | null]>;
+export declare function getWorkspace(level?: 'local' | 'global'): Promise<AngularWorkspace | undefined>;
+export declare function createGlobalSettings(): string;
+export declare function getWorkspaceRaw(level?: 'local' | 'global'): [JSONFile | null, string | null];
 export declare function validateWorkspace(data: json.JsonObject): Promise<void>;
 export declare function getProjectByCwd(workspace: AngularWorkspace): string | null;
 export declare function getConfiguredPackageManager(): Promise<PackageManager | null>;

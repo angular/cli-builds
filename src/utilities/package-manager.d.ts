@@ -8,7 +8,7 @@
 import { PackageManager } from '../../lib/config/workspace-schema';
 import { AngularWorkspace } from './config';
 export interface PackageManagerUtilsContext {
-    globalConfiguration: AngularWorkspace;
+    globalConfiguration?: AngularWorkspace;
     workspace?: AngularWorkspace;
     root: string;
 }
