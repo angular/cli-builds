@@ -11,7 +11,7 @@ export declare class CacheInfoCommandModule extends CommandModule implements Com
     command: string;
     describe: string;
     longDescriptionPath?: string | undefined;
-    static scope: CommandScope;
+    scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;
     private getSizeOfDirectory;

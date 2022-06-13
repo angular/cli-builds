@@ -13,7 +13,7 @@ export interface RunCommandArgs {
     target: string;
 }
 export declare class RunCommandModule extends ArchitectBaseCommandModule<RunCommandArgs> implements CommandModuleImplementation<RunCommandArgs> {
-    static scope: CommandScope;
+    scope: CommandScope;
     command: string;
     describe: string;
     longDescriptionPath: string;

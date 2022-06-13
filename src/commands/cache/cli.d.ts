@@ -11,7 +11,7 @@ export declare class CacheCommandModule extends CommandModule implements Command
     command: string;
     describe: string;
     longDescriptionPath: string;
-    static scope: CommandScope;
+    scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(_options: Options<{}>): void;
 }
