@@ -20,7 +20,7 @@ interface UpdateCommandArgs {
     'create-commits': boolean;
 }
 export declare class UpdateCommandModule extends CommandModule<UpdateCommandArgs> {
-    static scope: CommandScope;
+    scope: CommandScope;
     protected shouldReportAnalytics: boolean;
     command: string;
     describe: string;

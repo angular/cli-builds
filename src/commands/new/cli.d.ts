@@ -13,7 +13,7 @@ interface NewCommandArgs extends SchematicsCommandArgs {
 }
 export declare class NewCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<NewCommandArgs> {
     private readonly schematicName;
-    static scope: CommandScope;
+    scope: CommandScope;
     protected allowPrivateSchematics: boolean;
     command: string;
     aliases: string;

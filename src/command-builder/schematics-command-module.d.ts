@@ -21,7 +21,7 @@ export interface SchematicsExecutionOptions extends Options<SchematicsCommandArg
     packageRegistry?: string;
 }
 export declare abstract class SchematicsCommandModule extends CommandModule<SchematicsCommandArgs> implements CommandModuleImplementation<SchematicsCommandArgs> {
-    static scope: CommandScope;
+    scope: CommandScope;
     protected readonly allowPrivateSchematics: boolean;
     protected readonly shouldReportAnalytics = false;
     builder(argv: Argv): Promise<Argv<SchematicsCommandArgs>>;
