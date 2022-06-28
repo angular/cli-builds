@@ -31,7 +31,7 @@ export declare function getWorkspace(level: 'local' | 'global'): Promise<Angular
  * NB: This method is intended to be used only for `ng config`.
  */
 export declare function getWorkspaceRaw(level?: 'local' | 'global'): Promise<[JSONFile | null, string | null]>;
-export declare function validateWorkspace(data: json.JsonObject): Promise<void>;
+export declare function validateWorkspace(data: json.JsonObject, isGlobal: boolean): Promise<void>;
 export declare function getProjectByCwd(workspace: AngularWorkspace): string | null;
 export declare function getConfiguredPackageManager(): Promise<PackageManager | null>;
 export declare function getSchematicDefaults(collection: string, schematic: string, project?: string | null): Promise<{}>;
