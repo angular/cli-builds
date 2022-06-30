@@ -23,7 +23,7 @@
     "defaultProject": {
       "type": "string",
       "description": "Default project name used in commands.",
-      "x-deprecated": "The project to use will be determined from the current working directory."
+      "deprecated": true
     },
     "projects": {
       "type": "object",
@@ -46,7 +46,7 @@
         "defaultCollection": {
           "description": "The default schematics collection to use.",
           "type": "string",
-          "x-deprecated": "Use 'schematicCollections' instead."
+          "deprecated": true
         },
         "schematicCollections": {
           "type": "array",
@@ -133,7 +133,7 @@
         "defaultCollection": {
           "description": "The default schematics collection to use.",
           "type": "string",
-          "x-deprecated": "Use 'schematicCollections' instead."
+          "deprecated": true
         },
         "schematicCollections": {
           "type": "array",
@@ -263,7 +263,7 @@
           "defaultCollection": {
             "description": "The default schematics collection to use.",
             "type": "string",
-            "x-deprecated": "Use 'schematicCollections' instead."
+            "deprecated": true
           },
           "schematicCollections": {
             "type": "array",
@@ -719,20 +719,17 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the application?"
+          }
         },
         "inlineStyle": {
           "description": "Include styles inline in the root component.ts file. Only CSS styles can be included inline. Default is false, meaning that an external styles file is created and referenced in the root component.ts file.",
           "type": "boolean",
-          "alias": "s",
-          "x-user-analytics": 9
+          "alias": "s"
         },
         "inlineTemplate": {
           "description": "Include template inline in the root component.ts file. Default is false, meaning that an external template file is created and referenced in the root component.ts file. ",
           "type": "boolean",
-          "alias": "t",
-          "x-user-analytics": 10
+          "alias": "t"
         },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the new application.",
@@ -741,15 +738,12 @@
             "None",
             "ShadowDom"
           ],
-          "type": "string",
-          "x-user-analytics": 11
+          "type": "string"
         },
         "routing": {
           "type": "boolean",
           "description": "Create a routing NgModule.",
-          "default": false,
-          "x-prompt": "Would you like to add Angular routing?",
-          "x-user-analytics": 17
+          "default": false
         },
         "prefix": {
           "type": "string",
@@ -767,37 +761,13 @@
             "scss",
             "sass",
             "less"
-          ],
-          "x-prompt": {
-            "message": "Which stylesheet format would you like to use?",
-            "type": "list",
-            "items": [
-              {
-                "value": "css",
-                "label": "CSS"
-              },
-              {
-                "value": "scss",
-                "label": "SCSS   [ https://sass-lang.com/documentation/syntax#scss                ]"
-              },
-              {
-                "value": "sass",
-                "label": "Sass   [ https://sass-lang.com/documentation/syntax#the-indented-syntax ]"
-              },
-              {
-                "value": "less",
-                "label": "Less   [ http://lesscss.org                                             ]"
-              }
-            ]
-          },
-          "x-user-analytics": 5
+          ]
         },
         "skipTests": {
           "description": "Do not create \"spec.ts\" test files for the application.",
           "type": "boolean",
           "default": false,
-          "alias": "S",
-          "x-user-analytics": 12
+          "alias": "S"
         },
         "skipPackageJson": {
           "type": "boolean",
@@ -807,8 +777,7 @@
         "minimal": {
           "description": "Create a bare-bones project without any testing frameworks. (Use for learning purposes only.)",
           "type": "boolean",
-          "default": false,
-          "x-user-analytics": 14
+          "default": false
         },
         "skipInstall": {
           "description": "Skip installing dependency packages.",
@@ -818,8 +787,7 @@
         "strict": {
           "description": "Creates an application with stricter bundle budgets settings.",
           "type": "boolean",
-          "default": true,
-          "x-user-analytics": 7
+          "default": true
         }
       }
     },
@@ -835,8 +803,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the class?"
+          }
         },
         "path": {
           "type": "string",
@@ -857,8 +824,7 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new class.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "type": {
           "type": "string",
@@ -894,8 +860,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the component?"
+          }
         },
         "displayBlock": {
           "description": "Specifies if the style will contain `:host { display: block; }`.",
@@ -907,21 +872,18 @@
           "description": "Include styles inline in the component.ts file. Only CSS styles can be included inline. By default, an external styles file is created and referenced in the component.ts file.",
           "type": "boolean",
           "default": false,
-          "alias": "s",
-          "x-user-analytics": 9
+          "alias": "s"
         },
         "inlineTemplate": {
           "description": "Include template inline in the component.ts file. By default, an external template file is created and referenced in the component.ts file.",
           "type": "boolean",
           "default": false,
-          "alias": "t",
-          "x-user-analytics": 10
+          "alias": "t"
         },
         "standalone": {
           "description": "Whether the generated component is standalone.",
           "type": "boolean",
-          "default": false,
-          "x-user-analytics": 15
+          "default": false
         },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the new component.",
@@ -931,8 +893,7 @@
             "ShadowDom"
           ],
           "type": "string",
-          "alias": "v",
-          "x-user-analytics": 11
+          "alias": "v"
         },
         "changeDetection": {
           "description": "The change detection strategy to use in the new component.",
@@ -968,8 +929,7 @@
             "sass",
             "less",
             "none"
-          ],
-          "x-user-analytics": 5
+          ]
         },
         "type": {
           "type": "string",
@@ -979,8 +939,7 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new component.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "flat": {
           "type": "boolean",
@@ -990,8 +949,7 @@
         "skipImport": {
           "type": "boolean",
           "description": "Do not import this component into the owning NgModule.",
-          "default": false,
-          "x-user-analytics": 18
+          "default": false
         },
         "selector": {
           "type": "string",
@@ -1011,8 +969,7 @@
         "export": {
           "type": "boolean",
           "default": false,
-          "description": "The declaring NgModule exports this component.",
-          "x-user-analytics": 19
+          "description": "The declaring NgModule exports this component."
         }
       }
     },
@@ -1028,8 +985,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the directive?"
+          }
         },
         "path": {
           "type": "string",
@@ -1064,14 +1020,12 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new class.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "skipImport": {
           "type": "boolean",
           "description": "Do not import this directive into the owning NgModule.",
-          "default": false,
-          "x-user-analytics": 18
+          "default": false
         },
         "selector": {
           "type": "string",
@@ -1081,8 +1035,7 @@
         "standalone": {
           "description": "Whether the generated directive is standalone.",
           "type": "boolean",
-          "default": false,
-          "x-user-analytics": 15
+          "default": false
         },
         "flat": {
           "type": "boolean",
@@ -1097,8 +1050,7 @@
         "export": {
           "type": "boolean",
           "default": false,
-          "description": "The declaring NgModule exports this directive.",
-          "x-user-analytics": 19
+          "description": "The declaring NgModule exports this directive."
         }
       }
     },
@@ -1114,8 +1066,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the enum?"
+          }
         },
         "path": {
           "type": "string",
@@ -1151,14 +1102,12 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the guard?"
+          }
         },
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new guard.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "flat": {
           "type": "boolean",
@@ -1197,8 +1146,7 @@
           },
           "default": [
             "CanActivate"
-          ],
-          "x-prompt": "Which interfaces would you like to implement?"
+          ]
         }
       }
     },
@@ -1214,8 +1162,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the interceptor?"
+          }
         },
         "path": {
           "type": "string",
@@ -1241,8 +1188,7 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new interceptor.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         }
       }
     },
@@ -1258,8 +1204,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the interface?"
+          }
         },
         "path": {
           "type": "string",
@@ -1305,8 +1250,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the library?"
+          }
         },
         "entryFile": {
           "type": "string",
@@ -1350,8 +1294,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the pipe?"
+          }
         },
         "path": {
           "type": "string",
@@ -1377,20 +1320,17 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new pipe.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "skipImport": {
           "type": "boolean",
           "default": false,
-          "description": "Do not import this pipe into the owning NgModule.",
-          "x-user-analytics": 18
+          "description": "Do not import this pipe into the owning NgModule."
         },
         "standalone": {
           "description": "Whether the generated pipe is standalone.",
           "type": "boolean",
-          "default": false,
-          "x-user-analytics": 15
+          "default": false
         },
         "module": {
           "type": "string",
@@ -1400,8 +1340,7 @@
         "export": {
           "type": "boolean",
           "default": false,
-          "description": "The declaring NgModule exports this pipe.",
-          "x-user-analytics": 19
+          "description": "The declaring NgModule exports this pipe."
         }
       }
     },
@@ -1421,8 +1360,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the new workspace and initial project?"
+          }
         },
         "skipInstall": {
           "description": "Do not install dependency packages.",
@@ -1473,14 +1411,12 @@
         "inlineStyle": {
           "description": "Include styles inline in the component TS file. By default, an external styles file is created and referenced in the component TypeScript file.",
           "type": "boolean",
-          "alias": "s",
-          "x-user-analytics": 9
+          "alias": "s"
         },
         "inlineTemplate": {
           "description": "Include template inline in the component TS file. By default, an external template file is created and referenced in the component TypeScript file.",
           "type": "boolean",
-          "alias": "t",
-          "x-user-analytics": 10
+          "alias": "t"
         },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the initial project.",
@@ -1489,8 +1425,7 @@
             "None",
             "ShadowDom"
           ],
-          "type": "string",
-          "x-user-analytics": 11
+          "type": "string"
         },
         "version": {
           "type": "string",
@@ -1502,8 +1437,7 @@
         },
         "routing": {
           "type": "boolean",
-          "description": "Generate a routing module for the initial project.",
-          "x-user-analytics": 17
+          "description": "Generate a routing module for the initial project."
         },
         "prefix": {
           "type": "string",
@@ -1521,15 +1455,13 @@
             "scss",
             "sass",
             "less"
-          ],
-          "x-user-analytics": 5
+          ]
         },
         "skipTests": {
           "description": "Do not generate \"spec.ts\" test files for the new project.",
           "type": "boolean",
           "default": false,
-          "alias": "S",
-          "x-user-analytics": 12
+          "alias": "S"
         },
         "createApplication": {
           "description": "Create a new initial application project in the 'src' folder of the new workspace. When false, creates an empty workspace with no initial application. You can then use the generate application command so that all applications are created in the projects folder.",
@@ -1539,14 +1471,12 @@
         "minimal": {
           "description": "Create a workspace without any testing frameworks. (Use for learning purposes only.)",
           "type": "boolean",
-          "default": false,
-          "x-user-analytics": 14
+          "default": false
         },
         "strict": {
           "description": "Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.io/guide/strict-mode",
           "type": "boolean",
-          "default": true,
-          "x-user-analytics": 7
+          "default": true
         },
         "packageManager": {
           "description": "The package manager used to install dependencies.",
@@ -1572,14 +1502,12 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the resolver?"
+          }
         },
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new resolver.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         },
         "flat": {
           "type": "boolean",
@@ -1616,8 +1544,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the service?"
+          }
         },
         "path": {
           "type": "string",
@@ -1642,8 +1569,7 @@
         "skipTests": {
           "type": "boolean",
           "description": "Do not create \"spec.ts\" test files for the new service.",
-          "default": false,
-          "x-user-analytics": 12
+          "default": false
         }
       }
     },
@@ -1675,8 +1601,7 @@
           "$default": {
             "$source": "argv",
             "index": 0
-          },
-          "x-prompt": "What name would you like to use for the worker?"
+          }
         },
         "snippet": {
           "type": "boolean",
@@ -1843,7 +1768,6 @@
         },
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
-          "x-user-analytics": 16,
           "default": true,
           "oneOf": [
             {
@@ -1926,7 +1850,6 @@
         "aot": {
           "type": "boolean",
           "description": "Build using Ahead of Time compilation.",
-          "x-user-analytics": 13,
           "default": true
         },
         "sourceMap": {
@@ -1981,7 +1904,7 @@
         "deployUrl": {
           "type": "string",
           "description": "URL where files will be deployed.",
-          "x-deprecated": "Use \"baseHref\" option, \"APP_BASE_HREF\" DI token or a combination of both instead. For more information, see https://angular.io/guide/deployment#the-deploy-url."
+          "deprecated": true
         },
         "verbose": {
           "type": "boolean",
@@ -2406,7 +2329,6 @@
         },
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
-          "x-user-analytics": 16,
           "default": true,
           "oneOf": [
             {
@@ -2489,7 +2411,6 @@
         "aot": {
           "type": "boolean",
           "description": "Build using Ahead of Time compilation.",
-          "x-user-analytics": 13,
           "default": true
         },
         "sourceMap": {
@@ -2544,7 +2465,7 @@
         "deployUrl": {
           "type": "string",
           "description": "URL where files will be deployed.",
-          "x-deprecated": "Use \"baseHref\" option, \"APP_BASE_HREF\" DI token or a combination of both instead. For more information, see https://angular.io/guide/deployment#the-deploy-url."
+          "deprecated": true
         },
         "verbose": {
           "type": "boolean",
@@ -3354,7 +3275,6 @@
         },
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking and dead-code elimination. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
-          "x-user-analytics": 16,
           "default": true,
           "oneOf": [
             {
@@ -3432,7 +3352,7 @@
         "deployUrl": {
           "type": "string",
           "description": "URL where files will be deployed.",
-          "x-deprecated": "Use \"baseHref\" browser builder option, \"APP_BASE_HREF\" DI token or a combination of both instead. For more information, see https://angular.io/guide/deployment#the-deploy-url."
+          "deprecated": true
         },
         "verbose": {
           "type": "boolean",
