@@ -26,7 +26,7 @@
       "name": "force",
       "type": "boolean",
       "default": false,
-      "description": "Ignore peer dependency version mismatches. Passes the '--force' flag to the package manager when installing packages."
+      "description": "Ignore peer dependency version mismatches."
     },
     {
       "name": "from",
