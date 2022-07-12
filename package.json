@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "14.1.0-next.4+sha-cf24008",
+  "version": "14.1.0-next.4+sha-cfe93fb",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "0.1401.0-next.4+sha-cf24008",
-    "@angular-devkit/core": "14.1.0-next.4+sha-cf24008",
-    "@angular-devkit/schematics": "14.1.0-next.4+sha-cf24008",
-    "@schematics/angular": "14.1.0-next.4+sha-cf24008",
+    "@angular-devkit/architect": "0.1401.0-next.4+sha-cfe93fb",
+    "@angular-devkit/core": "14.1.0-next.4+sha-cfe93fb",
+    "@angular-devkit/schematics": "14.1.0-next.4+sha-cfe93fb",
+    "@schematics/angular": "14.1.0-next.4+sha-cfe93fb",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "debug": "4.3.4",
@@ -49,12 +49,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "14.1.0-next.4+sha-cf24008",
-      "@angular-devkit/architect": "0.1401.0-next.4+sha-cf24008",
-      "@angular-devkit/build-angular": "14.1.0-next.4+sha-cf24008",
-      "@angular-devkit/build-webpack": "0.1401.0-next.4+sha-cf24008",
-      "@angular-devkit/core": "14.1.0-next.4+sha-cf24008",
-      "@angular-devkit/schematics": "14.1.0-next.4+sha-cf24008"
+      "@angular/cli": "14.1.0-next.4+sha-cfe93fb",
+      "@angular-devkit/architect": "0.1401.0-next.4+sha-cfe93fb",
+      "@angular-devkit/build-angular": "14.1.0-next.4+sha-cfe93fb",
+      "@angular-devkit/build-webpack": "0.1401.0-next.4+sha-cfe93fb",
+      "@angular-devkit/core": "14.1.0-next.4+sha-cfe93fb",
+      "@angular-devkit/schematics": "14.1.0-next.4+sha-cfe93fb"
     }
   }
 }
