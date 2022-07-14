@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "14.2.0-next.0+sha-9defbdf",
+  "version": "14.2.0-next.0+sha-7c1c564",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -22,16 +22,16 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "0.1402.0-next.0+sha-9defbdf",
-    "@angular-devkit/core": "14.2.0-next.0+sha-9defbdf",
-    "@angular-devkit/schematics": "14.2.0-next.0+sha-9defbdf",
-    "@schematics/angular": "14.2.0-next.0+sha-9defbdf",
+    "@angular-devkit/architect": "0.1402.0-next.0+sha-7c1c564",
+    "@angular-devkit/core": "14.2.0-next.0+sha-7c1c564",
+    "@angular-devkit/schematics": "14.2.0-next.0+sha-7c1c564",
+    "@schematics/angular": "14.2.0-next.0+sha-7c1c564",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "debug": "4.3.4",
     "ini": "3.0.0",
     "inquirer": "8.2.4",
-    "jsonc-parser": "3.0.0",
+    "jsonc-parser": "3.1.0",
     "npm-package-arg": "9.1.0",
     "npm-pick-manifest": "7.0.1",
     "open": "8.4.0",
@@ -49,12 +49,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "14.2.0-next.0+sha-9defbdf",
-      "@angular-devkit/architect": "0.1402.0-next.0+sha-9defbdf",
-      "@angular-devkit/build-angular": "14.2.0-next.0+sha-9defbdf",
-      "@angular-devkit/build-webpack": "0.1402.0-next.0+sha-9defbdf",
-      "@angular-devkit/core": "14.2.0-next.0+sha-9defbdf",
-      "@angular-devkit/schematics": "14.2.0-next.0+sha-9defbdf"
+      "@angular/cli": "14.2.0-next.0+sha-7c1c564",
+      "@angular-devkit/architect": "0.1402.0-next.0+sha-7c1c564",
+      "@angular-devkit/build-angular": "14.2.0-next.0+sha-7c1c564",
+      "@angular-devkit/build-webpack": "0.1402.0-next.0+sha-7c1c564",
+      "@angular-devkit/core": "14.2.0-next.0+sha-7c1c564",
+      "@angular-devkit/schematics": "14.2.0-next.0+sha-7c1c564"
     }
   }
 }
