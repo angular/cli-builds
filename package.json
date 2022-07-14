@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "14.1.0-rc.2+sha-d776c5a",
+  "version": "14.1.0-rc.3+sha-6b406d5",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "0.1401.0-rc.2+sha-d776c5a",
-    "@angular-devkit/core": "14.1.0-rc.2+sha-d776c5a",
-    "@angular-devkit/schematics": "14.1.0-rc.2+sha-d776c5a",
-    "@schematics/angular": "14.1.0-rc.2+sha-d776c5a",
+    "@angular-devkit/architect": "0.1401.0-rc.3+sha-6b406d5",
+    "@angular-devkit/core": "14.1.0-rc.3+sha-6b406d5",
+    "@angular-devkit/schematics": "14.1.0-rc.3+sha-6b406d5",
+    "@schematics/angular": "14.1.0-rc.3+sha-6b406d5",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "debug": "4.3.4",
@@ -49,12 +49,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "14.1.0-rc.2+sha-d776c5a",
-      "@angular-devkit/architect": "0.1401.0-rc.2+sha-d776c5a",
-      "@angular-devkit/build-angular": "14.1.0-rc.2+sha-d776c5a",
-      "@angular-devkit/build-webpack": "0.1401.0-rc.2+sha-d776c5a",
-      "@angular-devkit/core": "14.1.0-rc.2+sha-d776c5a",
-      "@angular-devkit/schematics": "14.1.0-rc.2+sha-d776c5a"
+      "@angular/cli": "14.1.0-rc.3+sha-6b406d5",
+      "@angular-devkit/architect": "0.1401.0-rc.3+sha-6b406d5",
+      "@angular-devkit/build-angular": "14.1.0-rc.3+sha-6b406d5",
+      "@angular-devkit/build-webpack": "0.1401.0-rc.3+sha-6b406d5",
+      "@angular-devkit/core": "14.1.0-rc.3+sha-6b406d5",
+      "@angular-devkit/schematics": "14.1.0-rc.3+sha-6b406d5"
     }
   }
 }
