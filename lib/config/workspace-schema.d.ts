@@ -16,7 +16,7 @@ export interface Schema {
 }
 export interface CliOptions {
     /**
-     * Share anonymous usage data with the Angular Team at Google.
+     * Share pseudonymous usage data with the Angular Team at Google.
      */
     analytics?: Analytics;
     analyticsSharing?: AnalyticsSharing;
@@ -42,7 +42,7 @@ export interface CliOptions {
     warnings?: Warnings;
 }
 /**
- * Share anonymous usage data with the Angular Team at Google.
+ * Share pseudonymous usage data with the Angular Team at Google.
  */
 export declare type Analytics = boolean | string;
 export interface AnalyticsSharing {
