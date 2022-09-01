@@ -36,7 +36,6 @@ export interface NgPackageManifestProperties {
     };
 }
 export interface PackageManifest extends Manifest, NgPackageManifestProperties {
-    deprecated?: boolean;
 }
 export declare function fetchPackageMetadata(name: string, logger: logging.LoggerApi, options?: {
     registry?: string;
