@@ -215,7 +215,7 @@ export interface AngularClassOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not create "spec.ts" test files for the new class.
      */
@@ -275,7 +275,7 @@ export interface AngularComponentOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * The HTML selector to use for this component.
      */
@@ -360,7 +360,7 @@ export interface AngularDirectiveOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * The HTML selector to use for this directive.
      */
@@ -394,7 +394,7 @@ export interface AngularEnumOptionsSchema {
      * The name of the project in which to create the enum. Default is the configured default
      * project for the workspace.
      */
-    project?: string;
+    project: string;
     /**
      * Adds a developer-defined type to the filename, in the format "name.type.ts".
      */
@@ -424,7 +424,7 @@ export interface AngularGuardOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not create "spec.ts" test files for the new guard.
      */
@@ -455,7 +455,7 @@ export interface AngularInterceptorOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not create "spec.ts" test files for the new interceptor.
      */
@@ -480,7 +480,7 @@ export interface AngularInterfaceOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Adds a developer-defined type to the filename, in the format "name.type.ts".
      */
@@ -639,7 +639,7 @@ export interface AngularPipeOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not import this pipe into the owning NgModule.
      */
@@ -673,7 +673,7 @@ export interface AngularResolverOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not create "spec.ts" test files for the new resolver.
      */
@@ -698,7 +698,7 @@ export interface AngularServiceOptionsSchema {
     /**
      * The name of the project.
      */
-    project?: string;
+    project: string;
     /**
      * Do not create "spec.ts" test files for the new service.
      */
