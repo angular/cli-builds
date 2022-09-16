@@ -2674,36 +2674,18 @@
           ]
         },
         "fileReplacement": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "src": {
-                  "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
-                },
-                "replaceWith": {
-                  "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
-                }
-              },
-              "additionalProperties": false
+          "type": "object",
+          "properties": {
+            "replace": {
+              "type": "string",
+              "pattern": "\\.(([cm]?j|t)sx?|json)$"
             },
-            {
-              "type": "object",
-              "properties": {
-                "replace": {
-                  "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
-                },
-                "with": {
-                  "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
-                }
-              },
-              "additionalProperties": false
+            "with": {
+              "type": "string",
+              "pattern": "\\.(([cm]?j|t)sx?|json)$"
             }
-          ]
+          },
+          "additionalProperties": false
         },
         "budget": {
           "type": "object",
