@@ -20,6 +20,7 @@ export declare class AddCommandModule extends SchematicsCommandModule implements
     longDescriptionPath: string;
     protected allowPrivateSchematics: boolean;
     private readonly schematicName;
+    private rootRequire;
     builder(argv: Argv): Promise<Argv<AddCommandArgs>>;
     run(options: Options<AddCommandArgs> & OtherOptions): Promise<number | void>;
     private isProjectVersionValid;
