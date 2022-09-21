@@ -1716,7 +1716,7 @@
                   "input": {
                     "type": "string",
                     "description": "The file to include.",
-                    "pattern": "\\.(?:css|scss|sass|less)$"
+                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
                   },
                   "bundleName": {
                     "type": "string",
@@ -1734,7 +1734,7 @@
               {
                 "type": "string",
                 "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less)$"
+                "pattern": "\\.(?:css|scss|sass|less|styl)$"
               }
             ]
           }
@@ -2269,7 +2269,7 @@
                   "input": {
                     "type": "string",
                     "description": "The file to include.",
-                    "pattern": "\\.(?:css|scss|sass|less)$"
+                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
                   },
                   "bundleName": {
                     "type": "string",
@@ -2287,7 +2287,7 @@
               {
                 "type": "string",
                 "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less)$"
+                "pattern": "\\.(?:css|scss|sass|less|styl)$"
               }
             ]
           }
@@ -2958,7 +2958,7 @@
                   "input": {
                     "type": "string",
                     "description": "The file to include.",
-                    "pattern": "\\.(?:css|scss|sass|less)$"
+                    "pattern": "\\.(?:css|scss|sass|less|styl)$"
                   },
                   "bundleName": {
                     "type": "string",
@@ -2976,7 +2976,7 @@
               {
                 "type": "string",
                 "description": "The file to include.",
-                "pattern": "\\.(?:css|scss|sass|less)$"
+                "pattern": "\\.(?:css|scss|sass|less|styl)$"
               }
             ]
           }
