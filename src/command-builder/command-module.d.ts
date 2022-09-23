@@ -74,7 +74,7 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
     abstract builder(argv: Argv): Promise<Argv<T>> | Argv<T>;
     abstract run(options: Options<T> & OtherOptions): Promise<number | void> | number | void;
     handler(args: ArgumentsCamelCase<T> & OtherOptions): Promise<void>;
-    reportAnalytics(options: (Options<T> & OtherOptions) | OtherOptions, paths?: string[], dimensions?: (boolean | number | string)[]): Promise<void>;
+    reportAnalytics(options: (Options<T> & OtherOptions) | OtherOptions, paths?: string[], dimensions?: (boolean | number | string)[], title?: string): Promise<void>;
     protected getAnalytics(): Promise<analytics.Analytics>;
     /**
      * Adds schema options to a command also this keeps track of options that are required for analytics.
@@ -82,6 +82,13 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
      */
     protected addSchemaOptionsToCommand<T>(localYargs: Argv<T>, options: Option[]): Argv<T>;
     protected getWorkspaceOrThrow(): AngularWorkspace;
+    /**
+     * Flush on an interval (if the event loop is waiting).
+     *
+     * @returns a method that when called will terminate the periodic
+     * flush and call flush one last time.
+     */
+    private periodicAnalyticsFlush;
 }
 /**
  * Creates an known command module error.
