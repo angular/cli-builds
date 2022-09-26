@@ -170,7 +170,7 @@
     {
       "name": "polyfills",
       "type": "string",
-      "description": "The full path for the polyfills file, relative to the current workspace."
+      "description": "Polyfills to be included in the build."
     },
     {
       "name": "preserve-symlinks",

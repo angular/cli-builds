@@ -73,7 +73,7 @@
     {
       "name": "polyfills",
       "type": "string",
-      "description": "The name of the polyfills file."
+      "description": "Polyfills to be included in the build."
     },
     {
       "name": "preserve-symlinks",
