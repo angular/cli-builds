@@ -118,7 +118,7 @@
         {
           "name": "name",
           "type": "string",
-          "description": "The name of the new app.",
+          "description": "The name of the new application.",
           "positional": 0
         },
         {
@@ -129,6 +129,11 @@
           ],
           "default": "app",
           "description": "A prefix to apply to generated selectors."
+        },
+        {
+          "name": "project-root",
+          "type": "string",
+          "description": "The root directory of the new application."
         },
         {
           "name": "routing",
