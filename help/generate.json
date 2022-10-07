@@ -606,6 +606,11 @@
           "description": "A prefix to apply to generated selectors."
         },
         {
+          "name": "project-root",
+          "type": "string",
+          "description": "The root directory of the new library."
+        },
+        {
           "name": "skip-install",
           "type": "boolean",
           "default": false,
