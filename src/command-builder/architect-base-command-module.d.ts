@@ -15,9 +15,9 @@ export interface MissingTargetChoice {
 }
 export declare abstract class ArchitectBaseCommandModule<T extends object> extends CommandModule<T> implements CommandModuleImplementation<T> {
     scope: CommandScope;
-    protected shouldReportAnalytics: boolean;
     protected readonly missingTargetChoices: MissingTargetChoice[] | undefined;
     protected runSingleTarget(target: Target, options: OtherOptions): Promise<number>;
+    private builderStatsToAnalyticsParameters;
     private _architectHost;
     protected getArchitectHost(): WorkspaceNodeModulesArchitectHost;
     private _architect;

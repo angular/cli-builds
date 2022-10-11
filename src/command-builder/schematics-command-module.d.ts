@@ -23,7 +23,6 @@ export interface SchematicsExecutionOptions extends Options<SchematicsCommandArg
 export declare abstract class SchematicsCommandModule extends CommandModule<SchematicsCommandArgs> implements CommandModuleImplementation<SchematicsCommandArgs> {
     scope: CommandScope;
     protected readonly allowPrivateSchematics: boolean;
-    protected readonly shouldReportAnalytics = false;
     builder(argv: Argv): Promise<Argv<SchematicsCommandArgs>>;
     /** Get schematic schema options.*/
     protected getSchematicOptions(collection: Collection<FileSystemCollectionDescription, FileSystemSchematicDescription>, schematicName: string, workflow: NodeWorkflow): Promise<Option[]>;

@@ -5,8 +5,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { analytics, logging } from '@angular-devkit/core';
+import { logging } from '@angular-devkit/core';
 import { ArgumentsCamelCase, Argv, CamelCaseKey, CommandModule as YargsCommandModule } from 'yargs';
+import { AnalyticsCollector } from '../analytics/analytics-collector';
+import { EventCustomDimension, EventCustomMetric } from '../analytics/analytics-parameters';
 import { AngularWorkspace } from '../utilities/config';
 import { PackageManagerUtils } from '../utilities/package-manager';
 import { Option } from './utilities/json-schema';
@@ -74,8 +76,7 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
     abstract builder(argv: Argv): Promise<Argv<T>> | Argv<T>;
     abstract run(options: Options<T> & OtherOptions): Promise<number | void> | number | void;
     handler(args: ArgumentsCamelCase<T> & OtherOptions): Promise<void>;
-    reportAnalytics(options: (Options<T> & OtherOptions) | OtherOptions, paths?: string[], dimensions?: (boolean | number | string)[], title?: string): Promise<void>;
-    protected getAnalytics(): Promise<analytics.Analytics>;
+    protected getAnalytics(): Promise<AnalyticsCollector | undefined>;
     /**
      * Adds schema options to a command also this keeps track of options that are required for analytics.
      * **Note:** This method should be called from the command bundler method.
@@ -88,7 +89,7 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
      * @returns a method that when called will terminate the periodic
      * flush and call flush one last time.
      */
-    private periodicAnalyticsFlush;
+    protected getAnalyticsParameters(options: (Options<T> & OtherOptions) | OtherOptions): Partial<Record<EventCustomDimension | EventCustomMetric, string | boolean | number>>;
 }
 /**
  * Creates an known command module error.

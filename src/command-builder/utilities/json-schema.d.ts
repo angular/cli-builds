@@ -35,6 +35,6 @@ export interface Option extends yargs.Options {
      * Whether or not to report this option to the Angular Team, and which custom field to use.
      * If this is falsey, do not report this option.
      */
-    userAnalytics?: number;
+    userAnalytics?: string;
 }
 export declare function parseJsonSchemaToOptions(registry: json.schema.SchemaRegistry, schema: json.JsonObject, interactive?: boolean): Promise<Option[]>;

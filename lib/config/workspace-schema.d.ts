@@ -19,7 +19,6 @@ export interface CliOptions {
      * Share pseudonymous usage data with the Angular Team at Google.
      */
     analytics?: Analytics;
-    analyticsSharing?: AnalyticsSharing;
     /**
      * Control disk cache.
      */
@@ -45,16 +44,6 @@ export interface CliOptions {
  * Share pseudonymous usage data with the Angular Team at Google.
  */
 export declare type Analytics = boolean | string;
-export interface AnalyticsSharing {
-    /**
-     * Analytics sharing info tracking ID.
-     */
-    tracking?: string;
-    /**
-     * Analytics sharing info universally unique identifier.
-     */
-    uuid?: string;
-}
 /**
  * Control disk cache.
  */

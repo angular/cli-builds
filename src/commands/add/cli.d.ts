@@ -24,7 +24,6 @@ export declare class AddCommandModule extends SchematicsCommandModule implements
     builder(argv: Argv): Promise<Argv<AddCommandArgs>>;
     run(options: Options<AddCommandArgs> & OtherOptions): Promise<number | void>;
     private isProjectVersionValid;
-    reportAnalytics(options: OtherOptions, paths: string[]): Promise<void>;
     private getCollectionName;
     private isPackageInstalled;
     private executeSchematic;

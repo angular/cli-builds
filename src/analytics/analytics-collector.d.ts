@@ -5,25 +5,27 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { analytics } from '@angular-devkit/core';
-/**
- * See: https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide
- */
-export declare class AnalyticsCollector implements analytics.Analytics {
+import type { CommandContext } from '../command-builder/command-module';
+import { EventCustomDimension, EventCustomMetric, PrimitiveTypes } from './analytics-parameters';
+export declare class AnalyticsCollector {
+    private context;
     private trackingEventsQueue;
-    private readonly parameters;
-    private readonly analyticsLogDebug;
-    constructor(trackingId: string, userId: string);
-    event(ec: string, ea: string, options?: analytics.EventOptions): void;
-    pageview(dp: string, options?: analytics.PageviewOptions): void;
-    timing(utc: string, utv: string, utt: string | number, options?: analytics.TimingOptions): void;
-    screenview(cd: string, an: string, options?: analytics.ScreenviewOptions): void;
-    flush(): Promise<void>;
-    private addToQueue;
-    private send;
+    private readonly requestParameterStringified;
+    private readonly userParameters;
+    constructor(context: CommandContext, userId: string);
+    reportRebuildRunEvent(parameters: Partial<Record<EventCustomMetric & EventCustomDimension, string | boolean | number | undefined>>): void;
+    reportBuildRunEvent(parameters: Partial<Record<EventCustomMetric & EventCustomDimension, string | boolean | number | undefined>>): void;
+    reportArchitectRunEvent(parameters: Partial<Record<EventCustomDimension, PrimitiveTypes>>): void;
+    reportSchematicRunEvent(parameters: Partial<Record<EventCustomDimension, PrimitiveTypes>>): void;
+    reportCommandRunEvent(command: string): void;
+    private event;
     /**
-     * Creates the dimension and metrics variables to add to the queue.
-     * @private
+     * Flush on an interval (if the event loop is waiting).
+     *
+     * @returns a method that when called will terminate the periodic
+     * flush and call flush one last time.
      */
-    private customVariables;
+    periodFlush(): () => Promise<void>;
+    flush(): Promise<void>;
+    private send;
 }

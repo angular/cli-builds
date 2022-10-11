@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 export declare const analyticsDisabled: boolean;
-export declare const analyticsShareDisabled: boolean;
 export declare const isCI: boolean;
 export declare const disableVersionCheck: boolean;
 export declare const ngDebug: boolean;
