@@ -13,6 +13,7 @@ export declare class AnalyticsCollector {
     private readonly requestParameterStringified;
     private readonly userParameters;
     constructor(context: CommandContext, userId: string);
+    reportWorkspaceInfoEvent(parameters: Partial<Record<EventCustomMetric, string | boolean | number | undefined>>): void;
     reportRebuildRunEvent(parameters: Partial<Record<EventCustomMetric & EventCustomDimension, string | boolean | number | undefined>>): void;
     reportBuildRunEvent(parameters: Partial<Record<EventCustomMetric & EventCustomDimension, string | boolean | number | undefined>>): void;
     reportArchitectRunEvent(parameters: Partial<Record<EventCustomDimension, PrimitiveTypes>>): void;
