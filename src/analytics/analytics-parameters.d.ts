@@ -45,6 +45,7 @@ export declare enum RequestParameter {
  * @see https://support.google.com/analytics/answer/10075209?hl=en
  */
 export declare enum UserCustomDimension {
+    UserId = "up.ng_user_id",
     OsArchitecture = "up.ng_os_architecture",
     NodeVersion = "up.ng_node_version",
     NodeMajorVersion = "upn.ng_node_major_version",
@@ -91,5 +92,8 @@ export declare enum EventCustomMetric {
     DurationInMs = "epn.ng_duration_ms",
     CssSizeInBytes = "epn.ng_css_size_bytes",
     JsSizeInBytes = "epn.ng_js_size_bytes",
-    NgComponentCount = "epn.ng_component_count"
+    NgComponentCount = "epn.ng_component_count",
+    AllProjectsCount = "epn.all_projects_count",
+    LibraryProjectsCount = "epn.libs_projects_count",
+    ApplicationProjectsCount = "epn.apps_projects_count"
 }

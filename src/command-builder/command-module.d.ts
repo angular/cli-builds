@@ -90,6 +90,8 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
      * flush and call flush one last time.
      */
     protected getAnalyticsParameters(options: (Options<T> & OtherOptions) | OtherOptions): Partial<Record<EventCustomDimension | EventCustomMetric, string | boolean | number>>;
+    private reportCommandRunAnalytics;
+    private reportWorkspaceInfoAnalytics;
 }
 /**
  * Creates an known command module error.
