@@ -1107,7 +1107,8 @@
               "CanActivate",
               "CanActivateChild",
               "CanDeactivate",
-              "CanLoad"
+              "CanLoad",
+              "CanMatch"
             ],
             "type": "string"
           },
