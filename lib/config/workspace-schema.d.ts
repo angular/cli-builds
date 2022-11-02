@@ -434,7 +434,8 @@ export declare enum Implement {
     CanActivate = "CanActivate",
     CanActivateChild = "CanActivateChild",
     CanDeactivate = "CanDeactivate",
-    CanLoad = "CanLoad"
+    CanLoad = "CanLoad",
+    CanMatch = "CanMatch"
 }
 /**
  * Creates a new, generic interceptor definition in the given or default project.
