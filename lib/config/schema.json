@@ -1097,14 +1097,9 @@
             "$source": "projectName"
           }
         },
-        "functional": {
-          "type": "boolean",
-          "description": "Specifies whether to generate a guard as a function.",
-          "default": false
-        },
         "implements": {
           "type": "array",
-          "description": "Specifies which type of guard to create.",
+          "description": "Specifies which interfaces to implement.",
           "uniqueItems": true,
           "minItems": 1,
           "items": {
@@ -1489,11 +1484,6 @@
           "type": "boolean",
           "description": "When true (the default), creates the new files at the top level of the current project.",
           "default": true
-        },
-        "functional": {
-          "type": "boolean",
-          "description": "Creates the resolver as a `ResolveFn`.",
-          "default": false
         },
         "path": {
           "type": "string",
