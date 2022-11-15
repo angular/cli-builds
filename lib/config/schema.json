@@ -1884,7 +1884,7 @@
         },
         "vendorChunk": {
           "type": "boolean",
-          "description": "Generate a seperate bundle containing only vendor libraries. This option should only used for development.",
+          "description": "Generate a seperate bundle containing only vendor libraries. This option should only be used for development to reduce the incremental compilation time.",
           "default": false
         },
         "commonChunk": {
@@ -2459,7 +2459,7 @@
         },
         "vendorChunk": {
           "type": "boolean",
-          "description": "Generate a seperate bundle containing only vendor libraries. This option should only used for development.",
+          "description": "Generate a seperate bundle containing only vendor libraries. This option should only be used for development to reduce the incremental compilation time.",
           "default": false
         },
         "commonChunk": {
@@ -3361,6 +3361,11 @@
           "type": "string",
           "description": "URL where files will be deployed.",
           "deprecated": true
+        },
+        "vendorChunk": {
+          "type": "boolean",
+          "description": "Generate a seperate bundle containing only vendor libraries. This option should only be used for development to reduce the incremental compilation time.",
+          "default": false
         },
         "verbose": {
           "type": "boolean",

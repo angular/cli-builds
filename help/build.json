@@ -227,7 +227,7 @@
       "name": "vendor-chunk",
       "type": "boolean",
       "default": false,
-      "description": "Generate a seperate bundle containing only vendor libraries. This option should only used for development."
+      "description": "Generate a seperate bundle containing only vendor libraries. This option should only be used for development to reduce the incremental compilation time."
     },
     {
       "name": "verbose",
