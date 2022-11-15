@@ -398,7 +398,11 @@ export interface AngularGuardOptionsSchema {
      */
     flat?: boolean;
     /**
-     * Specifies which interfaces to implement.
+     * Specifies whether to generate a guard as a function.
+     */
+    functional?: boolean;
+    /**
+     * Specifies which type of guard to create.
      */
     implements?: Implement[];
     /**
@@ -655,6 +659,10 @@ export interface AngularResolverOptionsSchema {
      * When true (the default), creates the new files at the top level of the current project.
      */
     flat?: boolean;
+    /**
+     * Creates the resolver as a `ResolveFn`.
+     */
+    functional?: boolean;
     /**
      * The name of the new resolver.
      */

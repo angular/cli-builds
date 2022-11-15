@@ -492,9 +492,15 @@
           "description": "When true (the default), creates the new files at the top level of the current project."
         },
         {
+          "name": "functional",
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether to generate a guard as a function."
+        },
+        {
           "name": "implements",
           "type": "array",
-          "description": "Specifies which interfaces to implement."
+          "description": "Specifies which type of guard to create."
         },
         {
           "name": "name",
@@ -766,6 +772,12 @@
           "type": "boolean",
           "default": true,
           "description": "When true (the default), creates the new files at the top level of the current project."
+        },
+        {
+          "name": "functional",
+          "type": "boolean",
+          "default": false,
+          "description": "Creates the resolver as a `ResolveFn`."
         },
         {
           "name": "name",
