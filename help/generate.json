@@ -537,6 +537,12 @@
           "description": "When true (the default), creates files at the top level of the project."
         },
         {
+          "name": "functional",
+          "type": "boolean",
+          "default": false,
+          "description": "Creates the interceptor as a `HttpInterceptorFn`."
+        },
+        {
           "name": "name",
           "type": "string",
           "description": "The name of the interceptor.",
