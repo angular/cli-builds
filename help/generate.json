@@ -500,6 +500,9 @@
         {
           "name": "implements",
           "type": "array",
+          "aliases": [
+            "guardType"
+          ],
           "description": "Specifies which type of guard to create."
         },
         {
