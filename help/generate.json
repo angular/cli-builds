@@ -481,6 +481,20 @@
       "deprecated": false
     },
     {
+      "name": "environments",
+      "command": "environments",
+      "shortDescription": "Generates and configures environment files for a project.",
+      "options": [
+        {
+          "name": "project",
+          "type": "string",
+          "description": "The name of the project."
+        }
+      ],
+      "aliases": [],
+      "deprecated": false
+    },
+    {
       "name": "guard",
       "command": "guard [name]",
       "shortDescription": "Generates a new, generic route guard definition in the given or default project.",
