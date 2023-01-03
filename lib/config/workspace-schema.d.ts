@@ -190,7 +190,7 @@ export declare enum ViewEncapsulation {
     ShadowDom = "ShadowDom"
 }
 /**
- * Creates a new, generic class definition in the given or default project.
+ * Creates a new, generic class definition in the given project.
  */
 export interface AngularClassOptionsSchema {
     /**
@@ -215,7 +215,7 @@ export interface AngularClassOptionsSchema {
     type?: string;
 }
 /**
- * Creates a new, generic component definition in the given or default project.
+ * Creates a new, generic component definition in the given project.
  */
 export interface AngularComponentOptionsSchema {
     /**
@@ -318,7 +318,7 @@ export declare enum SchematicsAngularComponentStyle {
     Scss = "scss"
 }
 /**
- * Creates a new, generic directive definition in the given or default project.
+ * Creates a new, generic directive definition in the given project.
  */
 export interface AngularDirectiveOptionsSchema {
     /**
@@ -368,7 +368,7 @@ export interface AngularDirectiveOptionsSchema {
     standalone?: boolean;
 }
 /**
- * Generates a new, generic enum definition for the given or default project.
+ * Generates a new, generic enum definition in the given project.
  */
 export interface AngularEnumOptionsSchema {
     /**
@@ -390,7 +390,7 @@ export interface AngularEnumOptionsSchema {
     type?: string;
 }
 /**
- * Generates a new, generic route guard definition in the given or default project.
+ * Generates a new, generic route guard definition in the given project.
  */
 export interface AngularGuardOptionsSchema {
     /**
@@ -427,7 +427,7 @@ export declare enum Implement {
     CanMatch = "CanMatch"
 }
 /**
- * Creates a new, generic interceptor definition in the given or default project.
+ * Creates a new, generic interceptor definition in the given project.
  */
 export interface AngularInterceptorOptionsSchema {
     /**
@@ -452,7 +452,7 @@ export interface AngularInterceptorOptionsSchema {
     skipTests?: boolean;
 }
 /**
- * Creates a new, generic interface definition in the given or default project.
+ * Creates a new, generic interface definition in the given project.
  */
 export interface AngularInterfaceOptionsSchema {
     /**
@@ -607,7 +607,7 @@ export interface CommitObject {
     name: string;
 }
 /**
- * Creates a new, generic pipe definition in the given or default project.
+ * Creates a new, generic pipe definition in the given project.
  */
 export interface AngularPipeOptionsSchema {
     /**
@@ -648,7 +648,7 @@ export interface AngularPipeOptionsSchema {
     standalone?: boolean;
 }
 /**
- * Generates a new, generic resolver definition in the given or default project.
+ * Generates a new, generic resolver definition in the given project.
  */
 export interface AngularResolverOptionsSchema {
     /**
@@ -674,7 +674,7 @@ export interface AngularResolverOptionsSchema {
     skipTests?: boolean;
 }
 /**
- * Creates a new, generic service definition in the given or default project.
+ * Creates a new, generic service definition in the given project.
  */
 export interface AngularServiceOptionsSchema {
     /**
@@ -699,7 +699,7 @@ export interface AngularServiceOptionsSchema {
     skipTests?: boolean;
 }
 /**
- * Creates a new, generic web worker definition in the given or default project.
+ * Creates a new, generic web worker definition in the given project.
  */
 export interface AngularWebWorkerOptionsSchema {
     /**

@@ -761,7 +761,7 @@
     "SchematicsAngularClassSchema": {
       "title": "Angular Class Options Schema",
       "type": "object",
-      "description": "Creates a new, generic class definition in the given or default project.",
+      "description": "Creates a new, generic class definition in the given project.",
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -802,7 +802,7 @@
     "SchematicsAngularComponentSchema": {
       "title": "Angular Component Options Schema",
       "type": "object",
-      "description": "Creates a new, generic component definition in the given or default project.",
+      "description": "Creates a new, generic component definition in the given project.",
       "additionalProperties": false,
       "properties": {
         "path": {
@@ -943,7 +943,7 @@
     "SchematicsAngularDirectiveSchema": {
       "title": "Angular Directive Options Schema",
       "type": "object",
-      "description": "Creates a new, generic directive definition in the given or default project.",
+      "description": "Creates a new, generic directive definition in the given project.",
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -1024,7 +1024,7 @@
     "SchematicsAngularEnumSchema": {
       "title": "Angular Enum Options Schema",
       "type": "object",
-      "description": "Generates a new, generic enum definition for the given or default project.",
+      "description": "Generates a new, generic enum definition in the given project.",
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -1060,7 +1060,7 @@
     "SchematicsAngularGuardSchema": {
       "title": "Angular Guard Options Schema",
       "type": "object",
-      "description": "Generates a new, generic route guard definition in the given or default project.",
+      "description": "Generates a new, generic route guard definition in the given project.",
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -1122,7 +1122,7 @@
       "title": "Angular Interceptor Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Creates a new, generic interceptor definition in the given or default project.",
+      "description": "Creates a new, generic interceptor definition in the given project.",
       "properties": {
         "name": {
           "type": "string",
@@ -1164,7 +1164,7 @@
       "title": "Angular Interface Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Creates a new, generic interface definition in the given or default project.",
+      "description": "Creates a new, generic interface definition in the given project.",
       "properties": {
         "name": {
           "type": "string",
@@ -1257,7 +1257,7 @@
       "title": "Angular Pipe Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Creates a new, generic pipe definition in the given or default project.",
+      "description": "Creates a new, generic pipe definition in the given project.",
       "properties": {
         "name": {
           "type": "string",
@@ -1465,7 +1465,7 @@
       "title": "Angular resolver Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Generates a new, generic resolver definition in the given or default project.",
+      "description": "Generates a new, generic resolver definition in the given project.",
       "properties": {
         "name": {
           "type": "string",
@@ -1507,7 +1507,7 @@
       "title": "Angular Service Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Creates a new, generic service definition in the given or default project.",
+      "description": "Creates a new, generic service definition in the given project.",
       "properties": {
         "name": {
           "type": "string",
@@ -1548,7 +1548,7 @@
       "title": "Angular Web Worker Options Schema",
       "type": "object",
       "additionalProperties": false,
-      "description": "Creates a new, generic web worker definition in the given or default project.",
+      "description": "Creates a new, generic web worker definition in the given project.",
       "properties": {
         "path": {
           "type": "string",
