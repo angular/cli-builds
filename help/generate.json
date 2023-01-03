@@ -381,6 +381,30 @@
       "deprecated": false
     },
     {
+      "name": "config",
+      "command": "config [type]",
+      "shortDescription": "Generates a configuration file in the given project.",
+      "options": [
+        {
+          "name": "project",
+          "type": "string",
+          "description": "The name of the project."
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "enum": [
+            "karma",
+            "browserslist"
+          ],
+          "description": "Specifies which type of configuration file to create.",
+          "positional": 0
+        }
+      ],
+      "aliases": [],
+      "deprecated": false
+    },
+    {
       "name": "directive",
       "command": "directive [name]",
       "shortDescription": "Creates a new, generic directive definition in the given project.",
