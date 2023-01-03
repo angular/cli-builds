@@ -43,7 +43,7 @@ export interface CliOptions {
 /**
  * Share pseudonymous usage data with the Angular Team at Google.
  */
-export declare type Analytics = boolean | string;
+export type Analytics = boolean | string;
 /**
  * Control disk cache.
  */
@@ -608,7 +608,7 @@ export interface AngularNgNewOptionsSchema {
 /**
  * Initial git repository commit information.
  */
-export declare type CommitUnion = boolean | CommitObject;
+export type CommitUnion = boolean | CommitObject;
 export interface CommitObject {
     email: string;
     message?: string;

@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-export declare type PrimitiveTypes = string | number | boolean;
+export type PrimitiveTypes = string | number | boolean;
 /**
  * GA built-in request parameters
  * @see https://www.thyngster.com/ga4-measurement-protocol-cheatsheet

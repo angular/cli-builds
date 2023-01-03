@@ -12,7 +12,7 @@ import { EventCustomDimension, EventCustomMetric } from '../analytics/analytics-
 import { AngularWorkspace } from '../utilities/config';
 import { PackageManagerUtils } from '../utilities/package-manager';
 import { Option } from './utilities/json-schema';
-export declare type Options<T> = {
+export type Options<T> = {
     [key in keyof T as CamelCaseKey<key>]: T[key];
 };
 export declare enum CommandScope {
@@ -40,7 +40,7 @@ export interface CommandContext {
         } & Record<string, unknown>;
     };
 }
-export declare type OtherOptions = Record<string, unknown>;
+export type OtherOptions = Record<string, unknown>;
 export interface CommandModuleImplementation<T extends {} = {}> extends Omit<YargsCommandModule<{}, T>, 'builder' | 'handler'> {
     /** Scope in which the command can be executed in. */
     scope: CommandScope;
