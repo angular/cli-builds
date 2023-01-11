@@ -18,7 +18,7 @@ export declare class NewCommandModule extends SchematicsCommandModule implements
     command: string;
     aliases: string;
     describe: string;
-    longDescriptionPath?: string | undefined;
+    longDescriptionPath: string;
     builder(argv: Argv): Promise<Argv<NewCommandArgs>>;
     run(options: Options<NewCommandArgs> & OtherOptions): Promise<number | void>;
     /** Find a collection from config that has an `ng-new` schematic. */
