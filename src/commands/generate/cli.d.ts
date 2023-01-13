@@ -19,6 +19,13 @@ export declare class GenerateCommandModule extends SchematicsCommandModule imple
     builder(argv: Argv): Promise<Argv<GenerateCommandArgs>>;
     run(options: Options<GenerateCommandArgs> & OtherOptions): Promise<number | void>;
     private getCollectionNames;
+    private shouldAddCollectionNameAsPartOfCommand;
+    /**
+     * Generate an aliases string array to be passed to the command builder.
+     *
+     * @example `[component]` or `[@schematics/angular:component]`.
+     */
+    private generateCommandAliasesStrings;
     /**
      * Generate a command string to be passed to the command builder.
      *
