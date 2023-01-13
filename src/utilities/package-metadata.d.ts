@@ -14,7 +14,7 @@ export interface PackageMetadata extends Packument, NgPackageManifestProperties 
 export interface NpmRepositoryPackageJson extends PackageMetadata {
     requestedName?: string;
 }
-export declare type NgAddSaveDependency = 'dependencies' | 'devDependencies' | boolean;
+export type NgAddSaveDependency = 'dependencies' | 'devDependencies' | boolean;
 export interface PackageIdentifier {
     type: 'git' | 'tag' | 'version' | 'range' | 'file' | 'directory' | 'remote';
     name: string;
