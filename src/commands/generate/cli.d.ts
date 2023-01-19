@@ -36,6 +36,7 @@ export declare class GenerateCommandModule extends SchematicsCommandModule imple
      * Get schematics that can to be registered as subcommands.
      */
     private getSchematics;
+    private listSchematicAliases;
     /**
      * Get schematics that should to be registered as subcommands.
      *
