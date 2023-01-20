@@ -106,6 +106,7 @@ export interface SchematicOptions {
     "@schematics/angular:resolver"?: AngularResolverOptionsSchema;
     "@schematics/angular:service"?: AngularServiceOptionsSchema;
     "@schematics/angular:web-worker"?: AngularWebWorkerOptionsSchema;
+    [property: string]: any;
 }
 /**
  * Generates a new basic application definition in the "projects" subfolder of the workspace.
@@ -613,6 +614,7 @@ export interface CommitObject {
     email: string;
     message?: string;
     name: string;
+    [property: string]: any;
 }
 /**
  * Creates a new, generic pipe definition in the given project.

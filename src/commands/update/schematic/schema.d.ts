@@ -38,6 +38,7 @@ export interface Schema {
      * Display additional details during the update process.
      */
     verbose?: boolean;
+    [property: string]: any;
 }
 /**
  * The preferred package manager configuration files to use for registry settings.
