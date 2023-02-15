@@ -428,7 +428,6 @@ export declare enum Implement {
     CanActivate = "CanActivate",
     CanActivateChild = "CanActivateChild",
     CanDeactivate = "CanDeactivate",
-    CanLoad = "CanLoad",
     CanMatch = "CanMatch"
 }
 /**
