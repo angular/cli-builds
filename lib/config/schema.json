@@ -1098,7 +1098,7 @@
         "functional": {
           "type": "boolean",
           "description": "Specifies whether to generate a guard as a function.",
-          "default": false
+          "default": true
         },
         "implements": {
           "alias": "guardType",
@@ -1496,7 +1496,7 @@
         "functional": {
           "type": "boolean",
           "description": "Creates the resolver as a `ResolveFn`.",
-          "default": false
+          "default": true
         },
         "path": {
           "type": "string",
