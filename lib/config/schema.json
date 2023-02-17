@@ -20,11 +20,6 @@
       "type": "string",
       "description": "Path where new projects will be created."
     },
-    "defaultProject": {
-      "type": "string",
-      "description": "Default project name used in commands.",
-      "deprecated": true
-    },
     "projects": {
       "type": "object",
       "patternProperties": {
@@ -43,11 +38,6 @@
     "cliOptions": {
       "type": "object",
       "properties": {
-        "defaultCollection": {
-          "description": "The default schematics collection to use.",
-          "type": "string",
-          "deprecated": true
-        },
         "schematicCollections": {
           "type": "array",
           "description": "The list of schematic collections to use.",
@@ -114,11 +104,6 @@
     "cliGlobalOptions": {
       "type": "object",
       "properties": {
-        "defaultCollection": {
-          "description": "The default schematics collection to use.",
-          "type": "string",
-          "deprecated": true
-        },
         "schematicCollections": {
           "type": "array",
           "description": "The list of schematic collections to use.",
@@ -226,11 +211,6 @@
       "type": "object",
       "properties": {
         "cli": {
-          "defaultCollection": {
-            "description": "The default schematics collection to use.",
-            "type": "string",
-            "deprecated": true
-          },
           "schematicCollections": {
             "type": "array",
             "description": "The list of schematic collections to use.",

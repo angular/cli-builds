@@ -2,11 +2,6 @@ export interface Schema {
     $schema?: string;
     cli?: CliOptions;
     /**
-     * Default project name used in commands.
-     * @deprecated The project to use will be determined from the current working directory.
-     */
-    defaultProject?: string;
-    /**
      * Path where new projects will be created.
      */
     newProjectRoot?: string;
@@ -23,10 +18,6 @@ export interface CliOptions {
      * Control disk cache.
      */
     cache?: Cache;
-    /**
-     * The default schematics collection to use.
-     */
-    defaultCollection?: string;
     /**
      * Specify which package manager tool to use.
      */

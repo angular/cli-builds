@@ -36,7 +36,6 @@ export declare abstract class SchematicsCommandModule extends CommandModule<Sche
         collectionName: string;
         schematicName: string;
     }): Promise<number>;
-    private defaultProjectDeprecationWarningShown;
     private getProjectName;
     private getResolvePaths;
 }
