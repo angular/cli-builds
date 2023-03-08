@@ -52,5 +52,6 @@ export declare class UpdateCommandModule extends CommandModule<UpdateCommandArgs
     private getCLIUpdateRunnerVersion;
     private runTempBinary;
     private packageManagerForce;
+    private getOptionalMigrationsToRun;
 }
 export {};
