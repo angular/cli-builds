@@ -148,6 +148,10 @@ export interface AngularApplicationOptionsSchema {
      */
     skipTests?: boolean;
     /**
+     * Creates an application based upon the standalone API, without NgModules.
+     */
+    standalone?: boolean;
+    /**
      * Creates an application with stricter bundle budgets settings.
      */
     strict?: boolean;
@@ -577,6 +581,10 @@ export interface AngularNgNewOptionsSchema {
      * Do not generate "spec.ts" test files for the new project.
      */
     skipTests?: boolean;
+    /**
+     * Creates an application based upon the standalone API, without NgModules.
+     */
+    standalone?: boolean;
     /**
      * Creates a workspace with stricter type checking and stricter bundle budgets settings.
      * This setting helps improve maintainability and catch bugs ahead of time. For more

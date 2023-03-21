@@ -733,6 +733,11 @@
           "description": "Creates an application with stricter bundle budgets settings.",
           "type": "boolean",
           "default": true
+        },
+        "standalone": {
+          "description": "Creates an application based upon the standalone API, without NgModules.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
@@ -1446,6 +1451,11 @@
             "pnpm",
             "cnpm"
           ]
+        },
+        "standalone": {
+          "description": "Creates an application based upon the standalone API, without NgModules.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
