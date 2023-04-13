@@ -7,7 +7,7 @@
  */
 import { ArchitectCommandModule } from '../../command-builder/architect-command-module';
 import { CommandModuleImplementation } from '../../command-builder/command-module';
-export declare class ExtractI18nCommandModule extends ArchitectCommandModule implements CommandModuleImplementation {
+export default class ExtractI18nCommandModule extends ArchitectCommandModule implements CommandModuleImplementation {
     multiTarget: boolean;
     command: string;
     describe: string;

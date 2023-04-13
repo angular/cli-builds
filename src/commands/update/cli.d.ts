@@ -19,7 +19,7 @@ interface UpdateCommandArgs {
     verbose: boolean;
     'create-commits': boolean;
 }
-export declare class UpdateCommandModule extends CommandModule<UpdateCommandArgs> {
+export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs> {
     scope: CommandScope;
     protected shouldReportAnalytics: boolean;
     command: string;

@@ -11,9 +11,9 @@ import { SchematicsCommandArgs, SchematicsCommandModule } from '../../command-bu
 interface GenerateCommandArgs extends SchematicsCommandArgs {
     schematic?: string;
 }
-export declare class GenerateCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<GenerateCommandArgs> {
+export default class GenerateCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<GenerateCommandArgs> {
     command: string;
-    aliases: string;
+    aliases: string[] | undefined;
     describe: string;
     longDescriptionPath?: string | undefined;
     builder(argv: Argv): Promise<Argv<GenerateCommandArgs>>;

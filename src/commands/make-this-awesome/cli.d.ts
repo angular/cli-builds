@@ -7,7 +7,7 @@
  */
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation } from '../../command-builder/command-module';
-export declare class AwesomeCommandModule extends CommandModule implements CommandModuleImplementation {
+export default class AwesomeCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: false;
     deprecated: boolean;

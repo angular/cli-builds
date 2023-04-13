@@ -14,7 +14,7 @@ interface AddCommandArgs extends SchematicsCommandArgs {
     registry?: string;
     'skip-confirmation'?: boolean;
 }
-export declare class AddCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<AddCommandArgs> {
+export default class AddCommadModule extends SchematicsCommandModule implements CommandModuleImplementation<AddCommandArgs> {
     command: string;
     describe: string;
     longDescriptionPath: string;

@@ -7,7 +7,7 @@
  */
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation, Options } from '../../command-builder/command-module';
-export declare class AnalyticsCommandModule extends CommandModule implements CommandModuleImplementation {
+export default class AnalyticsCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
     longDescriptionPath: string;

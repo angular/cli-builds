@@ -7,10 +7,10 @@
  */
 import { ArchitectCommandModule } from '../../command-builder/architect-command-module';
 import { CommandModuleImplementation } from '../../command-builder/command-module';
-export declare class ServeCommandModule extends ArchitectCommandModule implements CommandModuleImplementation {
+export default class ServeCommandModule extends ArchitectCommandModule implements CommandModuleImplementation {
     multiTarget: boolean;
     command: string;
-    aliases: string[];
+    aliases: string[] | undefined;
     describe: string;
     longDescriptionPath?: string | undefined;
 }

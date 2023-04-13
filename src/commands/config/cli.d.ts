@@ -12,7 +12,7 @@ interface ConfigCommandArgs {
     value?: string;
     global?: boolean;
 }
-export declare class ConfigCommandModule extends CommandModule<ConfigCommandArgs> implements CommandModuleImplementation<ConfigCommandArgs> {
+export default class ConfigCommandModule extends CommandModule<ConfigCommandArgs> implements CommandModuleImplementation<ConfigCommandArgs> {
     command: string;
     describe: string;
     longDescriptionPath: string;
