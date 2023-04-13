@@ -11,12 +11,12 @@ import { SchematicsCommandArgs, SchematicsCommandModule } from '../../command-bu
 interface NewCommandArgs extends SchematicsCommandArgs {
     collection?: string;
 }
-export declare class NewCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<NewCommandArgs> {
+export default class NewCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<NewCommandArgs> {
     private readonly schematicName;
     scope: CommandScope;
     protected allowPrivateSchematics: boolean;
     command: string;
-    aliases: string;
+    aliases: string[] | undefined;
     describe: string;
     longDescriptionPath: string;
     builder(argv: Argv): Promise<Argv<NewCommandArgs>>;

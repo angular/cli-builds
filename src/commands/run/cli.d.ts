@@ -12,7 +12,7 @@ import { CommandModuleImplementation, CommandScope, Options, OtherOptions } from
 export interface RunCommandArgs {
     target: string;
 }
-export declare class RunCommandModule extends ArchitectBaseCommandModule<RunCommandArgs> implements CommandModuleImplementation<RunCommandArgs> {
+export default class RunCommandModule extends ArchitectBaseCommandModule<RunCommandArgs> implements CommandModuleImplementation<RunCommandArgs> {
     scope: CommandScope;
     command: string;
     describe: string;

@@ -7,7 +7,7 @@
  */
 import { Argv } from 'yargs';
 import { CommandModule, CommandModuleImplementation, CommandScope, Options } from '../../command-builder/command-module';
-export declare class CacheCommandModule extends CommandModule implements CommandModuleImplementation {
+export default class CacheCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
     longDescriptionPath: string;
