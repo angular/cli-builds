@@ -2597,6 +2597,10 @@
                   "description": "The output path of the application's generated HTML index file. The full provided path will be used and will be considered relative to the application's configured output path."
                 }
               }
+            },
+            {
+              "const": "false",
+              "description": "Does not generate an `index.html` file."
             }
           ]
         },
