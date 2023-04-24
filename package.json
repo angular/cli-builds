@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "16.0.0-rc.1+sha-a880fdd",
+  "version": "16.0.0-rc.1+sha-e56f115",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#a880fddb7",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#a880fddb7",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#a880fddb7",
-    "@schematics/angular": "github:angular/schematics-angular-builds#a880fddb7",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#e56f11520",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#e56f11520",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#e56f11520",
+    "@schematics/angular": "github:angular/schematics-angular-builds#e56f11520",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "ini": "4.0.0",
@@ -47,12 +47,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#a880fddb7",
-      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#a880fddb7",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#a880fddb7",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#a880fddb7",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#a880fddb7",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#a880fddb7"
+      "@angular/cli": "github:angular/cli-builds#e56f11520",
+      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#e56f11520",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#e56f11520",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#e56f11520",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#e56f11520",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#e56f11520"
     }
   },
   "engines": {
