@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "16.0.5+sha-eebb54c",
+  "version": "16.0.5+sha-2025dfa",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#eebb54cbf",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#eebb54cbf",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#eebb54cbf",
-    "@schematics/angular": "github:angular/schematics-angular-builds#eebb54cbf",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#2025dfaf8",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#2025dfaf8",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#2025dfaf8",
+    "@schematics/angular": "github:angular/schematics-angular-builds#2025dfaf8",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "ini": "4.0.0",
@@ -47,12 +47,12 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#eebb54cbf",
-      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#eebb54cbf",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#eebb54cbf",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#eebb54cbf",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#eebb54cbf",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#eebb54cbf"
+      "@angular/cli": "github:angular/cli-builds#2025dfaf8",
+      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#2025dfaf8",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#2025dfaf8",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#2025dfaf8",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#2025dfaf8",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#2025dfaf8"
     }
   },
   "engines": {
