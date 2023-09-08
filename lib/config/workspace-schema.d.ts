@@ -132,7 +132,7 @@ export interface AngularApplicationOptionsSchema {
      */
     projectRoot?: string;
     /**
-     * Create a routing NgModule.
+     * Creates an application with routing enabled.
      */
     routing?: boolean;
     /**
@@ -570,7 +570,7 @@ export interface AngularNgNewOptionsSchema {
      */
     prefix?: string;
     /**
-     * Generate a routing module for the initial project.
+     * Enable routing in the initial project.
      */
     routing?: boolean;
     /**
