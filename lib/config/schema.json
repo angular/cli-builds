@@ -783,7 +783,7 @@
         "standalone": {
           "description": "Creates an application based upon the standalone API, without NgModules.",
           "type": "boolean",
-          "default": false
+          "default": true
         }
       }
     },
@@ -879,7 +879,7 @@
         "standalone": {
           "description": "Whether the generated component is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the new component.",
@@ -1031,7 +1031,7 @@
         "standalone": {
           "description": "Whether the generated directive is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "flat": {
           "type": "boolean",
@@ -1293,7 +1293,7 @@
         "standalone": {
           "description": "Creates a library based upon the standalone API, without NgModules.",
           "type": "boolean",
-          "default": false
+          "default": true
         }
       }
     },
@@ -1345,7 +1345,7 @@
         "standalone": {
           "description": "Whether the generated pipe is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "module": {
           "type": "string",
@@ -1506,7 +1506,7 @@
         "standalone": {
           "description": "Creates an application based upon the standalone API, without NgModules.",
           "type": "boolean",
-          "default": false
+          "default": true
         }
       }
     },
