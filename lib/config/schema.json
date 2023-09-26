@@ -1200,7 +1200,7 @@
         "functional": {
           "type": "boolean",
           "description": "Creates the interceptor as a `HttpInterceptorFn`.",
-          "default": false
+          "default": true
         }
       }
     },
