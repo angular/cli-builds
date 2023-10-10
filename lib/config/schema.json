@@ -3397,6 +3397,12 @@
         "browserTarget": {
           "type": "string",
           "description": "A browser builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$",
+          "deprecated": true
+        },
+        "buildTarget": {
+          "type": "string",
+          "description": "A build builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "port": {
@@ -3492,7 +3498,11 @@
           "default": false
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {},
+        {}
+      ]
     },
     "AngularDevkitBuildAngularBuildersExtractI18nSchema": {
       "title": "Extract i18n Target",
@@ -3502,6 +3512,12 @@
         "browserTarget": {
           "type": "string",
           "description": "A browser builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$",
+          "deprecated": true
+        },
+        "buildTarget": {
+          "type": "string",
+          "description": "A builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "format": {
@@ -3534,7 +3550,11 @@
           "description": "Name of the file to output."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {},
+        {}
+      ]
     },
     "AngularDevkitBuildAngularBuildersKarmaSchema": {
       "title": "Karma Target",
