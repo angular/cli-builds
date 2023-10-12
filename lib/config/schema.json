@@ -783,6 +783,11 @@
         "standalone": {
           "description": "Creates an application based upon the standalone API, without NgModules.",
           "type": "boolean",
+          "default": true
+        },
+        "ssr": {
+          "description": "Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled.",
+          "type": "boolean",
           "default": false
         }
       }
@@ -879,7 +884,7 @@
         "standalone": {
           "description": "Whether the generated component is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "viewEncapsulation": {
           "description": "The view encapsulation strategy to use in the new component.",
@@ -1031,7 +1036,7 @@
         "standalone": {
           "description": "Whether the generated directive is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "flat": {
           "type": "boolean",
@@ -1195,7 +1200,7 @@
         "functional": {
           "type": "boolean",
           "description": "Creates the interceptor as a `HttpInterceptorFn`.",
-          "default": false
+          "default": true
         }
       }
     },
@@ -1293,7 +1298,7 @@
         "standalone": {
           "description": "Creates a library based upon the standalone API, without NgModules.",
           "type": "boolean",
-          "default": false
+          "default": true
         }
       }
     },
@@ -1345,7 +1350,7 @@
         "standalone": {
           "description": "Whether the generated pipe is standalone.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "module": {
           "type": "string",
@@ -1506,7 +1511,11 @@
         "standalone": {
           "description": "Creates an application based upon the standalone API, without NgModules.",
           "type": "boolean",
-          "default": false
+          "default": true
+        },
+        "ssr": {
+          "description": "Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled.",
+          "type": "boolean"
         }
       }
     },
@@ -1847,7 +1856,7 @@
         },
         "outputPath": {
           "type": "string",
-          "description": "The full path for the new output directory, relative to the current workspace.\nBy default, writes output to a folder named dist/ in the current project."
+          "description": "The full path for the new output directory, relative to the current workspace."
         },
         "aot": {
           "type": "boolean",
@@ -1975,6 +1984,11 @@
           "description": "Extract all licenses in a separate file.",
           "default": true
         },
+        "namedChunks": {
+          "type": "boolean",
+          "description": "Use file name for lazy loaded chunks.",
+          "default": false
+        },
         "subresourceIntegrity": {
           "type": "boolean",
           "description": "Enables the use of subresource integrity validation.",
@@ -2076,19 +2090,9 @@
                   "type": "string",
                   "description": "The path to a file containing routes separated by newlines."
                 },
-                "routes": {
-                  "type": "array",
-                  "description": "The routes to render.",
-                  "items": {
-                    "minItems": 1,
-                    "type": "string",
-                    "uniqueItems": true
-                  },
-                  "default": []
-                },
                 "discoverRoutes": {
                   "type": "boolean",
-                  "description": "Whether the builder should statically discover routes.",
+                  "description": "Whether the builder should discover routers using the Angular Router.",
                   "default": true
                 }
               },
@@ -2105,14 +2109,8 @@
               "description": "Enable the server bundles to be written to disk."
             },
             {
-              "type": "object",
-              "properties": {
-                "entry": {
-                  "type": "string",
-                  "description": "The server entry-point that when executed will spawn the web server."
-                }
-              },
-              "additionalProperties": false
+              "type": "string",
+              "description": "The server entry-point that when executed will spawn the web server."
             }
           ]
         },
@@ -2473,7 +2471,7 @@
         },
         "outputPath": {
           "type": "string",
-          "description": "The full path for the new output directory, relative to the current workspace.\nBy default, writes output to a folder named dist/ in the current project."
+          "description": "The full path for the new output directory, relative to the current workspace."
         },
         "resourcesOutputPath": {
           "type": "string",
@@ -3047,7 +3045,7 @@
         },
         "outputPath": {
           "type": "string",
-          "description": "The full path for the new output directory, relative to the current workspace.\nBy default, writes output to a folder named dist/ in the current project."
+          "description": "The full path for the new output directory, relative to the current workspace."
         },
         "resourcesOutputPath": {
           "type": "string",
@@ -3399,6 +3397,12 @@
         "browserTarget": {
           "type": "string",
           "description": "A browser builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$",
+          "deprecated": true
+        },
+        "buildTarget": {
+          "type": "string",
+          "description": "A build builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "port": {
@@ -3494,7 +3498,11 @@
           "default": false
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {},
+        {}
+      ]
     },
     "AngularDevkitBuildAngularBuildersExtractI18nSchema": {
       "title": "Extract i18n Target",
@@ -3504,6 +3512,12 @@
         "browserTarget": {
           "type": "string",
           "description": "A browser builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
+          "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$",
+          "deprecated": true
+        },
+        "buildTarget": {
+          "type": "string",
+          "description": "A builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`.",
           "pattern": "^[^:\\s]+:[^:\\s]+(:[^\\s]+)?$"
         },
         "format": {
@@ -3536,7 +3550,11 @@
           "description": "Name of the file to output."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {},
+        {}
+      ]
     },
     "AngularDevkitBuildAngularBuildersKarmaSchema": {
       "title": "Karma Target",

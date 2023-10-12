@@ -68,6 +68,7 @@ export declare enum EventCustomDimension {
     SchematicCollectionName = "ep.ng_schematic_collection_name",
     SchematicName = "ep.ng_schematic_name",
     Standalone = "ep.ng_standalone",
+    SSR = "ep.ng_ssr",
     Style = "ep.ng_style",
     Routing = "ep.ng_routing",
     InlineTemplate = "ep.ng_inline_template",

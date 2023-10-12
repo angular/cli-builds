@@ -122,6 +122,12 @@
       "description": "Translate the bundles in one or more locales."
     },
     {
+      "name": "named-chunks",
+      "type": "boolean",
+      "default": false,
+      "description": "Use file name for lazy loaded chunks."
+    },
+    {
       "name": "optimization",
       "type": "boolean",
       "default": true,
@@ -142,7 +148,7 @@
     {
       "name": "output-path",
       "type": "string",
-      "description": "The full path for the new output directory, relative to the current workspace.\nBy default, writes output to a folder named dist/ in the current project."
+      "description": "The full path for the new output directory, relative to the current workspace."
     },
     {
       "name": "poll",

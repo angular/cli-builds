@@ -148,6 +148,11 @@ export interface AngularApplicationOptionsSchema {
      */
     skipTests?: boolean;
     /**
+     * Creates an application with Server-Side Rendering (SSR) and Static Site Generation
+     * (SSG/Prerendering) enabled.
+     */
+    ssr?: boolean;
+    /**
      * Creates an application based upon the standalone API, without NgModules.
      */
     standalone?: boolean;
@@ -585,6 +590,11 @@ export interface AngularNgNewOptionsSchema {
      * Do not generate "spec.ts" test files for the new project.
      */
     skipTests?: boolean;
+    /**
+     * Creates an application with Server-Side Rendering (SSR) and Static Site Generation
+     * (SSG/Prerendering) enabled.
+     */
+    ssr?: boolean;
     /**
      * Creates an application based upon the standalone API, without NgModules.
      */
