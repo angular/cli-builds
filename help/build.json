@@ -12,7 +12,7 @@
     {
       "name": "allowed-common-js-dependencies",
       "type": "array",
-      "description": "A list of CommonJS packages that are allowed to be used without a build time warning."
+      "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all."
     },
     {
       "name": "aot",

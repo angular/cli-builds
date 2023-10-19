@@ -2068,7 +2068,7 @@
           ]
         },
         "allowedCommonJsDependencies": {
-          "description": "A list of CommonJS packages that are allowed to be used without a build time warning.",
+          "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all.",
           "type": "array",
           "items": {
             "type": "string"
@@ -2696,7 +2696,7 @@
           ]
         },
         "allowedCommonJsDependencies": {
-          "description": "A list of CommonJS packages that are allowed to be used without a build time warning.",
+          "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all.",
           "type": "array",
           "items": {
             "type": "string"
@@ -3275,7 +3275,7 @@
           ]
         },
         "allowedCommonJsDependencies": {
-          "description": "A list of CommonJS packages that are allowed to be used without a build time warning.",
+          "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all.",
           "type": "array",
           "items": {
             "type": "string"
