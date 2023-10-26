@@ -41,6 +41,7 @@ const config_1 = require("../utilities/config");
 const environment_options_1 = require("../utilities/environment-options");
 const tty_1 = require("../utilities/tty");
 const error_1 = require("./error");
+const load_esm_1 = require("./load-esm");
 /**
  * Checks if it is appropriate to prompt the user to setup autocompletion. If not, does nothing. If
  * so prompts and sets up autocompletion for the user. Returns an exit code if the program should
@@ -160,8 +161,8 @@ async function shouldPromptForAutocompletionSetup(command, config) {
 async function promptForAutocompletion() {
     // Dynamically load `inquirer` so users don't have to pay the cost of parsing and executing it for
     // the 99% of builds that *don't* prompt for autocompletion.
-    const { prompt } = await Promise.resolve().then(() => __importStar(require('inquirer')));
-    const { autocomplete } = await prompt([
+    const { default: inquirer } = await (0, load_esm_1.loadEsmModule)('inquirer');
+    const { autocomplete } = await inquirer.prompt([
         {
             name: 'autocomplete',
             type: 'confirm',
