@@ -143,6 +143,7 @@ function _validateReversePeerDependencies(name, version, infoMap, logger, next) 
                 '@schematics/update',
                 '@angular-devkit/build-ng-packagr',
                 'tsickle',
+                '@nguniversal/builders',
             ];
             if (ignoredPackages.includes(installed)) {
                 continue;
