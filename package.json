@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "17.1.0-next.0+sha-cc055f7",
+  "version": "17.1.0-next.0+sha-bcd3a86",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/angular/angular-cli",
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#cc055f7",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#cc055f7",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#cc055f7",
-    "@schematics/angular": "github:angular/schematics-angular-builds#cc055f7",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#bcd3a86",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#bcd3a86",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#bcd3a86",
+    "@schematics/angular": "github:angular/schematics-angular-builds#bcd3a86",
     "@yarnpkg/lockfile": "1.1.0",
     "ansi-colors": "4.1.3",
     "ini": "4.1.1",
@@ -47,13 +47,13 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#cc055f7",
-      "@angular/ssr": "github:angular/angular-ssr-builds#cc055f7",
-      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#cc055f7",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#cc055f7",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#cc055f7",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#cc055f7",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#cc055f7"
+      "@angular/cli": "github:angular/cli-builds#bcd3a86",
+      "@angular/ssr": "github:angular/angular-ssr-builds#bcd3a86",
+      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#bcd3a86",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#bcd3a86",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#bcd3a86",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#bcd3a86",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#bcd3a86"
     }
   },
   "engines": {
