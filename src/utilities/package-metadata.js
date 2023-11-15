@@ -195,6 +195,10 @@ async function fetchPackageMetadata(name, logger, options) {
         ...npmrc,
         ...(registry ? { registry } : {}),
     });
+    if (!response.versions) {
+        // While pacote type declares that versions cannot be undefined this is not the case.
+        response.versions = {};
+    }
     // Normalize the response
     const metadata = {
         ...response,
@@ -238,6 +242,12 @@ async function getNpmPackageJson(packageName, logger, options = {}) {
         fullMetadata: true,
         ...npmrc,
         ...(registry ? { registry } : {}),
+    }).then((response) => {
+        // While pacote type declares that versions cannot be undefined this is not the case.
+        if (!response.versions) {
+            response.versions = {};
+        }
+        return response;
     });
     npmPackageJsonCache.set(packageName, response);
     return response;
