@@ -10,8 +10,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const module_1 = __importDefault(require("module"));
-const path_1 = require("path");
+const node_module_1 = __importDefault(require("node:module"));
+const node_path_1 = require("node:path");
 const command_module_1 = require("../../command-builder/command-module");
 const color_1 = require("../../utilities/color");
 const command_config_1 = require("../command-config");
@@ -22,9 +22,7 @@ const SUPPORTED_NODE_MAJORS = [18, 20];
 const PACKAGE_PATTERNS = [
     /^@angular\/.*/,
     /^@angular-devkit\/.*/,
-    /^@bazel\/.*/,
     /^@ngtools\/.*/,
-    /^@nguniversal\/.*/,
     /^@schematics\/.*/,
     /^rxjs$/,
     /^typescript$/,
@@ -42,9 +40,9 @@ class VersionCommandModule extends command_module_1.CommandModule {
     }
     async run() {
         const { packageManager, logger, root } = this.context;
-        const localRequire = module_1.default.createRequire((0, path_1.resolve)(__filename, '../../../'));
+        const localRequire = node_module_1.default.createRequire((0, node_path_1.resolve)(__filename, '../../../'));
         // Trailing slash is used to allow the path to be treated as a directory
-        const workspaceRequire = module_1.default.createRequire(root + '/');
+        const workspaceRequire = node_module_1.default.createRequire(root + '/');
         const cliPackage = localRequire('./package.json');
         let workspacePackage;
         try {
