@@ -46,6 +46,7 @@ class SchematicsCommandModule extends command_module_1.CommandModule {
             .option('dry-run', {
             describe: 'Run through and reports activity without writing out results.',
             type: 'boolean',
+            alias: ['d'],
             default: false,
         })
             .option('defaults', {
