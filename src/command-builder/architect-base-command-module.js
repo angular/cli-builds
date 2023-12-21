@@ -6,14 +6,36 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArchitectBaseCommandModule = void 0;
 const architect_1 = require("@angular-devkit/architect");
 const node_1 = require("@angular-devkit/architect/node");
 const core_1 = require("@angular-devkit/core");
-const child_process_1 = require("child_process");
-const fs_1 = require("fs");
-const path_1 = require("path");
+const node_fs_1 = require("node:fs");
+const node_path_1 = require("node:path");
 const analytics_1 = require("../analytics/analytics");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
 const error_1 = require("../utilities/error");
@@ -139,14 +161,12 @@ class ArchitectBaseCommandModule extends command_module_1.CommandModule {
         if (!basePath) {
             return;
         }
-        // Check for a `node_modules` directory (npm, yarn non-PnP, etc.)
-        if ((0, fs_1.existsSync)((0, path_1.resolve)(basePath, 'node_modules'))) {
+        // Check if yarn PnP is used. https://yarnpkg.com/advanced/pnpapi#processversionspnp
+        if (process.versions.pnp) {
             return;
         }
-        // Check for yarn PnP files
-        if ((0, fs_1.existsSync)((0, path_1.resolve)(basePath, '.pnp.js')) ||
-            (0, fs_1.existsSync)((0, path_1.resolve)(basePath, '.pnp.cjs')) ||
-            (0, fs_1.existsSync)((0, path_1.resolve)(basePath, '.pnp.mjs'))) {
+        // Check for a `node_modules` directory (npm, yarn non-PnP, etc.)
+        if ((0, node_fs_1.existsSync)((0, node_path_1.resolve)(basePath, 'node_modules'))) {
             return;
         }
         this.context.logger.warn(`Node packages may not be installed. Try installing with '${this.context.packageManager.name} install'.`);
@@ -172,13 +192,14 @@ class ArchitectBaseCommandModule extends command_module_1.CommandModule {
             const packageToInstall = await this.getMissingTargetPackageToInstall(choices);
             if (packageToInstall) {
                 // Example run: `ng add @angular-eslint/schematics`.
-                const binPath = (0, path_1.resolve)(__dirname, '../../bin/ng.js');
-                const { error } = (0, child_process_1.spawnSync)(process.execPath, [binPath, 'add', packageToInstall], {
-                    stdio: 'inherit',
+                const AddCommandModule = (await Promise.resolve().then(() => __importStar(require('../commands/add/cli')))).default;
+                await new AddCommandModule(this.context).run({
+                    interactive: true,
+                    force: false,
+                    dryRun: false,
+                    defaults: false,
+                    collection: packageToInstall,
                 });
-                if (error) {
-                    throw error;
-                }
             }
         }
         else {
