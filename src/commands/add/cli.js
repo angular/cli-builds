@@ -36,7 +36,7 @@ const packageVersionExclusions = {
     // @angular/material@7.x versions have unbounded peer dependency ranges (>=7.0.0).
     '@angular/material': '7.x',
 };
-class AddCommadModule extends schematics_command_module_1.SchematicsCommandModule {
+class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
     describe = 'Adds support for an external library to your project.';
     longDescriptionPath = (0, path_1.join)(__dirname, 'long-description.md');
@@ -362,4 +362,4 @@ class AddCommadModule extends schematics_command_module_1.SchematicsCommandModul
         return false;
     }
 }
-exports.default = AddCommadModule;
+exports.default = AddCommandModule;
