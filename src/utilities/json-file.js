@@ -10,10 +10,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseJson = exports.readAndParseJson = exports.JSONFile = void 0;
 const fs_1 = require("fs");
 const jsonc_parser_1 = require("jsonc-parser");
+const eol_1 = require("./eol");
 /** @internal */
 class JSONFile {
     path;
     content;
+    eol;
     constructor(path) {
         this.path = path;
         const buffer = (0, fs_1.readFileSync)(this.path);
@@ -23,6 +25,7 @@ class JSONFile {
         else {
             throw new Error(`Could not read '${path}'.`);
         }
+        this.eol = (0, eol_1.getEOL)(this.content);
     }
     _jsonAst;
     get JsonAst() {
@@ -66,6 +69,7 @@ class JSONFile {
             formattingOptions: {
                 insertSpaces: true,
                 tabSize: 2,
+                eol: this.eol,
             },
         });
         if (edits.length === 0) {
