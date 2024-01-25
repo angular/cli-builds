@@ -113,6 +113,14 @@ class PackageManagerUtils {
                     prefix: '--prefix',
                     noLockfile: '--no-lockfile',
                 };
+            case workspace_schema_1.PackageManager.Bun:
+                return {
+                    saveDev: '--development',
+                    install: 'add',
+                    installAll: 'install',
+                    prefix: '--cwd',
+                    noLockfile: '',
+                };
             default:
                 return {
                     saveDev: '--save-dev',
@@ -175,12 +183,13 @@ class PackageManagerUtils {
         const hasNpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Npm);
         const hasYarnLock = this.hasLockfile(workspace_schema_1.PackageManager.Yarn);
         const hasPnpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Pnpm);
+        const hasBunLock = this.hasLockfile(workspace_schema_1.PackageManager.Bun);
         // PERF NOTE: `this.getVersion` spawns the package a the child_process which can take around ~300ms at times.
         // Therefore, we should only call this method when needed. IE: don't call `this.getVersion(PackageManager.Pnpm)` unless truly needed.
         // The result of this method is not stored in a variable because it's memoized.
         if (hasNpmLock) {
             // Has NPM lock file.
-            if (!hasYarnLock && !hasPnpmLock && this.getVersion(workspace_schema_1.PackageManager.Npm)) {
+            if (!hasYarnLock && !hasPnpmLock && !hasBunLock && this.getVersion(workspace_schema_1.PackageManager.Npm)) {
                 // Only NPM lock file and NPM binary is available.
                 return workspace_schema_1.PackageManager.Npm;
             }
@@ -195,16 +204,24 @@ class PackageManagerUtils {
                 // PNPM lock file and PNPM binary is available.
                 return workspace_schema_1.PackageManager.Pnpm;
             }
+            else if (hasBunLock && this.getVersion(workspace_schema_1.PackageManager.Bun)) {
+                // Bun lock file and Bun binary is available.
+                return workspace_schema_1.PackageManager.Bun;
+            }
         }
         if (!this.getVersion(workspace_schema_1.PackageManager.Npm)) {
             // Doesn't have NPM installed.
             const hasYarn = !!this.getVersion(workspace_schema_1.PackageManager.Yarn);
             const hasPnpm = !!this.getVersion(workspace_schema_1.PackageManager.Pnpm);
-            if (hasYarn && !hasPnpm) {
+            const hasBun = !!this.getVersion(workspace_schema_1.PackageManager.Bun);
+            if (hasYarn && !hasPnpm && !hasBun) {
                 return workspace_schema_1.PackageManager.Yarn;
             }
-            else if (!hasYarn && hasPnpm) {
+            else if (hasPnpm && !hasYarn && !hasBun) {
                 return workspace_schema_1.PackageManager.Pnpm;
+            }
+            else if (hasBun && !hasYarn && !hasPnpm) {
+                return workspace_schema_1.PackageManager.Bun;
             }
         }
         // TODO: This should eventually inform the user of ambiguous package manager usage.
@@ -219,6 +236,9 @@ class PackageManagerUtils {
                 break;
             case workspace_schema_1.PackageManager.Pnpm:
                 lockfileName = 'pnpm-lock.yaml';
+                break;
+            case workspace_schema_1.PackageManager.Bun:
+                lockfileName = 'bun.lockb';
                 break;
             case workspace_schema_1.PackageManager.Npm:
             default:

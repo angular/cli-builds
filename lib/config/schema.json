@@ -53,7 +53,8 @@
             "npm",
             "cnpm",
             "yarn",
-            "pnpm"
+            "pnpm",
+            "bun"
           ]
         },
         "warnings": {
@@ -119,7 +120,8 @@
             "npm",
             "cnpm",
             "yarn",
-            "pnpm"
+            "pnpm",
+            "bun"
           ]
         },
         "warnings": {
@@ -1574,7 +1576,8 @@
             "npm",
             "yarn",
             "pnpm",
-            "cnpm"
+            "cnpm",
+            "bun"
           ]
         },
         "standalone": {
