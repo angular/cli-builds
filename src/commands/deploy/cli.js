@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
+const node_path_1 = require("node:path");
 const architect_command_module_1 = require("../../command-builder/architect-command-module");
 class DeployCommandModule extends architect_command_module_1.ArchitectCommandModule {
     // The below choices should be kept in sync with the list in https://angular.io/guide/deployment
@@ -25,17 +25,13 @@ class DeployCommandModule extends architect_command_module_1.ArchitectCommandMod
             value: '@netlify-builder/deploy',
         },
         {
-            name: 'NPM',
-            value: 'ngx-deploy-npm',
-        },
-        {
             name: 'GitHub Pages',
             value: 'angular-cli-ghpages',
         },
     ];
     multiTarget = false;
     command = 'deploy [project]';
-    longDescriptionPath = (0, path_1.join)(__dirname, 'long-description.md');
+    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
     describe = 'Invokes the deploy builder for a specified project or for the default project in the workspace.';
 }
 exports.default = DeployCommandModule;
