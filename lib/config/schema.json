@@ -1853,6 +1853,11 @@
           },
           "default": []
         },
+        "clearScreen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically clear the terminal screen during rebuilds."
+        },
         "optimization": {
           "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.io/guide/workspace-config#optimization-configuration.",
           "default": true,
@@ -1935,6 +1940,13 @@
                 "empty"
               ]
             }
+          }
+        },
+        "define": {
+          "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         },
         "fileReplacements": {
@@ -3630,6 +3642,27 @@
           "type": "boolean",
           "description": "Force the development server to use the 'browser-esbuild' builder when building. This is a developer preview option for the esbuild-based build system.",
           "default": false
+        },
+        "prebundle": {
+          "description": "Enable and control the Vite-based development server's prebundling capabilities. To enable prebundling, the Angular CLI cache must also be enabled. This option has no effect when using the 'browser' or other Webpack-based builders.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "exclude": {
+                  "description": "List of package imports that should not be prebundled by the development server. The packages will be bundled into the application code itself.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
         }
       },
       "additionalProperties": false,
