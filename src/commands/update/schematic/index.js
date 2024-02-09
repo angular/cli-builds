@@ -35,7 +35,6 @@ const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const npa = __importStar(require("npm-package-arg"));
 const semver = __importStar(require("semver"));
-const error_1 = require("../../../utilities/error");
 const package_metadata_1 = require("../../../utilities/package-metadata");
 // Angular guarantees that a major is compatible with its following major (so packages that depend
 // on Angular 5 are also compatible with Angular 6). This is, in code, represented by verifying
@@ -196,14 +195,7 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
     if (!packageJsonContent) {
         throw new schematics_1.SchematicsException('Could not find a package.json. Are you in a Node project?');
     }
-    let packageJson;
-    try {
-        packageJson = JSON.parse(packageJsonContent.toString());
-    }
-    catch (e) {
-        (0, error_1.assertIsError)(e);
-        throw new schematics_1.SchematicsException('package.json could not be parsed: ' + e.message);
-    }
+    const packageJson = tree.readJson('/package.json');
     const updateDependency = (deps, name, newVersion) => {
         const oldVersion = deps[name];
         // We only respect caret and tilde ranges on update.
@@ -423,11 +415,12 @@ function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logg
     }
     // Find out the currently installed version. Either from the package.json or the node_modules/
     // TODO: figure out a way to read package-lock.json and/or yarn.lock.
+    const pkgJsonPath = `/node_modules/${name}/package.json`;
+    const pkgJsonExists = tree.exists(pkgJsonPath);
     let installedVersion;
-    const packageContent = tree.read(`/node_modules/${name}/package.json`);
-    if (packageContent) {
-        const content = JSON.parse(packageContent.toString());
-        installedVersion = content.version;
+    if (pkgJsonExists) {
+        const { version } = tree.readJson(pkgJsonPath);
+        installedVersion = version;
     }
     const packageVersionsNonDeprecated = [];
     const packageVersionsDeprecated = [];
@@ -449,7 +442,7 @@ function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logg
     if (!installedVersion) {
         throw new schematics_1.SchematicsException(`An unexpected error happened; could not determine version for package ${name}.`);
     }
-    const installedPackageJson = npmPackageJson.versions[installedVersion] || packageContent;
+    const installedPackageJson = npmPackageJson.versions[installedVersion] || pkgJsonExists;
     if (!installedPackageJson) {
         throw new schematics_1.SchematicsException(`An unexpected error happened; package ${name} has no version ${installedVersion}.`);
     }
@@ -593,22 +586,11 @@ function _addPeerDependencies(tree, packages, allDependencies, npmPackageJson, n
     }
 }
 function _getAllDependencies(tree) {
-    const packageJsonContent = tree.read('/package.json');
-    if (!packageJsonContent) {
-        throw new schematics_1.SchematicsException('Could not find a package.json. Are you in a Node project?');
-    }
-    let packageJson;
-    try {
-        packageJson = JSON.parse(packageJsonContent.toString());
-    }
-    catch (e) {
-        (0, error_1.assertIsError)(e);
-        throw new schematics_1.SchematicsException('package.json could not be parsed: ' + e.message);
-    }
+    const { dependencies, devDependencies, peerDependencies } = tree.readJson('/package.json');
     return [
-        ...Object.entries(packageJson.peerDependencies || {}),
-        ...Object.entries(packageJson.devDependencies || {}),
-        ...Object.entries(packageJson.dependencies || {}),
+        ...Object.entries(peerDependencies || {}),
+        ...Object.entries(devDependencies || {}),
+        ...Object.entries(dependencies || {}),
     ];
 }
 function _formatVersion(version) {
