@@ -2310,11 +2310,11 @@
           "properties": {
             "replace": {
               "type": "string",
-              "pattern": "\\.(([cm]?j|t)sx?|json)$"
+              "pattern": "\\.(([cm]?[jt])sx?|json)$"
             },
             "with": {
               "type": "string",
-              "pattern": "\\.(([cm]?j|t)sx?|json)$"
+              "pattern": "\\.(([cm]?[jt])sx?|json)$"
             }
           },
           "additionalProperties": false
@@ -2896,11 +2896,11 @@
               "properties": {
                 "src": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 },
                 "replaceWith": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 }
               },
               "additionalProperties": false
@@ -2910,11 +2910,11 @@
               "properties": {
                 "replace": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 },
                 "with": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 }
               },
               "additionalProperties": false
@@ -3473,11 +3473,11 @@
           "properties": {
             "replace": {
               "type": "string",
-              "pattern": "\\.(([cm]?j|t)sx?|json)$"
+              "pattern": "\\.(([cm]?[jt])sx?|json)$"
             },
             "with": {
               "type": "string",
-              "pattern": "\\.(([cm]?j|t)sx?|json)$"
+              "pattern": "\\.(([cm]?[jt])sx?|json)$"
             }
           },
           "additionalProperties": false
@@ -4819,11 +4819,11 @@
               "properties": {
                 "src": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 },
                 "replaceWith": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 }
               },
               "additionalProperties": false
@@ -4833,11 +4833,11 @@
               "properties": {
                 "replace": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 },
                 "with": {
                   "type": "string",
-                  "pattern": "\\.(([cm]?j|t)sx?|json)$"
+                  "pattern": "\\.(([cm]?[jt])sx?|json)$"
                 }
               },
               "additionalProperties": false
