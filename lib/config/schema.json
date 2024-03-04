@@ -1750,6 +1750,10 @@
           "type": "string",
           "description": "The full path for the TypeScript configuration file, relative to the current workspace."
         },
+        "deployUrl": {
+          "type": "string",
+          "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
+        },
         "scripts": {
           "description": "Global scripts to be included in the build.",
           "type": "array",
@@ -2679,8 +2683,7 @@
         },
         "deployUrl": {
           "type": "string",
-          "description": "URL where files will be deployed.",
-          "deprecated": true
+          "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
         },
         "verbose": {
           "type": "boolean",
@@ -3253,8 +3256,7 @@
         },
         "deployUrl": {
           "type": "string",
-          "description": "URL where files will be deployed.",
-          "deprecated": true
+          "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
         },
         "verbose": {
           "type": "boolean",
@@ -4659,8 +4661,7 @@
         },
         "deployUrl": {
           "type": "string",
-          "description": "URL where files will be deployed.",
-          "deprecated": true
+          "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
         },
         "vendorChunk": {
           "type": "boolean",
