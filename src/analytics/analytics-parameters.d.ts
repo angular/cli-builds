@@ -5,6 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+/** Any changes in this file needs to be done in the mts version. */
 export type PrimitiveTypes = string | number | boolean;
 /**
  * GA built-in request parameters

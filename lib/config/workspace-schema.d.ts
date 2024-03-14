@@ -552,10 +552,6 @@ export interface AngularNgNewOptionsSchema {
      */
     inlineTemplate?: boolean;
     /**
-     * Link the CLI to the global version (internal development only).
-     */
-    linkCli?: boolean;
-    /**
      * Create a workspace without any testing frameworks. (Use for learning purposes only.)
      */
     minimal?: boolean;

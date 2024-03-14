@@ -84,7 +84,7 @@ exports.RootCommands = {
     },
     'serve': {
         factory: () => Promise.resolve().then(() => __importStar(require('./serve/cli'))),
-        aliases: ['s'],
+        aliases: ['dev', 's'],
     },
     'test': {
         factory: () => Promise.resolve().then(() => __importStar(require('./test/cli'))),
