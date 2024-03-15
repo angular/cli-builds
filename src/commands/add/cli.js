@@ -10,7 +10,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("@angular-devkit/core");
 const tools_1 = require("@angular-devkit/schematics/tools");
 const module_1 = require("module");
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
@@ -291,10 +290,8 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         catch (e) {
             if (e instanceof tools_1.NodePackageDoesNotSupportSchematics) {
-                this.context.logger.error(core_1.tags.oneLine `
-          The package that you are trying to add does not support schematics. You can try using
-          a different version of the package or contact the package author to add ng-add support.
-        `);
+                this.context.logger.error('The package that you are trying to add does not support schematics.' +
+                    'You can try using a different version of the package or contact the package author to add ng-add support.');
                 return 1;
             }
             throw e;

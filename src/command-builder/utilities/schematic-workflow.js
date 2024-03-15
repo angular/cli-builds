@@ -8,7 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscribeToWorkflow = void 0;
-const core_1 = require("@angular-devkit/core");
 const color_1 = require("../../utilities/color");
 function subscribeToWorkflow(workflow, logger) {
     const files = new Set();
@@ -24,15 +23,11 @@ function subscribeToWorkflow(workflow, logger) {
                 logger.error(`ERROR! ${eventPath} ${desc}.`);
                 break;
             case 'update':
-                logs.push(core_1.tags.oneLine `
-              ${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)
-            `);
+                logs.push(`${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
                 files.add(eventPath);
                 break;
             case 'create':
-                logs.push(core_1.tags.oneLine `
-              ${color_1.colors.green('CREATE')} ${eventPath} (${event.content.length} bytes)
-            `);
+                logs.push(`${color_1.colors.green('CREATE')} ${eventPath} (${event.content.length} bytes)`);
                 files.add(eventPath);
                 break;
             case 'delete':
