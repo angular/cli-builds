@@ -2293,6 +2293,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 }
               },
@@ -2876,6 +2877,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 }
               },
@@ -3454,6 +3456,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 }
               },
@@ -4012,6 +4015,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 },
                 "ignore": {
@@ -4342,6 +4346,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 },
                 "ignore": {
@@ -4797,6 +4802,7 @@
                 },
                 "output": {
                   "type": "string",
+                  "default": "",
                   "description": "Absolute path within the output."
                 }
               },
