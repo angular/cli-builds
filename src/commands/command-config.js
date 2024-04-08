@@ -54,10 +54,6 @@ exports.RootCommands = {
     'deploy': {
         factory: () => Promise.resolve().then(() => __importStar(require('./deploy/cli'))),
     },
-    'doc': {
-        factory: () => Promise.resolve().then(() => __importStar(require('./doc/cli'))),
-        aliases: ['d'],
-    },
     'e2e': {
         factory: () => Promise.resolve().then(() => __importStar(require('./e2e/cli'))),
         aliases: ['e'],
