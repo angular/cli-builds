@@ -98,7 +98,7 @@ async function runCommand(args, logger) {
         'deprecated: %s': color_1.colors.yellow('deprecated:') + ' %s',
         'Did you mean %s?': 'Unknown command. Did you mean %s?',
     })
-        .epilogue('For more information, see https://angular.io/cli/.\n')
+        .epilogue('For more information, see https://angular.dev/cli/.\n')
         .demandCommand(1, command_1.demandCommandFailureMessage)
         .recommendCommands()
         .middleware(normalize_options_middleware_1.normalizeOptionsMiddleware)
