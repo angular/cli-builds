@@ -395,6 +395,7 @@
                   "description": "The builder used for this package.",
                   "not": {
                     "enum": [
+                      "@angular/build:application",
                       "@angular-devkit/build-angular:application",
                       "@angular-devkit/build-angular:app-shell",
                       "@angular-devkit/build-angular:browser",
@@ -437,6 +438,28 @@
               "additionalProperties": false,
               "properties": {
                 "builder": {
+                  "const": "@angular/build:application"
+                },
+                "defaultConfiguration": {
+                  "type": "string",
+                  "description": "A default named configuration to use when a target configuration is not provided."
+                },
+                "options": {
+                  "$ref": "#/definitions/AngularBuildBuildersApplicationSchema"
+                },
+                "configurations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/AngularBuildBuildersApplicationSchema"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "builder": {
                   "const": "@angular-devkit/build-angular:application"
                 },
                 "defaultConfiguration": {
@@ -444,12 +467,12 @@
                   "description": "A default named configuration to use when a target configuration is not provided."
                 },
                 "options": {
-                  "$ref": "#/definitions/AngularDevkitBuildAngularBuildersApplicationSchema"
+                  "$ref": "#/definitions/AngularBuildBuildersApplicationSchema"
                 },
                 "configurations": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/AngularDevkitBuildAngularBuildersApplicationSchema"
+                    "$ref": "#/definitions/AngularBuildBuildersApplicationSchema"
                   }
                 }
               }
@@ -1710,7 +1733,7 @@
         }
       }
     },
-    "AngularDevkitBuildAngularBuildersApplicationSchema": {
+    "AngularBuildBuildersApplicationSchema": {
       "title": "Application schema for Build Facade.",
       "description": "Application builder target options",
       "type": "object",
@@ -1720,7 +1743,7 @@
           "description": "List of static application assets.",
           "default": [],
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersApplicationSchema/definitions/assetPattern"
+            "$ref": "#/definitions/AngularBuildBuildersApplicationSchema/definitions/assetPattern"
           }
         },
         "browser": {
@@ -1951,7 +1974,7 @@
           "description": "Replace compilation source files with other compilation source files in the build.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersApplicationSchema/definitions/fileReplacement"
+            "$ref": "#/definitions/AngularBuildBuildersApplicationSchema/definitions/fileReplacement"
           },
           "default": []
         },
@@ -2187,7 +2210,7 @@
           "description": "Budget thresholds to ensure parts of your application stay within boundaries which you set.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AngularDevkitBuildAngularBuildersApplicationSchema/definitions/budget"
+            "$ref": "#/definitions/AngularBuildBuildersApplicationSchema/definitions/budget"
           },
           "default": []
         },
