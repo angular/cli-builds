@@ -3685,7 +3685,6 @@
         },
         "prebundle": {
           "description": "Enable and control the Vite-based development server's prebundling capabilities. To enable prebundling, the Angular CLI cache must also be enabled.",
-          "default": true,
           "oneOf": [
             {
               "type": "boolean"
