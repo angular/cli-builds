@@ -3932,11 +3932,7 @@
           "description": "Name of the file to output."
         }
       },
-      "additionalProperties": false,
-      "anyOf": [
-        {},
-        {}
-      ]
+      "additionalProperties": false
     },
     "AngularDevkitBuildAngularBuildersKarmaSchema": {
       "title": "Karma Target",
