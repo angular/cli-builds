@@ -785,6 +785,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const { logger } = this.context;
         const numberOfMigrations = optionalMigrations.length;
         logger.info(`This package has ${numberOfMigrations} optional migration${numberOfMigrations > 1 ? 's' : ''} that can be executed.`);
+        logger.info('Optional migrations may be skipped and executed after the update process if preferred.');
         logger.info(''); // Extra trailing newline.
         if (!(0, tty_1.isTTY)()) {
             for (const migration of optionalMigrations) {
