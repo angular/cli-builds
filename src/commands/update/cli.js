@@ -62,7 +62,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
     scope = command_module_1.CommandScope.In;
     shouldReportAnalytics = false;
     command = 'update [packages..]';
-    describe = 'Updates your workspace and its dependencies. See https://update.angular.io/.';
+    describe = 'Updates your workspace and its dependencies. See https://update.angular.dev/.';
     longDescriptionPath = (0, path_1.join)(__dirname, 'long-description.md');
     builder(localYargs) {
         return localYargs
@@ -514,14 +514,14 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                         // Before version 6, the major versions were not always sequential.
                         // Example @angular/core skipped version 3, @angular/cli skipped versions 2-5.
                         logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
-                            `For more information about the update process, see https://update.angular.io/.`);
+                            `For more information about the update process, see https://update.angular.dev/.`);
                     }
                     else {
                         const nextMajorVersionFromCurrent = currentMajorVersion + 1;
                         logger.error(`Updating multiple major versions of '${name}' at once is not supported. Please migrate each major version individually.\n` +
                             `Run 'ng update ${name}@${nextMajorVersionFromCurrent}' in your workspace directory ` +
                             `to update to latest '${nextMajorVersionFromCurrent}.x' version of '${name}'.\n\n` +
-                            `For more information about the update process, see https://update.angular.io/?v=${currentMajorVersion}.0-${nextMajorVersionFromCurrent}.0`);
+                            `For more information about the update process, see https://update.angular.dev/?v=${currentMajorVersion}.0-${nextMajorVersionFromCurrent}.0`);
                     }
                     return 1;
                 }
