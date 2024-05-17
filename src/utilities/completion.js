@@ -41,7 +41,7 @@ const config_1 = require("../utilities/config");
 const environment_options_1 = require("../utilities/environment-options");
 const tty_1 = require("../utilities/tty");
 const error_1 = require("./error");
-const load_esm_1 = require("./load-esm");
+const prompt_1 = require("./prompt");
 /**
  * Checks if it is appropriate to prompt the user to setup autocompletion. If not, does nothing. If
  * so prompts and sets up autocompletion for the user. Returns an exit code if the program should
@@ -159,24 +159,14 @@ async function shouldPromptForAutocompletionSetup(command, config) {
     return true;
 }
 async function promptForAutocompletion() {
-    // Dynamically load `inquirer` so users don't have to pay the cost of parsing and executing it for
-    // the 99% of builds that *don't* prompt for autocompletion.
-    const { default: inquirer } = await (0, load_esm_1.loadEsmModule)('inquirer');
-    const { autocomplete } = await inquirer.prompt([
-        {
-            name: 'autocomplete',
-            type: 'confirm',
-            message: `
+    const autocomplete = await (0, prompt_1.askConfirmation)(`
 Would you like to enable autocompletion? This will set up your terminal so pressing TAB while typing
 Angular CLI commands will show possible options and autocomplete arguments. (Enabling autocompletion
 will modify configuration files in your home directory.)
-      `
-                .split('\n')
-                .join(' ')
-                .trim(),
-            default: true,
-        },
-    ]);
+        `
+        .split('\n')
+        .join(' ')
+        .trim(), true);
     return autocomplete;
 }
 /**
