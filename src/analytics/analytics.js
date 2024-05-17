@@ -13,7 +13,7 @@ const crypto_1 = require("crypto");
 const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const environment_options_1 = require("../utilities/environment-options");
-const load_esm_1 = require("../utilities/load-esm");
+const prompt_1 = require("../utilities/prompt");
 const tty_1 = require("../utilities/tty");
 /* eslint-disable no-console */
 /**
@@ -67,22 +67,14 @@ async function promptAnalytics(context, global, force = false) {
         throw new Error(`Could not find a ${level} workspace. Are you in a project?`);
     }
     if (force || (0, tty_1.isTTY)()) {
-        const { default: inquirer } = await (0, load_esm_1.loadEsmModule)('inquirer');
-        const answers = await inquirer.prompt([
-            {
-                type: 'confirm',
-                name: 'analytics',
-                message: core_1.tags.stripIndents `
-           Would you like to share pseudonymous usage data about this project with the Angular Team
-           at Google under Google's Privacy Policy at https://policies.google.com/privacy. For more
-           details and how to change this setting, see https://angular.io/analytics.
+        const answer = await (0, prompt_1.askConfirmation)(`
+Would you like to share pseudonymous usage data about this project with the Angular Team
+at Google under Google's Privacy Policy at https://policies.google.com/privacy. For more
+details and how to change this setting, see https://angular.io/analytics.
 
-         `,
-                default: false,
-            },
-        ]);
-        await setAnalyticsConfig(global, answers.analytics);
-        if (answers.analytics) {
+  `, false);
+        await setAnalyticsConfig(global, answer);
+        if (answer) {
             console.log('');
             console.log(core_1.tags.stripIndent `
          Thank you for sharing pseudonymous usage data. Should you change your mind, the following
