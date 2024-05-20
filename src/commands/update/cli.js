@@ -785,8 +785,6 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const { logger } = this.context;
         const numberOfMigrations = optionalMigrations.length;
         logger.info(`This package has ${numberOfMigrations} optional migration${numberOfMigrations > 1 ? 's' : ''} that can be executed.`);
-        logger.info('Optional migrations may be skipped and executed after the update process if preferred.');
-        logger.info(''); // Extra trailing newline.
         if (!(0, tty_1.isTTY)()) {
             for (const migration of optionalMigrations) {
                 const { title } = getMigrationTitleAndDescription(migration);
@@ -796,10 +794,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             }
             return undefined;
         }
+        logger.info('Optional migrations may be skipped and executed after the update process, if preferred.');
+        logger.info(''); // Extra trailing newline.
         const answer = await (0, prompt_1.askChoices)(`Select the migrations that you'd like to run`, optionalMigrations.map((migration) => {
-            const { title } = getMigrationTitleAndDescription(migration);
+            const { title, documentation } = getMigrationTitleAndDescription(migration);
             return {
-                name: title,
+                name: `[${color_1.colors.white(migration.name)}] ${title}${documentation ? ` (${documentation})` : ''}`,
                 value: migration.name,
             };
         }), null);
@@ -867,5 +867,8 @@ function getMigrationTitleAndDescription(migration) {
     return {
         title: title.endsWith('.') ? title : title + '.',
         description: description.join('.\n  '),
+        documentation: migration.documentation
+            ? new URL(migration.documentation, 'https://angular.dev').href
+            : undefined,
     };
 }
