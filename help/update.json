@@ -78,6 +78,11 @@
       "type": "boolean",
       "default": false,
       "description": "Display additional details about internal operations during execution."
+    },
+    {
+      "name": "version",
+      "type": "boolean",
+      "description": "Show Angular CLI version."
     }
   ]
 }

@@ -139,8 +139,8 @@ class CommandModule {
             return undefined;
         }
         const userId = await (0, analytics_1.getAnalyticsUserId)(this.context, 
-        // Don't prompt for `ng update` and `ng analytics` commands.
-        ['update', 'analytics'].includes(this.commandName));
+        // Don't prompt on `ng update`, 'ng version' or `ng analytics`.
+        ['version', 'update', 'analytics'].includes(this.commandName));
         return userId ? new analytics_collector_1.AnalyticsCollector(this.context, userId) : undefined;
     }
     /**

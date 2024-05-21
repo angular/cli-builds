@@ -17,6 +17,11 @@
       "type": "string",
       "description": "The Architect target to run provided in the following format `project:target[:configuration]`.",
       "positional": 0
+    },
+    {
+      "name": "version",
+      "type": "boolean",
+      "description": "Show Angular CLI version."
     }
   ]
 }
