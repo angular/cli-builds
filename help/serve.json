@@ -135,6 +135,11 @@
       "description": "Adds more details to output logging."
     },
     {
+      "name": "version",
+      "type": "boolean",
+      "description": "Show Angular CLI version."
+    },
+    {
       "name": "watch",
       "type": "boolean",
       "default": true,

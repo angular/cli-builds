@@ -18,6 +18,7 @@ const color_1 = require("../utilities/color");
 const config_1 = require("../utilities/config");
 const error_1 = require("../utilities/error");
 const package_manager_1 = require("../utilities/package-manager");
+const version_1 = require("../utilities/version");
 const command_module_1 = require("./command-module");
 const command_1 = require("./utilities/command");
 const json_help_1 = require("./utilities/json-help");
@@ -102,7 +103,7 @@ async function runCommand(args, logger) {
         .demandCommand(1, command_1.demandCommandFailureMessage)
         .recommendCommands()
         .middleware(normalize_options_middleware_1.normalizeOptionsMiddleware)
-        .version(false)
+        .version('version', 'Show Angular CLI version.', version_1.VERSION.full)
         .showHelpOnFail(false)
         .strict()
         .fail((msg, err) => {
