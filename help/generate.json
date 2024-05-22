@@ -44,11 +44,6 @@
       "type": "string",
       "description": "The [collection:schematic] to run.",
       "positional": 0
-    },
-    {
-      "name": "version",
-      "type": "boolean",
-      "description": "Show Angular CLI version."
     }
   ],
   "subcommands": [
