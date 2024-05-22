@@ -11,11 +11,6 @@
       "name": "help",
       "type": "boolean",
       "description": "Shows a help message for this command in the console."
-    },
-    {
-      "name": "version",
-      "type": "boolean",
-      "description": "Show Angular CLI version."
     }
   ],
   "subcommands": [

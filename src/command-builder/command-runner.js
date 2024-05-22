@@ -71,6 +71,8 @@ async function runCommand(args, logger) {
         const usageInstance = localYargs.getInternalMethods().getUsageInstance();
         usageInstance.help = () => (0, json_help_1.jsonHelpUsage)();
     }
+    // Add default command to support version option when no subcommand is specified
+    localYargs.command('*', false, (builder) => builder.version('version', 'Show Angular CLI version.', version_1.VERSION.full));
     await localYargs
         .scriptName('ng')
         // https://github.com/yargs/yargs/blob/main/docs/advanced.md#customizing-yargs-parser
@@ -103,7 +105,7 @@ async function runCommand(args, logger) {
         .demandCommand(1, command_1.demandCommandFailureMessage)
         .recommendCommands()
         .middleware(normalize_options_middleware_1.normalizeOptionsMiddleware)
-        .version('version', 'Show Angular CLI version.', version_1.VERSION.full)
+        .version(false)
         .showHelpOnFail(false)
         .strict()
         .fail((msg, err) => {
