@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_path_1 = require("node:path");
 const architect_command_module_1 = require("../../command-builder/architect-command-module");
 class DeployCommandModule extends architect_command_module_1.ArchitectCommandModule {
-    // The below choices should be kept in sync with the list in https://angular.io/guide/deployment
+    // The below choices should be kept in sync with the list in https://angular.dev/tools/cli/deployment
     missingTargetChoices = [
         {
             name: 'Amazon S3',
