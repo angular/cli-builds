@@ -70,7 +70,7 @@ async function promptAnalytics(context, global, force = false) {
         const answer = await (0, prompt_1.askConfirmation)(`
 Would you like to share pseudonymous usage data about this project with the Angular Team
 at Google under Google's Privacy Policy at https://policies.google.com/privacy. For more
-details and how to change this setting, see https://angular.io/analytics.
+details and how to change this setting, see https://angular.dev/cli/analytics.
 
   `, false);
         await setAnalyticsConfig(global, answer);
