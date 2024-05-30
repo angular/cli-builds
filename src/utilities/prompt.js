@@ -7,7 +7,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.askChoices = exports.askQuestion = exports.askConfirmation = void 0;
+exports.askConfirmation = askConfirmation;
+exports.askQuestion = askQuestion;
+exports.askChoices = askChoices;
 const load_esm_1 = require("./load-esm");
 const tty_1 = require("./tty");
 async function askConfirmation(message, defaultResponse, noTTYResponse) {
@@ -25,7 +27,6 @@ async function askConfirmation(message, defaultResponse, noTTYResponse) {
     const answers = await inquirer.prompt([question]);
     return answers['confirmation'];
 }
-exports.askConfirmation = askConfirmation;
 async function askQuestion(message, choices, defaultResponseIndex, noTTYResponse) {
     if (!(0, tty_1.isTTY)()) {
         return noTTYResponse;
@@ -42,7 +43,6 @@ async function askQuestion(message, choices, defaultResponseIndex, noTTYResponse
     const answers = await inquirer.prompt([question]);
     return answers['answer'];
 }
-exports.askQuestion = askQuestion;
 async function askChoices(message, choices, noTTYResponse) {
     if (!(0, tty_1.isTTY)()) {
         return noTTYResponse;
@@ -58,4 +58,3 @@ async function askChoices(message, choices, noTTYResponse) {
     const answers = await inquirer.prompt([question]);
     return answers['answer'];
 }
-exports.askChoices = askChoices;

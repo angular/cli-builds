@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runCommand = void 0;
+exports.runCommand = runCommand;
 const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 const command_config_1 = require("../commands/command-config");
@@ -119,7 +119,6 @@ async function runCommand(args, logger) {
         .parseAsync();
     return process.exitCode ?? 0;
 }
-exports.runCommand = runCommand;
 /**
  * Get the commands that need to be registered.
  * @returns One or more command factories that needs to be registered.

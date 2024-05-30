@@ -7,7 +7,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addCommandModuleToYargs = exports.demandCommandFailureMessage = void 0;
+exports.demandCommandFailureMessage = void 0;
+exports.addCommandModuleToYargs = addCommandModuleToYargs;
 const command_module_1 = require("../command-module");
 exports.demandCommandFailureMessage = `You need to specify a command before moving on. Use '--help' to view the available commands.`;
 function addCommandModuleToYargs(localYargs, commandModule, context) {
@@ -35,4 +36,3 @@ function addCommandModuleToYargs(localYargs, commandModule, context) {
         handler: (args) => cmd.handler(args),
     });
 }
-exports.addCommandModuleToYargs = addCommandModuleToYargs;

@@ -30,7 +30,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.colors = exports.removeColor = void 0;
+exports.colors = void 0;
+exports.removeColor = removeColor;
 const ansiColors = __importStar(require("ansi-colors"));
 const tty_1 = require("tty");
 function supportColor() {
@@ -62,7 +63,6 @@ function removeColor(text) {
     // see: https://github.com/doowb/ansi-colors/blob/a4794363369d7b4d1872d248fc43a12761640d8e/index.js#L38
     return text.replace(ansiColors.ansiRegex, '');
 }
-exports.removeColor = removeColor;
 // Create a separate instance to prevent unintended global changes to the color configuration
 const colors = ansiColors.create();
 exports.colors = colors;

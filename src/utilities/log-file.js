@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.writeErrorToLogFile = void 0;
+exports.writeErrorToLogFile = writeErrorToLogFile;
 const fs_1 = require("fs");
 const os_1 = require("os");
 const path_1 = require("path");
@@ -25,4 +25,3 @@ function writeErrorToLogFile(error) {
     (0, fs_1.appendFileSync)(logPath, '[error] ' + (error.stack || error) + '\n\n');
     return logPath;
 }
-exports.writeErrorToLogFile = writeErrorToLogFile;

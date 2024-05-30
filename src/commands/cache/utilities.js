@@ -7,7 +7,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCacheConfig = exports.updateCacheConfig = void 0;
+exports.updateCacheConfig = updateCacheConfig;
+exports.getCacheConfig = getCacheConfig;
 const core_1 = require("@angular-devkit/core");
 const path_1 = require("path");
 const workspace_schema_1 = require("../../../lib/config/workspace-schema");
@@ -17,7 +18,6 @@ function updateCacheConfig(workspace, key, value) {
     cache[key] = value;
     return workspace.save();
 }
-exports.updateCacheConfig = updateCacheConfig;
 function getCacheConfig(workspace) {
     if (!workspace) {
         throw new Error(`Cannot retrieve cache configuration as workspace is not defined.`);
@@ -44,4 +44,3 @@ function getCacheConfig(workspace) {
         enabled,
     };
 }
-exports.getCacheConfig = getCacheConfig;

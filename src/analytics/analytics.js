@@ -7,7 +7,12 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAnalyticsInfoString = exports.getAnalyticsUserId = exports.promptAnalytics = exports.setAnalyticsConfig = exports.isPackageNameSafeForAnalytics = exports.analyticsPackageSafelist = void 0;
+exports.analyticsPackageSafelist = void 0;
+exports.isPackageNameSafeForAnalytics = isPackageNameSafeForAnalytics;
+exports.setAnalyticsConfig = setAnalyticsConfig;
+exports.promptAnalytics = promptAnalytics;
+exports.getAnalyticsUserId = getAnalyticsUserId;
+exports.getAnalyticsInfoString = getAnalyticsInfoString;
 const core_1 = require("@angular-devkit/core");
 const crypto_1 = require("crypto");
 const color_1 = require("../utilities/color");
@@ -35,7 +40,6 @@ function isPackageNameSafeForAnalytics(name) {
         }
     });
 }
-exports.isPackageNameSafeForAnalytics = isPackageNameSafeForAnalytics;
 /**
  * Set analytics settings. This does not work if the user is not inside a project.
  * @param global Which config to use. "global" for user-level, and "local" for project-level.
@@ -54,7 +58,6 @@ async function setAnalyticsConfig(global, value) {
     cli.analytics = value === true ? (0, crypto_1.randomUUID)() : value;
     await workspace.save();
 }
-exports.setAnalyticsConfig = setAnalyticsConfig;
 /**
  * Prompt the user for usage gathering permission.
  * @param force Whether to ask regardless of whether or not the user is using an interactive shell.
@@ -89,7 +92,6 @@ details and how to change this setting, see https://angular.dev/cli/analytics.
     }
     return false;
 }
-exports.promptAnalytics = promptAnalytics;
 /**
  * Get the analytics user id.
  *
@@ -154,7 +156,6 @@ async function getAnalyticsUserId(context, skipPrompt = false) {
     }
     return globalConfig;
 }
-exports.getAnalyticsUserId = getAnalyticsUserId;
 function analyticsConfigValueToHumanFormat(value) {
     if (value === false) {
         return 'disabled';
@@ -179,4 +180,3 @@ async function getAnalyticsInfoString(context) {
      Effective status: ${analyticsInstance ? 'enabled' : 'disabled'}
    ` + '\n');
 }
-exports.getAnalyticsInfoString = getAnalyticsInfoString;

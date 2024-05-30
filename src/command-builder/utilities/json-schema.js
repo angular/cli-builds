@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseJsonSchemaToOptions = void 0;
+exports.parseJsonSchemaToOptions = parseJsonSchemaToOptions;
 const core_1 = require("@angular-devkit/core");
 async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
     const options = [];
@@ -141,4 +141,3 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
         return a.name.localeCompare(b.name);
     });
 }
-exports.parseJsonSchemaToOptions = parseJsonSchemaToOptions;

@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.subscribeToWorkflow = void 0;
+exports.subscribeToWorkflow = subscribeToWorkflow;
 const color_1 = require("../../utilities/color");
 function subscribeToWorkflow(workflow, logger) {
     const files = new Set();
@@ -60,4 +60,3 @@ function subscribeToWorkflow(workflow, logger) {
         },
     };
 }
-exports.subscribeToWorkflow = subscribeToWorkflow;

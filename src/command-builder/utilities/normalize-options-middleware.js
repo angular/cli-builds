@@ -30,7 +30,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.normalizeOptionsMiddleware = void 0;
+exports.normalizeOptionsMiddleware = normalizeOptionsMiddleware;
 const yargs = __importStar(require("yargs"));
 /**
  * A Yargs middleware that normalizes non Array options when the argument has been provided multiple times.
@@ -56,4 +56,3 @@ function normalizeOptionsMiddleware(args) {
         }
     }
 }
-exports.normalizeOptionsMiddleware = normalizeOptionsMiddleware;

@@ -30,7 +30,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findWorkspaceFile = void 0;
+exports.findWorkspaceFile = findWorkspaceFile;
 const core_1 = require("@angular-devkit/core");
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
@@ -61,7 +61,6 @@ function findWorkspaceFile(currentDirectory = process.cwd()) {
     }
     return configFilePath;
 }
-exports.findWorkspaceFile = findWorkspaceFile;
 function containsCliDep(obj) {
     const pkgName = '@angular/cli';
     if (!obj) {

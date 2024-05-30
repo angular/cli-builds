@@ -30,7 +30,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasGlobalCliInstall = exports.initializeAutocomplete = exports.considerSettingUpAutocompletion = void 0;
+exports.considerSettingUpAutocompletion = considerSettingUpAutocompletion;
+exports.initializeAutocomplete = initializeAutocomplete;
+exports.hasGlobalCliInstall = hasGlobalCliInstall;
 const core_1 = require("@angular-devkit/core");
 const child_process_1 = require("child_process");
 const fs_1 = require("fs");
@@ -95,7 +97,6 @@ Appended \`source <(ng completion script)\` to \`${rcFile}\`. Restart your termi
     await setCompletionConfig({ ...completionConfig, prompted: true });
     return undefined;
 }
-exports.considerSettingUpAutocompletion = considerSettingUpAutocompletion;
 async function getCompletionConfig() {
     const wksp = await (0, config_1.getWorkspace)('global');
     return wksp?.getCli()?.['completion'];
@@ -207,7 +208,6 @@ async function initializeAutocomplete() {
     }
     return rcFile;
 }
-exports.initializeAutocomplete = initializeAutocomplete;
 /** Returns an ordered list of possible candidates of RC files used by the given shell. */
 function getShellRunCommandCandidates(shell, home) {
     if (shell.toLowerCase().includes('bash')) {
@@ -257,4 +257,3 @@ function hasGlobalCliInstall() {
         });
     });
 }
-exports.hasGlobalCliInstall = hasGlobalCliInstall;

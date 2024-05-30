@@ -30,7 +30,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProjectDependencies = exports.findPackageJson = exports.readPackageJson = void 0;
+exports.readPackageJson = readPackageJson;
+exports.findPackageJson = findPackageJson;
+exports.getProjectDependencies = getProjectDependencies;
 const fs = __importStar(require("fs"));
 const path_1 = require("path");
 const resolve = __importStar(require("resolve"));
@@ -50,7 +52,6 @@ async function readPackageJson(packageJsonPath) {
         return undefined;
     }
 }
-exports.readPackageJson = readPackageJson;
 function findPackageJson(workspaceDir, packageName) {
     try {
         // avoid require.resolve here, see: https://github.com/angular/angular-cli/pull/18610#issuecomment-681980185
@@ -61,7 +62,6 @@ function findPackageJson(workspaceDir, packageName) {
         return undefined;
     }
 }
-exports.findPackageJson = findPackageJson;
 async function getProjectDependencies(dir) {
     const pkg = await readPackageJson((0, path_1.join)(dir, 'package.json'));
     if (!pkg) {
@@ -82,4 +82,3 @@ async function getProjectDependencies(dir) {
     }
     return results;
 }
-exports.getProjectDependencies = getProjectDependencies;

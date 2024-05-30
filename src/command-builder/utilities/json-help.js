@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonHelpUsage = void 0;
+exports.jsonHelpUsage = jsonHelpUsage;
 const yargs_1 = __importDefault(require("yargs"));
 const yargsDefaultCommandRegExp = /^\$0|\*/;
 function jsonHelpUsage() {
@@ -75,7 +75,6 @@ function jsonHelpUsage() {
     };
     return JSON.stringify(output, undefined, 2);
 }
-exports.jsonHelpUsage = jsonHelpUsage;
 function parseDescription(rawDescription) {
     try {
         const { longDescription, describe: shortDescription, longDescriptionRelativePath, } = JSON.parse(rawDescription);

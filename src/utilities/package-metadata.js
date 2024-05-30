@@ -30,7 +30,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNpmPackageJson = exports.fetchPackageManifest = exports.fetchPackageMetadata = void 0;
+exports.fetchPackageMetadata = fetchPackageMetadata;
+exports.fetchPackageManifest = fetchPackageManifest;
+exports.getNpmPackageJson = getNpmPackageJson;
 const lockfile = __importStar(require("@yarnpkg/lockfile"));
 const fs_1 = require("fs");
 const ini = __importStar(require("ini"));
@@ -217,7 +219,6 @@ async function fetchPackageMetadata(name, logger, options) {
     }
     return metadata;
 }
-exports.fetchPackageMetadata = fetchPackageMetadata;
 async function fetchPackageManifest(name, logger, options = {}) {
     const { usingYarn = false, verbose = false, registry } = options;
     ensureNpmrc(logger, usingYarn, verbose);
@@ -229,7 +230,6 @@ async function fetchPackageManifest(name, logger, options = {}) {
     });
     return response;
 }
-exports.fetchPackageManifest = fetchPackageManifest;
 async function getNpmPackageJson(packageName, logger, options = {}) {
     const cachedResponse = npmPackageJsonCache.get(packageName);
     if (cachedResponse) {
@@ -252,4 +252,3 @@ async function getNpmPackageJson(packageName, logger, options = {}) {
     npmPackageJsonCache.set(packageName, response);
     return response;
 }
-exports.getNpmPackageJson = getNpmPackageJson;

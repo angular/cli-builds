@@ -7,7 +7,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseJson = exports.readAndParseJson = exports.JSONFile = void 0;
+exports.JSONFile = void 0;
+exports.readAndParseJson = readAndParseJson;
+exports.parseJson = parseJson;
 const fs_1 = require("fs");
 const jsonc_parser_1 = require("jsonc-parser");
 const eol_1 = require("./eol");
@@ -93,7 +95,6 @@ function readAndParseJson(path) {
     }
     return content;
 }
-exports.readAndParseJson = readAndParseJson;
 function formatError(path, errors) {
     const { error, offset } = errors[0];
     throw new Error(`Failed to parse "${path}" as JSON AST Object. ${(0, jsonc_parser_1.printParseErrorCode)(error)} at location: ${offset}.`);
@@ -102,4 +103,3 @@ function formatError(path, errors) {
 function parseJson(content) {
     return (0, jsonc_parser_1.parse)(content, undefined, { allowTrailingComma: true });
 }
-exports.parseJson = parseJson;

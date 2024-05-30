@@ -30,7 +30,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isWarningEnabled = exports.getSchematicDefaults = exports.getConfiguredPackageManager = exports.getProjectByCwd = exports.validateWorkspace = exports.getWorkspaceRaw = exports.getWorkspace = exports.AngularWorkspace = exports.workspaceSchemaPath = void 0;
+exports.AngularWorkspace = exports.workspaceSchemaPath = void 0;
+exports.getWorkspace = getWorkspace;
+exports.getWorkspaceRaw = getWorkspaceRaw;
+exports.validateWorkspace = validateWorkspace;
+exports.getProjectByCwd = getProjectByCwd;
+exports.getConfiguredPackageManager = getConfiguredPackageManager;
+exports.getSchematicDefaults = getSchematicDefaults;
+exports.isWarningEnabled = isWarningEnabled;
 const core_1 = require("@angular-devkit/core");
 const fs_1 = require("fs");
 const os = __importStar(require("os"));
@@ -180,7 +187,6 @@ async function getWorkspace(level) {
             `\n${error instanceof Error ? error.message : error}`);
     }
 }
-exports.getWorkspace = getWorkspace;
 /**
  * This method will load the workspace configuration in raw JSON format.
  * When `level` is `global` and file doesn't exists, it will be created.
@@ -202,7 +208,6 @@ async function getWorkspaceRaw(level = 'local') {
     }
     return [new json_file_1.JSONFile(configPath), configPath];
 }
-exports.getWorkspaceRaw = getWorkspaceRaw;
 async function validateWorkspace(data, isGlobal) {
     const schema = (0, json_file_1.readAndParseJson)(exports.workspaceSchemaPath);
     // We should eventually have a dedicated global config schema and use that to validate.
@@ -220,7 +225,6 @@ async function validateWorkspace(data, isGlobal) {
         throw new core_1.json.schema.SchemaValidationException(errors);
     }
 }
-exports.validateWorkspace = validateWorkspace;
 function findProjectByPath(workspace, location) {
     const isInside = (base, potential) => {
         const absoluteBase = path.resolve(workspace.basePath, base);
@@ -268,7 +272,6 @@ function getProjectByCwd(workspace) {
     }
     return null;
 }
-exports.getProjectByCwd = getProjectByCwd;
 async function getConfiguredPackageManager() {
     const getPackageManager = (source) => {
         if (isJsonObject(source)) {
@@ -294,7 +297,6 @@ async function getConfiguredPackageManager() {
     }
     return result;
 }
-exports.getConfiguredPackageManager = getConfiguredPackageManager;
 async function getSchematicDefaults(collection, schematic, project) {
     const result = {};
     const mergeOptions = (source) => {
@@ -323,7 +325,6 @@ async function getSchematicDefaults(collection, schematic, project) {
     }
     return result;
 }
-exports.getSchematicDefaults = getSchematicDefaults;
 async function isWarningEnabled(warning) {
     const getWarning = (source) => {
         if (isJsonObject(source)) {
@@ -352,4 +353,3 @@ async function isWarningEnabled(warning) {
     // All warnings are enabled by default
     return result ?? true;
 }
-exports.isWarningEnabled = isWarningEnabled;

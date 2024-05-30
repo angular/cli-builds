@@ -30,7 +30,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.angularMajorCompatGuarantee = void 0;
+exports.angularMajorCompatGuarantee = angularMajorCompatGuarantee;
+exports.default = default_1;
 const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const npa = __importStar(require("npm-package-arg"));
@@ -64,7 +65,6 @@ function angularMajorCompatGuarantee(range) {
     }
     return semver.validRange(newRange) || range;
 }
-exports.angularMajorCompatGuarantee = angularMajorCompatGuarantee;
 // This is a map of packageGroupName to range extending function. If it isn't found, the range is
 // kept the same.
 const knownPeerCompatibleList = {
@@ -703,4 +703,3 @@ function default_1(options) {
         }
     };
 }
-exports.default = default_1;

@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.memoize = void 0;
+exports.memoize = memoize;
 /**
  * A decorator that memoizes methods and getters.
  *
@@ -40,7 +40,6 @@ function memoize(target, propertyKey, descriptor) {
         },
     };
 }
-exports.memoize = memoize;
 /** Method to check if value is a non primitive. */
 function isNonPrimitive(value) {
     return ((value !== null && typeof value === 'object') ||

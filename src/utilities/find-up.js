@@ -30,7 +30,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUp = void 0;
+exports.findUp = findUp;
 const fs_1 = require("fs");
 const path = __importStar(require("path"));
 function findUp(names, from) {
@@ -50,4 +50,3 @@ function findUp(names, from) {
     }
     return null;
 }
-exports.findUp = findUp;
