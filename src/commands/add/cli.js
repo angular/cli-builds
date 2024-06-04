@@ -256,7 +256,17 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         return false;
     }
     async getCollectionName() {
-        const [, collectionName] = this.context.args.positional;
+        let [, collectionName] = this.context.args.positional;
+        // The CLI argument may specify also a version, like `ng add @my/lib@13.0.0`,
+        // but here we need only the name of the package, like `@my/lib`
+        try {
+            const packageIdentifier = (0, npm_package_arg_1.default)(collectionName);
+            collectionName = packageIdentifier.name ?? collectionName;
+        }
+        catch (e) {
+            (0, error_1.assertIsError)(e);
+            this.context.logger.error(e.message);
+        }
         return collectionName;
     }
     isPackageInstalled(name) {
