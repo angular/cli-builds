@@ -4,7 +4,7 @@
  * Copyright Google LLC All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
+ * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VERSION = void 0;
@@ -25,5 +25,5 @@ class Version {
     }
 }
 // TODO(bazel): Convert this to use build-time version stamping after flipping the build script to use bazel
-// export const VERSION = new Version('18.0.3+sha-04077e3');
+// export const VERSION = new Version('18.0.3+sha-27cb531');
 exports.VERSION = new Version(JSON.parse((0, fs_1.readFileSync)((0, path_1.resolve)(__dirname, '../../package.json'), 'utf-8')).version);
