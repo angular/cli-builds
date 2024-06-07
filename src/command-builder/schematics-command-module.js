@@ -6,11 +6,34 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
@@ -25,7 +48,6 @@ const analytics_1 = require("../analytics/analytics");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
 const config_1 = require("../utilities/config");
 const error_1 = require("../utilities/error");
-const load_esm_1 = require("../utilities/load-esm");
 const memoize_1 = require("../utilities/memoize");
 const tty_1 = require("../utilities/tty");
 const command_module_1 = require("./command-module");
@@ -124,70 +146,85 @@ class SchematicsCommandModule extends command_module_1.CommandModule {
         });
         if (options.interactive !== false && (0, tty_1.isTTY)()) {
             workflow.registry.usePromptProvider(async (definitions) => {
-                const questions = definitions
-                    .filter((definition) => !options.defaults || definition.default === undefined)
-                    .map((definition) => {
-                    const question = {
-                        name: definition.id,
-                        message: definition.message,
-                        default: definition.default,
-                    };
-                    const validator = definition.validator;
-                    if (validator) {
-                        question.validate = (input) => validator(input);
-                        // Filter allows transformation of the value prior to validation
-                        question.filter = async (input) => {
-                            for (const type of definition.propertyTypes) {
-                                let value;
-                                switch (type) {
-                                    case 'string':
-                                        value = String(input);
-                                        break;
-                                    case 'integer':
-                                    case 'number':
-                                        value = Number(input);
-                                        break;
-                                    default:
-                                        value = input;
-                                        break;
-                                }
-                                // Can be a string if validation fails
-                                const isValid = (await validator(value)) === true;
-                                if (isValid) {
-                                    return value;
-                                }
-                            }
-                            return input;
-                        };
+                let prompts;
+                const answers = {};
+                for (const definition of definitions) {
+                    if (options.defaults && definition.default !== undefined) {
+                        continue;
                     }
+                    // Only load prompt package if needed
+                    prompts ??= await Promise.resolve().then(() => __importStar(require('@inquirer/prompts')));
                     switch (definition.type) {
                         case 'confirmation':
-                            question.type = 'confirm';
+                            answers[definition.id] = await prompts.confirm({
+                                message: definition.message,
+                                default: definition.default,
+                            });
                             break;
                         case 'list':
-                            question.type = definition.multiselect ? 'checkbox' : 'list';
-                            question.choices = definition.items?.map((item) => {
+                            if (!definition.items?.length) {
+                                continue;
+                            }
+                            const choices = definition.items?.map((item) => {
                                 return typeof item == 'string'
-                                    ? item
+                                    ? {
+                                        name: item,
+                                        value: item,
+                                    }
                                     : {
                                         name: item.label,
                                         value: item.value,
                                     };
                             });
+                            answers[definition.id] = await (definition.multiselect ? prompts.checkbox : prompts.select)({
+                                message: definition.message,
+                                default: definition.default,
+                                choices,
+                            });
                             break;
-                        default:
-                            question.type = definition.type;
+                        case 'input':
+                            let finalValue;
+                            answers[definition.id] = await prompts.input({
+                                message: definition.message,
+                                default: definition.default,
+                                async validate(value) {
+                                    if (definition.validator === undefined) {
+                                        return true;
+                                    }
+                                    let lastValidation = false;
+                                    for (const type of definition.propertyTypes) {
+                                        let potential;
+                                        switch (type) {
+                                            case 'string':
+                                                potential = String(value);
+                                                break;
+                                            case 'integer':
+                                            case 'number':
+                                                potential = Number(value);
+                                                break;
+                                            default:
+                                                potential = value;
+                                                break;
+                                        }
+                                        lastValidation = await definition.validator(potential);
+                                        // Can be a string if validation fails
+                                        if (lastValidation === true) {
+                                            finalValue = potential;
+                                            return true;
+                                        }
+                                    }
+                                    return lastValidation;
+                                },
+                            });
+                            // Use validated value if present.
+                            // This ensures the correct type is inserted into the final schema options.
+                            if (finalValue !== undefined) {
+                                answers[definition.id] = finalValue;
+                            }
                             break;
                     }
-                    return question;
-                });
-                if (questions.length) {
-                    const { default: inquirer } = await (0, load_esm_1.loadEsmModule)('inquirer');
-                    return inquirer.prompt(questions);
                 }
-                else {
-                    return {};
-                }
+                return answers;
             });
         }
         return workflow;
