@@ -61,6 +61,7 @@ const UPDATE_SCHEMATIC_COLLECTION = path.join(__dirname, 'schematic/collection.j
 class UpdateCommandModule extends command_module_1.CommandModule {
     scope = command_module_1.CommandScope.In;
     shouldReportAnalytics = false;
+    resolvePaths = [__dirname, this.context.root];
     command = 'update [packages..]';
     describe = 'Updates your workspace and its dependencies. See https://update.angular.dev/.';
     longDescriptionPath = (0, path_1.join)(__dirname, 'long-description.md');
@@ -196,7 +197,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             packageManagerForce: this.packageManagerForce(options.verbose),
             // __dirname -> favor @schematics/update from this package
             // Otherwise, use packages from the active workspace (migrations)
-            resolvePaths: [__dirname, this.context.root],
+            resolvePaths: this.resolvePaths,
             schemaValidation: true,
             engineHostCreator: (options) => new schematic_engine_host_1.SchematicEngineHost(options.resolvePaths),
         });
@@ -397,7 +398,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             // This avoids issues with package hoisting.
             try {
                 const packageRequire = (0, module_1.createRequire)(packagePath + '/');
-                migrations = packageRequire.resolve(migrations);
+                migrations = packageRequire.resolve(migrations, { paths: this.resolvePaths });
             }
             catch (e) {
                 (0, error_1.assertIsError)(e);

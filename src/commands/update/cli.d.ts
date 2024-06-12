@@ -22,6 +22,7 @@ interface UpdateCommandArgs {
 export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs> {
     scope: CommandScope;
     protected shouldReportAnalytics: boolean;
+    private readonly resolvePaths;
     command: string;
     describe: string;
     longDescriptionPath: string;
