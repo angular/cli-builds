@@ -40,13 +40,13 @@ class PackageManagerUtils {
         return this.getVersion(this.name);
     }
     /** Install a single package. */
-    async install(packageName, save = true, extraArgs = [], cwd) {
+    async install(packageName, save = true, extraArgs = [], cwd, progress = true) {
         const packageManagerArgs = this.getArguments();
         const installArgs = [packageManagerArgs.install, packageName];
         if (save === 'devDependencies') {
             installArgs.push(packageManagerArgs.saveDev);
         }
-        return this.run([...installArgs, ...extraArgs], { cwd, silent: true });
+        return this.run([...installArgs, ...extraArgs], { cwd, silent: true, progress });
     }
     /** Install all packages. */
     async installAll(extraArgs = [], cwd) {
@@ -58,7 +58,7 @@ class PackageManagerUtils {
         return this.run([...installArgs, ...extraArgs], { cwd, silent: true });
     }
     /** Install a single package temporary. */
-    async installTemp(packageName, extraArgs) {
+    async installTemp(packageName, extraArgs, progress = true) {
         const tempPath = await fs_1.promises.mkdtemp((0, path_1.join)((0, fs_1.realpathSync)((0, os_1.tmpdir)()), 'angular-cli-packages-'));
         // clean up temp directory on process exit
         process.on('exit', () => {
@@ -92,7 +92,7 @@ class PackageManagerUtils {
             packageManagerArgs.noLockfile,
         ];
         return {
-            success: await this.install(packageName, true, installArgs, tempPath),
+            success: await this.install(packageName, true, installArgs, tempPath, progress),
             tempNodeModules,
         };
     }
@@ -132,9 +132,9 @@ class PackageManagerUtils {
         }
     }
     async run(args, options = {}) {
-        const { cwd = process.cwd(), silent = false } = options;
-        const spinner = new spinner_1.Spinner();
-        spinner.start('Installing packages...');
+        const { cwd = process.cwd(), silent = false, progress = true } = options;
+        const spinner = progress ? new spinner_1.Spinner() : undefined;
+        spinner?.start('Installing packages...');
         return new Promise((resolve) => {
             const bufferedOutput = [];
             const childProcess = (0, child_process_1.spawn)(this.name, args, {
@@ -144,13 +144,13 @@ class PackageManagerUtils {
                 cwd,
             }).on('close', (code) => {
                 if (code === 0) {
-                    spinner.succeed('Packages successfully installed.');
+                    spinner?.succeed('Packages successfully installed.');
                     resolve(true);
                 }
                 else {
-                    spinner.stop();
+                    spinner?.stop();
                     bufferedOutput.forEach(({ stream, data }) => stream.write(data));
-                    spinner.fail('Packages installation failed, see above.');
+                    spinner?.fail('Packages installation failed, see above.');
                     resolve(false);
                 }
             });
