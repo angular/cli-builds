@@ -188,7 +188,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 return 1;
             }
         }
-        logger.info(`Using package manager: ${color_1.colors.grey(packageManager.name)}`);
+        logger.info(`Using package manager: ${color_1.colors.gray(packageManager.name)}`);
         logger.info('Collecting installed dependencies...');
         const rootDependencies = await (0, package_tree_1.getProjectDependencies)(this.context.root);
         logger.info(`Found ${rootDependencies.size} dependencies.`);
@@ -233,12 +233,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         }
         catch (e) {
             if (e instanceof schematics_1.UnsuccessfulWorkflowExecution) {
-                logger.error(`${color_1.colors.symbols.cross} Migration failed. See above for further details.\n`);
+                logger.error(`${color_1.figures.cross} Migration failed. See above for further details.\n`);
             }
             else {
                 (0, error_1.assertIsError)(e);
                 const logPath = (0, log_file_1.writeErrorToLogFile)(e);
-                logger.fatal(`${color_1.colors.symbols.cross} Migration failed: ${e.message}\n` +
+                logger.fatal(`${color_1.figures.cross} Migration failed: ${e.message}\n` +
                     `  See "${logPath}" for further details.\n`);
             }
             return { success: false, files: workflowSubscription.files };
@@ -308,7 +308,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const { logger } = this.context;
         for (const migration of migrations) {
             const { title, description } = getMigrationTitleAndDescription(migration);
-            logger.info(color_1.colors.cyan(color_1.colors.symbols.pointer) + ' ' + color_1.colors.bold(title));
+            logger.info(color_1.colors.cyan(color_1.figures.pointer) + ' ' + color_1.colors.bold(title));
             if (description) {
                 logger.info('  ' + description);
             }
@@ -789,7 +789,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         if (!(0, tty_1.isTTY)()) {
             for (const migration of optionalMigrations) {
                 const { title } = getMigrationTitleAndDescription(migration);
-                logger.info(color_1.colors.cyan(color_1.colors.symbols.pointer) + ' ' + color_1.colors.bold(title));
+                logger.info(color_1.colors.cyan(color_1.figures.pointer) + ' ' + color_1.colors.bold(title));
                 logger.info(color_1.colors.gray(`  ng update ${packageName} --name ${migration.name}`));
                 logger.info(''); // Extra trailing newline.
             }
