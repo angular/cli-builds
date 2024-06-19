@@ -25,7 +25,6 @@ const path_1 = require("path");
 const workspace_schema_1 = require("../../lib/config/workspace-schema");
 const config_1 = require("./config");
 const memoize_1 = require("./memoize");
-const spinner_1 = require("./spinner");
 class PackageManagerUtils {
     context;
     constructor(context) {
@@ -40,13 +39,13 @@ class PackageManagerUtils {
         return this.getVersion(this.name);
     }
     /** Install a single package. */
-    async install(packageName, save = true, extraArgs = [], cwd, progress = true) {
+    async install(packageName, save = true, extraArgs = [], cwd) {
         const packageManagerArgs = this.getArguments();
         const installArgs = [packageManagerArgs.install, packageName];
         if (save === 'devDependencies') {
             installArgs.push(packageManagerArgs.saveDev);
         }
-        return this.run([...installArgs, ...extraArgs], { cwd, silent: true, progress });
+        return this.run([...installArgs, ...extraArgs], { cwd, silent: true });
     }
     /** Install all packages. */
     async installAll(extraArgs = [], cwd) {
@@ -58,7 +57,7 @@ class PackageManagerUtils {
         return this.run([...installArgs, ...extraArgs], { cwd, silent: true });
     }
     /** Install a single package temporary. */
-    async installTemp(packageName, extraArgs, progress = true) {
+    async installTemp(packageName, extraArgs) {
         const tempPath = await fs_1.promises.mkdtemp((0, path_1.join)((0, fs_1.realpathSync)((0, os_1.tmpdir)()), 'angular-cli-packages-'));
         // clean up temp directory on process exit
         process.on('exit', () => {
@@ -92,7 +91,7 @@ class PackageManagerUtils {
             packageManagerArgs.noLockfile,
         ];
         return {
-            success: await this.install(packageName, true, installArgs, tempPath, progress),
+            success: await this.install(packageName, true, installArgs, tempPath),
             tempNodeModules,
         };
     }
@@ -132,9 +131,7 @@ class PackageManagerUtils {
         }
     }
     async run(args, options = {}) {
-        const { cwd = process.cwd(), silent = false, progress = true } = options;
-        const spinner = progress ? new spinner_1.Spinner() : undefined;
-        spinner?.start('Installing packages...');
+        const { cwd = process.cwd(), silent = false } = options;
         return new Promise((resolve) => {
             const bufferedOutput = [];
             const childProcess = (0, child_process_1.spawn)(this.name, args, {
@@ -144,13 +141,10 @@ class PackageManagerUtils {
                 cwd,
             }).on('close', (code) => {
                 if (code === 0) {
-                    spinner?.succeed('Packages successfully installed.');
                     resolve(true);
                 }
                 else {
-                    spinner?.stop();
                     bufferedOutput.forEach(({ stream, data }) => stream.write(data));
-                    spinner?.fail('Packages installation failed, see above.');
                     resolve(false);
                 }
             });

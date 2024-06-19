@@ -35,9 +35,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
-const child_process_1 = require("child_process");
-const fs_1 = require("fs");
-const module_1 = require("module");
+const listr2_1 = require("listr2");
+const node_child_process_1 = require("node:child_process");
+const node_fs_1 = require("node:fs");
+const node_module_1 = require("node:module");
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const npm_pick_manifest_1 = __importDefault(require("npm-pick-manifest"));
 const path = __importStar(require("path"));
@@ -56,6 +57,8 @@ const package_tree_1 = require("../../utilities/package-tree");
 const prompt_1 = require("../../utilities/prompt");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
+class CommandError extends Error {
+}
 const ANGULAR_PACKAGES_REGEXP = /^@(?:angular|nguniversal)\//;
 const UPDATE_SCHEMATIC_COLLECTION = path.join(__dirname, 'schematic/collection.json');
 class UpdateCommandModule extends command_module_1.CommandModule {
@@ -390,14 +393,14 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         }
         // Check if it is a package-local location
         const localMigrations = path.join(packagePath, migrations);
-        if ((0, fs_1.existsSync)(localMigrations)) {
+        if ((0, node_fs_1.existsSync)(localMigrations)) {
             migrations = localMigrations;
         }
         else {
             // Try to resolve from package location.
             // This avoids issues with package hoisting.
             try {
-                const packageRequire = (0, module_1.createRequire)(packagePath + '/');
+                const packageRequire = (0, node_module_1.createRequire)(packagePath + '/');
                 migrations = packageRequire.resolve(migrations, { paths: this.resolvePaths });
             }
             catch (e) {
@@ -540,17 +543,45 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             packages: packagesToUpdate,
         });
         if (success) {
+            const { root: commandRoot, packageManager } = this.context;
+            const installArgs = this.packageManagerForce(options.verbose) ? ['--force'] : [];
+            const tasks = new listr2_1.Listr([
+                {
+                    title: 'Cleaning node modules directory',
+                    async task(_, task) {
+                        try {
+                            await node_fs_1.promises.rm(path.join(commandRoot, 'node_modules'), {
+                                force: true,
+                                recursive: true,
+                                maxRetries: 3,
+                            });
+                        }
+                        catch (e) {
+                            (0, error_1.assertIsError)(e);
+                            if (e.code === 'ENOENT') {
+                                task.skip('Cleaning not required. Node modules directory not found.');
+                            }
+                        }
+                    },
+                },
+                {
+                    title: 'Installing packages',
+                    async task() {
+                        const installationSuccess = await packageManager.installAll(installArgs, commandRoot);
+                        if (!installationSuccess) {
+                            throw new CommandError('Unable to install packages');
+                        }
+                    },
+                },
+            ]);
             try {
-                await fs_1.promises.rm(path.join(this.context.root, 'node_modules'), {
-                    force: true,
-                    recursive: true,
-                    maxRetries: 3,
-                });
+                await tasks.run();
             }
-            catch { }
-            const installationSuccess = await this.context.packageManager.installAll(this.packageManagerForce(options.verbose) ? ['--force'] : [], this.context.root);
-            if (!installationSuccess) {
-                return 1;
+            catch (e) {
+                if (e instanceof CommandError) {
+                    return 1;
+                }
+                throw e;
             }
         }
         if (success && options.createCommits) {
@@ -562,7 +593,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const migrations = global.externalMigrations;
         if (success && migrations) {
-            const rootRequire = (0, module_1.createRequire)(this.context.root + '/');
+            const rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');
             for (const migration of migrations) {
                 // Resolve the package from the workspace root, as otherwise it will be resolved from the temp
                 // installed CLI version.
@@ -600,14 +631,14 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 let migrations;
                 // Check if it is a package-local location
                 const localMigrations = path.join(packagePath, migration.collection);
-                if ((0, fs_1.existsSync)(localMigrations)) {
+                if ((0, node_fs_1.existsSync)(localMigrations)) {
                     migrations = localMigrations;
                 }
                 else {
                     // Try to resolve from package location.
                     // This avoids issues with package hoisting.
                     try {
-                        const packageRequire = (0, module_1.createRequire)(packagePath + '/');
+                        const packageRequire = (0, node_module_1.createRequire)(packagePath + '/');
                         migrations = packageRequire.resolve(migration.collection);
                     }
                     catch (e) {
@@ -672,11 +703,11 @@ class UpdateCommandModule extends command_module_1.CommandModule {
     }
     checkCleanGit() {
         try {
-            const topLevel = (0, child_process_1.execSync)('git rev-parse --show-toplevel', {
+            const topLevel = (0, node_child_process_1.execSync)('git rev-parse --show-toplevel', {
                 encoding: 'utf8',
                 stdio: 'pipe',
             });
-            const result = (0, child_process_1.execSync)('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
+            const result = (0, node_child_process_1.execSync)('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
             if (result.trim().length === 0) {
                 return true;
             }
@@ -736,8 +767,8 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const packageJsonPath = (0, path_1.join)(pkgLocation, 'package.json');
         // Get a binary location for this package
         let binPath;
-        if ((0, fs_1.existsSync)(packageJsonPath)) {
-            const content = await fs_1.promises.readFile(packageJsonPath, 'utf-8');
+        if ((0, node_fs_1.existsSync)(packageJsonPath)) {
+            const content = await node_fs_1.promises.readFile(packageJsonPath, 'utf-8');
             if (content) {
                 const { bin = {} } = JSON.parse(content);
                 const binKeys = Object.keys(bin);
@@ -749,7 +780,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         if (!binPath) {
             throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
         }
-        const { status, error } = (0, child_process_1.spawnSync)(process.execPath, [binPath, ...args], {
+        const { status, error } = (0, node_child_process_1.spawnSync)(process.execPath, [binPath, ...args], {
             stdio: 'inherit',
             env: {
                 ...process.env,
@@ -815,7 +846,7 @@ exports.default = UpdateCommandModule;
 function hasChangesToCommit() {
     // List all modified files not covered by .gitignore.
     // If any files are returned, then there must be something to commit.
-    return (0, child_process_1.execSync)('git ls-files -m -d -o --exclude-standard').toString() !== '';
+    return (0, node_child_process_1.execSync)('git ls-files -m -d -o --exclude-standard').toString() !== '';
 }
 /**
  * Precondition: Must have pending changes to commit, they do not need to be staged.
@@ -824,16 +855,16 @@ function hasChangesToCommit() {
  */
 function createCommit(message) {
     // Stage entire working tree for commit.
-    (0, child_process_1.execSync)('git add -A', { encoding: 'utf8', stdio: 'pipe' });
+    (0, node_child_process_1.execSync)('git add -A', { encoding: 'utf8', stdio: 'pipe' });
     // Commit with the message passed via stdin to avoid bash escaping issues.
-    (0, child_process_1.execSync)('git commit --no-verify -F -', { encoding: 'utf8', stdio: 'pipe', input: message });
+    (0, node_child_process_1.execSync)('git commit --no-verify -F -', { encoding: 'utf8', stdio: 'pipe', input: message });
 }
 /**
  * @return The Git SHA hash of the HEAD commit. Returns null if unable to retrieve the hash.
  */
 function findCurrentGitSha() {
     try {
-        return (0, child_process_1.execSync)('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' }).trim();
+        return (0, node_child_process_1.execSync)('git rev-parse HEAD', { encoding: 'utf8', stdio: 'pipe' }).trim();
     }
     catch {
         return null;

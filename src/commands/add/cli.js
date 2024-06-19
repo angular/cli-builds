@@ -270,7 +270,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                         task.title += ' in temporary location';
                         // Temporary packages are located in a different directory
                         // Hence we need to resolve them using the temp path
-                        const { success, tempNodeModules } = await packageManager.installTemp(context.packageIdentifier.toString(), registry ? [`--registry="${registry}"`] : undefined, false);
+                        const { success, tempNodeModules } = await packageManager.installTemp(context.packageIdentifier.toString(), registry ? [`--registry="${registry}"`] : undefined);
                         const tempRequire = (0, module_1.createRequire)(tempNodeModules + '/');
                         (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
                         const resolvedCollectionPath = tempRequire.resolve((0, path_1.join)(context.collectionName, 'package.json'));
@@ -280,7 +280,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                         context.collectionName = (0, path_1.dirname)(resolvedCollectionPath);
                     }
                     else {
-                        const success = await packageManager.install(context.packageIdentifier.toString(), context.savePackage, registry ? [`--registry="${registry}"`] : undefined, undefined, false);
+                        const success = await packageManager.install(context.packageIdentifier.toString(), context.savePackage, registry ? [`--registry="${registry}"`] : undefined, undefined);
                         if (!success) {
                             throw new CommandError('Unable to install package');
                         }
