@@ -5,4 +5,4 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-export declare function isTTY(): boolean;
+export declare function isTTY(stream?: NodeJS.WriteStream): boolean;
