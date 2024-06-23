@@ -35,9 +35,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SchematicsCommandModule = exports.DEFAULT_SCHEMATICS_COLLECTION = void 0;
 const core_1 = require("@angular-devkit/core");
@@ -335,20 +332,11 @@ class SchematicsCommandModule extends command_module_1.CommandModule {
 }
 exports.SchematicsCommandModule = SchematicsCommandModule;
 __decorate([
-    memoize_1.memoize,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", tools_1.NodeWorkflow)
+    memoize_1.memoize
 ], SchematicsCommandModule.prototype, "getOrCreateWorkflowForBuilder", null);
 __decorate([
-    memoize_1.memoize,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
+    memoize_1.memoize
 ], SchematicsCommandModule.prototype, "getOrCreateWorkflowForExecution", null);
 __decorate([
-    memoize_1.memoize,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    memoize_1.memoize
 ], SchematicsCommandModule.prototype, "getSchematicCollections", null);

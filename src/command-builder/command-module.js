@@ -35,9 +35,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -264,10 +261,7 @@ class CommandModule {
 }
 exports.CommandModule = CommandModule;
 __decorate([
-    memoize_1.memoize,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    memoize_1.memoize
 ], CommandModule.prototype, "getAnalytics", null);
 /**
  * Creates an known command module error.
