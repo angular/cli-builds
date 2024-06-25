@@ -15,29 +15,24 @@ exports.memoize = memoize;
  *
  * @see https://en.wikipedia.org/wiki/Memoization
  */
-function memoize(target, propertyKey, descriptor) {
-    const descriptorPropertyName = descriptor.get ? 'get' : 'value';
-    const originalMethod = descriptor[descriptorPropertyName];
-    if (typeof originalMethod !== 'function') {
+function memoize(target, context) {
+    if (context.kind !== 'method' && context.kind !== 'getter') {
         throw new Error('Memoize decorator can only be used on methods or get accessors.');
     }
     const cache = new Map();
-    return {
-        ...descriptor,
-        [descriptorPropertyName]: function (...args) {
-            for (const arg of args) {
-                if (!isJSONSerializable(arg)) {
-                    throw new Error(`Argument ${isNonPrimitive(arg) ? arg.toString() : arg} is JSON serializable.`);
-                }
+    return function (...args) {
+        for (const arg of args) {
+            if (!isJSONSerializable(arg)) {
+                throw new Error(`Argument ${isNonPrimitive(arg) ? arg.toString() : arg} is JSON serializable.`);
             }
-            const key = JSON.stringify(args);
-            if (cache.has(key)) {
-                return cache.get(key);
-            }
-            const result = originalMethod.apply(this, args);
-            cache.set(key, result);
-            return result;
-        },
+        }
+        const key = JSON.stringify(args);
+        if (cache.has(key)) {
+            return cache.get(key);
+        }
+        const result = target.apply(this, args);
+        cache.set(key, result);
+        return result;
     };
 }
 /** Method to check if value is a non primitive. */

@@ -12,4 +12,4 @@
  *
  * @see https://en.wikipedia.org/wiki/Memoization
  */
-export declare function memoize<T>(target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
+export declare function memoize<This, Args extends unknown[], Return>(target: (this: This, ...args: Args) => Return, context: ClassMemberDecoratorContext): (this: This, ...args: Args) => Return;
