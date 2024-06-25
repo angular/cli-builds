@@ -47,7 +47,7 @@ class ArchitectBaseCommandModule extends command_module_1.CommandModule {
     scope = command_module_1.CommandScope.In;
     missingTargetChoices;
     async runSingleTarget(target, options) {
-        const architectHost = await this.getArchitectHost();
+        const architectHost = this.getArchitectHost();
         let builderName;
         try {
             builderName = await architectHost.getBuilderNameForTarget(target);

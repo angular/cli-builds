@@ -30,7 +30,7 @@ class NewCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const collectionName = typeof collectionNameFromArgs === 'string'
             ? collectionNameFromArgs
             : await this.getCollectionFromConfig();
-        const workflow = await this.getOrCreateWorkflowForBuilder(collectionName);
+        const workflow = this.getOrCreateWorkflowForBuilder(collectionName);
         const collection = workflow.engine.createCollection(collectionName);
         const options = await this.getSchematicOptions(collection, this.schematicName, workflow);
         return this.addSchemaOptionsToCommand(localYargs, options);
