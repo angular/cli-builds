@@ -191,7 +191,7 @@ function _validateUpdatePackages(infoMap, force, next, logger) {
     }
 }
 function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
-    const packageJsonContent = tree.read('/package.json');
+    const packageJsonContent = tree.read('/package.json')?.toString();
     if (!packageJsonContent) {
         throw new schematics_1.SchematicsException('Could not find a package.json. Are you in a Node project?');
     }
@@ -232,10 +232,12 @@ function _performUpdate(tree, context, infoMap, logger, migrateOnly) {
             logger.warn(`Package ${name} was not found in dependencies.`);
         }
     });
-    const newContent = JSON.stringify(packageJson, null, 2);
-    if (packageJsonContent.toString() != newContent || migrateOnly) {
+    const eofMatches = packageJsonContent.match(/\r?\n$/);
+    const eof = eofMatches?.[0] ?? '';
+    const newContent = JSON.stringify(packageJson, null, 2) + eof;
+    if (packageJsonContent != newContent || migrateOnly) {
         if (!migrateOnly) {
-            tree.overwrite('/package.json', JSON.stringify(packageJson, null, 2));
+            tree.overwrite('/package.json', newContent);
         }
         const externalMigrations = [];
         // Run the migrate schematics with the list of packages to use. The collection contains
