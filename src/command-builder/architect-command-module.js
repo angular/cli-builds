@@ -58,6 +58,24 @@ let ArchitectCommandModule = (() => {
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
         async builder(argv) {
+            const target = this.getArchitectTarget();
+            // Add default builder if target is not in project and a command default is provided
+            if (this.findDefaultBuilderName && this.context.workspace) {
+                for (const [project, projectDefinition] of this.context.workspace.projects) {
+                    if (projectDefinition.targets.has(target)) {
+                        continue;
+                    }
+                    const defaultBuilder = await this.findDefaultBuilderName(projectDefinition, {
+                        project,
+                        target,
+                    });
+                    if (defaultBuilder) {
+                        projectDefinition.targets.set(target, {
+                            builder: defaultBuilder,
+                        });
+                    }
+                }
+            }
             const project = this.getArchitectProject();
             const { jsonHelp, getYargsCompletions, help } = this.context.args.options;
             const localYargs = argv
@@ -84,7 +102,6 @@ let ArchitectCommandModule = (() => {
             if (!project) {
                 return localYargs;
             }
-            const target = this.getArchitectTarget();
             const schemaOptions = await this.getArchitectTargetOptions({
                 project,
                 target,
