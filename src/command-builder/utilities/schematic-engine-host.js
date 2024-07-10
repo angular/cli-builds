@@ -14,7 +14,6 @@ const fs_1 = require("fs");
 const jsonc_parser_1 = require("jsonc-parser");
 const module_1 = require("module");
 const path_1 = require("path");
-const util_1 = require("util");
 const vm_1 = require("vm");
 const error_1 = require("../../utilities/error");
 /**
@@ -165,34 +164,16 @@ function wrap(schematicFile, schematicDirectory, moduleCache, exportName) {
     };
     // Setup a wrapper function to capture the module's exports
     const schematicCode = (0, fs_1.readFileSync)(schematicFile, 'utf8');
-    // `module` is required due to @angular/localize ng-add being in UMD format
-    const headerCode = '(function() {\nvar exports = {};\nvar module = { exports };\n';
-    const footerCode = exportName
-        ? `\nreturn module.exports['${exportName}'];});`
-        : '\nreturn module.exports;});';
-    const script = new vm_1.Script(headerCode + schematicCode + footerCode, {
+    const script = new vm_1.Script(module_1.Module.wrap(schematicCode), {
         filename: schematicFile,
-        lineOffset: 3,
+        lineOffset: 1,
     });
-    const context = {
-        __dirname: schematicDirectory,
-        __filename: schematicFile,
-        Buffer,
-        // TextEncoder is used by the compiler to generate i18n message IDs. See:
-        // https://github.com/angular/angular/blob/main/packages/compiler/src/i18n/digest.ts#L17
-        // It is referenced globally, because it may be run either on the browser or the server.
-        // Usually Node exposes it globally, but in order for it to work, our custom context
-        // has to expose it too. Issue context: https://github.com/angular/angular/issues/48940.
-        TextEncoder: util_1.TextEncoder,
-        console,
-        process,
-        get global() {
-            return this;
-        },
-        require: customRequire,
+    const schematicModule = new module_1.Module(schematicFile);
+    const moduleFactory = script.runInThisContext();
+    return () => {
+        moduleFactory(schematicModule.exports, customRequire, schematicModule, schematicFile, schematicDirectory);
+        return exportName ? schematicModule.exports[exportName] : schematicModule.exports;
     };
-    const exportsFactory = script.runInNewContext(context);
-    return exportsFactory;
 }
 function loadBuiltinModule(id) {
     return undefined;
