@@ -9,18 +9,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscribeToWorkflow = subscribeToWorkflow;
 const color_1 = require("../../utilities/color");
+function removeLeadingSlash(value) {
+    return value[0] === '/' ? value.slice(1) : value;
+}
 function subscribeToWorkflow(workflow, logger) {
     const files = new Set();
     let error = false;
     let logs = [];
     const reporterSubscription = workflow.reporter.subscribe((event) => {
         // Strip leading slash to prevent confusion.
-        const eventPath = event.path.charAt(0) === '/' ? event.path.substring(1) : event.path;
+        const eventPath = removeLeadingSlash(event.path);
         switch (event.kind) {
             case 'error':
                 error = true;
-                const desc = event.description == 'alreadyExist' ? 'already exists' : 'does not exist';
-                logger.error(`ERROR! ${eventPath} ${desc}.`);
+                logger.error(`ERROR! ${eventPath} ${event.description == 'alreadyExist' ? 'already exists' : 'does not exist'}.`);
                 break;
             case 'update':
                 logs.push(`${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
@@ -35,8 +37,7 @@ function subscribeToWorkflow(workflow, logger) {
                 files.add(eventPath);
                 break;
             case 'rename':
-                const eventToPath = event.to.charAt(0) === '/' ? event.to.substring(1) : event.to;
-                logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${eventToPath}`);
+                logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${removeLeadingSlash(event.to)}`);
                 files.add(eventPath);
                 break;
         }

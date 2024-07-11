@@ -206,8 +206,10 @@ let SchematicsCommandModule = (() => {
                                 if (!definition.items?.length) {
                                     continue;
                                 }
-                                const choices = definition.items?.map((item) => {
-                                    return typeof item == 'string'
+                                answers[definition.id] = await (definition.multiselect ? prompts.checkbox : prompts.select)({
+                                    message: definition.message,
+                                    default: definition.default,
+                                    choices: definition.items?.map((item) => typeof item == 'string'
                                         ? {
                                             name: item,
                                             value: item,
@@ -215,15 +217,10 @@ let SchematicsCommandModule = (() => {
                                         : {
                                             name: item.label,
                                             value: item.value,
-                                        };
-                                });
-                                answers[definition.id] = await (definition.multiselect ? prompts.checkbox : prompts.select)({
-                                    message: definition.message,
-                                    default: definition.default,
-                                    choices,
+                                        }),
                                 });
                                 break;
-                            case 'input':
+                            case 'input': {
                                 let finalValue;
                                 answers[definition.id] = await prompts.input({
                                     message: definition.message,
@@ -263,6 +260,7 @@ let SchematicsCommandModule = (() => {
                                     answers[definition.id] = finalValue;
                                 }
                                 break;
+                            }
                         }
                     }
                     return answers;
