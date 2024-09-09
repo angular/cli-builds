@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { json } from '@angular-devkit/core';
-import yargs from 'yargs';
+import yargs, { Argv } from 'yargs';
 /**
  * An option description.
  */
@@ -36,5 +36,16 @@ export interface Option extends yargs.Options {
      * If this is falsey, do not report this option.
      */
     userAnalytics?: string;
+    /**
+     * Type of the values in a key/value pair field.
+     */
+    itemValueType?: 'string';
 }
 export declare function parseJsonSchemaToOptions(registry: json.schema.SchemaRegistry, schema: json.JsonObject, interactive?: boolean): Promise<Option[]>;
+/**
+ * Adds schema options to a command also this keeps track of options that are required for analytics.
+ * **Note:** This method should be called from the command bundler method.
+ *
+ * @returns A map from option name to analytics configuration.
+ */
+export declare function addSchemaOptionsToCommand<T>(localYargs: Argv<T>, options: Option[], includeDefaultValues: boolean): Map<string, string>;

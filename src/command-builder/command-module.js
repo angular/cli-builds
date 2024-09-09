@@ -78,6 +78,7 @@ const analytics_collector_1 = require("../analytics/analytics-collector");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
 const completion_1 = require("../utilities/completion");
 const memoize_1 = require("../utilities/memoize");
+const json_schema_1 = require("./utilities/json-schema");
 var CommandScope;
 (function (CommandScope) {
     /** Command can only run inside an Angular workspace. */
@@ -182,51 +183,12 @@ let CommandModule = (() => {
          * **Note:** This method should be called from the command bundler method.
          */
         addSchemaOptionsToCommand(localYargs, options) {
-            const booleanOptionsWithNoPrefix = new Set();
-            for (const option of options) {
-                const { default: defaultVal, positional, deprecated, description, alias, userAnalytics, type, hidden, name, choices, } = option;
-                const sharedOptions = {
-                    alias,
-                    hidden,
-                    description,
-                    deprecated,
-                    choices,
-                    // This should only be done when `--help` is used otherwise default will override options set in angular.json.
-                    ...(this.context.args.options.help ? { default: defaultVal } : {}),
-                };
-                let dashedName = core_1.strings.dasherize(name);
-                // Handle options which have been defined in the schema with `no` prefix.
-                if (type === 'boolean' && dashedName.startsWith('no-')) {
-                    dashedName = dashedName.slice(3);
-                    booleanOptionsWithNoPrefix.add(dashedName);
-                }
-                if (positional === undefined) {
-                    localYargs = localYargs.option(dashedName, {
-                        type,
-                        ...sharedOptions,
-                    });
-                }
-                else {
-                    localYargs = localYargs.positional(dashedName, {
-                        type: type === 'array' || type === 'count' ? 'string' : type,
-                        ...sharedOptions,
-                    });
-                }
-                // Record option of analytics.
-                if (userAnalytics !== undefined) {
-                    this.optionsWithAnalytics.set(name, userAnalytics);
-                }
-            }
-            // Handle options which have been defined in the schema with `no` prefix.
-            if (booleanOptionsWithNoPrefix.size) {
-                localYargs.middleware((options) => {
-                    for (const key of booleanOptionsWithNoPrefix) {
-                        if (key in options) {
-                            options[`no-${key}`] = !options[key];
-                            delete options[key];
-                        }
-                    }
-                }, false);
+            const optionsWithAnalytics = (0, json_schema_1.addSchemaOptionsToCommand)(localYargs, options, 
+            // This should only be done when `--help` is used otherwise default will override options set in angular.json.
+            /* includeDefaultValues= */ this.context.args.options.help);
+            // Record option of analytics.
+            for (const [name, userAnalytics] of optionsWithAnalytics) {
+                this.optionsWithAnalytics.set(name, userAnalytics);
             }
             return localYargs;
         }
