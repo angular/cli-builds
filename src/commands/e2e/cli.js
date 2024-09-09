@@ -12,6 +12,10 @@ const command_config_1 = require("../command-config");
 class E2eCommandModule extends architect_command_module_1.ArchitectCommandModule {
     missingTargetChoices = [
         {
+            name: 'Playwright',
+            value: 'playwright-ng-schematics',
+        },
+        {
             name: 'Cypress',
             value: '@cypress/schematic',
         },
