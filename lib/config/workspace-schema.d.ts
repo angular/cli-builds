@@ -105,6 +105,10 @@ export interface SchematicOptions {
  */
 export interface AngularApplicationOptionsSchema {
     /**
+     * Create an application that does not utilize zone.js.
+     */
+    experimentalZoneless?: boolean;
+    /**
      * Include styles inline in the root component.ts file. Only CSS styles can be included
      * inline. Default is false, meaning that an external styles file is created and referenced
      * in the root component.ts file.
@@ -545,6 +549,10 @@ export interface AngularNgNewOptionsSchema {
      * The directory name to create the workspace in.
      */
     directory?: string;
+    /**
+     * Create an application that does not utilize zone.js.
+     */
+    experimentalZoneless?: boolean;
     /**
      * Include styles inline in the component TS file. By default, an external styles file is
      * created and referenced in the component TypeScript file.

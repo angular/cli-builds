@@ -929,6 +929,11 @@
           "description": "Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled.",
           "type": "boolean",
           "default": false
+        },
+        "experimentalZoneless": {
+          "description": "Create an application that does not utilize zone.js.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
@@ -1656,6 +1661,11 @@
         "ssr": {
           "description": "Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled.",
           "type": "boolean"
+        },
+        "experimentalZoneless": {
+          "description": "Create an application that does not utilize zone.js.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
