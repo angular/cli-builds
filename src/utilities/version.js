@@ -25,5 +25,5 @@ class Version {
     }
 }
 // TODO(bazel): Convert this to use build-time version stamping after flipping the build script to use bazel
-// export const VERSION = new Version('17.3.10+sha-b6d1f68');
+// export const VERSION = new Version('17.3.10+sha-8bad9ce');
 exports.VERSION = new Version(JSON.parse((0, fs_1.readFileSync)((0, path_1.resolve)(__dirname, '../../package.json'), 'utf-8')).version);
