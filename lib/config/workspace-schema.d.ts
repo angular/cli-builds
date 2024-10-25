@@ -141,6 +141,11 @@ export interface AngularApplicationOptionsSchema {
      */
     routing?: boolean;
     /**
+     * Creates a server application using the Server Routing and App Engine APIs (Developer
+     * Preview).
+     */
+    serverRouting?: boolean;
+    /**
      * Skip installing dependency packages.
      */
     skipInstall?: boolean;
@@ -587,6 +592,11 @@ export interface AngularNgNewOptionsSchema {
      * Enable routing in the initial project.
      */
     routing?: boolean;
+    /**
+     * Creates a server application using the Server Routing and App Engine APIs (Developer
+     * Preview).
+     */
+    serverRouting?: boolean;
     /**
      * Do not initialize a git repository.
      */

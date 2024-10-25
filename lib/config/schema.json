@@ -907,6 +907,10 @@
           "type": "boolean",
           "default": false
         },
+        "serverRouting": {
+          "description": "Creates a server application using the Server Routing and App Engine APIs (Developer Preview).",
+          "type": "boolean"
+        },
         "experimentalZoneless": {
           "description": "Create an application that does not utilize zone.js.",
           "type": "boolean",
@@ -1637,6 +1641,10 @@
         },
         "ssr": {
           "description": "Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled.",
+          "type": "boolean"
+        },
+        "serverRouting": {
+          "description": "Creates a server application using the Server Routing and App Engine APIs (Developer Preview).",
           "type": "boolean"
         },
         "experimentalZoneless": {
