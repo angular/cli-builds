@@ -833,6 +833,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             return {
                 name: `[${color_1.colors.white(migration.name)}] ${title}${documentation ? ` (${documentation})` : ''}`,
                 value: migration.name,
+                checked: migration.recommended,
             };
         }), null);
         logger.info(''); // Extra trailing newline.

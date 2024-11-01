@@ -13,4 +13,5 @@ export declare function askQuestion(message: string, choices: {
 export declare function askChoices(message: string, choices: {
     name: string;
     value: string;
+    checked?: boolean;
 }[], noTTYResponse: string[] | null): Promise<string[] | null>;
