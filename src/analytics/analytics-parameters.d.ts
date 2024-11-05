@@ -39,7 +39,7 @@ export declare enum RequestParameter {
 }
 /**
  * User scoped custom dimensions.
- * @notes
+ * @remarks
  * - User custom dimensions limit is 25.
  * - `up.*` string type.
  * - `upn.*` number type.
@@ -58,7 +58,7 @@ export declare enum UserCustomDimension {
 }
 /**
  * Event scoped custom dimensions.
- * @notes
+ * @remarks
  * - Event custom dimensions limit is 50.
  * - `ep.*` string type.
  * - `epn.*` number type.
@@ -80,7 +80,7 @@ export declare enum EventCustomDimension {
 }
 /**
  * Event scoped custom mertics.
- * @notes
+ * @remarks
  * - Event scoped custom mertics limit is 50.
  * - `ep.*` string type.
  * - `epn.*` number type.
