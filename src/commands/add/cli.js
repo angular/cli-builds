@@ -200,6 +200,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                             }
                             context.packageIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
                             found = true;
+                            break;
                         }
                         if (!found) {
                             task.output = "Unable to find compatible package. Using 'latest' tag.";
