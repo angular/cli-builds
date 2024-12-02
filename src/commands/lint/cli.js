@@ -13,7 +13,7 @@ class LintCommandModule extends architect_command_module_1.ArchitectCommandModul
     missingTargetChoices = [
         {
             name: 'ESLint',
-            value: '@angular-eslint/schematics',
+            value: 'angular-eslint',
         },
     ];
     multiTarget = true;

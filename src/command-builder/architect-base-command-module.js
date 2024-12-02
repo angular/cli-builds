@@ -191,7 +191,7 @@ class ArchitectBaseCommandModule extends command_module_1.CommandModule {
             logger.warn(missingTargetMessage);
             const packageToInstall = await this.getMissingTargetPackageToInstall(choices);
             if (packageToInstall) {
-                // Example run: `ng add @angular-eslint/schematics`.
+                // Example run: `ng add angular-eslint`.
                 const AddCommandModule = (await Promise.resolve().then(() => __importStar(require('../commands/add/cli')))).default;
                 await new AddCommandModule(this.context).run({
                     interactive: true,
