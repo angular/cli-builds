@@ -1,4 +1,4 @@
-export interface Schema {
+export type Schema = {
     $schema?: string;
     cli?: CliOptions;
     /**
@@ -8,8 +8,8 @@ export interface Schema {
     projects?: Projects;
     schematics?: SchematicOptions;
     version: number;
-}
-export interface CliOptions {
+};
+export type CliOptions = {
     /**
      * Share pseudonymous usage data with the Angular Team at Google.
      */
@@ -30,7 +30,7 @@ export interface CliOptions {
      * Control CLI specific console warnings
      */
     warnings?: Warnings;
-}
+};
 /**
  * Share pseudonymous usage data with the Angular Team at Google.
  */
@@ -38,7 +38,7 @@ export type Analytics = boolean | string;
 /**
  * Control disk cache.
  */
-export interface Cache {
+export type Cache = {
     /**
      * Configure whether disk caching is enabled.
      */
@@ -51,7 +51,7 @@ export interface Cache {
      * Cache base path.
      */
     path?: string;
-}
+};
 /**
  * Configure in which environment disk cache is enabled.
  */
@@ -75,15 +75,14 @@ export declare enum PackageManager {
 /**
  * Control CLI specific console warnings
  */
-export interface Warnings {
+export type Warnings = {
     /**
      * Show a warning when the global version is newer than the local one.
      */
     versionMismatch?: boolean;
-}
-export interface Projects {
-}
-export interface SchematicOptions {
+};
+export type Projects = {};
+export type SchematicOptions = {
     "@schematics/angular:application"?: AngularApplicationOptionsSchema;
     "@schematics/angular:class"?: AngularClassOptionsSchema;
     "@schematics/angular:component"?: AngularComponentOptionsSchema;
@@ -99,14 +98,14 @@ export interface SchematicOptions {
     "@schematics/angular:service"?: AngularServiceOptionsSchema;
     "@schematics/angular:web-worker"?: AngularWebWorkerOptionsSchema;
     [property: string]: any;
-}
+};
 /**
  * Generates a new Angular application within your workspace. This schematic sets up the
  * foundational structure of your project, including the root component, module, and
  * configuration files. You can customize various aspects of the application, such as
  * routing, styling, and testing.
  */
-export interface AngularApplicationOptionsSchema {
+export type AngularApplicationOptionsSchema = {
     /**
      * Generate an application that does not use `zone.js`.
      */
@@ -192,7 +191,7 @@ export interface AngularApplicationOptionsSchema {
      * component styles are scoped and applied.
      */
     viewEncapsulation?: ViewEncapsulation;
-}
+};
 /**
  * The type of stylesheet files to be created for components in the application.
  *
@@ -227,7 +226,7 @@ export declare enum ViewEncapsulation {
  * with properties and methods. This schematic helps you generate a new class with the basic
  * structure and optional test files.
  */
-export interface AngularClassOptionsSchema {
+export type AngularClassOptionsSchema = {
     /**
      * The name for the new class. This will be used to create the class file (e.g.,
      * `my-class.ts`) and, if enabled, the corresponding test file `my-class.spec.ts`.
@@ -252,13 +251,13 @@ export interface AngularClassOptionsSchema {
      * For example, if you set the type to `helper`, the filename will be `my-class.helper.ts`.
      */
     type?: string;
-}
+};
 /**
  * Creates a new Angular component. Components are the basic building blocks of Angular
  * applications. Each component consists of a TypeScript class, an HTML template, and an
  * optional CSS stylesheet. Use this schematic to generate a new component in your project.
  */
-export interface AngularComponentOptionsSchema {
+export type AngularComponentOptionsSchema = {
     /**
      * Configures the change detection strategy for the component.
      */
@@ -358,7 +357,7 @@ export interface AngularComponentOptionsSchema {
      * styles are scoped and applied.
      */
     viewEncapsulation?: ViewEncapsulation;
-}
+};
 /**
  * Configures the change detection strategy for the component.
  */
@@ -383,7 +382,7 @@ export declare enum SchematicsAngularComponentStyle {
  * custom attributes, and respond to events. This schematic generates the necessary files
  * and boilerplate code for a new directive.
  */
-export interface AngularDirectiveOptionsSchema {
+export type AngularDirectiveOptionsSchema = {
     /**
      * Automatically export the directive from the specified NgModule, making it accessible to
      * other modules in the application.
@@ -438,13 +437,13 @@ export interface AngularDirectiveOptionsSchema {
      * other standalone components or directives.
      */
     standalone?: boolean;
-}
+};
 /**
  * Creates a new enum in your project. Enums (enumerations) are a way to define a set of
  * named constants, making your code more readable and maintainable. This schematic
  * generates a new enum with the specified name and type.
  */
-export interface AngularEnumOptionsSchema {
+export type AngularEnumOptionsSchema = {
     /**
      * The name for the new enum. This will be used to create the enum file (e.g.,
      * `my-enum.enum.ts`).
@@ -465,13 +464,13 @@ export interface AngularEnumOptionsSchema {
      * For example, if you set the type to `status`, the filename will be `my-enum.status.ts`.
      */
     type?: string;
-}
+};
 /**
  * Creates a new route guard in your project. Route guards are used to control access to
  * parts of your application by checking certain conditions before a route is activated.
  * This schematic generates a new guard with the specified name, type, and options.
  */
-export interface AngularGuardOptionsSchema {
+export type AngularGuardOptionsSchema = {
     /**
      * Creates the new guard files at the top level of the current project. If set to false, a
      * new folder with the guard's name will be created to contain the files.
@@ -508,7 +507,7 @@ export interface AngularGuardOptionsSchema {
      * Skip the generation of a unit test file `spec.ts` for the new guard.
      */
     skipTests?: boolean;
-}
+};
 export declare enum Implement {
     CanActivate = "CanActivate",
     CanActivateChild = "CanActivateChild",
@@ -521,7 +520,7 @@ export declare enum Implement {
  * perform tasks like adding authentication headers, handling errors, or logging requests.
  * This schematic generates the necessary files and boilerplate code for a new interceptor.
  */
-export interface AngularInterceptorOptionsSchema {
+export type AngularInterceptorOptionsSchema = {
     /**
      * Creates the new interceptor files at the top level of the current project. If set to
      * false, a new folder with the interceptor's name will be created to contain the files.
@@ -552,13 +551,13 @@ export interface AngularInterceptorOptionsSchema {
      * Skip the generation of a unit test file `spec.ts` for the new interceptor.
      */
     skipTests?: boolean;
-}
+};
 /**
  * Creates a new interface in your project. Interfaces define the structure of objects in
  * TypeScript, ensuring type safety and code clarity. This schematic generates a new
  * interface with the specified name and type.
  */
-export interface AngularInterfaceOptionsSchema {
+export type AngularInterfaceOptionsSchema = {
     /**
      * The name for the new interface. This will be used to create the interface file (e.g.,
      * `my-interface.interface.ts`).
@@ -585,14 +584,14 @@ export interface AngularInterfaceOptionsSchema {
      * `my-interface.data.ts`.
      */
     type?: string;
-}
+};
 /**
  * Creates a new library project in your Angular workspace. Libraries are reusable
  * collections of components, services, and other Angular artifacts that can be shared
  * across multiple applications. This schematic simplifies the process of generating a new
  * library with the necessary files and configurations.
  */
-export interface LibraryOptionsSchema {
+export type LibraryOptionsSchema = {
     /**
      * The path to the library's public API file, relative to the workspace root. This file
      * defines what parts of the library are accessible to applications that import it.
@@ -635,14 +634,14 @@ export interface LibraryOptionsSchema {
      * This can simplify the structure of your library and its usage in applications.
      */
     standalone?: boolean;
-}
+};
 /**
  * Creates a new Angular workspace and an initial project. This schematic sets up the
  * foundation for your Angular development, generating the workspace configuration files and
  * an optional starter application. You can customize various aspects of the workspace and
  * the initial project, such as routing, styling, and testing.
  */
-export interface AngularNgNewOptionsSchema {
+export type AngularNgNewOptionsSchema = {
     /**
      * Configure the initial Git commit for the new repository.
      */
@@ -753,24 +752,24 @@ export interface AngularNgNewOptionsSchema {
      * encapsulated using Shadow DOM).
      */
     viewEncapsulation?: ViewEncapsulation;
-}
+};
 /**
  * Configure the initial Git commit for the new repository.
  */
 export type CommitUnion = boolean | CommitObject;
-export interface CommitObject {
+export type CommitObject = {
     email: string;
     message?: string;
     name: string;
     [property: string]: any;
-}
+};
 /**
  * Creates a new pipe in your project. Pipes are used to transform data for display in
  * templates. They take input values and apply a specific transformation, such as formatting
  * dates, currency, or filtering arrays. This schematic generates the necessary files and
  * boilerplate code for a new pipe.
  */
-export interface AngularPipeOptionsSchema {
+export type AngularPipeOptionsSchema = {
     /**
      * Automatically export the pipe from the specified NgModule, making it accessible to other
      * modules in the application.
@@ -815,14 +814,14 @@ export interface AngularPipeOptionsSchema {
      * standalone components, directives, or pipes.
      */
     standalone?: boolean;
-}
+};
 /**
  * Creates a new resolver in your project. Resolvers are used to pre-fetch data before a
  * route is activated, ensuring that the necessary data is available before the component is
  * displayed. This can improve the user experience by preventing delays and loading states.
  * This schematic generates a new resolver with the specified name and options.
  */
-export interface AngularResolverOptionsSchema {
+export type AngularResolverOptionsSchema = {
     /**
      * Creates the new resolver files at the top level of the current project. If set to false,
      * a new folder with the resolver's name will be created to contain the files.
@@ -852,13 +851,13 @@ export interface AngularResolverOptionsSchema {
      * Skip the generation of a unit test file `spec.ts` for the new resolver.
      */
     skipTests?: boolean;
-}
+};
 /**
  * Creates a new service in your project. Services are used to encapsulate reusable logic,
  * such as data access, API calls, or utility functions. This schematic simplifies the
  * process of generating a new service with the necessary files and boilerplate code.
  */
-export interface AngularServiceOptionsSchema {
+export type AngularServiceOptionsSchema = {
     /**
      * Creates files at the top level of the project or the given path. If set to false, a new
      * folder with the service's name will be created to contain the files.
@@ -883,14 +882,14 @@ export interface AngularServiceOptionsSchema {
      * Skip the generation of a unit test file `spec.ts` for the service.
      */
     skipTests?: boolean;
-}
+};
 /**
  * Creates a new web worker in your project. Web workers allow you to run JavaScript code in
  * the background, improving the performance and responsiveness of your application by
  * offloading computationally intensive tasks. This schematic generates the necessary files
  * for a new web worker and provides an optional code snippet to demonstrate its usage.
  */
-export interface AngularWebWorkerOptionsSchema {
+export type AngularWebWorkerOptionsSchema = {
     /**
      * The name for the new web worker. This will be used to create the worker file (e.g.,
      * `my-worker.worker.ts`).
@@ -910,4 +909,4 @@ export interface AngularWebWorkerOptionsSchema {
      * Generate a code snippet that demonstrates how to create and use the new web worker.
      */
     snippet?: boolean;
-}
+};
