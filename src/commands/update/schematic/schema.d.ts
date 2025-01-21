@@ -1,4 +1,4 @@
-export interface Schema {
+export type Schema = {
     /**
      * When false (the default), reports an error if installed packages are incompatible with
      * the update.
@@ -39,7 +39,7 @@ export interface Schema {
      */
     verbose?: boolean;
     [property: string]: any;
-}
+};
 /**
  * The preferred package manager configuration files to use for registry settings.
  */
