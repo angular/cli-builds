@@ -286,17 +286,13 @@ let SchematicsCommandModule = (() => {
             return workflow;
         }
         async getSchematicCollections() {
-            // Resolve relative collections from the location of `angular.json`
-            const resolveRelativeCollection = (collectionName) => collectionName.charAt(0) === '.'
-                ? (0, path_1.resolve)(this.context.root, collectionName)
-                : collectionName;
             const getSchematicCollections = (configSection) => {
                 if (!configSection) {
                     return undefined;
                 }
                 const { schematicCollections } = configSection;
                 if (Array.isArray(schematicCollections)) {
-                    return new Set(schematicCollections.map((c) => resolveRelativeCollection(c)));
+                    return new Set(schematicCollections);
                 }
                 return undefined;
             };
@@ -379,6 +375,10 @@ let SchematicsCommandModule = (() => {
         }
         getResolvePaths(collectionName) {
             const { workspace, root } = this.context;
+            if (collectionName[0] === '.') {
+                // Resolve relative collections from the location of `angular.json`
+                return [root];
+            }
             return workspace
                 ? // Workspace
                     collectionName === exports.DEFAULT_SCHEMATICS_COLLECTION
