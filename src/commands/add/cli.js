@@ -99,7 +99,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             // Possibly in the future update the logic to use the following syntax:
             // `ng add @angular/localize -- --package-options`.
             .strict(false);
-        const collectionName = await this.getCollectionName();
+        const collectionName = this.getCollectionName();
+        if (!collectionName) {
+            return localYargs;
+        }
         const workflow = this.getOrCreateWorkflowForBuilder(collectionName);
         try {
             const collection = workflow.engine.createCollection(collectionName);
@@ -336,13 +339,18 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         return false;
     }
-    async getCollectionName() {
-        let [, collectionName] = this.context.args.positional;
+    getCollectionName() {
+        const [, collectionName] = this.context.args.positional;
+        if (!collectionName) {
+            return undefined;
+        }
         // The CLI argument may specify also a version, like `ng add @my/lib@13.0.0`,
-        // but here we need only the name of the package, like `@my/lib`
+        // but here we need only the name of the package, like `@my/lib`.
         try {
-            const packageIdentifier = (0, npm_package_arg_1.default)(collectionName);
-            collectionName = packageIdentifier.name ?? collectionName;
+            const packageName = (0, npm_package_arg_1.default)(collectionName).name;
+            if (packageName) {
+                return packageName;
+            }
         }
         catch (e) {
             (0, error_1.assertIsError)(e);
