@@ -9,8 +9,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheInfoCommandModule = void 0;
 const core_1 = require("@angular-devkit/core");
-const fs_1 = require("fs");
-const path_1 = require("path");
+const node_fs_1 = require("node:fs");
+const node_path_1 = require("node:path");
 const command_module_1 = require("../../../command-builder/command-module");
 const environment_options_1 = require("../../../utilities/environment-options");
 const utilities_1 = require("../utilities");
@@ -40,12 +40,12 @@ class CacheInfoCommandModule extends command_module_1.CommandModule {
             const dirPath = directoriesStack.pop();
             let entries = [];
             try {
-                entries = await fs_1.promises.readdir(dirPath);
+                entries = await node_fs_1.promises.readdir(dirPath);
             }
             catch { }
             for (const entry of entries) {
-                const entryPath = (0, path_1.join)(dirPath, entry);
-                const stats = await fs_1.promises.stat(entryPath);
+                const entryPath = (0, node_path_1.join)(dirPath, entry);
+                const stats = await node_fs_1.promises.stat(entryPath);
                 if (stats.isDirectory()) {
                     directoriesStack.push(entryPath);
                 }

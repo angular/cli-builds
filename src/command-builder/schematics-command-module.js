@@ -78,7 +78,7 @@ exports.SchematicsCommandModule = exports.DEFAULT_SCHEMATICS_COLLECTION = void 0
 const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
 const tools_1 = require("@angular-devkit/schematics/tools");
-const path_1 = require("path");
+const node_path_1 = require("node:path");
 const analytics_1 = require("../analytics/analytics");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
 const config_1 = require("../utilities/config");
@@ -176,7 +176,7 @@ let SchematicsCommandModule = (() => {
             workflow.registry.addPostTransform(core_1.schema.transforms.addUndefinedDefaults);
             workflow.registry.useXDeprecatedProvider((msg) => logger.warn(msg));
             workflow.registry.addSmartDefaultProvider('projectName', () => this.getProjectName());
-            const workingDir = (0, core_1.normalize)((0, path_1.relative)(this.context.root, process.cwd()));
+            const workingDir = (0, core_1.normalize)((0, node_path_1.relative)(this.context.root, process.cwd()));
             workflow.registry.addSmartDefaultProvider('workingDirectory', () => workingDir === '' ? undefined : workingDir);
             let shouldReportAnalytics = true;
             workflow.engineHost.registerOptionsTransform(async (schematic, options) => {
