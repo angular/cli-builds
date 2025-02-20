@@ -117,7 +117,7 @@ async function runCommand(args, logger) {
     })
         .wrap(yargs_1.default.terminalWidth())
         .parseAsync();
-    return process.exitCode ?? 0;
+    return +(process.exitCode ?? 0);
 }
 /**
  * Get the commands that need to be registered.
