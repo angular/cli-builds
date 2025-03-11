@@ -178,21 +178,16 @@ let SchematicsCommandModule = (() => {
             workflow.registry.addSmartDefaultProvider('projectName', () => this.getProjectName());
             const workingDir = (0, core_1.normalize)((0, node_path_1.relative)(this.context.root, process.cwd()));
             workflow.registry.addSmartDefaultProvider('workingDirectory', () => workingDir === '' ? undefined : workingDir);
-            let shouldReportAnalytics = true;
             workflow.engineHost.registerOptionsTransform(async (schematic, options) => {
-                // Report analytics
-                if (shouldReportAnalytics) {
-                    shouldReportAnalytics = false;
-                    const { collection: { name: collectionName }, name: schematicName, } = schematic;
-                    const analytics = (0, analytics_1.isPackageNameSafeForAnalytics)(collectionName)
-                        ? await this.getAnalytics()
-                        : undefined;
-                    analytics?.reportSchematicRunEvent({
-                        [analytics_parameters_1.EventCustomDimension.SchematicCollectionName]: collectionName,
-                        [analytics_parameters_1.EventCustomDimension.SchematicName]: schematicName,
-                        ...this.getAnalyticsParameters(options),
-                    });
-                }
+                const { collection: { name: collectionName }, name: schematicName, } = schematic;
+                const analytics = (0, analytics_1.isPackageNameSafeForAnalytics)(collectionName)
+                    ? await this.getAnalytics()
+                    : undefined;
+                analytics?.reportSchematicRunEvent({
+                    [analytics_parameters_1.EventCustomDimension.SchematicCollectionName]: collectionName,
+                    [analytics_parameters_1.EventCustomDimension.SchematicName]: schematicName,
+                    ...this.getAnalyticsParameters(options),
+                });
                 return options;
             });
             if (options.interactive !== false && (0, tty_1.isTTY)()) {
