@@ -45,7 +45,7 @@ exports.initializeAutocomplete = initializeAutocomplete;
 exports.hasGlobalCliInstall = hasGlobalCliInstall;
 const core_1 = require("@angular-devkit/core");
 const node_child_process_1 = require("node:child_process");
-const node_fs_1 = require("node:fs");
+const fs = __importStar(require("node:fs/promises"));
 const path = __importStar(require("node:path"));
 const node_process_1 = require("node:process");
 const color_1 = require("../utilities/color");
@@ -162,7 +162,7 @@ async function shouldPromptForAutocompletionSetup(command, config) {
     }
     // Check each RC file if they already use `ng completion script` in any capacity and don't prompt.
     for (const rcFile of rcFiles) {
-        const contents = await node_fs_1.promises.readFile(rcFile, 'utf-8').catch(() => undefined);
+        const contents = await fs.readFile(rcFile, 'utf-8').catch(() => undefined);
         if (contents?.includes('ng completion script')) {
             return false;
         }
@@ -206,11 +206,11 @@ async function initializeAutocomplete() {
         throw new Error(`Unknown \`$SHELL\` environment variable value (${shell}). Angular CLI autocompletion only supports Bash or Zsh.`);
     }
     // Get the first file that already exists or fallback to a new file of the first candidate.
-    const candidates = await Promise.allSettled(runCommandCandidates.map((rcFile) => node_fs_1.promises.access(rcFile).then(() => rcFile)));
+    const candidates = await Promise.allSettled(runCommandCandidates.map((rcFile) => fs.access(rcFile).then(() => rcFile)));
     const rcFile = candidates.find((result) => result.status === 'fulfilled')?.value ?? runCommandCandidates[0];
     // Append Angular autocompletion setup to RC file.
     try {
-        await node_fs_1.promises.appendFile(rcFile, '\n\n# Load Angular CLI autocompletion.\nsource <(ng completion script)\n');
+        await fs.appendFile(rcFile, '\n\n# Load Angular CLI autocompletion.\nsource <(ng completion script)\n');
     }
     catch (err) {
         (0, error_1.assertIsError)(err);
