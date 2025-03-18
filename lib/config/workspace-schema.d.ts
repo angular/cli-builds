@@ -877,6 +877,11 @@ export type AngularServiceOptionsSchema = {
      * Skip the generation of a unit test file `spec.ts` for the service.
      */
     skipTests?: boolean;
+    /**
+     * Append a custom type to the service's filename. For example, if you set the type to
+     * `service`, the file will be named `my-service.service.ts`.
+     */
+    type?: string;
 };
 /**
  * Creates a new web worker in your project. Web workers allow you to run JavaScript code in
