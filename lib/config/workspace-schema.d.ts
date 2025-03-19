@@ -437,6 +437,11 @@ export type AngularDirectiveOptionsSchema = {
      * other standalone components or directives.
      */
     standalone?: boolean;
+    /**
+     * Append a custom type to the directive's filename. For example, if you set the type to
+     * `directive`, the file will be named `example.directive.ts`.
+     */
+    type?: string;
 };
 /**
  * Creates a new enum in your project. Enums (enumerations) are a way to define a set of
