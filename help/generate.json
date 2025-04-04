@@ -566,6 +566,15 @@
           "type": "boolean",
           "default": false,
           "description": "Skip the generation of a unit test file `spec.ts` for the new guard."
+        },
+        {
+          "name": "type-separator",
+          "type": "string",
+          "default": "-",
+          "enum": [
+            "-",
+            "."
+          ]
         }
       ],
       "aliases": [

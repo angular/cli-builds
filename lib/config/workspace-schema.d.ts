@@ -512,12 +512,17 @@ export type AngularGuardOptionsSchema = {
      * Skip the generation of a unit test file `spec.ts` for the new guard.
      */
     skipTests?: boolean;
+    typeSeparator?: TypeSeparator;
 };
 export declare enum Implement {
     CanActivate = "CanActivate",
     CanActivateChild = "CanActivateChild",
     CanDeactivate = "CanDeactivate",
     CanMatch = "CanMatch"
+}
+export declare enum TypeSeparator {
+    Empty = "-",
+    TypeSeparator = "."
 }
 /**
  * Creates a new interceptor in your project. Interceptors are used to intercept and modify
@@ -816,10 +821,6 @@ export type AngularPipeOptionsSchema = {
     standalone?: boolean;
     typeSeparator?: TypeSeparator;
 };
-export declare enum TypeSeparator {
-    Empty = "-",
-    TypeSeparator = "."
-}
 /**
  * Creates a new resolver in your project. Resolvers are used to pre-fetch data before a
  * route is activated, ensuring that the necessary data is available before the component is

@@ -1405,6 +1405,14 @@
           "default": [
             "CanActivate"
           ]
+        },
+        "typeSeparator": {
+          "type": "string",
+          "default": "-",
+          "enum": [
+            "-",
+            "."
+          ]
         }
       }
     },
