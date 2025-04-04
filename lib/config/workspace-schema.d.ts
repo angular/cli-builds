@@ -512,6 +512,10 @@ export type AngularGuardOptionsSchema = {
      * Skip the generation of a unit test file `spec.ts` for the new guard.
      */
     skipTests?: boolean;
+    /**
+     * The separator character to use before the type within the generated file's name. For
+     * example, if you set the option to `.`, the file will be named `example.guard.ts`.
+     */
     typeSeparator?: TypeSeparator;
 };
 export declare enum Implement {
@@ -520,6 +524,16 @@ export declare enum Implement {
     CanDeactivate = "CanDeactivate",
     CanMatch = "CanMatch"
 }
+/**
+ * The separator character to use before the type within the generated file's name. For
+ * example, if you set the option to `.`, the file will be named `example.guard.ts`.
+ *
+ * The separator character to use before the type within the generated file's name. For
+ * example, if you set the option to `.`, the file will be named `example.pipe.ts`.
+ *
+ * The separator character to use before the type within the generated file's name. For
+ * example, if you set the option to `.`, the file will be named `example.resolver.ts`.
+ */
 export declare enum TypeSeparator {
     Empty = "-",
     TypeSeparator = "."
@@ -819,6 +833,10 @@ export type AngularPipeOptionsSchema = {
      * standalone components, directives, or pipes.
      */
     standalone?: boolean;
+    /**
+     * The separator character to use before the type within the generated file's name. For
+     * example, if you set the option to `.`, the file will be named `example.pipe.ts`.
+     */
     typeSeparator?: TypeSeparator;
 };
 /**
@@ -857,6 +875,11 @@ export type AngularResolverOptionsSchema = {
      * Skip the generation of a unit test file `spec.ts` for the new resolver.
      */
     skipTests?: boolean;
+    /**
+     * The separator character to use before the type within the generated file's name. For
+     * example, if you set the option to `.`, the file will be named `example.resolver.ts`.
+     */
+    typeSeparator?: TypeSeparator;
 };
 /**
  * Creates a new service in your project. Services are used to encapsulate reusable logic,
