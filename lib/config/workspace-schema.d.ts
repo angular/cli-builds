@@ -529,6 +529,9 @@ export declare enum Implement {
  * example, if you set the option to `.`, the file will be named `example.guard.ts`.
  *
  * The separator character to use before the type within the generated file's name. For
+ * example, if you set the option to `.`, the file will be named `example.interceptor.ts`.
+ *
+ * The separator character to use before the type within the generated file's name. For
  * example, if you set the option to `.`, the file will be named `example.pipe.ts`.
  *
  * The separator character to use before the type within the generated file's name. For
@@ -575,6 +578,11 @@ export type AngularInterceptorOptionsSchema = {
      * Skip the generation of a unit test file `spec.ts` for the new interceptor.
      */
     skipTests?: boolean;
+    /**
+     * The separator character to use before the type within the generated file's name. For
+     * example, if you set the option to `.`, the file will be named `example.interceptor.ts`.
+     */
+    typeSeparator?: TypeSeparator;
 };
 /**
  * Creates a new interface in your project. Interfaces define the structure of objects in
