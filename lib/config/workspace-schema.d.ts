@@ -300,7 +300,6 @@ export type AngularComponentOptionsSchema = {
     name: string;
     /**
      * Generate component template files with an '.ng.html' file extension instead of '.html'.
-     * The '.ng.html' file extension is recommended by the Angular style guide.
      */
     ngHtml?: boolean;
     /**
