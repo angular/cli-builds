@@ -1046,7 +1046,7 @@
           "type": "boolean",
           "default": false
         },
-        "experimentalZoneless": {
+        "zoneless": {
           "description": "Generate an application that does not use `zone.js`.",
           "type": "boolean",
           "default": false
@@ -1813,7 +1813,7 @@
           "description": "Configure the initial application for Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering).",
           "type": "boolean"
         },
-        "experimentalZoneless": {
+        "zoneless": {
           "description": "Create an initial application that does not utilize `zone.js`.",
           "type": "boolean",
           "default": false

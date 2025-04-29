@@ -107,10 +107,6 @@ export type SchematicOptions = {
  */
 export type AngularApplicationOptionsSchema = {
     /**
-     * Generate an application that does not use `zone.js`.
-     */
-    experimentalZoneless?: boolean;
-    /**
      * Include the styles for the root component directly within the `app.component.ts` file.
      * Only CSS styles can be included inline. By default, a separate stylesheet file (e.g.,
      * `app.component.css`) is created.
@@ -186,6 +182,10 @@ export type AngularApplicationOptionsSchema = {
      * component styles are scoped and applied.
      */
     viewEncapsulation?: ViewEncapsulation;
+    /**
+     * Generate an application that does not use `zone.js`.
+     */
+    zoneless?: boolean;
 };
 /**
  * The type of stylesheet files to be created for components in the application.
@@ -689,10 +689,6 @@ export type AngularNgNewOptionsSchema = {
      */
     directory?: string;
     /**
-     * Create an initial application that does not utilize `zone.js`.
-     */
-    experimentalZoneless?: boolean;
-    /**
      * Include the styles for the initial application's root component directly within the
      * `app.component.ts` file. By default, a separate stylesheet file (e.g.,
      * `app.component.css`) is created.
@@ -778,6 +774,10 @@ export type AngularNgNewOptionsSchema = {
      * encapsulated using Shadow DOM).
      */
     viewEncapsulation?: ViewEncapsulation;
+    /**
+     * Create an initial application that does not utilize `zone.js`.
+     */
+    zoneless?: boolean;
 };
 /**
  * Configure the initial Git commit for the new repository.
