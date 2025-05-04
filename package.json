@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "20.0.0-next.9+sha-22ba074",
+  "version": "20.0.0-next.9+sha-ce03490",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
