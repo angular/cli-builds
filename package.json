@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "20.0.0-next.9+sha-f36a272",
+  "version": "20.0.0-next.9+sha-888d0b2",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -29,12 +29,12 @@
     "@angular-devkit/core": "github:angular/angular-devkit-core-builds#{BUILD_SCM_ABBREV_HASH}",
     "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#{BUILD_SCM_ABBREV_HASH}",
     "@inquirer/prompts": "7.5.0",
-    "@listr2/prompt-adapter-inquirer": "2.0.21",
+    "@listr2/prompt-adapter-inquirer": "2.0.22",
     "@schematics/angular": "github:angular/schematics-angular-builds#{BUILD_SCM_ABBREV_HASH}",
     "@yarnpkg/lockfile": "1.1.0",
     "ini": "5.0.0",
     "jsonc-parser": "3.3.1",
-    "listr2": "8.3.2",
+    "listr2": "8.3.3",
     "npm-package-arg": "12.0.2",
     "npm-pick-manifest": "10.0.0",
     "pacote": "20.0.0",
