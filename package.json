@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "20.0.0-rc.0+sha-0f8594f",
+  "version": "20.0.0-rc.0+sha-a01dc23",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -28,7 +28,7 @@
     "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#{BUILD_SCM_ABBREV_HASH}",
     "@angular-devkit/core": "github:angular/angular-devkit-core-builds#{BUILD_SCM_ABBREV_HASH}",
     "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#{BUILD_SCM_ABBREV_HASH}",
-    "@inquirer/prompts": "7.5.0",
+    "@inquirer/prompts": "7.5.1",
     "@listr2/prompt-adapter-inquirer": "2.0.22",
     "@schematics/angular": "github:angular/schematics-angular-builds#{BUILD_SCM_ABBREV_HASH}",
     "@yarnpkg/lockfile": "1.1.0",
