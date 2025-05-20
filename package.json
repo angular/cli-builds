@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "20.0.0-rc.2+sha-787e510",
+  "version": "20.0.0-rc.2+sha-36c2a82",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -37,7 +37,7 @@
     "listr2": "8.3.3",
     "npm-package-arg": "12.0.2",
     "npm-pick-manifest": "10.0.0",
-    "pacote": "20.0.0",
+    "pacote": "21.0.0",
     "resolve": "1.22.10",
     "semver": "7.7.2",
     "yargs": "17.7.2"
