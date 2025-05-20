@@ -4183,6 +4183,15 @@
         "outFile": {
           "type": "string",
           "description": "Name of the file to output."
+        },
+        "i18nDuplicateTranslation": {
+          "type": "string",
+          "description": "How to handle duplicate translations.",
+          "enum": [
+            "error",
+            "warning",
+            "ignore"
+          ]
         }
       },
       "additionalProperties": false
@@ -4225,6 +4234,15 @@
         "outFile": {
           "type": "string",
           "description": "Name of the file to output."
+        },
+        "i18nDuplicateTranslation": {
+          "type": "string",
+          "description": "How to handle duplicate translations.",
+          "enum": [
+            "error",
+            "warning",
+            "ignore"
+          ]
         }
       },
       "additionalProperties": false
