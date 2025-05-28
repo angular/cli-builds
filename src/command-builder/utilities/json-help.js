@@ -6,22 +6,18 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jsonHelpUsage = jsonHelpUsage;
-const yargs_1 = __importDefault(require("yargs"));
 const yargsDefaultCommandRegExp = /^\$0|\*/;
-function jsonHelpUsage() {
+function jsonHelpUsage(localYargs) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const localYargs = yargs_1.default;
-    const { deprecatedOptions, alias: aliases, array, string, boolean, number, choices, demandedOptions, default: defaultVal, hiddenOptions = [], } = localYargs.getOptions();
-    const internalMethods = localYargs.getInternalMethods();
+    const localYargsInstance = localYargs;
+    const { deprecatedOptions, alias: aliases, array, string, boolean, number, choices, demandedOptions, default: defaultVal, hiddenOptions = [], } = localYargsInstance.getOptions();
+    const internalMethods = localYargsInstance.getInternalMethods();
     const usageInstance = internalMethods.getUsageInstance();
     const context = internalMethods.getContext();
     const descriptions = usageInstance.getDescriptions();
-    const groups = localYargs.getGroups();
+    const groups = localYargsInstance.getGroups();
     const positional = groups[usageInstance.getPositionalGroupName()];
     const hidden = new Set(hiddenOptions);
     const normalizeOptions = [];
@@ -68,7 +64,7 @@ function jsonHelpUsage() {
     const otherSubcommands = subcommands.filter((s) => !s.default);
     const output = {
         name: [...context.commands].pop(),
-        command: `${command?.replace(yargsDefaultCommandRegExp, localYargs['$0'])}${defaultSubCommand}`,
+        command: `${command?.replace(yargsDefaultCommandRegExp, localYargsInstance['$0'])}${defaultSubCommand}`,
         ...parseDescription(rawDescription),
         options: normalizeOptions.sort((a, b) => a.name.localeCompare(b.name)),
         subcommands: otherSubcommands.length ? otherSubcommands : undefined,

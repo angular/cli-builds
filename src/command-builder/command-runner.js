@@ -45,11 +45,13 @@ async function runCommand(args, logger) {
         return 1;
     }
     const root = workspace?.basePath ?? process.cwd();
+    const localYargs = (0, yargs_1.default)(args);
     const context = {
         globalConfiguration,
         workspace,
         logger,
         currentDirectory: process.cwd(),
+        yargsInstance: localYargs,
         root,
         packageManager: new package_manager_1.PackageManagerUtils({ globalConfiguration, workspace, root }),
         args: {
@@ -62,14 +64,13 @@ async function runCommand(args, logger) {
             },
         },
     };
-    let localYargs = (0, yargs_1.default)(args);
     for (const CommandModule of await getCommandsToRegister(positional[0])) {
-        localYargs = (0, command_1.addCommandModuleToYargs)(localYargs, CommandModule, context);
+        (0, command_1.addCommandModuleToYargs)(CommandModule, context);
     }
     if (jsonHelp) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const usageInstance = localYargs.getInternalMethods().getUsageInstance();
-        usageInstance.help = () => (0, json_help_1.jsonHelpUsage)();
+        usageInstance.help = () => (0, json_help_1.jsonHelpUsage)(localYargs);
     }
     // Add default command to support version option when no subcommand is specified
     localYargs.command('*', false, (builder) => builder.version('version', 'Show Angular CLI version.', version_1.VERSION.full));
@@ -104,7 +105,7 @@ async function runCommand(args, logger) {
         .epilogue('For more information, see https://angular.dev/cli/.\n')
         .demandCommand(1, command_1.demandCommandFailureMessage)
         .recommendCommands()
-        .middleware(normalize_options_middleware_1.normalizeOptionsMiddleware)
+        .middleware((0, normalize_options_middleware_1.createNormalizeOptionsMiddleware)(localYargs))
         .version(false)
         .showHelpOnFail(false)
         .strict()

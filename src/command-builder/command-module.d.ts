@@ -30,6 +30,7 @@ export interface CommandContext {
     globalConfiguration: AngularWorkspace;
     logger: logging.Logger;
     packageManager: PackageManagerUtils;
+    yargsInstance: Argv<{}>;
     /** Arguments parsed in free-from without parser configuration. */
     args: {
         positional: string[];

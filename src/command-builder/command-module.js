@@ -73,15 +73,11 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandModuleError = exports.CommandModule = exports.CommandScope = void 0;
 const core_1 = require("@angular-devkit/core");
 const node_fs_1 = require("node:fs");
 const path = __importStar(require("node:path"));
-const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
 const analytics_1 = require("../analytics/analytics");
 const analytics_collector_1 = require("../analytics/analytics-collector");
@@ -232,7 +228,7 @@ let CommandModule = (() => {
         }
         reportCommandRunAnalytics(analytics) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const internalMethods = yargs_1.default.getInternalMethods();
+            const internalMethods = this.context.yargsInstance.getInternalMethods();
             // $0 generate component [name] -> generate_component
             // $0 add <collection> -> add
             const fullCommand = internalMethods.getUsageInstance().getUsage()[0][0]

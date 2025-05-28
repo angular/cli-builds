@@ -26,7 +26,7 @@ class CacheCommandModule extends command_module_1.CommandModule {
             cli_2.CacheInfoCommandModule,
         ].sort();
         for (const module of subcommands) {
-            localYargs = (0, command_1.addCommandModuleToYargs)(localYargs, module, this.context);
+            (0, command_1.addCommandModuleToYargs)(module, this.context);
         }
         return localYargs.demandCommand(1, command_1.demandCommandFailureMessage).strict();
     }
