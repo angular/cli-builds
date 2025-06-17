@@ -4365,7 +4365,9 @@
             "lcovonly",
             "text",
             "text-summary",
-            "cobertura"
+            "cobertura",
+            "json",
+            "json-summary"
           ]
         }
       }
