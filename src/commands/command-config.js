@@ -81,6 +81,9 @@ exports.RootCommands = {
     'make-this-awesome': {
         factory: () => Promise.resolve().then(() => __importStar(require('./make-this-awesome/cli'))),
     },
+    'mcp': {
+        factory: () => Promise.resolve().then(() => __importStar(require('./mcp/cli'))),
+    },
     'new': {
         factory: () => Promise.resolve().then(() => __importStar(require('./new/cli'))),
         aliases: ['n'],
