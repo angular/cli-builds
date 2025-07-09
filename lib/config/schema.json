@@ -4354,6 +4354,13 @@
           "type": "string",
           "description": "TypeScript file that exports an array of Angular providers to use during test execution. The array must be a default export.",
           "minLength": 1
+        },
+        "setupFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of global setup and configuration files that are included before the test files. The application's polyfills are always included before these files. The Angular Testbed is also initialized prior to the execution of these files."
         }
       },
       "additionalProperties": false,
