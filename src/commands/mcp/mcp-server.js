@@ -16,6 +16,7 @@ const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 const zod_1 = require("zod");
 const version_1 = require("../../utilities/version");
+const doc_search_1 = require("./tools/doc-search");
 async function createMcpServer(context) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
@@ -102,5 +103,6 @@ async function createMcpServer(context) {
             structuredContent: { projects },
         };
     });
+    await (0, doc_search_1.registerDocSearchTool)(server);
     return server;
 }
