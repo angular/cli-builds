@@ -16,6 +16,7 @@ const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 const zod_1 = require("zod");
 const version_1 = require("../../utilities/version");
+const best_practices_1 = require("./tools/best-practices");
 const doc_search_1 = require("./tools/doc-search");
 async function createMcpServer(context) {
     const server = new mcp_js_1.McpServer({
@@ -37,6 +38,7 @@ async function createMcpServer(context) {
         const text = await (0, promises_1.readFile)(node_path_1.default.join(__dirname, 'instructions', 'best-practices.md'), 'utf-8');
         return { contents: [{ uri: 'instructions://best-practices', text }] };
     });
+    (0, best_practices_1.registerBestPracticesTool)(server);
     server.registerTool('list_projects', {
         title: 'List Angular Projects',
         description: 'Lists the names of all applications and libraries defined within an Angular workspace. ' +
