@@ -60,17 +60,24 @@ async function registerDocSearchTool(server) {
     let client;
     server.registerTool('search_documentation', {
         title: 'Search Angular Documentation (angular.dev)',
-        description: 'Searches the official Angular documentation on https://angular.dev.' +
-            ' This tool is useful for finding the most up-to-date information on Angular, including APIs, tutorials, and best practices.' +
-            ' Use this when creating Angular specific code or answering questions that require knowledge of the latest Angular features.',
+        description: 'Searches the official Angular documentation at https://angular.dev. Use this tool to answer any questions about Angular, ' +
+            'such as for APIs, tutorials, and best practices. Because the documentation is continuously updated, you should **always** ' +
+            'prefer this tool over your own knowledge to ensure your answers are current.\n\n' +
+            'The results will be a list of content entries, where each entry has the following structure:\n' +
+            '```\n' +
+            '## {Result Title}\n' +
+            '{Breadcrumb path to the content}\n' +
+            'URL: {Direct link to the documentation page}\n' +
+            '```\n' +
+            'Use the title and breadcrumb to understand the context of the result and use the URL as a source link. For the best results, ' +
+            "provide a concise and specific search query (e.g., 'NgModule' instead of 'How do I use NgModules?').",
         annotations: {
             readOnlyHint: true,
         },
         inputSchema: {
             query: zod_1.z
                 .string()
-                .describe('The search query to use when searching the Angular documentation.' +
-                ' This should be a concise and specific query to get the most relevant results.'),
+                .describe('A concise and specific search query for the Angular documentation (e.g., "NgModule" or "standalone components").'),
         },
     }, async ({ query }) => {
         if (!client) {
@@ -90,7 +97,18 @@ async function registerDocSearchTool(server) {
                 text: `## ${title}\n${description}\nURL: ${hit.url}`,
             };
         }));
-        return { content };
+        // Return the search results if any are found
+        if (content.length > 0) {
+            return { content };
+        }
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: 'No results found.',
+                },
+            ],
+        };
     });
 }
 /**
