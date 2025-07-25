@@ -37,7 +37,7 @@ class McpCommandModule extends command_module_1.CommandModule {
             this.context.logger.info(INTERACTIVE_MESSAGE);
             return;
         }
-        const server = await (0, mcp_server_1.createMcpServer)({ workspace: this.context.workspace });
+        const server = await (0, mcp_server_1.createMcpServer)({ workspace: this.context.workspace }, this.context.logger);
         const transport = new stdio_js_1.StdioServerTransport();
         await server.connect(transport);
     }

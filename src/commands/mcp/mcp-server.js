@@ -17,8 +17,9 @@ const node_path_1 = __importDefault(require("node:path"));
 const version_1 = require("../../utilities/version");
 const best_practices_1 = require("./tools/best-practices");
 const doc_search_1 = require("./tools/doc-search");
+const examples_1 = require("./tools/examples");
 const projects_1 = require("./tools/projects");
-async function createMcpServer(context) {
+async function createMcpServer(context, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
         version: version_1.VERSION.full,
@@ -41,5 +42,16 @@ async function createMcpServer(context) {
     (0, best_practices_1.registerBestPracticesTool)(server);
     (0, projects_1.registerListProjectsTool)(server, context);
     await (0, doc_search_1.registerDocSearchTool)(server);
+    if (process.env['NG_MCP_CODE_EXAMPLES'] === '1') {
+        // sqlite database support requires Node.js 22.16+
+        const [nodeMajor, nodeMinor] = process.versions.node.split('.', 2).map(Number);
+        if (nodeMajor < 22 || (nodeMajor === 22 && nodeMinor < 16)) {
+            logger.warn(`MCP tool 'find_examples' requires Node.js 22.16 (or higher). ` +
+                ' Registration of this tool has been skipped.');
+        }
+        else {
+            (0, examples_1.registerFindExampleTool)(server, node_path_1.default.join(__dirname, '../../../lib/code-examples.db'));
+        }
+    }
     return server;
 }

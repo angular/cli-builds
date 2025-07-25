@@ -9,4 +9,6 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AngularWorkspace } from '../../utilities/config';
 export declare function createMcpServer(context: {
     workspace?: AngularWorkspace;
+}, logger: {
+    warn(text: string): void;
 }): Promise<McpServer>;
