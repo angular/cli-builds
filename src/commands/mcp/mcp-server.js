@@ -39,7 +39,11 @@ async function createMcpServer(context) {
         return { contents: [{ uri: 'instructions://best-practices', text }] };
     });
     (0, best_practices_1.registerBestPracticesTool)(server);
-    (0, projects_1.registerListProjectsTool)(server, context);
+    // If run outside an Angular workspace (e.g., globally) skip the workspace specific tools.
+    // Currently only the `list_projects` tool.
+    if (!context.workspace) {
+        (0, projects_1.registerListProjectsTool)(server, context);
+    }
     await (0, doc_search_1.registerDocSearchTool)(server);
     return server;
 }
