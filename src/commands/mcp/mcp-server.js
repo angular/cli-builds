@@ -27,6 +27,8 @@ async function createMcpServer(context, logger) {
             resources: {},
             tools: {},
         },
+        instructions: 'For Angular development, this server provides tools to adhere to best practices, search documentation, and find code examples. ' +
+            'When writing or modifying Angular code, use the MCP server and its tools instead of direct shell commands where possible.',
     });
     server.registerResource('instructions', 'instructions://best-practices', {
         title: 'Angular Best Practices and Code Generation Guide',
