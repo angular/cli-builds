@@ -43,8 +43,7 @@ async function createMcpServer(context, logger) {
     });
     (0, best_practices_1.registerBestPracticesTool)(server);
     // If run outside an Angular workspace (e.g., globally) skip the workspace specific tools.
-    // Currently only the `list_projects` tool.
-    if (!context.workspace) {
+    if (context.workspace) {
         (0, projects_1.registerListProjectsTool)(server, context);
     }
     await (0, doc_search_1.registerDocSearchTool)(server);
