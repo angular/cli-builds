@@ -14,6 +14,7 @@ exports.registerBestPracticesTool = registerBestPracticesTool;
 const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 function registerBestPracticesTool(server) {
+    let bestPracticesText;
     server.registerTool('get_best_practices', {
         title: 'Get Angular Coding Best Practices Guide',
         description: 'You **MUST** use this tool to retrieve the Angular Best Practices Guide ' +
@@ -26,12 +27,16 @@ function registerBestPracticesTool(server) {
             openWorldHint: false,
         },
     }, async () => {
-        const text = await (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'instructions', 'best-practices.md'), 'utf-8');
+        bestPracticesText ??= await (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'instructions', 'best-practices.md'), 'utf-8');
         return {
             content: [
                 {
                     type: 'text',
-                    text,
+                    text: bestPracticesText,
+                    annotations: {
+                        audience: ['assistant'],
+                        priority: 0.9,
+                    },
                 },
             ],
         };
