@@ -23,9 +23,11 @@ async function createMcpServer(context, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
         version: version_1.VERSION.full,
+    }, {
         capabilities: {
             resources: {},
             tools: {},
+            logging: {},
         },
         instructions: 'For Angular development, this server provides tools to adhere to best practices, search documentation, and find code examples. ' +
             'When writing or modifying Angular code, use the MCP server and its tools instead of direct shell commands where possible.',
