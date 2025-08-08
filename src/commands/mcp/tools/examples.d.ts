@@ -15,7 +15,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
  * @param server The MCP server instance.
  * @param exampleDatabasePath The path to the SQLite database file containing the examples.
  */
-export declare function registerFindExampleTool(server: McpServer, exampleDatabasePath: string): void;
+export declare function registerFindExampleTool(server: McpServer, exampleDatabasePath: string): Promise<void>;
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.
  *

@@ -39,9 +39,14 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerFindExampleTool = registerFindExampleTool;
 exports.escapeSearchQuery = escapeSearchQuery;
+const promises_1 = require("node:fs/promises");
+const node_path_1 = __importDefault(require("node:path"));
 const zod_1 = require("zod");
 /**
  * Registers the `find_examples` tool with the MCP server.
@@ -52,9 +57,14 @@ const zod_1 = require("zod");
  * @param server The MCP server instance.
  * @param exampleDatabasePath The path to the SQLite database file containing the examples.
  */
-function registerFindExampleTool(server, exampleDatabasePath) {
+async function registerFindExampleTool(server, exampleDatabasePath) {
     let db;
     let queryStatement;
+    // Runtime directory of examples uses an in-memory database
+    if (process.env['NG_MCP_EXAMPLES_DIR']) {
+        db = await setupRuntimeExamples(process.env['NG_MCP_EXAMPLES_DIR']);
+    }
+    suppressSqliteWarning();
     server.registerTool('find_examples', {
         title: 'Find Angular Code Examples',
         description: 'Before writing or modifying any Angular code including templates, ' +
@@ -94,10 +104,11 @@ Examples of queries:
             openWorldHint: false,
         },
     }, async ({ query }) => {
-        if (!db || !queryStatement) {
-            suppressSqliteWarning();
+        if (!db) {
             const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
             db = new DatabaseSync(exampleDatabasePath, { readOnly: true });
+        }
+        if (!queryStatement) {
             queryStatement = db.prepare('SELECT * from examples WHERE examples MATCH ? ORDER BY rank;');
         }
         const sanitizedQuery = escapeSearchQuery(query);
@@ -187,4 +198,20 @@ function suppressSqliteWarning() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, prefer-rest-params
         return originalProcessEmit.apply(process, arguments);
     };
+}
+async function setupRuntimeExamples(examplesPath) {
+    const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
+    const db = new DatabaseSync(':memory:');
+    db.exec(`CREATE VIRTUAL TABLE examples USING fts5(content, tokenize = 'porter ascii');`);
+    const insertStatement = db.prepare('INSERT INTO examples(content) VALUES(?);');
+    db.exec('BEGIN TRANSACTION');
+    for await (const entry of (0, promises_1.glob)('*.md', { cwd: examplesPath, withFileTypes: true })) {
+        if (!entry.isFile()) {
+            continue;
+        }
+        const example = await (0, promises_1.readFile)(node_path_1.default.join(entry.parentPath, entry.name), 'utf-8');
+        insertStatement.run(example);
+    }
+    db.exec('END TRANSACTION');
+    return db;
 }

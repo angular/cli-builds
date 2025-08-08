@@ -55,7 +55,7 @@ async function createMcpServer(context, logger) {
                 ' Registration of this tool has been skipped.');
         }
         else {
-            (0, examples_1.registerFindExampleTool)(server, node_path_1.default.join(__dirname, '../../../lib/code-examples.db'));
+            await (0, examples_1.registerFindExampleTool)(server, node_path_1.default.join(__dirname, '../../../lib/code-examples.db'));
         }
     }
     return server;
