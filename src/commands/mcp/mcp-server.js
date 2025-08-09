@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createMcpServer = createMcpServer;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
-const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 const version_1 = require("../../utilities/version");
+const instructions_1 = require("./resources/instructions");
 const best_practices_1 = require("./tools/best-practices");
 const doc_search_1 = require("./tools/doc-search");
 const examples_1 = require("./tools/examples");
+const modernize_1 = require("./tools/modernize");
 const projects_1 = require("./tools/projects");
 async function createMcpServer(context, logger) {
     const server = new mcp_js_1.McpServer({
@@ -32,18 +33,9 @@ async function createMcpServer(context, logger) {
         instructions: 'For Angular development, this server provides tools to adhere to best practices, search documentation, and find code examples. ' +
             'When writing or modifying Angular code, use the MCP server and its tools instead of direct shell commands where possible.',
     });
-    server.registerResource('instructions', 'instructions://best-practices', {
-        title: 'Angular Best Practices and Code Generation Guide',
-        description: "A comprehensive guide detailing Angular's best practices for code generation and development." +
-            ' This guide should be used as a reference by an LLM to ensure any generated code' +
-            ' adheres to modern Angular standards, including the use of standalone components,' +
-            ' typed forms, modern control flow syntax, and other current conventions.',
-        mimeType: 'text/markdown',
-    }, async () => {
-        const text = await (0, promises_1.readFile)(node_path_1.default.join(__dirname, 'instructions', 'best-practices.md'), 'utf-8');
-        return { contents: [{ uri: 'instructions://best-practices', text }] };
-    });
+    (0, instructions_1.registerInstructionsResource)(server);
     (0, best_practices_1.registerBestPracticesTool)(server);
+    (0, modernize_1.registerModernizeTool)(server);
     // If run outside an Angular workspace (e.g., globally) skip the workspace specific tools.
     if (context.workspace) {
         (0, projects_1.registerListProjectsTool)(server, context);
