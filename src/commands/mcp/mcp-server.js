@@ -20,6 +20,7 @@ const doc_search_1 = require("./tools/doc-search");
 const examples_1 = require("./tools/examples");
 const modernize_1 = require("./tools/modernize");
 const projects_1 = require("./tools/projects");
+const tool_registry_1 = require("./tools/tool-registry");
 async function createMcpServer(context, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
@@ -34,23 +35,39 @@ async function createMcpServer(context, logger) {
             'When writing or modifying Angular code, use the MCP server and its tools instead of direct shell commands where possible.',
     });
     (0, instructions_1.registerInstructionsResource)(server);
-    (0, best_practices_1.registerBestPracticesTool)(server);
-    (0, modernize_1.registerModernizeTool)(server);
-    // If run outside an Angular workspace (e.g., globally) skip the workspace specific tools.
-    if (context.workspace) {
-        (0, projects_1.registerListProjectsTool)(server, context);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let toolDeclarations = [
+        best_practices_1.BEST_PRACTICES_TOOL,
+        doc_search_1.DOC_SEARCH_TOOL,
+        projects_1.LIST_PROJECTS_TOOL,
+    ];
+    const experimentalToolDeclarations = [examples_1.FIND_EXAMPLE_TOOL, modernize_1.MODERNIZE_TOOL];
+    if (context.readOnly) {
+        toolDeclarations = toolDeclarations.filter((tool) => tool.isReadOnly);
     }
-    await (0, doc_search_1.registerDocSearchTool)(server);
+    if (context.localOnly) {
+        toolDeclarations = toolDeclarations.filter((tool) => tool.isLocalOnly);
+    }
+    const enabledExperimentalTools = new Set(context.experimentalTools);
     if (process.env['NG_MCP_CODE_EXAMPLES'] === '1') {
-        // sqlite database support requires Node.js 22.16+
-        const [nodeMajor, nodeMinor] = process.versions.node.split('.', 2).map(Number);
-        if (nodeMajor < 22 || (nodeMajor === 22 && nodeMinor < 16)) {
-            logger.warn(`MCP tool 'find_examples' requires Node.js 22.16 (or higher). ` +
-                ' Registration of this tool has been skipped.');
-        }
-        else {
-            await (0, examples_1.registerFindExampleTool)(server, node_path_1.default.join(__dirname, '../../../lib/code-examples.db'));
+        enabledExperimentalTools.add('find_examples');
+    }
+    if (enabledExperimentalTools.size > 0) {
+        const experimentalToolsMap = new Map(experimentalToolDeclarations.map((tool) => [tool.name, tool]));
+        for (const toolName of enabledExperimentalTools) {
+            const tool = experimentalToolsMap.get(toolName);
+            if (tool) {
+                toolDeclarations.push(tool);
+            }
+            else {
+                logger.warn(`Unknown experimental tool: ${toolName}`);
+            }
         }
     }
+    await (0, tool_registry_1.registerTools)(server, {
+        workspace: context.workspace,
+        logger,
+        exampleDatabasePath: node_path_1.default.join(__dirname, '../../../lib/code-examples.db'),
+    }, toolDeclarations);
     return server;
 }

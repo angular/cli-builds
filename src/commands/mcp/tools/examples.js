@@ -43,40 +43,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerFindExampleTool = registerFindExampleTool;
+exports.FIND_EXAMPLE_TOOL = void 0;
 exports.escapeSearchQuery = escapeSearchQuery;
 const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 const zod_1 = require("zod");
-/**
- * Registers the `find_examples` tool with the MCP server.
- *
- * This tool allows users to search for best-practice Angular code examples
- * from a local SQLite database.
- *
- * @param server The MCP server instance.
- * @param exampleDatabasePath The path to the SQLite database file containing the examples.
- */
-async function registerFindExampleTool(server, exampleDatabasePath) {
-    let db;
-    let queryStatement;
-    // Runtime directory of examples uses an in-memory database
-    if (process.env['NG_MCP_EXAMPLES_DIR']) {
-        db = await setupRuntimeExamples(process.env['NG_MCP_EXAMPLES_DIR']);
-    }
-    suppressSqliteWarning();
-    server.registerTool('find_examples', {
-        title: 'Find Angular Code Examples',
-        description: 'Before writing or modifying any Angular code including templates, ' +
-            '**ALWAYS** use this tool to find current best-practice examples. ' +
-            'This is critical for ensuring code quality and adherence to modern Angular standards. ' +
-            'This tool searches a curated database of approved Angular code examples and returns the most relevant results for your query. ' +
-            'Example Use Cases: ' +
-            "1) Creating new components, directives, or services (e.g., query: 'standalone component' or 'signal input'). " +
-            "2) Implementing core features (e.g., query: 'lazy load route', 'httpinterceptor', or 'route guard'). " +
-            "3) Refactoring existing code to use modern patterns (e.g., query: 'ngfor trackby' or 'form validation').",
-        inputSchema: {
-            query: zod_1.z.string().describe(`Performs a full-text search using FTS5 syntax. The query should target relevant Angular concepts.
+const tool_registry_1 = require("./tool-registry");
+const findExampleInputSchema = zod_1.z.object({
+    query: zod_1.z.string().describe(`Performs a full-text search using FTS5 syntax. The query should target relevant Angular concepts.
 
 Key Syntax Features (see https://www.sqlite.org/fts5.html for full documentation):
   - AND (default): Space-separated terms are combined with AND.
@@ -98,13 +72,46 @@ Examples of queries:
   - Find signal inputs: 'signal input'
   - Find lazy loading a route: 'lazy load route'
   - Find forms with validation: 'form AND (validation OR validator)'`),
-        },
-        annotations: {
-            readOnlyHint: true,
-            openWorldHint: false,
-        },
-    }, async ({ query }) => {
+});
+exports.FIND_EXAMPLE_TOOL = (0, tool_registry_1.declareTool)({
+    name: 'find_examples',
+    title: 'Find Angular Code Examples',
+    description: 'Before writing or modifying any Angular code including templates, ' +
+        '**ALWAYS** use this tool to find current best-practice examples. ' +
+        'This is critical for ensuring code quality and adherence to modern Angular standards. ' +
+        'This tool searches a curated database of approved Angular code examples and returns the most relevant results for your query. ' +
+        'Example Use Cases: ' +
+        "1) Creating new components, directives, or services (e.g., query: 'standalone component' or 'signal input'). " +
+        "2) Implementing core features (e.g., query: 'lazy load route', 'httpinterceptor', or 'route guard'). " +
+        "3) Refactoring existing code to use modern patterns (e.g., query: 'ngfor trackby' or 'form validation').",
+    inputSchema: findExampleInputSchema.shape,
+    isReadOnly: true,
+    isLocalOnly: true,
+    shouldRegister: ({ logger }) => {
+        // sqlite database support requires Node.js 22.16+
+        const [nodeMajor, nodeMinor] = process.versions.node.split('.', 2).map(Number);
+        if (nodeMajor < 22 || (nodeMajor === 22 && nodeMinor < 16)) {
+            logger.warn(`MCP tool 'find_examples' requires Node.js 22.16 (or higher). ` +
+                ' Registration of this tool has been skipped.');
+            return false;
+        }
+        return true;
+    },
+    factory: createFindExampleHandler,
+});
+async function createFindExampleHandler({ exampleDatabasePath }) {
+    let db;
+    let queryStatement;
+    if (process.env['NG_MCP_EXAMPLES_DIR']) {
+        db = await setupRuntimeExamples(process.env['NG_MCP_EXAMPLES_DIR']);
+    }
+    suppressSqliteWarning();
+    return async ({ query }) => {
         if (!db) {
+            if (!exampleDatabasePath) {
+                // This should be prevented by the registration logic in mcp-server.ts
+                throw new Error('Example database path is not available.');
+            }
             const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
             db = new DatabaseSync(exampleDatabasePath, { readOnly: true });
         }
@@ -120,7 +127,7 @@ Examples of queries:
         return {
             content,
         };
-    });
+    };
 }
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.

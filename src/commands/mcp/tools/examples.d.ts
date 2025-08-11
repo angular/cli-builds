@@ -5,17 +5,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-/**
- * Registers the `find_examples` tool with the MCP server.
- *
- * This tool allows users to search for best-practice Angular code examples
- * from a local SQLite database.
- *
- * @param server The MCP server instance.
- * @param exampleDatabasePath The path to the SQLite database file containing the examples.
- */
-export declare function registerFindExampleTool(server: McpServer, exampleDatabasePath: string): Promise<void>;
+import { z } from 'zod';
+export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclaration<{
+    query: z.ZodString;
+}, z.ZodRawShape>;
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.
  *

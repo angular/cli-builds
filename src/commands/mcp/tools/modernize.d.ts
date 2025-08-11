@@ -5,7 +5,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 declare const modernizeInputSchema: z.ZodObject<{
     transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;
@@ -24,5 +23,9 @@ export declare function runModernization(input: ModernizeInput): Promise<{
         instructions: string[];
     };
 }>;
-export declare function registerModernizeTool(server: McpServer): void;
+export declare const MODERNIZE_TOOL: import("./tool-registry").McpToolDeclaration<{
+    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;
+}, {
+    instructions: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+}>;
 export {};

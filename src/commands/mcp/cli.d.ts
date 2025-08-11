@@ -12,5 +12,9 @@ export default class McpCommandModule extends CommandModule implements CommandMo
     describe: false;
     longDescriptionPath: undefined;
     builder(localYargs: Argv): Argv;
-    run(): Promise<void>;
+    run(options: {
+        readOnly: boolean;
+        localOnly: boolean;
+        experimentalTool: string[] | undefined;
+    }): Promise<void>;
 }

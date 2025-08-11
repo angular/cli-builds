@@ -30,14 +30,35 @@ class McpCommandModule extends command_module_1.CommandModule {
     describe = false;
     longDescriptionPath = undefined;
     builder(localYargs) {
-        return localYargs;
+        return localYargs
+            .option('read-only', {
+            type: 'boolean',
+            default: false,
+            describe: 'Only register read-only tools.',
+        })
+            .option('local-only', {
+            type: 'boolean',
+            default: false,
+            describe: 'Only register tools that do not require internet access.',
+        })
+            .option('experimental-tool', {
+            type: 'string',
+            alias: 'E',
+            array: true,
+            describe: 'Enable an experimental tool.',
+        });
     }
-    async run() {
+    async run(options) {
         if ((0, tty_1.isTTY)()) {
             this.context.logger.info(INTERACTIVE_MESSAGE);
             return;
         }
-        const server = await (0, mcp_server_1.createMcpServer)({ workspace: this.context.workspace }, this.context.logger);
+        const server = await (0, mcp_server_1.createMcpServer)({
+            workspace: this.context.workspace,
+            readOnly: options.readOnly,
+            localOnly: options.localOnly,
+            experimentalTools: options.experimentalTool,
+        }, this.context.logger);
         const transport = new stdio_js_1.StdioServerTransport();
         await server.connect(transport);
     }

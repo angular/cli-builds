@@ -40,51 +40,48 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerDocSearchTool = registerDocSearchTool;
+exports.DOC_SEARCH_TOOL = void 0;
 const node_crypto_1 = require("node:crypto");
 const zod_1 = require("zod");
 const constants_1 = require("../constants");
+const tool_registry_1 = require("./tool-registry");
 const ALGOLIA_APP_ID = 'L1XWT2UJ7F';
 // https://www.algolia.com/doc/guides/security/api-keys/#search-only-api-key
 // This is a search only, rate limited key. It is sent within the URL of the query request.
 // This is not the actual key.
 const ALGOLIA_API_E = '322d89dab5f2080fe09b795c93413c6a89222b13a447cdf3e6486d692717bc0c';
-/**
- * Registers a tool with the MCP server to search the Angular documentation.
- *
- * This tool uses Algolia to search the official Angular documentation.
- *
- * @param server The MCP server instance with which to register the tool.
- */
-async function registerDocSearchTool(server) {
+const docSearchInputSchema = zod_1.z.object({
+    query: zod_1.z
+        .string()
+        .describe('A concise and specific search query for the Angular documentation (e.g., "NgModule" or "standalone components").'),
+    includeTopContent: zod_1.z
+        .boolean()
+        .optional()
+        .default(true)
+        .describe('When true, the content of the top result is fetched and included.'),
+});
+exports.DOC_SEARCH_TOOL = (0, tool_registry_1.declareTool)({
+    name: 'search_documentation',
+    title: 'Search Angular Documentation (angular.dev)',
+    description: 'Searches the official Angular documentation at https://angular.dev. Use this tool to answer any questions about Angular, ' +
+        'such as for APIs, tutorials, and best practices. Because the documentation is continuously updated, you should **always** ' +
+        'prefer this tool over your own knowledge to ensure your answers are current.\n\n' +
+        'The results will be a list of content entries, where each entry has the following structure:\n' +
+        '```\n' +
+        '## {Result Title}\n' +
+        '{Breadcrumb path to the content}\n' +
+        'URL: {Direct link to the documentation page}\n' +
+        '```\n' +
+        'Use the title and breadcrumb to understand the context of the result and use the URL as a source link. For the best results, ' +
+        "provide a concise and specific search query (e.g., 'NgModule' instead of 'How do I use NgModules?').",
+    inputSchema: docSearchInputSchema.shape,
+    isReadOnly: true,
+    isLocalOnly: false,
+    factory: createDocSearchHandler,
+});
+function createDocSearchHandler() {
     let client;
-    server.registerTool('search_documentation', {
-        title: 'Search Angular Documentation (angular.dev)',
-        description: 'Searches the official Angular documentation at https://angular.dev. Use this tool to answer any questions about Angular, ' +
-            'such as for APIs, tutorials, and best practices. Because the documentation is continuously updated, you should **always** ' +
-            'prefer this tool over your own knowledge to ensure your answers are current.\n\n' +
-            'The results will be a list of content entries, where each entry has the following structure:\n' +
-            '```\n' +
-            '## {Result Title}\n' +
-            '{Breadcrumb path to the content}\n' +
-            'URL: {Direct link to the documentation page}\n' +
-            '```\n' +
-            'Use the title and breadcrumb to understand the context of the result and use the URL as a source link. For the best results, ' +
-            "provide a concise and specific search query (e.g., 'NgModule' instead of 'How do I use NgModules?').",
-        annotations: {
-            readOnlyHint: true,
-        },
-        inputSchema: {
-            query: zod_1.z
-                .string()
-                .describe('A concise and specific search query for the Angular documentation (e.g., "NgModule" or "standalone components").'),
-            includeTopContent: zod_1.z
-                .boolean()
-                .optional()
-                .default(true)
-                .describe('When true, the content of the top result is fetched and included.'),
-        },
-    }, async ({ query, includeTopContent }) => {
+    return async ({ query, includeTopContent }) => {
         if (!client) {
             const dcip = (0, node_crypto_1.createDecipheriv)('aes-256-gcm', (constants_1.k1 + ALGOLIA_APP_ID).padEnd(32, '^'), constants_1.iv).setAuthTag(Buffer.from(constants_1.at, 'base64'));
             const { searchClient } = await Promise.resolve().then(() => __importStar(require('algoliasearch')));
@@ -138,7 +135,7 @@ async function registerDocSearchTool(server) {
             });
         }
         return { content };
-    });
+    };
 }
 /**
  * Extracts the content of the `<body>` element from an HTML string.
