@@ -220,6 +220,9 @@ async function getWorkspaceRaw(level = 'local') {
 }
 async function validateWorkspace(data, isGlobal) {
     const schema = (0, json_file_1.readAndParseJson)(exports.workspaceSchemaPath);
+    if (!isJsonObject(schema)) {
+        throw new Error('Workspace schema is not a JSON object.');
+    }
     // We should eventually have a dedicated global config schema and use that to validate.
     const schemaToValidate = isGlobal
         ? {
