@@ -29,6 +29,7 @@ export interface McpToolDeclaration<TInput extends ZodRawShape, TOutput extends 
     isReadOnly?: boolean;
     isLocalOnly?: boolean;
 }
+export type AnyMcpToolDeclaration = McpToolDeclaration<any, any>;
 export declare function declareTool<TInput extends ZodRawShape, TOutput extends ZodRawShape>(declaration: McpToolDeclaration<TInput, TOutput>): McpToolDeclaration<TInput, TOutput>;
-export declare function registerTools(server: McpServer, context: McpToolContext, declarations: McpToolDeclaration<any, any>[]): Promise<void>;
+export declare function registerTools(server: McpServer, context: McpToolContext, declarations: AnyMcpToolDeclaration[]): Promise<void>;
 export {};

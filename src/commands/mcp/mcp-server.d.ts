@@ -7,7 +7,8 @@
  */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AngularWorkspace } from '../../utilities/config';
-export declare function createMcpServer(context: {
+import { AnyMcpToolDeclaration } from './tools/tool-registry';
+export declare function createMcpServer(options: {
     workspace?: AngularWorkspace;
     readOnly?: boolean;
     localOnly?: boolean;
@@ -15,3 +16,11 @@ export declare function createMcpServer(context: {
 }, logger: {
     warn(text: string): void;
 }): Promise<McpServer>;
+export declare function assembleToolDeclarations(stableDeclarations: readonly AnyMcpToolDeclaration[], experimentalDeclarations: readonly AnyMcpToolDeclaration[], options: {
+    readOnly?: boolean;
+    localOnly?: boolean;
+    experimentalTools?: string[];
+    logger: {
+        warn(text: string): void;
+    };
+}): AnyMcpToolDeclaration[];

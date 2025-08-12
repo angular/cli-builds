@@ -12,9 +12,7 @@ exports.registerTools = registerTools;
 function declareTool(declaration) {
     return declaration;
 }
-async function registerTools(server, context, 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declarations) {
+async function registerTools(server, context, declarations) {
     for (const declaration of declarations) {
         if (declaration.shouldRegister && !(await declaration.shouldRegister(context))) {
             continue;
