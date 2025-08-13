@@ -28,8 +28,8 @@ const TRANSFORMATIONS = [
         documentationUrl: 'https://angular.dev/guide/testing/dependency-injection',
     },
     {
-        name: 'inject-flags',
-        description: 'Updates `inject` calls from using the InjectFlags enum to a more modern and readable options object.',
+        name: 'inject',
+        description: 'Converts usages of constructor-based injection to the inject() function.',
         documentationUrl: 'https://angular.dev/reference/migrations/inject-function',
     },
     {
@@ -114,7 +114,7 @@ exports.MODERNIZE_TOOL = (0, tool_registry_1.declareTool)({
         '<Use Cases>\n' +
         '* After generating new code: Run this tool immediately after creating new Angular components, directives, ' +
         'or services to ensure they adhere to modern standards.\n' +
-        '* On existing code: Apply to existing TypeScript files (.ts) and Angular templates (.ng.html) to update ' +
+        '* On existing code: Apply to existing TypeScript files (.ts) and Angular templates (.html) to update ' +
         'them with the latest features, such as the new built-in control flow syntax.\n\n' +
         '* When the user asks for a specific transformation: When the transformation list is populated, ' +
         'these specific ones will be ran on the inputs.\n' +
