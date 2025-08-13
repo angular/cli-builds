@@ -27,7 +27,7 @@ exports.BEST_PRACTICES_TOOL = (0, tool_registry_1.declareTool)({
     factory: () => {
         let bestPracticesText;
         return async () => {
-            bestPracticesText ??= await (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'instructions', 'best-practices.md'), 'utf-8');
+            bestPracticesText ??= await (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'resources', 'best-practices.md'), 'utf-8');
             return {
                 content: [
                     {
