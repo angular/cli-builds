@@ -224,11 +224,13 @@ let SchematicsCommandModule = (() => {
                                         ? {
                                             name: item,
                                             value: item,
+                                            checked: item === definition.default,
                                         }
                                         : {
                                             ...item,
                                             name: item.label,
                                             value: item.value,
+                                            checked: item.value === definition.default,
                                         }),
                                 });
                                 break;
