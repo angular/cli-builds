@@ -171,7 +171,7 @@ let PackageManagerUtils = (() => {
             const { cwd = process.cwd(), silent = false } = options;
             return new Promise((resolve) => {
                 const bufferedOutput = [];
-                const childProcess = (0, node_child_process_1.spawn)(this.name, args, {
+                const childProcess = (0, node_child_process_1.spawn)(`${this.name} ${args.join(' ')}`, {
                     // Always pipe stderr to allow for failures to be reported
                     stdio: silent ? ['ignore', 'ignore', 'pipe'] : 'pipe',
                     shell: true,
