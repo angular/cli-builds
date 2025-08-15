@@ -7,6 +7,7 @@
  */
 import { json } from '@angular-devkit/core';
 import type { Argv, Options as YargsOptions } from 'yargs';
+import { EventCustomDimension } from '../../analytics/analytics-parameters';
 /**
  * An option description.
  */
@@ -48,4 +49,4 @@ export declare function parseJsonSchemaToOptions(registry: json.schema.SchemaReg
  *
  * @returns A map from option name to analytics configuration.
  */
-export declare function addSchemaOptionsToCommand<T>(localYargs: Argv<T>, options: Option[], includeDefaultValues: boolean): Map<string, string>;
+export declare function addSchemaOptionsToCommand<T>(localYargs: Argv<T>, options: Option[], includeDefaultValues: boolean): Map<string, EventCustomDimension>;

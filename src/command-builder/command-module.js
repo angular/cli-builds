@@ -218,10 +218,16 @@ let CommandModule = (() => {
                 ...Object.values(analytics_parameters_1.EventCustomMetric),
             ]);
             for (const [name, ua] of this.optionsWithAnalytics) {
+                if (!validEventCustomDimensionAndMetrics.has(ua)) {
+                    continue;
+                }
                 const value = options[name];
-                if ((typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') &&
-                    validEventCustomDimensionAndMetrics.has(ua)) {
+                if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
                     parameters[ua] = value;
+                }
+                else if (Array.isArray(value)) {
+                    // GA doesn't allow array as values.
+                    parameters[ua] = value.sort().join(', ');
                 }
             }
             return parameters;
