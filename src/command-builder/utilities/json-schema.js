@@ -10,7 +10,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseJsonSchemaToOptions = parseJsonSchemaToOptions;
 exports.addSchemaOptionsToCommand = addSchemaOptionsToCommand;
 const core_1 = require("@angular-devkit/core");
-function coerceToStringMap(dashedName, value) {
+function checkStringMap(keyValuePairOptions, args) {
+    for (const key of keyValuePairOptions) {
+        const value = args[key];
+        if (!Array.isArray(value)) {
+            // Value has been parsed.
+            continue;
+        }
+        for (const pair of value) {
+            if (pair === undefined) {
+                continue;
+            }
+            if (!pair.includes('=')) {
+                throw new Error(`Invalid value for argument: ${key}, Given: '${pair}', Expected key=value pair`);
+            }
+        }
+    }
+    return true;
+}
+function coerceToStringMap(value) {
     const stringMap = {};
     for (const pair of value) {
         // This happens when the flag isn't passed at all.
@@ -19,14 +37,11 @@ function coerceToStringMap(dashedName, value) {
         }
         const eqIdx = pair.indexOf('=');
         if (eqIdx === -1) {
-            // TODO: Remove workaround once yargs properly handles thrown errors from coerce.
-            // Right now these sometimes end up as uncaught exceptions instead of proper validation
-            // errors with usage output.
-            return Promise.reject(new Error(`Invalid value for argument: ${dashedName}, Given: '${pair}', Expected key=value pair`));
+            // In the case it is not valid skip processing this option and handle the error in `checkStringMap`
+            return value;
         }
         const key = pair.slice(0, eqIdx);
-        const value = pair.slice(eqIdx + 1);
-        stringMap[key] = value;
+        stringMap[key] = pair.slice(eqIdx + 1);
     }
     return stringMap;
 }
@@ -105,6 +120,7 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
         if (current.default !== undefined) {
             switch (types[0]) {
                 case 'string':
+                case 'array':
                     if (typeof current.default == 'string') {
                         defaultValue = current.default;
                     }
@@ -196,7 +212,7 @@ function addSchemaOptionsToCommand(localYargs, options, includeDefaultValues) {
             booleanOptionsWithNoPrefix.add(dashedName);
         }
         if (itemValueType) {
-            keyValuePairOptions.add(name);
+            keyValuePairOptions.add(dashedName);
         }
         const sharedOptions = {
             alias,
@@ -204,7 +220,7 @@ function addSchemaOptionsToCommand(localYargs, options, includeDefaultValues) {
             description,
             deprecated,
             choices,
-            coerce: itemValueType ? coerceToStringMap.bind(null, dashedName) : undefined,
+            coerce: itemValueType ? coerceToStringMap : undefined,
             // This should only be done when `--help` is used otherwise default will override options set in angular.json.
             ...(includeDefaultValues ? { default: defaultVal } : {}),
         };
@@ -225,6 +241,10 @@ function addSchemaOptionsToCommand(localYargs, options, includeDefaultValues) {
         if (userAnalytics !== undefined) {
             optionsWithAnalytics.set(name, userAnalytics);
         }
+    }
+    // Valid key/value options
+    if (keyValuePairOptions.size) {
+        localYargs.check(checkStringMap.bind(null, keyValuePairOptions), false);
     }
     // Handle options which have been defined in the schema with `no` prefix.
     if (booleanOptionsWithNoPrefix.size) {
