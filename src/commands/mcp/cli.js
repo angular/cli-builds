@@ -24,6 +24,8 @@ To start using the Angular CLI MCP Server, add this configuration to your host:
 }
 
 Exact configuration may differ depending on the host.
+
+For more information and documentation, visit: https://angular.dev/ai/mcp
 `;
 class McpCommandModule extends command_module_1.CommandModule {
     command = 'mcp';
@@ -46,6 +48,8 @@ class McpCommandModule extends command_module_1.CommandModule {
             alias: 'E',
             array: true,
             describe: 'Enable an experimental tool.',
+            choices: mcp_server_1.EXPERIMENTAL_TOOLS.map(({ name }) => name),
+            hidden: true,
         });
     }
     async run(options) {

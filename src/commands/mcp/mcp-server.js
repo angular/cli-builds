@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EXPERIMENTAL_TOOLS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
@@ -31,7 +32,7 @@ const STABLE_TOOLS = [best_practices_1.BEST_PRACTICES_TOOL, doc_search_1.DOC_SEA
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-const EXPERIMENTAL_TOOLS = [examples_1.FIND_EXAMPLE_TOOL, modernize_1.MODERNIZE_TOOL];
+exports.EXPERIMENTAL_TOOLS = [examples_1.FIND_EXAMPLE_TOOL, modernize_1.MODERNIZE_TOOL];
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
@@ -46,7 +47,7 @@ async function createMcpServer(options, logger) {
             'When writing or modifying Angular code, use the MCP server and its tools instead of direct shell commands where possible.',
     });
     (0, instructions_1.registerInstructionsResource)(server);
-    const toolDeclarations = assembleToolDeclarations(STABLE_TOOLS, EXPERIMENTAL_TOOLS, {
+    const toolDeclarations = assembleToolDeclarations(STABLE_TOOLS, exports.EXPERIMENTAL_TOOLS, {
         ...options,
         logger,
     });
