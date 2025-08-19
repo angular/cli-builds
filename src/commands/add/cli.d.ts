@@ -23,6 +23,11 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     private rootRequire;
     builder(argv: Argv): Promise<Argv<AddCommandArgs>>;
     run(options: Options<AddCommandArgs> & OtherOptions): Promise<number | void>;
+    private determinePackageManagerTask;
+    private findCompatiblePackageVersionTask;
+    private loadPackageInfoTask;
+    private confirmInstallationTask;
+    private installPackageTask;
     private isProjectVersionValid;
     private getCollectionName;
     private isPackageInstalled;
