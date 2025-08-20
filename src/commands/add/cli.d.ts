@@ -15,6 +15,7 @@ interface AddCommandArgs extends SchematicsCommandArgs {
     'skip-confirmation'?: boolean;
 }
 export default class AddCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<AddCommandArgs> {
+    #private;
     command: string;
     describe: string;
     longDescriptionPath: string;
@@ -33,6 +34,6 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     private isPackageInstalled;
     private executeSchematic;
     private findProjectVersion;
-    private hasMismatchedPeer;
+    private getPeerDependencyConflicts;
 }
 export {};

@@ -69,6 +69,7 @@ const packageVersionExclusions = {
     // @angular/material@7.x versions have unbounded peer dependency ranges (>=7.0.0).
     '@angular/material': '7.x',
 };
+const DEFAULT_CONFLICT_DISPLAY_LIMIT = 5;
 class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
     describe = 'Adds support for an external library to your project.';
@@ -76,6 +77,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
     allowPrivateSchematics = true;
     schematicName = 'ng-add';
     rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');
+    #projectVersionCache = new Map();
     async builder(argv) {
         const localYargs = (await super.builder(argv))
             .positional('collection', {
@@ -117,6 +119,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         return localYargs;
     }
     async run(options) {
+        this.#projectVersionCache.clear();
         const { logger } = this.context;
         const { collection, skipConfirmation } = options;
         let packageIdentifier;
@@ -141,7 +144,8 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const taskContext = {
             packageIdentifier,
             executeSchematic: this.executeSchematic.bind(this),
-            hasMismatchedPeer: this.hasMismatchedPeer.bind(this),
+            getPeerDependencyConflicts: this.getPeerDependencyConflicts.bind(this),
+            dryRun: options.dryRun,
         };
         const tasks = new listr2_1.Listr([
             {
@@ -162,11 +166,18 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             },
             {
                 title: 'Confirming installation',
-                enabled: !skipConfirmation,
+                enabled: !skipConfirmation && !options.dryRun,
                 task: (context, task) => this.confirmInstallationTask(context, task),
                 rendererOptions: { persistentOutput: true },
             },
             {
+                title: 'Installing package',
+                skip: (context) => {
+                    if (context.dryRun) {
+                        return `Skipping package installation. Would install package ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
+                    }
+                    return false;
+                },
                 task: (context, task) => this.installPackageTask(context, task, options),
                 rendererOptions: { bottomBar: Infinity },
             },
@@ -177,6 +188,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         try {
             const result = await tasks.run(taskContext);
             (0, node_assert_1.default)(result.collectionName, 'Collection name should always be available');
+            if (options.dryRun) {
+                logger.info('The package schematic would be executed next.');
+                return;
+            }
             return this.executeSchematic({ ...options, collection: result.collectionName });
         }
         catch (e) {
@@ -210,59 +225,78 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             (0, error_1.assertIsError)(e);
             throw new CommandError(`Unable to load package information from registry: ${e.message}`);
         }
+        const rejectionReasons = [];
         // Start with the version tagged as `latest` if it exists
         const latestManifest = packageMetadata.tags['latest'];
         if (latestManifest) {
-            context.packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
-        }
-        // Adjust the version based on name and peer dependencies
-        if (latestManifest?.peerDependencies &&
-            Object.keys(latestManifest.peerDependencies).length === 0) {
-            task.output = `Found compatible package version: ${listr2_1.color.blue(latestManifest.version)}.`;
-        }
-        else if (!latestManifest || (await context.hasMismatchedPeer(latestManifest))) {
-            // 'latest' is invalid so search for most recent matching package
-            // Allow prelease versions if the CLI itself is a prerelease
-            const allowPrereleases = (0, semver_1.prerelease)(version_1.VERSION.full);
-            const versionExclusions = packageVersionExclusions[packageMetadata.name];
-            const versionManifests = Object.values(packageMetadata.versions).filter((value) => {
-                // Prerelease versions are not stable and should not be considered by default
-                if (!allowPrereleases && (0, semver_1.prerelease)(value.version)) {
-                    return false;
-                }
-                // Deprecated versions should not be used or considered
-                if (value.deprecated) {
-                    return false;
-                }
-                // Excluded package versions should not be considered
-                if (versionExclusions &&
-                    (0, semver_1.satisfies)(value.version, versionExclusions, { includePrerelease: true })) {
-                    return false;
-                }
-                return true;
-            });
-            // Sort in reverse SemVer order so that the newest compatible version is chosen
-            versionManifests.sort((a, b) => (0, semver_1.compare)(b.version, a.version, true));
-            let found = false;
-            for (const versionManifest of versionManifests) {
-                const mismatch = await context.hasMismatchedPeer(versionManifest);
-                if (mismatch) {
-                    continue;
-                }
-                context.packageIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
-                found = true;
-                break;
-            }
-            if (!found) {
-                task.output = "Unable to find compatible package. Using 'latest' tag.";
+            const latestConflicts = await this.getPeerDependencyConflicts(latestManifest);
+            if (latestConflicts) {
+                // 'latest' is invalid so search for most recent matching package
+                rejectionReasons.push(...latestConflicts);
             }
             else {
-                task.output = `Found compatible package version: ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
+                context.packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
+                task.output = `Found compatible package version: ${listr2_1.color.blue(latestManifest.version)}.`;
+                return;
             }
+        }
+        // Allow prelease versions if the CLI itself is a prerelease
+        const allowPrereleases = !!(0, semver_1.prerelease)(version_1.VERSION.full);
+        const versionManifests = this.#getPotentialVersionManifests(packageMetadata, allowPrereleases);
+        let found = false;
+        for (const versionManifest of versionManifests) {
+            // Already checked the 'latest' version
+            if (latestManifest?.version === versionManifest.version) {
+                continue;
+            }
+            const conflicts = await this.getPeerDependencyConflicts(versionManifest);
+            if (conflicts) {
+                if (options.verbose || rejectionReasons.length < DEFAULT_CONFLICT_DISPLAY_LIMIT) {
+                    rejectionReasons.push(...conflicts);
+                }
+                continue;
+            }
+            context.packageIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
+            found = true;
+            break;
+        }
+        if (!found) {
+            let message = `Unable to find compatible package. Using 'latest' tag.`;
+            if (rejectionReasons.length > 0) {
+                message +=
+                    '\nThis is often because of incompatible peer dependencies.\n' +
+                        'These versions were rejected due to the following conflicts:\n' +
+                        rejectionReasons
+                            .slice(0, options.verbose ? undefined : DEFAULT_CONFLICT_DISPLAY_LIMIT)
+                            .map((r) => `  - ${r}`)
+                            .join('\n');
+            }
+            task.output = message;
         }
         else {
             task.output = `Found compatible package version: ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
         }
+    }
+    #getPotentialVersionManifests(packageMetadata, allowPrereleases) {
+        const versionExclusions = packageVersionExclusions[packageMetadata.name];
+        const versionManifests = Object.values(packageMetadata.versions).filter((value) => {
+            // Prerelease versions are not stable and should not be considered by default
+            if (!allowPrereleases && (0, semver_1.prerelease)(value.version)) {
+                return false;
+            }
+            // Deprecated versions should not be used or considered
+            if (value.deprecated) {
+                return false;
+            }
+            // Excluded package versions should not be considered
+            if (versionExclusions &&
+                (0, semver_1.satisfies)(value.version, versionExclusions, { includePrerelease: true })) {
+                return false;
+            }
+            return true;
+        });
+        // Sort in reverse SemVer order so that the newest compatible version is chosen
+        return versionManifests.sort((a, b) => (0, semver_1.compare)(b.version, a.version, true));
     }
     async loadPackageInfoTask(context, task, options) {
         const { logger } = this.context;
@@ -281,7 +315,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         context.savePackage = manifest['ng-add']?.save;
         context.collectionName = manifest.name;
-        if (await context.hasMismatchedPeer(manifest)) {
+        if (await this.getPeerDependencyConflicts(manifest)) {
             task.output = listr2_1.color.yellow(listr2_1.figures.warning +
                 ' Package has unmet peer dependencies. Adding the package may not succeed.');
         }
@@ -411,6 +445,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
     }
     async findProjectVersion(name) {
+        const cachedVersion = this.#projectVersionCache.get(name);
+        if (cachedVersion !== undefined) {
+            return cachedVersion;
+        }
         const { logger, root } = this.context;
         let installedPackage;
         try {
@@ -420,6 +458,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         if (installedPackage) {
             try {
                 const installed = await (0, package_metadata_1.fetchPackageManifest)((0, node_path_1.dirname)(installedPackage), logger);
+                this.#projectVersionCache.set(name, installed.version);
                 return installed.version;
             }
             catch { }
@@ -432,44 +471,50 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         if (projectManifest) {
             const version = projectManifest.dependencies?.[name] || projectManifest.devDependencies?.[name];
             if (version) {
+                this.#projectVersionCache.set(name, version);
                 return version;
             }
         }
+        this.#projectVersionCache.set(name, null);
         return null;
     }
-    async hasMismatchedPeer(manifest) {
-        for (const peer in manifest.peerDependencies) {
+    async getPeerDependencyConflicts(manifest) {
+        if (!manifest.peerDependencies) {
+            return false;
+        }
+        const checks = Object.entries(manifest.peerDependencies).map(async ([peer, range]) => {
             let peerIdentifier;
             try {
-                peerIdentifier = npm_package_arg_1.default.resolve(peer, manifest.peerDependencies[peer]);
+                peerIdentifier = npm_package_arg_1.default.resolve(peer, range);
             }
             catch {
                 this.context.logger.warn(`Invalid peer dependency ${peer} found in package.`);
-                continue;
+                return null;
             }
-            if (peerIdentifier.type === 'version' || peerIdentifier.type === 'range') {
-                try {
-                    const version = await this.findProjectVersion(peer);
-                    if (!version) {
-                        continue;
-                    }
-                    const options = { includePrerelease: true };
-                    if (!(0, semver_1.intersects)(version, peerIdentifier.rawSpec, options) &&
-                        !(0, semver_1.satisfies)(version, peerIdentifier.rawSpec, options)) {
-                        return true;
-                    }
-                }
-                catch {
-                    // Not found or invalid so ignore
-                    continue;
-                }
-            }
-            else {
+            if (peerIdentifier.type !== 'version' && peerIdentifier.type !== 'range') {
                 // type === 'tag' | 'file' | 'directory' | 'remote' | 'git'
-                // Cannot accurately compare these as the tag/location may have changed since install
+                // Cannot accurately compare these as the tag/location may have changed since install.
+                return null;
             }
-        }
-        return false;
+            try {
+                const version = await this.findProjectVersion(peer);
+                if (!version) {
+                    return null;
+                }
+                const options = { includePrerelease: true };
+                if (!(0, semver_1.intersects)(version, peerIdentifier.rawSpec, options) &&
+                    !(0, semver_1.satisfies)(version, peerIdentifier.rawSpec, options)) {
+                    return (`Package "${manifest.name}@${manifest.version}" has an incompatible peer dependency to "` +
+                        `${peer}@${peerIdentifier.rawSpec}" (requires "${version}" in project).`);
+                }
+            }
+            catch {
+                // Not found or invalid so ignore
+            }
+            return null;
+        });
+        const conflicts = (await Promise.all(checks)).filter((result) => !!result);
+        return conflicts.length > 0 && conflicts;
     }
 }
 exports.default = AddCommandModule;
