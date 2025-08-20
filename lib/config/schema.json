@@ -51,7 +51,6 @@
           "type": "string",
           "enum": [
             "npm",
-            "cnpm",
             "yarn",
             "pnpm",
             "bun"
@@ -118,7 +117,6 @@
           "type": "string",
           "enum": [
             "npm",
-            "cnpm",
             "yarn",
             "pnpm",
             "bun"
@@ -1800,7 +1798,6 @@
             "npm",
             "yarn",
             "pnpm",
-            "cnpm",
             "bun"
           ]
         },
