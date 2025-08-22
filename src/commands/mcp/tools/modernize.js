@@ -23,11 +23,6 @@ const TRANSFORMATIONS = [
         documentationUrl: 'https://angular.dev/reference/migrations/self-closing-tags',
     },
     {
-        name: 'test-bed-get',
-        description: 'Updates `TestBed.get` to the preferred and type-safe `TestBed.inject` in TypeScript test files.',
-        documentationUrl: 'https://angular.dev/guide/testing/dependency-injection',
-    },
-    {
         name: 'inject',
         description: 'Converts usages of constructor-based injection to the inject() function.',
         documentationUrl: 'https://angular.dev/reference/migrations/inject-function',
@@ -58,11 +53,6 @@ const TRANSFORMATIONS = [
             '2. Run `ng g @angular/core:standalone` and select "Remove unnecessary NgModule classes"\n' +
             '3. Run `ng g @angular/core:standalone` and select "Bootstrap the project using standalone APIs"',
         documentationUrl: 'https://angular.dev/reference/migrations/standalone',
-    },
-    {
-        name: 'zoneless',
-        description: 'Migrates the application to be zoneless.',
-        documentationUrl: 'https://angular.dev/guide/zoneless',
     },
 ];
 const modernizeInputSchema = zod_1.z.object({
