@@ -1005,7 +1005,8 @@
             "css",
             "scss",
             "sass",
-            "less"
+            "less",
+            "tailwind"
           ]
         },
         "skipTests": {
@@ -1767,7 +1768,8 @@
             "css",
             "scss",
             "sass",
-            "less"
+            "less",
+            "tailwind"
           ]
         },
         "skipTests": {

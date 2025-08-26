@@ -195,7 +195,8 @@ export declare enum SchematicsAngularApplicationStyle {
     Css = "css",
     Less = "less",
     Sass = "sass",
-    Scss = "scss"
+    Scss = "scss",
+    Tailwind = "tailwind"
 }
 /**
  * Sets the view encapsulation mode for the application's components. This determines how
