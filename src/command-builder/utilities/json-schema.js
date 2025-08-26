@@ -120,8 +120,12 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
         if (current.default !== undefined) {
             switch (types[0]) {
                 case 'string':
-                case 'array':
                     if (typeof current.default == 'string') {
+                        defaultValue = current.default;
+                    }
+                    break;
+                case 'array':
+                    if (Array.isArray(current.default)) {
                         defaultValue = current.default;
                     }
                     break;
