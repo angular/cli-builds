@@ -125,7 +125,7 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
                     }
                     break;
                 case 'array':
-                    if (Array.isArray(current.default)) {
+                    if (Array.isArray(current.default) && current.default.length > 0) {
                         defaultValue = current.default;
                     }
                     break;
