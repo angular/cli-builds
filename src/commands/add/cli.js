@@ -43,7 +43,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const tools_1 = require("@angular-devkit/schematics/tools");
 const listr2_1 = require("listr2");
 const node_assert_1 = __importDefault(require("node:assert"));
 const node_module_1 = require("node:module");
@@ -188,8 +187,18 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         try {
             const result = await tasks.run(taskContext);
             (0, node_assert_1.default)(result.collectionName, 'Collection name should always be available');
+            if (!result.hasSchematics) {
+                let message = options.dryRun
+                    ? 'The package does not provide any `ng add` actions, so no further actions would be taken.'
+                    : 'Package installed successfully. The package does not provide any `ng add` actions, so no further actions were taken.';
+                if (result.homepage) {
+                    message += `\nFor more information about this package, visit its homepage at ${result.homepage}`;
+                }
+                logger.info(message);
+                return;
+            }
             if (options.dryRun) {
-                logger.info('The package schematic would be executed next.');
+                logger.info("The package's `ng add` actions would be executed next.");
                 return;
             }
             return this.executeSchematic({ ...options, collection: result.collectionName });
@@ -313,8 +322,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             (0, error_1.assertIsError)(e);
             throw new CommandError(`Unable to fetch package information for '${context.packageIdentifier}': ${e.message}`);
         }
+        context.hasSchematics = !!manifest.schematics;
         context.savePackage = manifest['ng-add']?.save;
         context.collectionName = manifest.name;
+        context.homepage = manifest.homepage;
         if (await this.getPeerDependencyConflicts(manifest)) {
             task.output = listr2_1.color.yellow(listr2_1.figures.warning +
                 ' Package has unmet peer dependencies. Adding the package may not succeed.');
@@ -419,30 +430,20 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         return false;
     }
-    async executeSchematic(options) {
-        try {
-            const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, ...schematicOptions } = options;
-            return await this.runSchematic({
-                schematicOptions,
-                schematicName: this.schematicName,
-                collectionName,
-                executionOptions: {
-                    interactive,
-                    force,
-                    dryRun,
-                    defaults,
-                    packageRegistry: registry,
-                },
-            });
-        }
-        catch (e) {
-            if (e instanceof tools_1.NodePackageDoesNotSupportSchematics) {
-                this.context.logger.error('The package that you are trying to add does not support schematics.' +
-                    'You can try using a different version of the package or contact the package author to add ng-add support.');
-                return 1;
-            }
-            throw e;
-        }
+    executeSchematic(options) {
+        const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, ...schematicOptions } = options;
+        return this.runSchematic({
+            schematicOptions,
+            schematicName: this.schematicName,
+            collectionName,
+            executionOptions: {
+                interactive,
+                force,
+                dryRun,
+                defaults,
+                packageRegistry: registry,
+            },
+        });
     }
     async findProjectVersion(name) {
         const cachedVersion = this.#projectVersionCache.get(name);
