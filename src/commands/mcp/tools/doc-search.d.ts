@@ -9,4 +9,21 @@ import { z } from 'zod';
 export declare const DOC_SEARCH_TOOL: import("./tool-registry").McpToolDeclaration<{
     query: z.ZodString;
     includeTopContent: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-}, z.ZodRawShape>;
+}, {
+    results: z.ZodArray<z.ZodObject<{
+        title: z.ZodString;
+        breadcrumb: z.ZodString;
+        url: z.ZodString;
+        content: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        title: string;
+        breadcrumb: string;
+        url: string;
+        content?: string | undefined;
+    }, {
+        title: string;
+        breadcrumb: string;
+        url: string;
+        content?: string | undefined;
+    }>, "many">;
+}>;
