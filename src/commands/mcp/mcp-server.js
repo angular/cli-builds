@@ -21,6 +21,7 @@ const best_practices_1 = require("./tools/best-practices");
 const doc_search_1 = require("./tools/doc-search");
 const examples_1 = require("./tools/examples");
 const modernize_1 = require("./tools/modernize");
+const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
 const tool_registry_1 = require("./tools/tool-registry");
 /**
@@ -32,7 +33,11 @@ const STABLE_TOOLS = [best_practices_1.BEST_PRACTICES_TOOL, doc_search_1.DOC_SEA
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [examples_1.FIND_EXAMPLE_TOOL, modernize_1.MODERNIZE_TOOL];
+exports.EXPERIMENTAL_TOOLS = [
+    examples_1.FIND_EXAMPLE_TOOL,
+    modernize_1.MODERNIZE_TOOL,
+    zoneless_migration_1.ZONELESS_MIGRATION_TOOL,
+];
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
