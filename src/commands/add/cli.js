@@ -69,6 +69,16 @@ const packageVersionExclusions = {
     '@angular/material': '7.x',
 };
 const DEFAULT_CONFLICT_DISPLAY_LIMIT = 5;
+/**
+ * A map of packages to built-in schematics.
+ * This is used for packages that do not have a native `ng-add` schematic.
+ */
+const BUILT_IN_SCHEMATICS = {
+    tailwindcss: {
+        collection: '@schematics/angular',
+        name: 'tailwind',
+    },
+};
 class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
     describe = 'Adds support for an external library to your project.';
@@ -187,7 +197,35 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         try {
             const result = await tasks.run(taskContext);
             (0, node_assert_1.default)(result.collectionName, 'Collection name should always be available');
+            // Check if the installed package has actual add actions and not just schematic support
+            if (result.hasSchematics && !options.dryRun) {
+                const workflow = this.getOrCreateWorkflowForBuilder(result.collectionName);
+                const collection = workflow.engine.createCollection(result.collectionName);
+                // listSchematicNames cannot be used here since it does not list private schematics.
+                // Most `ng-add` schematics are marked as private.
+                // TODO: Consider adding a `hasSchematic` helper to the schematic collection object.
+                try {
+                    collection.createSchematic(this.schematicName, true);
+                }
+                catch {
+                    result.hasSchematics = false;
+                }
+            }
             if (!result.hasSchematics) {
+                // Fallback to a built-in schematic if the package does not have an `ng-add` schematic
+                const packageName = result.packageIdentifier.name;
+                if (packageName) {
+                    const builtInSchematic = BUILT_IN_SCHEMATICS[packageName];
+                    if (builtInSchematic) {
+                        logger.info(`The ${listr2_1.color.blue(packageName)} package does not provide \`ng add\` actions.`);
+                        logger.info('The Angular CLI will use built-in actions to add it to your project.');
+                        return this.executeSchematic({
+                            ...options,
+                            collection: builtInSchematic.collection,
+                            schematicName: builtInSchematic.name,
+                        });
+                    }
+                }
                 let message = options.dryRun
                     ? 'The package does not provide any `ng add` actions, so no further actions would be taken.'
                     : 'Package installed successfully. The package does not provide any `ng add` actions, so no further actions were taken.';
@@ -431,10 +469,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         return false;
     }
     executeSchematic(options) {
-        const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, ...schematicOptions } = options;
+        const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, schematicName, ...schematicOptions } = options;
         return this.runSchematic({
             schematicOptions,
-            schematicName: this.schematicName,
+            schematicName: schematicName ?? this.schematicName,
             collectionName,
             executionOptions: {
                 interactive,
