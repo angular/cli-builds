@@ -8,7 +8,15 @@
 import { z } from 'zod';
 export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclaration<{
     query: z.ZodString;
-}, z.ZodRawShape>;
+}, {
+    examples: z.ZodArray<z.ZodObject<{
+        content: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        content: string;
+    }, {
+        content: string;
+    }>, "many">;
+}>;
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.
  *
