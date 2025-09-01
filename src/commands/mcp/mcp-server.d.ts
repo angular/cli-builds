@@ -14,7 +14,15 @@ import { AnyMcpToolDeclaration } from './tools/tool-registry';
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
     query: import("zod").ZodString;
-}, import("zod").ZodRawShape>, import("./tools/tool-registry").McpToolDeclaration<{
+}, {
+    examples: import("zod").ZodArray<import("zod").ZodObject<{
+        content: import("zod").ZodString;
+    }, "strip", import("zod").ZodTypeAny, {
+        content: string;
+    }, {
+        content: string;
+    }>, "many">;
+}>, import("./tools/tool-registry").McpToolDeclaration<{
     transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<[string, ...string[]]>, "many">>;
 }, {
     instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
