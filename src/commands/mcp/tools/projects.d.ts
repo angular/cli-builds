@@ -7,23 +7,54 @@
  */
 import z from 'zod';
 export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclaration<z.ZodRawShape, {
-    projects: z.ZodArray<z.ZodObject<{
-        name: z.ZodString;
-        type: z.ZodOptional<z.ZodEnum<["application", "library"]>>;
-        root: z.ZodString;
-        sourceRoot: z.ZodString;
-        selectorPrefix: z.ZodOptional<z.ZodString>;
+    workspaces: z.ZodArray<z.ZodObject<{
+        path: z.ZodString;
+        projects: z.ZodArray<z.ZodObject<{
+            name: z.ZodString;
+            type: z.ZodOptional<z.ZodEnum<["application", "library"]>>;
+            root: z.ZodString;
+            sourceRoot: z.ZodString;
+            selectorPrefix: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            root: string;
+            sourceRoot: string;
+            type?: "application" | "library" | undefined;
+            selectorPrefix?: string | undefined;
+        }, {
+            name: string;
+            root: string;
+            sourceRoot: string;
+            type?: "application" | "library" | undefined;
+            selectorPrefix?: string | undefined;
+        }>, "many">;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        root: string;
-        sourceRoot: string;
-        type?: "application" | "library" | undefined;
-        selectorPrefix?: string | undefined;
+        path: string;
+        projects: {
+            name: string;
+            root: string;
+            sourceRoot: string;
+            type?: "application" | "library" | undefined;
+            selectorPrefix?: string | undefined;
+        }[];
     }, {
-        name: string;
-        root: string;
-        sourceRoot: string;
-        type?: "application" | "library" | undefined;
-        selectorPrefix?: string | undefined;
+        path: string;
+        projects: {
+            name: string;
+            root: string;
+            sourceRoot: string;
+            type?: "application" | "library" | undefined;
+            selectorPrefix?: string | undefined;
+        }[];
     }>, "many">;
+    parsingErrors: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        filePath: z.ZodString;
+        message: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        message: string;
+        filePath: string;
+    }, {
+        message: string;
+        filePath: string;
+    }>, "many">>;
 }>;

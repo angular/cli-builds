@@ -14,11 +14,12 @@ function declareTool(declaration) {
 }
 async function registerTools(server, context, declarations) {
     for (const declaration of declarations) {
-        if (declaration.shouldRegister && !(await declaration.shouldRegister(context))) {
+        const toolContext = { ...context, server };
+        if (declaration.shouldRegister && !(await declaration.shouldRegister(toolContext))) {
             continue;
         }
         const { name, factory, shouldRegister, isReadOnly, isLocalOnly, ...config } = declaration;
-        const handler = await factory(context);
+        const handler = await factory(toolContext);
         // Add declarative characteristics to annotations
         config.annotations ??= {};
         if (isReadOnly !== undefined) {
