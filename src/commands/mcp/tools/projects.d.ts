@@ -47,7 +47,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             selectorPrefix?: string | undefined;
         }[];
     }>, "many">;
-    parsingErrors: z.ZodOptional<z.ZodArray<z.ZodObject<{
+    parsingErrors: z.ZodDefault<z.ZodArray<z.ZodObject<{
         filePath: z.ZodString;
         message: z.ZodString;
     }, "strip", z.ZodTypeAny, {
