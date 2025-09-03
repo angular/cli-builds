@@ -109,9 +109,14 @@ let ArchitectCommandModule = (() => {
             return this.addSchemaOptionsToCommand(localYargs, schemaOptions);
         }
         async run(options) {
-            const target = this.getArchitectTarget();
-            const { configuration = '', project, ...architectOptions } = options;
-            if (!project) {
+            const originalProcessTitle = process.title;
+            try {
+                const target = this.getArchitectTarget();
+                const { configuration = '', project, ...architectOptions } = options;
+                if (project) {
+                    process.title = `${originalProcessTitle} (${project})`;
+                    return await this.runSingleTarget({ configuration, target, project }, architectOptions);
+                }
                 // This runs each target sequentially.
                 // Running them in parallel would jumble the log messages.
                 let result = 0;
@@ -120,12 +125,13 @@ let ArchitectCommandModule = (() => {
                     return this.onMissingTarget('Cannot determine project or target for command.');
                 }
                 for (const project of projectNames) {
+                    process.title = `${originalProcessTitle} (${project})`;
                     result |= await this.runSingleTarget({ configuration, target, project }, architectOptions);
                 }
                 return result;
             }
-            else {
-                return await this.runSingleTarget({ configuration, target, project }, architectOptions);
+            finally {
+                process.title = originalProcessTitle;
             }
         }
         getArchitectProject() {
