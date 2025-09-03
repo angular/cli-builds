@@ -28,8 +28,12 @@ function createProvideZonelessForTestsSetupPrompt(testFilePath) {
 
     In the main \`beforeEach\` block for the test suite (the one inside the top-level \`describe\`), add \`provideZonelessChangeDetection()\` to the providers array in \`TestBed.configureTestingModule\`.
 
+    *   If there is already an import from \`@angular/core\`, add \`provideZonelessChangeDetection\` to the existing import.
+    *   Otherwise, add a new import statement for \`provideZonelessChangeDetection\` from \`@angular/core\`.
+
     \`\`\`diff
-    + import { provideZonelessChangeDetection } from '@angular/core';
+    - import {{ SomeImport }} from '@angular/core';
+    + import {{ SomeImport, provideZonelessChangeDetection }} from '@angular/core';
       
       describe('MyComponent', () => {
    +    beforeEach(() => {
@@ -184,6 +188,9 @@ async function createFixResponseForZoneTests(sourceFile) {
 
       The following usages of \`provideZoneChangeDetection\` must be removed:
       ${locations.map((loc) => `- ${loc}`).join('\n')}
+
+      After removing \`provideZoneChangeDetection\`, the tests will likely fail. Use this guide to diagnose and fix the failures.
+
       ${testDebuggingGuideText(sourceFile.fileName)}
 
       ### Final Step
@@ -193,8 +200,6 @@ async function createFixResponseForZoneTests(sourceFile) {
 function testDebuggingGuideText(fileName) {
     return `
       ### Test Debugging Guide
-
-      After removing \`provideZoneChangeDetection\`, the tests will likely fail. Use this guide to diagnose and fix the failures.
 
       1.  **\`ExpressionChangedAfterItHasBeenCheckedError\`**:
         *   **Cause**: This error indicates that a value in a component's template was updated, but Angular was not notified to run change detection.

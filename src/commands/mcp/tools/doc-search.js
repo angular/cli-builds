@@ -103,7 +103,7 @@ tutorials, concepts, and best practices.
     isLocalOnly: false,
     factory: createDocSearchHandler,
 });
-function createDocSearchHandler() {
+function createDocSearchHandler({ logger }) {
     let client;
     return async ({ query, includeTopContent }) => {
         if (!client) {
@@ -130,21 +130,24 @@ function createDocSearchHandler() {
         const topHit = allHits[0];
         const { title: topTitle, breadcrumb: topBreadcrumb } = formatHitToParts(topHit);
         let topContent;
-        try {
-            if (includeTopContent && typeof topHit.url === 'string') {
-                const url = new URL(topHit.url);
+        if (includeTopContent && typeof topHit.url === 'string') {
+            const url = new URL(topHit.url);
+            try {
                 // Only fetch content from angular.dev
                 if (url.hostname === 'angular.dev' || url.hostname.endsWith('.angular.dev')) {
                     const response = await fetch(url);
                     if (response.ok) {
                         const html = await response.text();
-                        topContent = extractMainContent(html);
+                        const mainContent = extractMainContent(html);
+                        if (mainContent) {
+                            topContent = stripHtml(mainContent);
+                        }
                     }
                 }
             }
-        }
-        catch {
-            // Ignore errors fetching content
+            catch (e) {
+                logger.warn(`Failed to fetch or parse content from ${url}: ${e}`);
+            }
         }
         structuredResults.push({
             title: topTitle,
@@ -175,6 +178,21 @@ function createDocSearchHandler() {
             structuredContent: { results: structuredResults },
         };
     };
+}
+/**
+ * Strips HTML tags from a string.
+ * @param html The HTML string to strip.
+ * @returns The text content of the HTML.
+ */
+function stripHtml(html) {
+    // This is a basic regex to remove HTML tags.
+    // It also decodes common HTML entities.
+    return html
+        .replace(/<[^>]*>/g, '')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .trim();
 }
 /**
  * Extracts the content of the `<main>` element from an HTML string.
