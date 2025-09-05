@@ -4363,8 +4363,7 @@
           "description": "Globs to exclude from code coverage.",
           "items": {
             "type": "string"
-          },
-          "default": []
+          }
         },
         "codeCoverageReporters": {
           "type": "array",
