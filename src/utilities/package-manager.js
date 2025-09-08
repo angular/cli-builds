@@ -50,6 +50,18 @@ const node_path_1 = require("node:path");
 const workspace_schema_1 = require("../../lib/config/workspace-schema");
 const config_1 = require("./config");
 const memoize_1 = require("./memoize");
+/**
+ * A map of package managers to their corresponding lockfile names.
+ */
+const LOCKFILE_NAMES = {
+    [workspace_schema_1.PackageManager.Yarn]: 'yarn.lock',
+    [workspace_schema_1.PackageManager.Pnpm]: 'pnpm-lock.yaml',
+    [workspace_schema_1.PackageManager.Bun]: ['bun.lockb', 'bun.lock'],
+    [workspace_schema_1.PackageManager.Npm]: 'package-lock.json',
+};
+/**
+ * Utilities for interacting with various package managers.
+ */
 let PackageManagerUtils = (() => {
     let _instanceExtraInitializers = [];
     let _getVersion_decorators;
@@ -64,6 +76,9 @@ let PackageManagerUtils = (() => {
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
         context = __runInitializers(this, _instanceExtraInitializers);
+        /**
+         * @param context The context for the package manager utilities, including workspace and global configuration.
+         */
         constructor(context) {
             this.context = context;
         }
@@ -211,10 +226,11 @@ let PackageManagerUtils = (() => {
             if (packageManager) {
                 return packageManager;
             }
-            const hasNpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Npm);
-            const hasYarnLock = this.hasLockfile(workspace_schema_1.PackageManager.Yarn);
-            const hasPnpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Pnpm);
-            const hasBunLock = this.hasLockfile(workspace_schema_1.PackageManager.Bun);
+            const filesInRoot = (0, node_fs_1.readdirSync)(this.context.root);
+            const hasNpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Npm, filesInRoot);
+            const hasYarnLock = this.hasLockfile(workspace_schema_1.PackageManager.Yarn, filesInRoot);
+            const hasPnpmLock = this.hasLockfile(workspace_schema_1.PackageManager.Pnpm, filesInRoot);
+            const hasBunLock = this.hasLockfile(workspace_schema_1.PackageManager.Bun, filesInRoot);
             // PERF NOTE: `this.getVersion` spawns the package a the child_process which can take around ~300ms at times.
             // Therefore, we should only call this method when needed. IE: don't call `this.getVersion(PackageManager.Pnpm)` unless truly needed.
             // The result of this method is not stored in a variable because it's memoized.
@@ -259,24 +275,17 @@ let PackageManagerUtils = (() => {
             //       Potentially with a prompt to choose and optionally set as the default.
             return workspace_schema_1.PackageManager.Npm;
         }
-        hasLockfile(packageManager) {
-            let lockfileName;
-            switch (packageManager) {
-                case workspace_schema_1.PackageManager.Yarn:
-                    lockfileName = 'yarn.lock';
-                    break;
-                case workspace_schema_1.PackageManager.Pnpm:
-                    lockfileName = 'pnpm-lock.yaml';
-                    break;
-                case workspace_schema_1.PackageManager.Bun:
-                    lockfileName = 'bun.lockb';
-                    break;
-                case workspace_schema_1.PackageManager.Npm:
-                default:
-                    lockfileName = 'package-lock.json';
-                    break;
-            }
-            return (0, node_fs_1.existsSync)((0, node_path_1.join)(this.context.root, lockfileName));
+        /**
+         * Checks if a lockfile for a specific package manager exists in the root directory.
+         * @param packageManager The package manager to check for.
+         * @param filesInRoot An array of file names in the root directory.
+         * @returns True if the lockfile exists, false otherwise.
+         */
+        hasLockfile(packageManager, filesInRoot) {
+            const lockfiles = LOCKFILE_NAMES[packageManager];
+            return typeof lockfiles === 'string'
+                ? filesInRoot.includes(lockfiles)
+                : lockfiles.some((lockfile) => filesInRoot.includes(lockfile));
         }
         getConfiguredPackageManager() {
             const getPackageManager = (source) => {
