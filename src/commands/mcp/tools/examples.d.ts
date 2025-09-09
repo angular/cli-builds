@@ -11,13 +11,35 @@ export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclara
     keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     related_concepts: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    includeExperimental: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, {
     examples: z.ZodArray<z.ZodObject<{
+        title: z.ZodString;
+        summary: z.ZodString;
+        keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        related_concepts: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        related_tools: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
         content: z.ZodString;
+        snippet: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        title: string;
         content: string;
+        summary: string;
+        keywords?: string[] | undefined;
+        required_packages?: string[] | undefined;
+        related_concepts?: string[] | undefined;
+        related_tools?: string[] | undefined;
+        snippet?: string | undefined;
     }, {
+        title: string;
         content: string;
+        summary: string;
+        keywords?: string[] | undefined;
+        required_packages?: string[] | undefined;
+        related_concepts?: string[] | undefined;
+        related_tools?: string[] | undefined;
+        snippet?: string | undefined;
     }>, "many">;
 }>;
 /**
