@@ -15,7 +15,6 @@ interface AddCommandArgs extends SchematicsCommandArgs {
     'skip-confirmation'?: boolean;
 }
 export default class AddCommandModule extends SchematicsCommandModule implements CommandModuleImplementation<AddCommandArgs> {
-    #private;
     command: string;
     describe: string;
     longDescriptionPath: string;
@@ -24,16 +23,11 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     private rootRequire;
     builder(argv: Argv): Promise<Argv<AddCommandArgs>>;
     run(options: Options<AddCommandArgs> & OtherOptions): Promise<number | void>;
-    private determinePackageManagerTask;
-    private findCompatiblePackageVersionTask;
-    private loadPackageInfoTask;
-    private confirmInstallationTask;
-    private installPackageTask;
     private isProjectVersionValid;
     private getCollectionName;
     private isPackageInstalled;
     private executeSchematic;
     private findProjectVersion;
-    private getPeerDependencyConflicts;
+    private hasMismatchedPeer;
 }
 export {};

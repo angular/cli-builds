@@ -50,92 +50,28 @@ const node_path_1 = __importDefault(require("node:path"));
 const zod_1 = require("zod");
 const tool_registry_1 = require("./tool-registry");
 const findExampleInputSchema = zod_1.z.object({
-    query: zod_1.z
-        .string()
-        .describe(`The primary, conceptual search query. This should capture the user's main goal or question ` +
-        `(e.g., 'lazy loading a route' or 'how to use signal inputs'). The query will be processed ` +
-        'by a powerful full-text search engine.\n\n' +
-        'Key Syntax Features (see https://www.sqlite.org/fts5.html for full documentation):\n' +
-        '  - AND (default): Space-separated terms are combined with AND.\n' +
-        '    - Example: \'standalone component\' (finds results with both "standalone" and "component")\n' +
-        '  - OR: Use the OR operator to find results with either term.\n' +
-        "    - Example: 'validation OR validator'\n" +
-        '  - NOT: Use the NOT operator to exclude terms.\n' +
-        "    - Example: 'forms NOT reactive'\n" +
-        '  - Grouping: Use parentheses () to group expressions.\n' +
-        "    - Example: '(validation OR validator) AND forms'\n" +
-        '  - Phrase Search: Use double quotes "" for exact phrases.\n' +
-        '    - Example: \'"template-driven forms"\'\n' +
-        '  - Prefix Search: Use an asterisk * for prefix matching.\n' +
-        '    - Example: \'rout*\' (matches "route", "router", "routing")'),
-    keywords: zod_1.z
-        .array(zod_1.z.string())
-        .optional()
-        .describe('A list of specific, exact keywords to narrow the search. Use this for precise terms like ' +
-        'API names, function names, or decorators (e.g., `ngFor`, `trackBy`, `inject`).'),
-    required_packages: zod_1.z
-        .array(zod_1.z.string())
-        .optional()
-        .describe("A list of NPM packages that an example must use. Use this when the user's request is " +
-        'specific to a feature within a certain package (e.g., if the user asks about `ngModel`, ' +
-        'you should filter by `@angular/forms`).'),
-    related_concepts: zod_1.z
-        .array(zod_1.z.string())
-        .optional()
-        .describe('A list of high-level concepts to filter by. Use this to find examples related to broader ' +
-        'architectural ideas or patterns (e.g., `signals`, `dependency injection`, `routing`).'),
-    includeExperimental: zod_1.z
-        .boolean()
-        .optional()
-        .default(false)
-        .describe('By default, this tool returns only production-safe examples. Set this to `true` **only if** ' +
-        'the user explicitly asks for a bleeding-edge feature or if a stable solution to their ' +
-        'problem cannot be found. If you set this to `true`, you **MUST** preface your answer by ' +
-        'warning the user that the example uses experimental APIs that are not suitable for production.'),
-});
-const findExampleOutputSchema = zod_1.z.object({
-    examples: zod_1.z.array(zod_1.z.object({
-        title: zod_1.z
-            .string()
-            .describe('The title of the example. Use this as a heading when presenting the example to the user.'),
-        summary: zod_1.z
-            .string()
-            .describe("A one-sentence summary of the example's purpose. Use this to help the user decide " +
-            'if the example is relevant to them.'),
-        keywords: zod_1.z
-            .array(zod_1.z.string())
-            .optional()
-            .describe('A list of keywords for the example. You can use these to explain why this example ' +
-            "was a good match for the user's query."),
-        required_packages: zod_1.z
-            .array(zod_1.z.string())
-            .optional()
-            .describe('A list of NPM packages required for the example to work. Before presenting the code, ' +
-            'you should inform the user if any of these packages need to be installed.'),
-        related_concepts: zod_1.z
-            .array(zod_1.z.string())
-            .optional()
-            .describe('A list of related concepts. You can suggest these to the user as topics for ' +
-            'follow-up questions.'),
-        related_tools: zod_1.z
-            .array(zod_1.z.string())
-            .optional()
-            .describe('A list of related MCP tools. You can suggest these as potential next steps for the user.'),
-        content: zod_1.z
-            .string()
-            .describe('A complete, self-contained Angular code example in Markdown format. This should be ' +
-            'presented to the user inside a markdown code block.'),
-        snippet: zod_1.z
-            .string()
-            .optional()
-            .describe('A contextual snippet from the content showing the matched search term. This field is ' +
-            'critical for efficiently evaluating a result`s relevance. It enables two primary ' +
-            'workflows:\n\n' +
-            '1. For direct questions: You can internally review snippets to select the single best ' +
-            'result before generating a comprehensive answer from its full `content`.\n' +
-            '2. For ambiguous or exploratory questions: You can present a summary of titles and ' +
-            'snippets to the user, allowing them to guide the next step.'),
-    })),
+    query: zod_1.z.string().describe(`Performs a full-text search using FTS5 syntax. The query should target relevant Angular concepts.
+
+Key Syntax Features (see https://www.sqlite.org/fts5.html for full documentation):
+  - AND (default): Space-separated terms are combined with AND.
+    - Example: 'standalone component' (finds results with both "standalone" and "component")
+  - OR: Use the OR operator to find results with either term.
+    - Example: 'validation OR validator'
+  - NOT: Use the NOT operator to exclude terms.
+    - Example: 'forms NOT reactive'
+  - Grouping: Use parentheses () to group expressions.
+    - Example: '(validation OR validator) AND forms'
+  - Phrase Search: Use double quotes "" for exact phrases.
+    - Example: '"template-driven forms"'
+  - Prefix Search: Use an asterisk * for prefix matching.
+    - Example: 'rout*' (matches "route", "router", "routing")
+
+Examples of queries:
+  - Find standalone components: 'standalone component'
+  - Find ngFor with trackBy: 'ngFor trackBy'
+  - Find signal inputs: 'signal input'
+  - Find lazy loading a route: 'lazy load route'
+  - Find forms with validation: 'form AND (validation OR validator)'`),
 });
 exports.FIND_EXAMPLE_TOOL = (0, tool_registry_1.declareTool)({
     name: 'find_examples',
@@ -153,9 +89,7 @@ new or evolving features.
 * **Modern Implementation:** Finding the correct modern syntax for features
   (e.g., query: 'functional route guard' or 'http client with fetch').
 * **Refactoring to Modern Patterns:** Upgrading older code by finding examples of new syntax
-  (e.g., query: 'built-in control flow' to replace "*ngIf").
-* **Advanced Filtering:** Combining a full-text search with filters to narrow results.
-  (e.g., query: 'forms', required_packages: ['@angular/forms'], keywords: ['validation'])
+  (e.g., query: 'built-in control flow' to replace "*ngIf').
 </Use Cases>
 <Operational Notes>
 * **Tool Selection:** This database primarily contains examples for new and recently updated Angular
@@ -164,11 +98,15 @@ new or evolving features.
 * The examples in this database are the single source of truth for modern Angular coding patterns.
 * The search query uses a powerful full-text search syntax (FTS5). Refer to the 'query'
   parameter description for detailed syntax rules and examples.
-* You can combine the main 'query' with optional filters like 'keywords', 'required_packages',
-  and 'related_concepts' to create highly specific searches.
 </Operational Notes>`,
     inputSchema: findExampleInputSchema.shape,
-    outputSchema: findExampleOutputSchema.shape,
+    outputSchema: {
+        examples: zod_1.z.array(zod_1.z.object({
+            content: zod_1.z
+                .string()
+                .describe('A complete, self-contained Angular code example in Markdown format.'),
+        })),
+    },
     isReadOnly: true,
     isLocalOnly: true,
     shouldRegister: ({ logger }) => {
@@ -190,7 +128,7 @@ async function createFindExampleHandler({ exampleDatabasePath }) {
         db = await setupRuntimeExamples(process.env['NG_MCP_EXAMPLES_DIR']);
     }
     suppressSqliteWarning();
-    return async (input) => {
+    return async ({ query }) => {
         if (!db) {
             if (!exampleDatabasePath) {
                 // This should be prevented by the registration logic in mcp-server.ts
@@ -199,67 +137,17 @@ async function createFindExampleHandler({ exampleDatabasePath }) {
             const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
             db = new DatabaseSync(exampleDatabasePath, { readOnly: true });
         }
-        const { query, keywords, required_packages, related_concepts, includeExperimental } = input;
-        // Build the query dynamically
-        const params = [];
-        let sql = 'SELECT title, summary, keywords, required_packages, related_concepts, related_tools, content, ' +
-            // The `snippet` function generates a contextual snippet of the matched text.
-            // Column 6 is the `content` column. We highlight matches with asterisks and limit the snippet size.
-            "snippet(examples_fts, 6, '**', '**', '...', 15) AS snippet " +
-            'FROM examples_fts';
-        const whereClauses = [];
-        // FTS query
-        if (query) {
-            whereClauses.push('examples_fts MATCH ?');
-            params.push(escapeSearchQuery(query));
+        if (!queryStatement) {
+            queryStatement = db.prepare('SELECT * from examples WHERE examples MATCH ? ORDER BY rank;');
         }
-        // JSON array filters
-        const addJsonFilter = (column, values) => {
-            if (values?.length) {
-                for (const value of values) {
-                    whereClauses.push(`${column} LIKE ?`);
-                    params.push(`%"${value}"%`);
-                }
-            }
-        };
-        addJsonFilter('keywords', keywords);
-        addJsonFilter('required_packages', required_packages);
-        addJsonFilter('related_concepts', related_concepts);
-        if (!includeExperimental) {
-            whereClauses.push('experimental = 0');
-        }
-        if (whereClauses.length > 0) {
-            sql += ` WHERE ${whereClauses.join(' AND ')}`;
-        }
-        // Order the results by relevance using the BM25 algorithm.
-        // The weights assigned to each column boost the ranking of documents where the
-        // search term appears in a more important field.
-        // Column order: title, summary, keywords, required_packages, related_concepts, related_tools, content
-        sql += ' ORDER BY bm25(examples_fts, 10.0, 5.0, 5.0, 1.0, 2.0, 1.0, 1.0);';
-        const queryStatement = db.prepare(sql);
+        const sanitizedQuery = escapeSearchQuery(query);
         // Query database and return results
         const examples = [];
         const textContent = [];
-        for (const exampleRecord of queryStatement.all(...params)) {
-            const record = exampleRecord;
-            const example = {
-                title: record['title'],
-                summary: record['summary'],
-                keywords: JSON.parse(record['keywords'] || '[]'),
-                required_packages: JSON.parse(record['required_packages'] || '[]'),
-                related_concepts: JSON.parse(record['related_concepts'] || '[]'),
-                related_tools: JSON.parse(record['related_tools'] || '[]'),
-                content: record['content'],
-                snippet: record['snippet'],
-            };
-            examples.push(example);
-            // Also create a more structured text output
-            let text = `## Example: ${example.title}\n**Summary:** ${example.summary}`;
-            if (example.snippet) {
-                text += `\n**Snippet:** ${example.snippet}`;
-            }
-            text += `\n\n---\n\n${example.content}`;
-            textContent.push({ type: 'text', text });
+        for (const exampleRecord of queryStatement.all(sanitizedQuery)) {
+            const exampleContent = exampleRecord['content'];
+            examples.push({ content: exampleContent });
+            textContent.push({ type: 'text', text: exampleContent });
         }
         return {
             content: textContent,
@@ -344,122 +232,18 @@ function suppressSqliteWarning() {
         return originalProcessEmit.apply(process, arguments);
     };
 }
-/**
- * A simple YAML front matter parser.
- *
- * This function extracts the YAML block enclosed by `---` at the beginning of a string
- * and parses it into a JavaScript object. It is not a full YAML parser and only
- * supports simple key-value pairs and string arrays.
- *
- * @param content The string content to parse.
- * @returns A record containing the parsed front matter data.
- */
-function parseFrontmatter(content) {
-    const match = content.match(/^---\r?\n(.*?)\r?\n---/s);
-    if (!match) {
-        return {};
-    }
-    const frontmatter = match[1];
-    const data = {};
-    const lines = frontmatter.split(/\r?\n/);
-    let currentKey = '';
-    let isArray = false;
-    const arrayValues = [];
-    for (const line of lines) {
-        const keyValueMatch = line.match(/^([^:]+):\s*(.*)/);
-        if (keyValueMatch) {
-            if (currentKey && isArray) {
-                data[currentKey] = arrayValues.slice();
-                arrayValues.length = 0;
-            }
-            const [, key, value] = keyValueMatch;
-            currentKey = key.trim();
-            isArray = value.trim() === '';
-            if (!isArray) {
-                data[currentKey] = value.trim();
-            }
-        }
-        else {
-            const arrayItemMatch = line.match(/^\s*-\s*(.*)/);
-            if (arrayItemMatch && currentKey && isArray) {
-                arrayValues.push(arrayItemMatch[1].trim());
-            }
-        }
-    }
-    if (currentKey && isArray) {
-        data[currentKey] = arrayValues;
-    }
-    return data;
-}
 async function setupRuntimeExamples(examplesPath) {
     const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
     const db = new DatabaseSync(':memory:');
-    // Create a relational table to store the structured example data.
-    db.exec(`
-    CREATE TABLE examples (
-      id INTEGER PRIMARY KEY,
-      title TEXT NOT NULL,
-      summary TEXT NOT NULL,
-      keywords TEXT,
-      required_packages TEXT,
-      related_concepts TEXT,
-      related_tools TEXT,
-      experimental INTEGER NOT NULL DEFAULT 0,
-      content TEXT NOT NULL
-    );
-  `);
-    // Create an FTS5 virtual table to provide full-text search capabilities.
-    db.exec(`
-    CREATE VIRTUAL TABLE examples_fts USING fts5(
-      title,
-      summary,
-      keywords,
-      required_packages,
-      related_concepts,
-      related_tools,
-      content,
-      content='examples',
-      content_rowid='id',
-      tokenize = 'porter ascii'
-    );
-  `);
-    // Create triggers to keep the FTS table synchronized with the examples table.
-    db.exec(`
-    CREATE TRIGGER examples_after_insert AFTER INSERT ON examples BEGIN
-      INSERT INTO examples_fts(rowid, title, summary, keywords, required_packages, related_concepts, related_tools, content)
-      VALUES (
-        new.id, new.title, new.summary, new.keywords, new.required_packages, new.related_concepts,
-        new.related_tools, new.content
-      );
-    END;
-  `);
-    const insertStatement = db.prepare('INSERT INTO examples(' +
-        'title, summary, keywords, required_packages, related_concepts, related_tools, experimental, content' +
-        ') VALUES(?, ?, ?, ?, ?, ?, ?, ?);');
-    const frontmatterSchema = zod_1.z.object({
-        title: zod_1.z.string(),
-        summary: zod_1.z.string(),
-        keywords: zod_1.z.array(zod_1.z.string()).optional(),
-        required_packages: zod_1.z.array(zod_1.z.string()).optional(),
-        related_concepts: zod_1.z.array(zod_1.z.string()).optional(),
-        related_tools: zod_1.z.array(zod_1.z.string()).optional(),
-        experimental: zod_1.z.boolean().optional(),
-    });
+    db.exec(`CREATE VIRTUAL TABLE examples USING fts5(content, tokenize = 'porter ascii');`);
+    const insertStatement = db.prepare('INSERT INTO examples(content) VALUES(?);');
     db.exec('BEGIN TRANSACTION');
-    for await (const entry of (0, promises_1.glob)('**/*.md', { cwd: examplesPath, withFileTypes: true })) {
+    for await (const entry of (0, promises_1.glob)('*.md', { cwd: examplesPath, withFileTypes: true })) {
         if (!entry.isFile()) {
             continue;
         }
-        const content = await (0, promises_1.readFile)(node_path_1.default.join(entry.parentPath, entry.name), 'utf-8');
-        const frontmatter = parseFrontmatter(content);
-        const validation = frontmatterSchema.safeParse(frontmatter);
-        if (!validation.success) {
-            // eslint-disable-next-line no-console
-            console.warn(`Skipping invalid example file ${entry.name}:`, validation.error.issues);
-            continue;
-        }
-        const { title, summary, keywords, required_packages, related_concepts, related_tools, experimental, } = validation.data;
-        insertStatement.run(title, summary, JSON.stringify(keywords ?? []), JSON.stringify(required_packages ?? []), JSON.stringify(related_concepts ?? []), JSON.stringify(related_tools ?? []), experimental ? 1 : 0, content);
+        const example = await (0, promises_1.readFile)(node_path_1.default.join(entry.parentPath, entry.name), 'utf-8');
+        insertStatement.run(example);
     }
     db.exec('END TRANSACTION');
     return db;

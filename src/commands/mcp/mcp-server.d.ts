@@ -14,38 +14,13 @@ import { AnyMcpToolDeclaration } from './tools/tool-registry';
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
     query: import("zod").ZodString;
-    keywords: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-    required_packages: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-    related_concepts: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-    includeExperimental: import("zod").ZodDefault<import("zod").ZodOptional<import("zod").ZodBoolean>>;
 }, {
     examples: import("zod").ZodArray<import("zod").ZodObject<{
-        title: import("zod").ZodString;
-        summary: import("zod").ZodString;
-        keywords: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-        required_packages: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-        related_concepts: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
-        related_tools: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
         content: import("zod").ZodString;
-        snippet: import("zod").ZodOptional<import("zod").ZodString>;
     }, "strip", import("zod").ZodTypeAny, {
-        title: string;
         content: string;
-        summary: string;
-        keywords?: string[] | undefined;
-        required_packages?: string[] | undefined;
-        related_concepts?: string[] | undefined;
-        related_tools?: string[] | undefined;
-        snippet?: string | undefined;
     }, {
-        title: string;
         content: string;
-        summary: string;
-        keywords?: string[] | undefined;
-        required_packages?: string[] | undefined;
-        related_concepts?: string[] | undefined;
-        related_tools?: string[] | undefined;
-        snippet?: string | undefined;
     }>, "many">;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
     transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<[string, ...string[]]>, "many">>;

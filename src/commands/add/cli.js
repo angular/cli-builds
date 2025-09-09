@@ -43,6 +43,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const tools_1 = require("@angular-devkit/schematics/tools");
 const listr2_1 = require("listr2");
 const node_assert_1 = __importDefault(require("node:assert"));
 const node_module_1 = require("node:module");
@@ -68,17 +69,6 @@ const packageVersionExclusions = {
     // @angular/material@7.x versions have unbounded peer dependency ranges (>=7.0.0).
     '@angular/material': '7.x',
 };
-const DEFAULT_CONFLICT_DISPLAY_LIMIT = 5;
-/**
- * A map of packages to built-in schematics.
- * This is used for packages that do not have a native `ng-add` schematic.
- */
-const BUILT_IN_SCHEMATICS = {
-    tailwindcss: {
-        collection: '@schematics/angular',
-        name: 'tailwind',
-    },
-};
 class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
     describe = 'Adds support for an external library to your project.';
@@ -86,7 +76,6 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
     allowPrivateSchematics = true;
     schematicName = 'ng-add';
     rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');
-    #projectVersionCache = new Map();
     async builder(argv) {
         const localYargs = (await super.builder(argv))
             .positional('collection', {
@@ -127,10 +116,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         return localYargs;
     }
+    // eslint-disable-next-line max-lines-per-function
     async run(options) {
-        this.#projectVersionCache.clear();
-        const { logger } = this.context;
-        const { collection, skipConfirmation } = options;
+        const { logger, packageManager } = this.context;
+        const { verbose, registry, collection, skipConfirmation } = options;
         let packageIdentifier;
         try {
             packageIdentifier = (0, npm_package_arg_1.default)(collection);
@@ -153,264 +142,178 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const taskContext = {
             packageIdentifier,
             executeSchematic: this.executeSchematic.bind(this),
-            getPeerDependencyConflicts: this.getPeerDependencyConflicts.bind(this),
-            dryRun: options.dryRun,
+            hasMismatchedPeer: this.hasMismatchedPeer.bind(this),
         };
         const tasks = new listr2_1.Listr([
             {
                 title: 'Determining Package Manager',
-                task: (context, task) => this.determinePackageManagerTask(context, task),
+                task(context, task) {
+                    context.usingYarn = packageManager.name === workspace_schema_1.PackageManager.Yarn;
+                    task.output = `Using package manager: ${listr2_1.color.dim(packageManager.name)}`;
+                },
                 rendererOptions: { persistentOutput: true },
             },
             {
                 title: 'Searching for compatible package version',
                 enabled: packageIdentifier.type === 'range' && packageIdentifier.rawSpec === '*',
-                task: (context, task) => this.findCompatiblePackageVersionTask(context, task, options),
+                async task(context, task) {
+                    (0, node_assert_1.default)(context.packageIdentifier.name, 'Registry package identifiers should always have a name.');
+                    // only package name provided; search for viable version
+                    // plus special cases for packages that did not have peer deps setup
+                    let packageMetadata;
+                    try {
+                        packageMetadata = await (0, package_metadata_1.fetchPackageMetadata)(context.packageIdentifier.name, logger, {
+                            registry,
+                            usingYarn: context.usingYarn,
+                            verbose,
+                        });
+                    }
+                    catch (e) {
+                        (0, error_1.assertIsError)(e);
+                        throw new CommandError(`Unable to load package information from registry: ${e.message}`);
+                    }
+                    // Start with the version tagged as `latest` if it exists
+                    const latestManifest = packageMetadata.tags['latest'];
+                    if (latestManifest) {
+                        context.packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
+                    }
+                    // Adjust the version based on name and peer dependencies
+                    if (latestManifest?.peerDependencies &&
+                        Object.keys(latestManifest.peerDependencies).length === 0) {
+                        task.output = `Found compatible package version: ${listr2_1.color.blue(latestManifest.version)}.`;
+                    }
+                    else if (!latestManifest || (await context.hasMismatchedPeer(latestManifest))) {
+                        // 'latest' is invalid so search for most recent matching package
+                        // Allow prelease versions if the CLI itself is a prerelease
+                        const allowPrereleases = (0, semver_1.prerelease)(version_1.VERSION.full);
+                        const versionExclusions = packageVersionExclusions[packageMetadata.name];
+                        const versionManifests = Object.values(packageMetadata.versions).filter((value) => {
+                            // Prerelease versions are not stable and should not be considered by default
+                            if (!allowPrereleases && (0, semver_1.prerelease)(value.version)) {
+                                return false;
+                            }
+                            // Deprecated versions should not be used or considered
+                            if (value.deprecated) {
+                                return false;
+                            }
+                            // Excluded package versions should not be considered
+                            if (versionExclusions &&
+                                (0, semver_1.satisfies)(value.version, versionExclusions, { includePrerelease: true })) {
+                                return false;
+                            }
+                            return true;
+                        });
+                        // Sort in reverse SemVer order so that the newest compatible version is chosen
+                        versionManifests.sort((a, b) => (0, semver_1.compare)(b.version, a.version, true));
+                        let found = false;
+                        for (const versionManifest of versionManifests) {
+                            const mismatch = await context.hasMismatchedPeer(versionManifest);
+                            if (mismatch) {
+                                continue;
+                            }
+                            context.packageIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
+                            found = true;
+                            break;
+                        }
+                        if (!found) {
+                            task.output = "Unable to find compatible package. Using 'latest' tag.";
+                        }
+                        else {
+                            task.output = `Found compatible package version: ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
+                        }
+                    }
+                    else {
+                        task.output = `Found compatible package version: ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
+                    }
+                },
                 rendererOptions: { persistentOutput: true },
             },
             {
                 title: 'Loading package information from registry',
-                task: (context, task) => this.loadPackageInfoTask(context, task, options),
+                async task(context, task) {
+                    let manifest;
+                    try {
+                        manifest = await (0, package_metadata_1.fetchPackageManifest)(context.packageIdentifier.toString(), logger, {
+                            registry,
+                            verbose,
+                            usingYarn: context.usingYarn,
+                        });
+                    }
+                    catch (e) {
+                        (0, error_1.assertIsError)(e);
+                        throw new CommandError(`Unable to fetch package information for '${context.packageIdentifier}': ${e.message}`);
+                    }
+                    context.savePackage = manifest['ng-add']?.save;
+                    context.collectionName = manifest.name;
+                    if (await context.hasMismatchedPeer(manifest)) {
+                        task.output = listr2_1.color.yellow(listr2_1.figures.warning +
+                            ' Package has unmet peer dependencies. Adding the package may not succeed.');
+                    }
+                },
                 rendererOptions: { persistentOutput: true },
             },
             {
                 title: 'Confirming installation',
-                enabled: !skipConfirmation && !options.dryRun,
-                task: (context, task) => this.confirmInstallationTask(context, task),
+                enabled: !skipConfirmation,
+                async task(context, task) {
+                    if (!(0, tty_1.isTTY)()) {
+                        task.output =
+                            `'--skip-confirmation' can be used to bypass installation confirmation. ` +
+                                `Ensure package name is correct prior to '--skip-confirmation' option usage.`;
+                        throw new CommandError('No terminal detected');
+                    }
+                    const { ListrInquirerPromptAdapter } = await Promise.resolve().then(() => __importStar(require('@listr2/prompt-adapter-inquirer')));
+                    const { confirm } = await Promise.resolve().then(() => __importStar(require('@inquirer/prompts')));
+                    const shouldProceed = await task.prompt(ListrInquirerPromptAdapter).run(confirm, {
+                        message: `The package ${listr2_1.color.blue(context.packageIdentifier.toString())} will be installed and executed.\n` +
+                            'Would you like to proceed?',
+                        default: true,
+                        theme: { prefix: '' },
+                    });
+                    if (!shouldProceed) {
+                        throw new CommandError('Command aborted');
+                    }
+                },
                 rendererOptions: { persistentOutput: true },
             },
             {
-                title: 'Installing package',
-                skip: (context) => {
-                    if (context.dryRun) {
-                        return `Skipping package installation. Would install package ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
+                async task(context, task) {
+                    // Only show if installation will actually occur
+                    task.title = 'Installing package';
+                    if (context.savePackage === false) {
+                        task.title += ' in temporary location';
+                        // Temporary packages are located in a different directory
+                        // Hence we need to resolve them using the temp path
+                        const { success, tempNodeModules } = await packageManager.installTemp(context.packageIdentifier.toString(), registry ? [`--registry="${registry}"`] : undefined);
+                        const tempRequire = (0, node_module_1.createRequire)(tempNodeModules + '/');
+                        (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
+                        const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
+                        if (!success) {
+                            throw new CommandError('Unable to install package');
+                        }
+                        context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
                     }
-                    return false;
+                    else {
+                        const success = await packageManager.install(context.packageIdentifier.toString(), context.savePackage, registry ? [`--registry="${registry}"`] : undefined, undefined);
+                        if (!success) {
+                            throw new CommandError('Unable to install package');
+                        }
+                    }
                 },
-                task: (context, task) => this.installPackageTask(context, task, options),
                 rendererOptions: { bottomBar: Infinity },
             },
             // TODO: Rework schematic execution as a task and insert here
-        ], {
-        /* options */
-        });
+        ]);
         try {
             const result = await tasks.run(taskContext);
             (0, node_assert_1.default)(result.collectionName, 'Collection name should always be available');
-            // Check if the installed package has actual add actions and not just schematic support
-            if (result.hasSchematics && !options.dryRun) {
-                const workflow = this.getOrCreateWorkflowForBuilder(result.collectionName);
-                const collection = workflow.engine.createCollection(result.collectionName);
-                // listSchematicNames cannot be used here since it does not list private schematics.
-                // Most `ng-add` schematics are marked as private.
-                // TODO: Consider adding a `hasSchematic` helper to the schematic collection object.
-                try {
-                    collection.createSchematic(this.schematicName, true);
-                }
-                catch {
-                    result.hasSchematics = false;
-                }
-            }
-            if (!result.hasSchematics) {
-                // Fallback to a built-in schematic if the package does not have an `ng-add` schematic
-                const packageName = result.packageIdentifier.name;
-                if (packageName) {
-                    const builtInSchematic = BUILT_IN_SCHEMATICS[packageName];
-                    if (builtInSchematic) {
-                        logger.info(`The ${listr2_1.color.blue(packageName)} package does not provide \`ng add\` actions.`);
-                        logger.info('The Angular CLI will use built-in actions to add it to your project.');
-                        return this.executeSchematic({
-                            ...options,
-                            collection: builtInSchematic.collection,
-                            schematicName: builtInSchematic.name,
-                        });
-                    }
-                }
-                let message = options.dryRun
-                    ? 'The package does not provide any `ng add` actions, so no further actions would be taken.'
-                    : 'Package installed successfully. The package does not provide any `ng add` actions, so no further actions were taken.';
-                if (result.homepage) {
-                    message += `\nFor more information about this package, visit its homepage at ${result.homepage}`;
-                }
-                logger.info(message);
-                return;
-            }
-            if (options.dryRun) {
-                logger.info("The package's `ng add` actions would be executed next.");
-                return;
-            }
             return this.executeSchematic({ ...options, collection: result.collectionName });
         }
         catch (e) {
             if (e instanceof CommandError) {
-                logger.error(e.message);
                 return 1;
             }
             throw e;
-        }
-    }
-    determinePackageManagerTask(context, task) {
-        const { packageManager } = this.context;
-        context.usingYarn = packageManager.name === workspace_schema_1.PackageManager.Yarn;
-        task.output = `Using package manager: ${listr2_1.color.dim(packageManager.name)}`;
-    }
-    async findCompatiblePackageVersionTask(context, task, options) {
-        const { logger } = this.context;
-        const { verbose, registry } = options;
-        (0, node_assert_1.default)(context.packageIdentifier.name, 'Registry package identifiers should always have a name.');
-        // only package name provided; search for viable version
-        // plus special cases for packages that did not have peer deps setup
-        let packageMetadata;
-        try {
-            packageMetadata = await (0, package_metadata_1.fetchPackageMetadata)(context.packageIdentifier.name, logger, {
-                registry,
-                usingYarn: context.usingYarn,
-                verbose,
-            });
-        }
-        catch (e) {
-            (0, error_1.assertIsError)(e);
-            throw new CommandError(`Unable to load package information from registry: ${e.message}`);
-        }
-        const rejectionReasons = [];
-        // Start with the version tagged as `latest` if it exists
-        const latestManifest = packageMetadata.tags['latest'];
-        if (latestManifest) {
-            const latestConflicts = await this.getPeerDependencyConflicts(latestManifest);
-            if (latestConflicts) {
-                // 'latest' is invalid so search for most recent matching package
-                rejectionReasons.push(...latestConflicts);
-            }
-            else {
-                context.packageIdentifier = npm_package_arg_1.default.resolve(latestManifest.name, latestManifest.version);
-                task.output = `Found compatible package version: ${listr2_1.color.blue(latestManifest.version)}.`;
-                return;
-            }
-        }
-        // Allow prelease versions if the CLI itself is a prerelease
-        const allowPrereleases = !!(0, semver_1.prerelease)(version_1.VERSION.full);
-        const versionManifests = this.#getPotentialVersionManifests(packageMetadata, allowPrereleases);
-        let found = false;
-        for (const versionManifest of versionManifests) {
-            // Already checked the 'latest' version
-            if (latestManifest?.version === versionManifest.version) {
-                continue;
-            }
-            const conflicts = await this.getPeerDependencyConflicts(versionManifest);
-            if (conflicts) {
-                if (options.verbose || rejectionReasons.length < DEFAULT_CONFLICT_DISPLAY_LIMIT) {
-                    rejectionReasons.push(...conflicts);
-                }
-                continue;
-            }
-            context.packageIdentifier = npm_package_arg_1.default.resolve(versionManifest.name, versionManifest.version);
-            found = true;
-            break;
-        }
-        if (!found) {
-            let message = `Unable to find compatible package. Using 'latest' tag.`;
-            if (rejectionReasons.length > 0) {
-                message +=
-                    '\nThis is often because of incompatible peer dependencies.\n' +
-                        'These versions were rejected due to the following conflicts:\n' +
-                        rejectionReasons
-                            .slice(0, options.verbose ? undefined : DEFAULT_CONFLICT_DISPLAY_LIMIT)
-                            .map((r) => `  - ${r}`)
-                            .join('\n');
-            }
-            task.output = message;
-        }
-        else {
-            task.output = `Found compatible package version: ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
-        }
-    }
-    #getPotentialVersionManifests(packageMetadata, allowPrereleases) {
-        const versionExclusions = packageVersionExclusions[packageMetadata.name];
-        const versionManifests = Object.values(packageMetadata.versions).filter((value) => {
-            // Prerelease versions are not stable and should not be considered by default
-            if (!allowPrereleases && (0, semver_1.prerelease)(value.version)) {
-                return false;
-            }
-            // Deprecated versions should not be used or considered
-            if (value.deprecated) {
-                return false;
-            }
-            // Excluded package versions should not be considered
-            if (versionExclusions &&
-                (0, semver_1.satisfies)(value.version, versionExclusions, { includePrerelease: true })) {
-                return false;
-            }
-            return true;
-        });
-        // Sort in reverse SemVer order so that the newest compatible version is chosen
-        return versionManifests.sort((a, b) => (0, semver_1.compare)(b.version, a.version, true));
-    }
-    async loadPackageInfoTask(context, task, options) {
-        const { logger } = this.context;
-        const { verbose, registry } = options;
-        let manifest;
-        try {
-            manifest = await (0, package_metadata_1.fetchPackageManifest)(context.packageIdentifier.toString(), logger, {
-                registry,
-                verbose,
-                usingYarn: context.usingYarn,
-            });
-        }
-        catch (e) {
-            (0, error_1.assertIsError)(e);
-            throw new CommandError(`Unable to fetch package information for '${context.packageIdentifier}': ${e.message}`);
-        }
-        context.hasSchematics = !!manifest.schematics;
-        context.savePackage = manifest['ng-add']?.save;
-        context.collectionName = manifest.name;
-        context.homepage = manifest.homepage;
-        if (await this.getPeerDependencyConflicts(manifest)) {
-            task.output = listr2_1.color.yellow(listr2_1.figures.warning +
-                ' Package has unmet peer dependencies. Adding the package may not succeed.');
-        }
-    }
-    async confirmInstallationTask(context, task) {
-        if (!(0, tty_1.isTTY)()) {
-            task.output =
-                `'--skip-confirmation' can be used to bypass installation confirmation. ` +
-                    `Ensure package name is correct prior to '--skip-confirmation' option usage.`;
-            throw new CommandError('No terminal detected');
-        }
-        const { ListrInquirerPromptAdapter } = await Promise.resolve().then(() => __importStar(require('@listr2/prompt-adapter-inquirer')));
-        const { confirm } = await Promise.resolve().then(() => __importStar(require('@inquirer/prompts')));
-        const shouldProceed = await task.prompt(ListrInquirerPromptAdapter).run(confirm, {
-            message: `The package ${listr2_1.color.blue(context.packageIdentifier.toString())} will be installed and executed.\n` +
-                'Would you like to proceed?',
-            default: true,
-            theme: { prefix: '' },
-        });
-        if (!shouldProceed) {
-            throw new CommandError('Command aborted');
-        }
-    }
-    async installPackageTask(context, task, options) {
-        const { packageManager } = this.context;
-        const { registry } = options;
-        // Only show if installation will actually occur
-        task.title = 'Installing package';
-        if (context.savePackage === false) {
-            task.title += ' in temporary location';
-            // Temporary packages are located in a different directory
-            // Hence we need to resolve them using the temp path
-            const { success, tempNodeModules } = await packageManager.installTemp(context.packageIdentifier.toString(), registry ? [`--registry="${registry}"`] : undefined);
-            const tempRequire = (0, node_module_1.createRequire)(tempNodeModules + '/');
-            (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
-            const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
-            if (!success) {
-                throw new CommandError('Unable to install package');
-            }
-            context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
-        }
-        else {
-            const success = await packageManager.install(context.packageIdentifier.toString(), context.savePackage, registry ? [`--registry="${registry}"`] : undefined, undefined);
-            if (!success) {
-                throw new CommandError('Unable to install package');
-            }
         }
     }
     async isProjectVersionValid(packageIdentifier) {
@@ -468,26 +371,32 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         return false;
     }
-    executeSchematic(options) {
-        const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, schematicName, ...schematicOptions } = options;
-        return this.runSchematic({
-            schematicOptions,
-            schematicName: schematicName ?? this.schematicName,
-            collectionName,
-            executionOptions: {
-                interactive,
-                force,
-                dryRun,
-                defaults,
-                packageRegistry: registry,
-            },
-        });
+    async executeSchematic(options) {
+        try {
+            const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, ...schematicOptions } = options;
+            return await this.runSchematic({
+                schematicOptions,
+                schematicName: this.schematicName,
+                collectionName,
+                executionOptions: {
+                    interactive,
+                    force,
+                    dryRun,
+                    defaults,
+                    packageRegistry: registry,
+                },
+            });
+        }
+        catch (e) {
+            if (e instanceof tools_1.NodePackageDoesNotSupportSchematics) {
+                this.context.logger.error('The package that you are trying to add does not support schematics.' +
+                    'You can try using a different version of the package or contact the package author to add ng-add support.');
+                return 1;
+            }
+            throw e;
+        }
     }
     async findProjectVersion(name) {
-        const cachedVersion = this.#projectVersionCache.get(name);
-        if (cachedVersion !== undefined) {
-            return cachedVersion;
-        }
         const { logger, root } = this.context;
         let installedPackage;
         try {
@@ -497,7 +406,6 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         if (installedPackage) {
             try {
                 const installed = await (0, package_metadata_1.fetchPackageManifest)((0, node_path_1.dirname)(installedPackage), logger);
-                this.#projectVersionCache.set(name, installed.version);
                 return installed.version;
             }
             catch { }
@@ -510,50 +418,44 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         if (projectManifest) {
             const version = projectManifest.dependencies?.[name] || projectManifest.devDependencies?.[name];
             if (version) {
-                this.#projectVersionCache.set(name, version);
                 return version;
             }
         }
-        this.#projectVersionCache.set(name, null);
         return null;
     }
-    async getPeerDependencyConflicts(manifest) {
-        if (!manifest.peerDependencies) {
-            return false;
-        }
-        const checks = Object.entries(manifest.peerDependencies).map(async ([peer, range]) => {
+    async hasMismatchedPeer(manifest) {
+        for (const peer in manifest.peerDependencies) {
             let peerIdentifier;
             try {
-                peerIdentifier = npm_package_arg_1.default.resolve(peer, range);
+                peerIdentifier = npm_package_arg_1.default.resolve(peer, manifest.peerDependencies[peer]);
             }
             catch {
                 this.context.logger.warn(`Invalid peer dependency ${peer} found in package.`);
-                return null;
+                continue;
             }
-            if (peerIdentifier.type !== 'version' && peerIdentifier.type !== 'range') {
+            if (peerIdentifier.type === 'version' || peerIdentifier.type === 'range') {
+                try {
+                    const version = await this.findProjectVersion(peer);
+                    if (!version) {
+                        continue;
+                    }
+                    const options = { includePrerelease: true };
+                    if (!(0, semver_1.intersects)(version, peerIdentifier.rawSpec, options) &&
+                        !(0, semver_1.satisfies)(version, peerIdentifier.rawSpec, options)) {
+                        return true;
+                    }
+                }
+                catch {
+                    // Not found or invalid so ignore
+                    continue;
+                }
+            }
+            else {
                 // type === 'tag' | 'file' | 'directory' | 'remote' | 'git'
-                // Cannot accurately compare these as the tag/location may have changed since install.
-                return null;
+                // Cannot accurately compare these as the tag/location may have changed since install
             }
-            try {
-                const version = await this.findProjectVersion(peer);
-                if (!version) {
-                    return null;
-                }
-                const options = { includePrerelease: true };
-                if (!(0, semver_1.intersects)(version, peerIdentifier.rawSpec, options) &&
-                    !(0, semver_1.satisfies)(version, peerIdentifier.rawSpec, options)) {
-                    return (`Package "${manifest.name}@${manifest.version}" has an incompatible peer dependency to "` +
-                        `${peer}@${peerIdentifier.rawSpec}" (requires "${version}" in project).`);
-                }
-            }
-            catch {
-                // Not found or invalid so ignore
-            }
-            return null;
-        });
-        const conflicts = (await Promise.all(checks)).filter((result) => !!result);
-        return conflicts.length > 0 && conflicts;
+        }
+        return false;
     }
 }
 exports.default = AddCommandModule;

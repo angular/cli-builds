@@ -67,6 +67,7 @@ export declare enum Environment {
  */
 export declare enum PackageManager {
     Bun = "bun",
+    Cnpm = "cnpm",
     Npm = "npm",
     Pnpm = "pnpm",
     Yarn = "yarn"
@@ -105,13 +106,6 @@ export type SchematicOptions = {
  * routing, styling, and testing.
  */
 export type AngularApplicationOptionsSchema = {
-    /**
-     * The file naming convention to use for generated files. The '2025' style guide (default)
-     * uses a concise format (e.g., `app.ts` for the root component), while the '2016' style
-     * guide includes the type in the file name (e.g., `app.component.ts`). For more
-     * information, see the Angular Style Guide (https://angular.dev/style-guide).
-     */
-    fileNameStyleGuide?: FileNameStyleGuide;
     /**
      * Include the styles for the root component directly within the `app.component.ts` file.
      * Only CSS styles can be included inline. By default, a separate stylesheet file (e.g.,
@@ -194,16 +188,6 @@ export type AngularApplicationOptionsSchema = {
     zoneless?: boolean;
 };
 /**
- * The file naming convention to use for generated files. The '2025' style guide (default)
- * uses a concise format (e.g., `app.ts` for the root component), while the '2016' style
- * guide includes the type in the file name (e.g., `app.component.ts`). For more
- * information, see the Angular Style Guide (https://angular.dev/style-guide).
- */
-export declare enum FileNameStyleGuide {
-    The2016 = "2016",
-    The2025 = "2025"
-}
-/**
  * The type of stylesheet files to be created for components in the application.
  *
  * The type of stylesheet files to be created for components in the initial project.
@@ -212,8 +196,7 @@ export declare enum SchematicsAngularApplicationStyle {
     Css = "css",
     Less = "less",
     Sass = "sass",
-    Scss = "scss",
-    Tailwind = "tailwind"
+    Scss = "scss"
 }
 /**
  * Sets the view encapsulation mode for the application's components. This determines how
@@ -270,11 +253,6 @@ export type AngularClassOptionsSchema = {
  * optional CSS stylesheet. Use this schematic to generate a new component in your project.
  */
 export type AngularComponentOptionsSchema = {
-    /**
-     * When true, the 'type' option will be appended to the generated class name. When false,
-     * only the file name will include the type.
-     */
-    addTypeToClassName?: boolean;
     /**
      * Configures the change detection strategy for the component.
      */
@@ -403,11 +381,6 @@ export declare enum SchematicsAngularComponentStyle {
  * and boilerplate code for a new directive.
  */
 export type AngularDirectiveOptionsSchema = {
-    /**
-     * When true, the 'type' option will be appended to the generated class name. When false,
-     * only the file name will include the type.
-     */
-    addTypeToClassName?: boolean;
     /**
      * Automatically export the directive from the specified NgModule, making it accessible to
      * other modules in the application.
@@ -720,13 +693,6 @@ export type AngularNgNewOptionsSchema = {
      */
     directory?: string;
     /**
-     * The file naming convention to use for generated files. The '2025' style guide (default)
-     * uses a concise format (e.g., `app.ts` for the root component), while the '2016' style
-     * guide includes the type in the file name (e.g., `app.component.ts`). For more
-     * information, see the Angular Style Guide (https://angular.dev/style-guide).
-     */
-    fileNameStyleGuide?: FileNameStyleGuide;
-    /**
      * Include the styles for the initial application's root component directly within the
      * `app.component.ts` file. By default, a separate stylesheet file (e.g.,
      * `app.component.css`) is created.
@@ -941,11 +907,6 @@ export type AngularResolverOptionsSchema = {
  * process of generating a new service with the necessary files and boilerplate code.
  */
 export type AngularServiceOptionsSchema = {
-    /**
-     * When true, the 'type' option will be appended to the generated class name. When false,
-     * only the file name will include the type.
-     */
-    addTypeToClassName?: boolean;
     /**
      * Creates files at the top level of the project or the given path. If set to false, a new
      * folder with the service's name will be created to contain the files.
