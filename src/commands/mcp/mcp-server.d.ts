@@ -14,6 +14,9 @@ import { AnyMcpToolDeclaration } from './tools/tool-registry';
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
     query: import("zod").ZodString;
+    keywords: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
+    required_packages: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
+    related_concepts: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
 }, {
     examples: import("zod").ZodArray<import("zod").ZodObject<{
         content: import("zod").ZodString;

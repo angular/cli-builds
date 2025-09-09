@@ -8,6 +8,9 @@
 import { z } from 'zod';
 export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclaration<{
     query: z.ZodString;
+    keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    related_concepts: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
 }, {
     examples: z.ZodArray<z.ZodObject<{
         content: z.ZodString;
