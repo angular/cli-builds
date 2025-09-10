@@ -376,7 +376,16 @@ function parseFrontmatter(content) {
             currentKey = key.trim();
             isArray = value.trim() === '';
             if (!isArray) {
-                data[currentKey] = value.trim();
+                const trimmedValue = value.trim();
+                if (trimmedValue === 'true') {
+                    data[currentKey] = true;
+                }
+                else if (trimmedValue === 'false') {
+                    data[currentKey] = false;
+                }
+                else {
+                    data[currentKey] = trimmedValue;
+                }
             }
         }
         else {
