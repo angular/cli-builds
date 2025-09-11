@@ -185,7 +185,6 @@ new or evolving features.
 });
 async function createFindExampleHandler({ exampleDatabasePath }) {
     let db;
-    let queryStatement;
     if (process.env['NG_MCP_EXAMPLES_DIR']) {
         db = await setupRuntimeExamples(process.env['NG_MCP_EXAMPLES_DIR']);
     }
