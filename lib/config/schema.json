@@ -4391,9 +4391,40 @@
         },
         "reporters": {
           "type": "array",
-          "description": "Test runner reporters to use. Directly passed to the test runner.",
+          "description": "Specifies the reporters to use during test execution. Each reporter can be a string representing its name, or a tuple containing the name and an options object. Built-in reporters include 'default', 'verbose', 'dots', 'json', 'junit', 'tap', 'tap-flat', and 'html'. You can also provide a path to a custom reporter.",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/reporters-enum"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/reporters-enum"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            ]
           }
         },
         "providersFile": {
@@ -4425,6 +4456,19 @@
             "cobertura",
             "json",
             "json-summary"
+          ]
+        },
+        "reporters-enum": {
+          "type": "string",
+          "enum": [
+            "default",
+            "verbose",
+            "dots",
+            "json",
+            "junit",
+            "tap",
+            "tap-flat",
+            "html"
           ]
         }
       }
