@@ -17,6 +17,7 @@ const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
 const node_path_1 = __importDefault(require("node:path"));
 const version_1 = require("../../utilities/version");
 const instructions_1 = require("./resources/instructions");
+const ai_tutor_1 = require("./tools/ai-tutor");
 const best_practices_1 = require("./tools/best-practices");
 const doc_search_1 = require("./tools/doc-search");
 const examples_1 = require("./tools/examples");
@@ -29,6 +30,7 @@ const tool_registry_1 = require("./tools/tool-registry");
  * These tools are considered stable and suitable for general use.
  */
 const STABLE_TOOLS = [
+    ai_tutor_1.AI_TUTOR_TOOL,
     best_practices_1.BEST_PRACTICES_TOOL,
     doc_search_1.DOC_SEARCH_TOOL,
     examples_1.FIND_EXAMPLE_TOOL,
