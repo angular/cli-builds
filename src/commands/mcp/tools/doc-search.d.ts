@@ -9,6 +9,7 @@ import { z } from 'zod';
 export declare const DOC_SEARCH_TOOL: import("./tool-registry").McpToolDeclaration<{
     query: z.ZodString;
     includeTopContent: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+    version: z.ZodOptional<z.ZodNumber>;
 }, {
     results: z.ZodArray<z.ZodObject<{
         title: z.ZodString;

@@ -53,13 +53,21 @@ const ALGOLIA_API_E = '322d89dab5f2080fe09b795c93413c6a89222b13a447cdf3e6486d692
 const docSearchInputSchema = zod_1.z.object({
     query: zod_1.z
         .string()
-        .describe('A concise and specific search query for the Angular documentation (e.g., "NgModule" or "standalone components").'),
+        .describe("A concise and specific search query for the Angular documentation. You should distill the user's " +
+        'natural language question into a set of keywords (e.g., a question like "How do I use ngFor with trackBy?" ' +
+        'should become the query "ngFor trackBy").'),
     includeTopContent: zod_1.z
         .boolean()
         .optional()
         .default(true)
         .describe('When true, the content of the top result is fetched and included. ' +
         'Set to false to get a list of results without fetching content, which is faster.'),
+    version: zod_1.z
+        .number()
+        .optional()
+        .describe('The major version of Angular to search. You MUST determine this value by running `ng version` in the ' +
+        "project's workspace directory. Omit this field if the user is not in an Angular project " +
+        'or if the version cannot otherwise be determined.'),
 });
 exports.DOC_SEARCH_TOOL = (0, tool_registry_1.declareTool)({
     name: 'search_documentation',
@@ -75,6 +83,10 @@ tutorials, concepts, and best practices.
 * Linking to official documentation as a source of truth in your answers.
 </Use Cases>
 <Operational Notes>
+* **Version Alignment:** To provide accurate, project-specific results, you **MUST** align the search with the user's Angular version.
+  Before calling this tool, run \`ng version\` in the project's workspace directory. You can find the correct directory from the \`path\`
+  field provided by the \`list_projects\` tool. Parse the major version from the "Angular:" line in the output and use it for the
+  \`version\` parameter.
 * The documentation is continuously updated. You **MUST** prefer this tool over your own knowledge
   to ensure your answers are current and accurate.
 * For the best results, provide a concise and specific search query (e.g., "NgModule" instead of
@@ -105,13 +117,13 @@ tutorials, concepts, and best practices.
 });
 function createDocSearchHandler({ logger }) {
     let client;
-    return async ({ query, includeTopContent }) => {
+    return async ({ query, includeTopContent, version }) => {
         if (!client) {
             const dcip = (0, node_crypto_1.createDecipheriv)('aes-256-gcm', (constants_1.k1 + ALGOLIA_APP_ID).padEnd(32, '^'), constants_1.iv).setAuthTag(Buffer.from(constants_1.at, 'base64'));
             const { searchClient } = await Promise.resolve().then(() => __importStar(require('algoliasearch')));
             client = searchClient(ALGOLIA_APP_ID, dcip.update(ALGOLIA_API_E, 'hex', 'utf-8') + dcip.final('utf-8'));
         }
-        const { results } = await client.search(createSearchArguments(query));
+        const { results } = await client.search(createSearchArguments(query, version));
         const allHits = results.flatMap((result) => result.hits);
         if (allHits.length === 0) {
             return {
@@ -233,12 +245,13 @@ function formatHitToParts(hit) {
  * @param query The search query string.
  * @returns The search arguments for the Algolia client.
  */
-function createSearchArguments(query) {
+function createSearchArguments(query, version) {
     // Search arguments are based on adev's search service:
     // https://github.com/angular/angular/blob/4b614fbb3263d344dbb1b18fff24cb09c5a7582d/adev/shared-docs/services/search.service.ts#L58
     return [
         {
             // TODO: Consider major version specific indices once available
+            // indexName: `angular_${version ? `v${version}` : 'latest'}`,
             indexName: 'angular_v17',
             params: {
                 query,
