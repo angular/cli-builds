@@ -1048,7 +1048,7 @@
         "zoneless": {
           "description": "Generate an application that does not use `zone.js`.",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "fileNameStyleGuide": {
           "type": "string",
