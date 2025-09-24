@@ -288,17 +288,17 @@ let PackageManagerUtils = (() => {
                 : lockfiles.some((lockfile) => filesInRoot.includes(lockfile));
         }
         getConfiguredPackageManager() {
-            const getPackageManager = (source) => {
-                if (source && (0, core_1.isJsonObject)(source)) {
-                    const value = source['packageManager'];
-                    if (typeof value === 'string') {
-                        return value;
-                    }
-                }
-                return undefined;
-            };
-            let result;
             const { workspace: localWorkspace, globalConfiguration: globalWorkspace } = this.context;
+            let result;
+            try {
+                const packageJsonPath = (0, node_path_1.join)(this.context.root, 'package.json');
+                const pkgJson = JSON.parse((0, node_fs_1.readFileSync)(packageJsonPath, 'utf-8'));
+                result = getPackageManager(pkgJson);
+            }
+            catch { }
+            if (result) {
+                return result;
+            }
             if (localWorkspace) {
                 const project = (0, config_1.getProjectByCwd)(localWorkspace);
                 if (project) {
@@ -306,11 +306,18 @@ let PackageManagerUtils = (() => {
                 }
                 result ??= getPackageManager(localWorkspace.extensions['cli']);
             }
-            if (!result) {
-                result = getPackageManager(globalWorkspace.extensions['cli']);
-            }
+            result ??= getPackageManager(globalWorkspace.extensions['cli']);
             return result;
         }
     };
 })();
 exports.PackageManagerUtils = PackageManagerUtils;
+function getPackageManager(source) {
+    if (source && (0, core_1.isJsonObject)(source)) {
+        const value = source['packageManager'];
+        if (typeof value === 'string') {
+            return value.split('@', 1)[0];
+        }
+    }
+    return undefined;
+}

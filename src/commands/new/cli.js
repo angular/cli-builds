@@ -46,6 +46,7 @@ class NewCommandModule extends schematics_command_module_1.SchematicsCommandModu
             defaults,
         });
         workflow.registry.addSmartDefaultProvider('ng-cli-version', () => version_1.VERSION.full);
+        workflow.registry.addSmartDefaultProvider('packageManager', () => this.context.packageManager.name);
         return this.runSchematic({
             collectionName,
             schematicName: this.schematicName,
