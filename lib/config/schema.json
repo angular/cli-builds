@@ -4375,7 +4375,16 @@
           "items": {
             "oneOf": [
               {
-                "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/coverage-reporters"
+                "enum": [
+                  "html",
+                  "lcov",
+                  "lcovonly",
+                  "text",
+                  "text-summary",
+                  "cobertura",
+                  "json",
+                  "json-summary"
+                ]
               },
               {
                 "type": "array",
@@ -4383,7 +4392,16 @@
                 "maxItems": 2,
                 "items": [
                   {
-                    "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/coverage-reporters"
+                    "enum": [
+                      "html",
+                      "lcov",
+                      "lcovonly",
+                      "text",
+                      "text-summary",
+                      "cobertura",
+                      "json",
+                      "json-summary"
+                    ]
                   },
                   {
                     "type": "object"
@@ -4401,10 +4419,19 @@
               {
                 "anyOf": [
                   {
-                    "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/reporters-enum"
+                    "type": "string"
                   },
                   {
-                    "type": "string"
+                    "enum": [
+                      "default",
+                      "verbose",
+                      "dots",
+                      "json",
+                      "junit",
+                      "tap",
+                      "tap-flat",
+                      "html"
+                    ]
                   }
                 ]
               },
@@ -4416,10 +4443,19 @@
                   {
                     "anyOf": [
                       {
-                        "$ref": "#/definitions/AngularBuildBuildersUnitTestSchema/definitions/reporters-enum"
+                        "type": "string"
                       },
                       {
-                        "type": "string"
+                        "enum": [
+                          "default",
+                          "verbose",
+                          "dots",
+                          "json",
+                          "junit",
+                          "tap",
+                          "tap-flat",
+                          "html"
+                        ]
                       }
                     ]
                   },
@@ -4463,34 +4499,7 @@
           "visible": false
         }
       },
-      "additionalProperties": false,
-      "definitions": {
-        "coverage-reporters": {
-          "enum": [
-            "html",
-            "lcov",
-            "lcovonly",
-            "text",
-            "text-summary",
-            "cobertura",
-            "json",
-            "json-summary"
-          ]
-        },
-        "reporters-enum": {
-          "type": "string",
-          "enum": [
-            "default",
-            "verbose",
-            "dots",
-            "json",
-            "junit",
-            "tap",
-            "tap-flat",
-            "html"
-          ]
-        }
-      }
+      "additionalProperties": false
     },
     "AngularBuildBuildersKarmaSchema": {
       "title": "Karma Target",
