@@ -818,6 +818,7 @@ export type AngularNgNewOptionsSchema = {
     zoneless?: boolean;
 };
 export declare enum AiConfig {
+    Agents = "agents",
     Claude = "claude",
     Copilot = "copilot",
     Cursor = "cursor",
