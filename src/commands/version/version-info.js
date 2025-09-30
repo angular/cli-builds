@@ -9,7 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gatherVersionInfo = gatherVersionInfo;
 const node_module_1 = require("node:module");
-const node_path_1 = require("node:path");
+const version_1 = require("../../utilities/version");
 /**
  * Major versions of Node.js that are officially supported by Angular.
  * @see https://angular.dev/reference/versions#supported-node-js-versions
@@ -35,10 +35,8 @@ const PACKAGE_PATTERNS = [
  * @returns An object containing all the version information.
  */
 function gatherVersionInfo(context) {
-    const localRequire = (0, node_module_1.createRequire)((0, node_path_1.resolve)(__filename, '../../../'));
     // Trailing slash is used to allow the path to be treated as a directory
     const workspaceRequire = (0, node_module_1.createRequire)(context.root + '/');
-    const cliPackage = localRequire('./package.json');
     let workspacePackage;
     try {
         workspacePackage = workspaceRequire('./package.json');
@@ -47,18 +45,16 @@ function gatherVersionInfo(context) {
     const [nodeMajor] = process.versions.node.split('.').map((part) => Number(part));
     const unsupportedNodeVersion = !SUPPORTED_NODE_MAJORS.includes(nodeMajor);
     const packageNames = new Set(Object.keys({
-        ...cliPackage.dependencies,
-        ...cliPackage.devDependencies,
         ...workspacePackage?.dependencies,
         ...workspacePackage?.devDependencies,
     }));
     const versions = {};
     for (const name of packageNames) {
         if (PACKAGE_PATTERNS.some((p) => p.test(name))) {
-            versions[name] = getVersion(name, workspaceRequire, localRequire);
+            versions[name] = getVersion(name, workspaceRequire);
         }
     }
-    const ngCliVersion = cliPackage.version;
+    const ngCliVersion = version_1.VERSION.full;
     let angularCoreVersion = '';
     const angularSameAsCore = [];
     if (workspacePackage) {
@@ -95,28 +91,16 @@ function gatherVersionInfo(context) {
  * @param localRequire A `require` function for the CLI.
  * @returns The version of the package, or `<error>` if it could not be found.
  */
-function getVersion(moduleName, workspaceRequire, localRequire) {
+function getVersion(moduleName, workspaceRequire) {
     let packageInfo;
-    let cliOnly = false;
     // Try to find the package in the workspace
     try {
         packageInfo = workspaceRequire(`${moduleName}/package.json`);
     }
     catch { }
-    // If not found, try to find within the CLI
-    if (!packageInfo) {
-        try {
-            packageInfo = localRequire(`${moduleName}/package.json`);
-            cliOnly = true;
-        }
-        catch { }
-    }
     // If found, attempt to get the version
     if (packageInfo) {
-        try {
-            return packageInfo.version + (cliOnly ? ' (cli-only)' : '');
-        }
-        catch { }
+        return packageInfo.version;
     }
     return '<error>';
 }
