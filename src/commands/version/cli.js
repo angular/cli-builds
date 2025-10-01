@@ -48,45 +48,27 @@ class VersionCommandModule extends command_module_1.CommandModule {
         const { logger } = this.context;
         const versionInfo = (0, version_info_1.gatherVersionInfo)(this.context);
         const { ngCliVersion, nodeVersion, unsupportedNodeVersion, packageManagerName, packageManagerVersion, os, arch, versions, } = versionInfo;
-        const header = `
-      Angular CLI: ${ngCliVersion}
-      Node: ${nodeVersion}${unsupportedNodeVersion ? ' (Unsupported)' : ''}
-      Package Manager: ${packageManagerName} ${packageManagerVersion ?? '<error>'}
-      OS: ${os} ${arch}
-    `.replace(/^ {6}/gm, '');
-        const angularPackages = this.formatAngularPackages(versionInfo);
+        const headerInfo = [
+            { label: 'Angular CLI', value: ngCliVersion },
+            {
+                label: 'Node.js',
+                value: `${nodeVersion}${unsupportedNodeVersion ? color_1.colors.yellow(' (Unsupported)') : ''}`,
+            },
+            {
+                label: 'Package Manager',
+                value: `${packageManagerName} ${packageManagerVersion ?? '<error>'}`,
+            },
+            { label: 'Operating System', value: `${os} ${arch}` },
+        ];
+        const maxHeaderLabelLength = Math.max(...headerInfo.map((l) => l.label.length));
+        const header = headerInfo
+            .map(({ label, value }) => color_1.colors.bold(label.padEnd(maxHeaderLabelLength + 2)) + `: ${color_1.colors.cyan(value)}`)
+            .join('\n');
         const packageTable = this.formatPackageTable(versions);
-        logger.info([ASCII_ART, header, angularPackages, packageTable].join('\n\n'));
+        logger.info([ASCII_ART, header, packageTable].join('\n\n'));
         if (unsupportedNodeVersion) {
             logger.warn(`Warning: The current version of Node (${nodeVersion}) is not supported by Angular.`);
         }
-    }
-    /**
-     * Formats the Angular packages section of the version output.
-     * @param versionInfo An object containing the version information.
-     * @returns A string containing the formatted Angular packages information.
-     */
-    formatAngularPackages(versionInfo) {
-        const { angularCoreVersion, angularSameAsCore } = versionInfo;
-        if (!angularCoreVersion) {
-            return 'Angular: <error>';
-        }
-        const wrappedPackages = angularSameAsCore
-            .reduce((acc, name) => {
-            if (acc.length === 0) {
-                return [name];
-            }
-            const line = acc[acc.length - 1] + ', ' + name;
-            if (line.length > 60) {
-                acc.push(name);
-            }
-            else {
-                acc[acc.length - 1] = line;
-            }
-            return acc;
-        }, [])
-            .join('\n... ');
-        return `Angular: ${angularCoreVersion}\n... ${wrappedPackages}`;
     }
     /**
      * Formats the package table section of the version output.
@@ -98,19 +80,24 @@ class VersionCommandModule extends command_module_1.CommandModule {
         if (versionKeys.length === 0) {
             return '';
         }
-        const header = 'Package';
-        const maxNameLength = Math.max(...versionKeys.map((key) => key.length));
-        const namePad = ' '.repeat(Math.max(0, maxNameLength - header.length) + 3);
-        const tableHeader = `${header}${namePad}Version`;
-        const separator = '-'.repeat(tableHeader.length);
+        const nameHeader = 'Package';
+        const versionHeader = 'Version';
+        const maxNameLength = Math.max(nameHeader.length, ...versionKeys.map((key) => key.length));
+        const maxVersionLength = Math.max(versionHeader.length, ...versionKeys.map((key) => versions[key].length));
         const tableRows = versionKeys
             .map((module) => {
-            const padding = ' '.repeat(maxNameLength - module.length + 3);
-            return `${module}${padding}${versions[module]}`;
+            const name = module.padEnd(maxNameLength);
+            const version = versions[module];
+            const coloredVersion = version === '<error>' ? color_1.colors.red(version) : color_1.colors.cyan(version);
+            const padding = ' '.repeat(maxVersionLength - version.length);
+            return `│ ${name} │ ${coloredVersion}${padding} │`;
         })
-            .sort()
-            .join('\n');
-        return `${tableHeader}\n${separator}\n${tableRows}`;
+            .sort();
+        const top = `┌─${'─'.repeat(maxNameLength)}─┬─${'─'.repeat(maxVersionLength)}─┐`;
+        const header = `│ ${nameHeader.padEnd(maxNameLength)} │ ${versionHeader.padEnd(maxVersionLength)} │`;
+        const separator = `├─${'─'.repeat(maxNameLength)}─┼─${'─'.repeat(maxVersionLength)}─┤`;
+        const bottom = `└─${'─'.repeat(maxNameLength)}─┴─${'─'.repeat(maxVersionLength)}─┘`;
+        return [top, header, separator, ...tableRows, bottom].join('\n');
     }
 }
 exports.default = VersionCommandModule;

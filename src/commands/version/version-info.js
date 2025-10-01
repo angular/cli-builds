@@ -54,27 +54,8 @@ function gatherVersionInfo(context) {
             versions[name] = getVersion(name, workspaceRequire);
         }
     }
-    const ngCliVersion = version_1.VERSION.full;
-    let angularCoreVersion = '';
-    const angularSameAsCore = [];
-    if (workspacePackage) {
-        // Filter all angular versions that are the same as core.
-        angularCoreVersion = versions['@angular/core'];
-        if (angularCoreVersion) {
-            for (const [name, version] of Object.entries(versions)) {
-                if (version === angularCoreVersion && name.startsWith('@angular/')) {
-                    angularSameAsCore.push(name.replace(/^@angular\//, ''));
-                    delete versions[name];
-                }
-            }
-            // Make sure we list them in alphabetical order.
-            angularSameAsCore.sort();
-        }
-    }
     return {
-        ngCliVersion,
-        angularCoreVersion,
-        angularSameAsCore,
+        ngCliVersion: version_1.VERSION.full,
         versions,
         unsupportedNodeVersion,
         nodeVersion: process.versions.node,

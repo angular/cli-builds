@@ -26,12 +26,6 @@ export default class VersionCommandModule extends CommandModule implements Comma
      */
     run(): Promise<void>;
     /**
-     * Formats the Angular packages section of the version output.
-     * @param versionInfo An object containing the version information.
-     * @returns A string containing the formatted Angular packages information.
-     */
-    private formatAngularPackages;
-    /**
      * Formats the package table section of the version output.
      * @param versions A map of package names to their versions.
      * @returns A string containing the formatted package table.

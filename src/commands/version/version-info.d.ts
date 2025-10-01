@@ -10,8 +10,6 @@
  */
 export interface VersionInfo {
     ngCliVersion: string;
-    angularCoreVersion: string;
-    angularSameAsCore: string[];
     versions: Record<string, string>;
     unsupportedNodeVersion: boolean;
     nodeVersion: string;
