@@ -24,7 +24,9 @@ export default class VersionCommandModule extends CommandModule implements Comma
     /**
      * The main execution logic for the `ng version` command.
      */
-    run(): Promise<void>;
+    run(options: {
+        json?: boolean;
+    }): Promise<void>;
     /**
      * Formats the package table section of the version output.
      * @param versions A map of package names to their versions.

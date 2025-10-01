@@ -39,15 +39,23 @@ class VersionCommandModule extends command_module_1.CommandModule {
      * @returns The configured `yargs` instance.
      */
     builder(localYargs) {
-        return localYargs;
+        return localYargs.option('json', {
+            describe: 'Outputs version information in JSON format.',
+            type: 'boolean',
+        });
     }
     /**
      * The main execution logic for the `ng version` command.
      */
-    async run() {
+    async run(options) {
         const { logger } = this.context;
         const versionInfo = (0, version_info_1.gatherVersionInfo)(this.context);
-        const { ngCliVersion, nodeVersion, unsupportedNodeVersion, packageManagerName, packageManagerVersion, os, arch, versions, } = versionInfo;
+        if (options.json) {
+            // eslint-disable-next-line no-console
+            console.log(JSON.stringify(versionInfo, null, 2));
+            return;
+        }
+        const { cli: { version: ngCliVersion }, system: { node: { version: nodeVersion, unsupported: unsupportedNodeVersion }, os: { platform: os, architecture: arch }, packageManager: { name: packageManagerName, version: packageManagerVersion }, }, packages, } = versionInfo;
         const headerInfo = [
             { label: 'Angular CLI', value: ngCliVersion },
             {
@@ -64,7 +72,7 @@ class VersionCommandModule extends command_module_1.CommandModule {
         const header = headerInfo
             .map(({ label, value }) => color_1.colors.bold(label.padEnd(maxHeaderLabelLength + 2)) + `: ${color_1.colors.cyan(value)}`)
             .join('\n');
-        const packageTable = this.formatPackageTable(versions);
+        const packageTable = this.formatPackageTable(packages);
         logger.info([ASCII_ART, header, packageTable].join('\n\n'));
         if (unsupportedNodeVersion) {
             logger.warn(`Warning: The current version of Node (${nodeVersion}) is not supported by Angular.`);

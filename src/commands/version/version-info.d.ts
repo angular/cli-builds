@@ -9,14 +9,24 @@
  * An object containing all the version information that will be displayed by the command.
  */
 export interface VersionInfo {
-    ngCliVersion: string;
-    versions: Record<string, string>;
-    unsupportedNodeVersion: boolean;
-    nodeVersion: string;
-    packageManagerName: string;
-    packageManagerVersion: string | undefined;
-    os: string;
-    arch: string;
+    cli: {
+        version: string;
+    };
+    system: {
+        node: {
+            version: string;
+            unsupported: boolean;
+        };
+        os: {
+            platform: string;
+            architecture: string;
+        };
+        packageManager: {
+            name: string;
+            version: string | undefined;
+        };
+    };
+    packages: Record<string, string>;
 }
 /**
  * Gathers all the version information from the environment and workspace.

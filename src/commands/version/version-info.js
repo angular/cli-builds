@@ -48,21 +48,31 @@ function gatherVersionInfo(context) {
         ...workspacePackage?.dependencies,
         ...workspacePackage?.devDependencies,
     }));
-    const versions = {};
+    const packages = {};
     for (const name of packageNames) {
         if (PACKAGE_PATTERNS.some((p) => p.test(name))) {
-            versions[name] = getVersion(name, workspaceRequire);
+            packages[name] = getVersion(name, workspaceRequire);
         }
     }
     return {
-        ngCliVersion: version_1.VERSION.full,
-        versions,
-        unsupportedNodeVersion,
-        nodeVersion: process.versions.node,
-        packageManagerName: context.packageManager.name,
-        packageManagerVersion: context.packageManager.version,
-        os: process.platform,
-        arch: process.arch,
+        cli: {
+            version: version_1.VERSION.full,
+        },
+        system: {
+            node: {
+                version: process.versions.node,
+                unsupported: unsupportedNodeVersion,
+            },
+            os: {
+                platform: process.platform,
+                architecture: process.arch,
+            },
+            packageManager: {
+                name: context.packageManager.name,
+                version: context.packageManager.version,
+            },
+        },
+        packages,
     };
 }
 /**
