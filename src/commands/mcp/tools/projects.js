@@ -14,6 +14,7 @@ exports.LIST_PROJECTS_TOOL = void 0;
 const promises_1 = require("node:fs/promises");
 const node_path_1 = __importDefault(require("node:path"));
 const node_url_1 = require("node:url");
+const semver_1 = __importDefault(require("semver"));
 const zod_1 = __importDefault(require("zod"));
 const config_1 = require("../../../utilities/config");
 const error_1 = require("../../../utilities/error");
@@ -21,6 +22,10 @@ const tool_registry_1 = require("./tool-registry");
 const listProjectsOutputSchema = {
     workspaces: zod_1.default.array(zod_1.default.object({
         path: zod_1.default.string().describe('The path to the `angular.json` file for this workspace.'),
+        frameworkVersion: zod_1.default
+            .string()
+            .optional()
+            .describe('The major version of the Angular framework (`@angular/core`) in this workspace, if found.'),
         projects: zod_1.default.array(zod_1.default.object({
             name: zod_1.default
                 .string()
@@ -49,6 +54,15 @@ const listProjectsOutputSchema = {
     }))
         .default([])
         .describe('A list of files that looked like workspaces but failed to parse.'),
+    versioningErrors: zod_1.default
+        .array(zod_1.default.object({
+        filePath: zod_1.default
+            .string()
+            .describe('The path to the workspace `angular.json` for which versioning failed.'),
+        message: zod_1.default.string().describe('The error message detailing why versioning failed.'),
+    }))
+        .default([])
+        .describe('A list of workspaces for which the framework version could not be determined.'),
 };
 exports.LIST_PROJECTS_TOOL = (0, tool_registry_1.declareTool)({
     name: 'list_projects',
@@ -64,6 +78,7 @@ their types, and their locations.
 * Identifying the \`root\` and \`sourceRoot\` of a project to read, analyze, or modify its files.
 * Determining if a project is an \`application\` or a \`library\`.
 * Getting the \`selectorPrefix\` for a project before generating a new component to ensure it follows conventions.
+* Identifying the major version of the Angular framework for each workspace, which is crucial for monorepos.
 </Use Cases>
 <Operational Notes>
 * **Working Directory:** Shell commands for a project (like \`ng generate\`) **MUST**
@@ -123,6 +138,64 @@ async function* findAngularJsonFiles(rootDir) {
     }
 }
 /**
+ * Searches upwards from a starting directory to find the version of '@angular/core'.
+ * It caches results to avoid redundant lookups.
+ * @param startDir The directory to start the search from.
+ * @param cache A map to store cached results.
+ * @param searchRoot The directory at which to stop the search.
+ * @returns The major version of '@angular/core' as a string, otherwise undefined.
+ */
+async function findAngularCoreVersion(startDir, cache, searchRoot) {
+    let currentDir = startDir;
+    const dirsToCache = [];
+    while (currentDir) {
+        dirsToCache.push(currentDir);
+        if (cache.has(currentDir)) {
+            const cachedResult = cache.get(currentDir);
+            // Populate cache for all intermediate directories.
+            for (const dir of dirsToCache) {
+                cache.set(dir, cachedResult);
+            }
+            return cachedResult;
+        }
+        const pkgPath = node_path_1.default.join(currentDir, 'package.json');
+        try {
+            const pkgContent = await (0, promises_1.readFile)(pkgPath, 'utf-8');
+            const pkg = JSON.parse(pkgContent);
+            const versionSpecifier = pkg.dependencies?.['@angular/core'] ?? pkg.devDependencies?.['@angular/core'];
+            if (versionSpecifier) {
+                const minVersion = semver_1.default.minVersion(versionSpecifier);
+                const result = minVersion ? String(minVersion.major) : undefined;
+                for (const dir of dirsToCache) {
+                    cache.set(dir, result);
+                }
+                return result;
+            }
+        }
+        catch (error) {
+            (0, error_1.assertIsError)(error);
+            if (error.code !== 'ENOENT') {
+                // Ignore missing package.json files, but rethrow other errors.
+                throw error;
+            }
+        }
+        // Stop if we are at the search root or the filesystem root.
+        if (currentDir === searchRoot) {
+            break;
+        }
+        const parentDir = node_path_1.default.dirname(currentDir);
+        if (parentDir === currentDir) {
+            break; // Reached the filesystem root.
+        }
+        currentDir = parentDir;
+    }
+    // Cache the failure for all traversed directories.
+    for (const dir of dirsToCache) {
+        cache.set(dir, undefined);
+    }
+    return undefined;
+}
+/**
  * Loads, parses, and transforms a single angular.json file into the tool's output format.
  * It checks a set of seen paths to avoid processing the same workspace multiple times.
  * @param configFile The path to the angular.json file.
@@ -164,7 +237,9 @@ async function createListProjectsHandler({ server }) {
     return async () => {
         const workspaces = [];
         const parsingErrors = [];
+        const versioningErrors = [];
         const seenPaths = new Set();
+        const versionCache = new Map();
         let searchRoots;
         const clientCapabilities = server.server.getClientCapabilities();
         if (clientCapabilities?.roots) {
@@ -178,11 +253,21 @@ async function createListProjectsHandler({ server }) {
         for (const root of searchRoots) {
             for await (const configFile of findAngularJsonFiles(root)) {
                 const { workspace, error } = await loadAndParseWorkspace(configFile, seenPaths);
-                if (workspace) {
-                    workspaces.push(workspace);
-                }
                 if (error) {
                     parsingErrors.push(error);
+                }
+                if (workspace) {
+                    try {
+                        const workspaceDir = node_path_1.default.dirname(configFile);
+                        workspace.frameworkVersion = await findAngularCoreVersion(workspaceDir, versionCache, root);
+                    }
+                    catch (e) {
+                        versioningErrors.push({
+                            filePath: workspace.path,
+                            message: e instanceof Error ? e.message : 'An unknown error occurred.',
+                        });
+                    }
+                    workspaces.push(workspace);
                 }
             }
         }
@@ -204,9 +289,13 @@ async function createListProjectsHandler({ server }) {
             text += `\n\nWarning: The following ${parsingErrors.length} file(s) could not be parsed and were skipped:\n`;
             text += parsingErrors.map((e) => `- ${e.filePath}: ${e.message}`).join('\n');
         }
+        if (versioningErrors.length > 0) {
+            text += `\n\nWarning: The framework version for the following ${versioningErrors.length} workspace(s) could not be determined:\n`;
+            text += versioningErrors.map((e) => `- ${e.filePath}: ${e.message}`).join('\n');
+        }
         return {
             content: [{ type: 'text', text }],
-            structuredContent: { workspaces, parsingErrors },
+            structuredContent: { workspaces, parsingErrors, versioningErrors },
         };
     };
 }
