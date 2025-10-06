@@ -55,19 +55,18 @@ class VersionCommandModule extends command_module_1.CommandModule {
             console.log(JSON.stringify(versionInfo, null, 2));
             return;
         }
-        const { cli: { version: ngCliVersion }, system: { node: { version: nodeVersion, unsupported: unsupportedNodeVersion }, os: { platform: os, architecture: arch }, packageManager: { name: packageManagerName, version: packageManagerVersion }, }, packages, } = versionInfo;
-        const headerInfo = [
-            { label: 'Angular CLI', value: ngCliVersion },
-            {
-                label: 'Node.js',
-                value: `${nodeVersion}${unsupportedNodeVersion ? color_1.colors.yellow(' (Unsupported)') : ''}`,
-            },
-            {
-                label: 'Package Manager',
-                value: `${packageManagerName} ${packageManagerVersion ?? '<error>'}`,
-            },
-            { label: 'Operating System', value: `${os} ${arch}` },
-        ];
+        const { cli: { version: ngCliVersion }, framework, system: { node: { version: nodeVersion, unsupported: unsupportedNodeVersion }, os: { platform: os, architecture: arch }, packageManager: { name: packageManagerName, version: packageManagerVersion }, }, packages, } = versionInfo;
+        const headerInfo = [{ label: 'Angular CLI', value: ngCliVersion }];
+        if (framework.version) {
+            headerInfo.push({ label: 'Angular', value: framework.version });
+        }
+        headerInfo.push({
+            label: 'Node.js',
+            value: `${nodeVersion}${unsupportedNodeVersion ? color_1.colors.yellow(' (Unsupported)') : ''}`,
+        }, {
+            label: 'Package Manager',
+            value: `${packageManagerName} ${packageManagerVersion ?? '<error>'}`,
+        }, { label: 'Operating System', value: `${os} ${arch}` });
         const maxHeaderLabelLength = Math.max(...headerInfo.map((l) => l.label.length));
         const header = headerInfo
             .map(({ label, value }) => color_1.colors.bold(label.padEnd(maxHeaderLabelLength + 2)) + `: ${color_1.colors.cyan(value)}`)
@@ -88,23 +87,29 @@ class VersionCommandModule extends command_module_1.CommandModule {
         if (versionKeys.length === 0) {
             return '';
         }
-        const nameHeader = 'Package';
-        const versionHeader = 'Version';
-        const maxNameLength = Math.max(nameHeader.length, ...versionKeys.map((key) => key.length));
-        const maxVersionLength = Math.max(versionHeader.length, ...versionKeys.map((key) => versions[key].length));
+        const headers = {
+            name: 'Package',
+            installed: 'Installed Version',
+            requested: 'Requested Version',
+        };
+        const maxNameLength = Math.max(headers.name.length, ...versionKeys.map((key) => key.length));
+        const maxInstalledLength = Math.max(headers.installed.length, ...versionKeys.map((key) => versions[key].installed.length));
+        const maxRequestedLength = Math.max(headers.requested.length, ...versionKeys.map((key) => versions[key].requested.length));
         const tableRows = versionKeys
             .map((module) => {
+            const { requested, installed } = versions[module];
             const name = module.padEnd(maxNameLength);
-            const version = versions[module];
-            const coloredVersion = version === '<error>' ? color_1.colors.red(version) : color_1.colors.cyan(version);
-            const padding = ' '.repeat(maxVersionLength - version.length);
-            return `│ ${name} │ ${coloredVersion}${padding} │`;
+            const coloredInstalled = installed === '<error>' ? color_1.colors.red(installed) : color_1.colors.cyan(installed);
+            const installedPadding = ' '.repeat(maxInstalledLength - installed.length);
+            return `│ ${name} │ ${coloredInstalled}${installedPadding} │ ${requested.padEnd(maxRequestedLength)} │`;
         })
             .sort();
-        const top = `┌─${'─'.repeat(maxNameLength)}─┬─${'─'.repeat(maxVersionLength)}─┐`;
-        const header = `│ ${nameHeader.padEnd(maxNameLength)} │ ${versionHeader.padEnd(maxVersionLength)} │`;
-        const separator = `├─${'─'.repeat(maxNameLength)}─┼─${'─'.repeat(maxVersionLength)}─┤`;
-        const bottom = `└─${'─'.repeat(maxNameLength)}─┴─${'─'.repeat(maxVersionLength)}─┘`;
+        const top = `┌─${'─'.repeat(maxNameLength)}─┬─${'─'.repeat(maxInstalledLength)}─┬─${'─'.repeat(maxRequestedLength)}─┐`;
+        const header = `│ ${headers.name.padEnd(maxNameLength)} │ ` +
+            `${headers.installed.padEnd(maxInstalledLength)} │ ` +
+            `${headers.requested.padEnd(maxRequestedLength)} │`;
+        const separator = `├─${'─'.repeat(maxNameLength)}─┼─${'─'.repeat(maxInstalledLength)}─┼─${'─'.repeat(maxRequestedLength)}─┤`;
+        const bottom = `└─${'─'.repeat(maxNameLength)}─┴─${'─'.repeat(maxInstalledLength)}─┴─${'─'.repeat(maxRequestedLength)}─┘`;
         return [top, header, separator, ...tableRows, bottom].join('\n');
     }
 }

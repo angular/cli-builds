@@ -44,19 +44,27 @@ function gatherVersionInfo(context) {
     catch { }
     const [nodeMajor] = process.versions.node.split('.').map((part) => Number(part));
     const unsupportedNodeVersion = !SUPPORTED_NODE_MAJORS.includes(nodeMajor);
-    const packageNames = new Set(Object.keys({
+    const allDependencies = {
         ...workspacePackage?.dependencies,
         ...workspacePackage?.devDependencies,
-    }));
+    };
+    const packageNames = new Set(Object.keys(allDependencies));
     const packages = {};
     for (const name of packageNames) {
         if (PACKAGE_PATTERNS.some((p) => p.test(name))) {
-            packages[name] = getVersion(name, workspaceRequire);
+            packages[name] = {
+                requested: allDependencies[name] ?? 'error',
+                installed: getVersion(name, workspaceRequire),
+            };
         }
     }
+    const angularCoreVersion = packages['@angular/core'];
     return {
         cli: {
             version: version_1.VERSION.full,
+        },
+        framework: {
+            version: angularCoreVersion?.installed,
         },
         system: {
             node: {

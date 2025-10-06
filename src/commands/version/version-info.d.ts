@@ -6,11 +6,21 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 /**
+ * An object containing version information for a single package.
+ */
+export interface PackageVersionInfo {
+    requested: string;
+    installed: string;
+}
+/**
  * An object containing all the version information that will be displayed by the command.
  */
 export interface VersionInfo {
     cli: {
         version: string;
+    };
+    framework: {
+        version: string | undefined;
     };
     system: {
         node: {
@@ -26,7 +36,7 @@ export interface VersionInfo {
             version: string | undefined;
         };
     };
-    packages: Record<string, string>;
+    packages: Record<string, PackageVersionInfo>;
 }
 /**
  * Gathers all the version information from the environment and workspace.
