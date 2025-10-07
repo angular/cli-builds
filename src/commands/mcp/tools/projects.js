@@ -34,6 +34,10 @@ const listProjectsOutputSchema = {
                 .enum(['application', 'library'])
                 .optional()
                 .describe(`The type of the project, either 'application' or 'library'.`),
+            builder: zod_1.default
+                .string()
+                .optional()
+                .describe('The primary builder for the project, typically from the "build" target.'),
             root: zod_1.default
                 .string()
                 .describe('The root directory of the project, relative to the workspace root.'),
@@ -79,6 +83,7 @@ their types, and their locations.
 * Determining if a project is an \`application\` or a \`library\`.
 * Getting the \`selectorPrefix\` for a project before generating a new component to ensure it follows conventions.
 * Identifying the major version of the Angular framework for each workspace, which is crucial for monorepos.
+* Determining a project's primary function by inspecting its builder (e.g., '@angular-devkit/build-angular:browser' for an application).
 </Use Cases>
 <Operational Notes>
 * **Working Directory:** Shell commands for a project (like \`ng generate\`) **MUST**
@@ -215,6 +220,7 @@ async function loadAndParseWorkspace(configFile, seenPaths) {
             projects.push({
                 name,
                 type: project.extensions['projectType'],
+                builder: project.targets.get('build')?.builder,
                 root: project.root,
                 sourceRoot: project.sourceRoot ?? node_path_1.default.posix.join(project.root, 'src'),
                 selectorPrefix: project.extensions['prefix'],
@@ -231,6 +237,37 @@ async function loadAndParseWorkspace(configFile, seenPaths) {
             message = 'An unknown error occurred while parsing the file.';
         }
         return { workspace: null, error: { filePath: configFile, message } };
+    }
+}
+/**
+ * Processes a single `angular.json` file to extract workspace and framework version information.
+ * @param configFile The path to the `angular.json` file.
+ * @param searchRoot The directory at which to stop the upward search for `package.json`.
+ * @param seenPaths A Set of absolute paths that have already been processed to avoid duplicates.
+ * @param versionCache A Map to cache framework version lookups for performance.
+ * @returns A promise resolving to an object containing the processed data and any errors.
+ */
+async function processConfigFile(configFile, searchRoot, seenPaths, versionCache) {
+    const { workspace, error } = await loadAndParseWorkspace(configFile, seenPaths);
+    if (error) {
+        return { parsingError: error };
+    }
+    if (!workspace) {
+        return {}; // Skipped as it was already seen.
+    }
+    try {
+        const workspaceDir = node_path_1.default.dirname(configFile);
+        workspace.frameworkVersion = await findAngularCoreVersion(workspaceDir, versionCache, searchRoot);
+        return { workspace };
+    }
+    catch (e) {
+        return {
+            workspace,
+            versioningError: {
+                filePath: workspace.path,
+                message: e instanceof Error ? e.message : 'An unknown error occurred.',
+            },
+        };
     }
 }
 async function createListProjectsHandler({ server }) {
@@ -252,22 +289,15 @@ async function createListProjectsHandler({ server }) {
         }
         for (const root of searchRoots) {
             for await (const configFile of findAngularJsonFiles(root)) {
-                const { workspace, error } = await loadAndParseWorkspace(configFile, seenPaths);
-                if (error) {
-                    parsingErrors.push(error);
-                }
+                const { workspace, parsingError, versioningError } = await processConfigFile(configFile, root, seenPaths, versionCache);
                 if (workspace) {
-                    try {
-                        const workspaceDir = node_path_1.default.dirname(configFile);
-                        workspace.frameworkVersion = await findAngularCoreVersion(workspaceDir, versionCache, root);
-                    }
-                    catch (e) {
-                        versioningErrors.push({
-                            filePath: workspace.path,
-                            message: e instanceof Error ? e.message : 'An unknown error occurred.',
-                        });
-                    }
                     workspaces.push(workspace);
+                }
+                if (parsingError) {
+                    parsingErrors.push(parsingError);
+                }
+                if (versioningError) {
+                    versioningErrors.push(versioningError);
                 }
             }
         }

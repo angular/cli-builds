@@ -13,6 +13,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
         projects: z.ZodArray<z.ZodObject<{
             name: z.ZodString;
             type: z.ZodOptional<z.ZodEnum<["application", "library"]>>;
+            builder: z.ZodOptional<z.ZodString>;
             root: z.ZodString;
             sourceRoot: z.ZodString;
             selectorPrefix: z.ZodOptional<z.ZodString>;
@@ -21,12 +22,14 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             root: string;
             sourceRoot: string;
             type?: "application" | "library" | undefined;
+            builder?: string | undefined;
             selectorPrefix?: string | undefined;
         }, {
             name: string;
             root: string;
             sourceRoot: string;
             type?: "application" | "library" | undefined;
+            builder?: string | undefined;
             selectorPrefix?: string | undefined;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
@@ -36,6 +39,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             root: string;
             sourceRoot: string;
             type?: "application" | "library" | undefined;
+            builder?: string | undefined;
             selectorPrefix?: string | undefined;
         }[];
         frameworkVersion?: string | undefined;
@@ -46,6 +50,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             root: string;
             sourceRoot: string;
             type?: "application" | "library" | undefined;
+            builder?: string | undefined;
             selectorPrefix?: string | undefined;
         }[];
         frameworkVersion?: string | undefined;
