@@ -118,3 +118,4 @@ function assembleToolDeclarations(stableDeclarations, experimentalDeclarations, 
     }
     return toolDeclarations;
 }
+//# sourceMappingURL=mcp-server.js.map

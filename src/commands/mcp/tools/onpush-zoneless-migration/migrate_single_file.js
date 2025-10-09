@@ -70,3 +70,4 @@ async function migrateSingleFile(sourceFile, extras) {
     // Component decorator found, but no change detection strategy.
     return (0, prompts_1.generateZonelessMigrationInstructionsForComponent)(sourceFile.fileName);
 }
+//# sourceMappingURL=migrate_single_file.js.map

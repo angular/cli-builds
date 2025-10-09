@@ -274,3 +274,4 @@ function createSearchArguments(query, version) {
         },
     ];
 }
+//# sourceMappingURL=doc-search.js.map

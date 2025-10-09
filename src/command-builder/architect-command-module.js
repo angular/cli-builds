@@ -208,3 +208,4 @@ let ArchitectCommandModule = (() => {
     };
 })();
 exports.ArchitectCommandModule = ArchitectCommandModule;
+//# sourceMappingURL=architect-command-module.js.map

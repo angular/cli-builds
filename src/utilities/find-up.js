@@ -60,3 +60,4 @@ function findUp(names, from) {
     }
     return null;
 }
+//# sourceMappingURL=find-up.js.map

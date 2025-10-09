@@ -68,3 +68,4 @@ class McpCommandModule extends command_module_1.CommandModule {
     }
 }
 exports.default = McpCommandModule;
+//# sourceMappingURL=cli.js.map

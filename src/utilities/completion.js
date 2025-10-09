@@ -267,3 +267,4 @@ function hasGlobalCliInstall() {
         });
     });
 }
+//# sourceMappingURL=completion.js.map

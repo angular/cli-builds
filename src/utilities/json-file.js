@@ -176,3 +176,4 @@ function formatError(path, errors) {
 function parseJson(content) {
     return (0, jsonc_parser_1.parse)(content, undefined, { allowTrailingComma: true });
 }
+//# sourceMappingURL=json-file.js.map

@@ -244,3 +244,4 @@ class ArchitectBaseCommandModule extends command_module_1.CommandModule {
     }
 }
 exports.ArchitectBaseCommandModule = ArchitectBaseCommandModule;
+//# sourceMappingURL=architect-base-command-module.js.map

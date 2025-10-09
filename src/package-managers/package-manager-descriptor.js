@@ -144,3 +144,4 @@ exports.PACKAGE_MANAGER_PRECEDENCE = [
     'bun',
     'npm',
 ];
+//# sourceMappingURL=package-manager-descriptor.js.map

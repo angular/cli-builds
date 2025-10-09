@@ -346,3 +346,4 @@ function addSchemaOptionsToCommand(localYargs, options, includeDefaultValues) {
     }
     return optionsWithAnalytics;
 }
+//# sourceMappingURL=json-schema.js.map

@@ -58,3 +58,4 @@ class CompletionScriptCommandModule extends command_module_1.CommandModule {
         this.context.yargsInstance.showCompletionScript();
     }
 }
+//# sourceMappingURL=cli.js.map

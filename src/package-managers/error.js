@@ -38,3 +38,4 @@ class PackageManagerError extends Error {
     }
 }
 exports.PackageManagerError = PackageManagerError;
+//# sourceMappingURL=error.js.map

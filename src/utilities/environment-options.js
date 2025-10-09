@@ -57,3 +57,4 @@ exports.forceAutocomplete = parseTristate(process.env['NG_FORCE_AUTOCOMPLETE']);
  * The `NG_FORCE_TTY` environment variable can be 'true', 'false', or undefined (for default behavior).
  */
 exports.forceTty = parseTristate(process.env['NG_FORCE_TTY']);
+//# sourceMappingURL=environment-options.js.map

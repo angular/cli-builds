@@ -134,3 +134,4 @@ ${TRANSFORMATIONS.map((t) => `  * ${t.name}: ${t.description}`).join('\n')}
     isReadOnly: true,
     factory: () => (input) => runModernization(input),
 });
+//# sourceMappingURL=modernize.js.map

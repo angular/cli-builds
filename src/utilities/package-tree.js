@@ -92,3 +92,4 @@ async function getProjectDependencies(dir) {
     }
     return results;
 }
+//# sourceMappingURL=package-tree.js.map

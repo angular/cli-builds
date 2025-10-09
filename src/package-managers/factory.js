@@ -120,3 +120,4 @@ async function createPackageManager(options) {
     logger?.debug(`Successfully created PackageManager for '${name}'.`);
     return packageManager;
 }
+//# sourceMappingURL=factory.js.map

@@ -65,3 +65,4 @@ function subscribeToWorkflow(workflow, logger) {
         },
     };
 }
+//# sourceMappingURL=schematic-workflow.js.map

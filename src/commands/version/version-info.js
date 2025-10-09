@@ -103,3 +103,4 @@ function getVersion(moduleName, workspaceRequire) {
     }
     return '<error>';
 }
+//# sourceMappingURL=version-info.js.map

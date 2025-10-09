@@ -33,3 +33,4 @@ class CacheCommandModule extends command_module_1.CommandModule {
     run(_options) { }
 }
 exports.default = CacheCommandModule;
+//# sourceMappingURL=cli.js.map

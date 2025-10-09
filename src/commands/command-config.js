@@ -113,3 +113,4 @@ exports.RootCommandsAliases = Object.values(exports.RootCommands).reduce((prev, 
     });
     return prev;
 }, {});
+//# sourceMappingURL=command-config.js.map

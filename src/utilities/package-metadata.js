@@ -262,3 +262,4 @@ async function getNpmPackageJson(packageName, logger, options = {}) {
     npmPackageJsonCache.set(packageName, response);
     return response;
 }
+//# sourceMappingURL=package-metadata.js.map

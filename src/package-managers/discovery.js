@@ -107,3 +107,4 @@ async function discover(host, startDir, logger) {
         currentDir = parentDir;
     }
 }
+//# sourceMappingURL=discovery.js.map

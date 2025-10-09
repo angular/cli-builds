@@ -920,3 +920,4 @@ function getMigrationTitleAndDescription(migration) {
             : undefined,
     };
 }
+//# sourceMappingURL=cli.js.map

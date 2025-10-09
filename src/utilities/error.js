@@ -38,3 +38,4 @@ function isError(value) {
 function assertIsError(value) {
     (0, node_assert_1.default)(isError(value), `Expected a value to be an Error-like object, but received: ${(0, node_util_1.inspect)(value)}`);
 }
+//# sourceMappingURL=error.js.map

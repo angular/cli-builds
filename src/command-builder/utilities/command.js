@@ -36,3 +36,4 @@ function addCommandModuleToYargs(commandModule, context) {
         handler: (args) => cmd.handler(args),
     });
 }
+//# sourceMappingURL=command.js.map

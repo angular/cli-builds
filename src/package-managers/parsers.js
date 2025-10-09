@@ -231,3 +231,4 @@ function parseYarnLegacyManifest(stdout, logger) {
     // Yarn classic wraps the manifest in a `data` property.
     return data.data ?? data;
 }
+//# sourceMappingURL=parsers.js.map

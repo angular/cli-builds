@@ -138,3 +138,4 @@ async function getCommandsToRegister(commandName) {
     }
     return Promise.all(commands.map((command) => command.factory().then((m) => m.default)));
 }
+//# sourceMappingURL=command-runner.js.map

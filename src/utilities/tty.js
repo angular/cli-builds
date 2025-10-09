@@ -20,3 +20,4 @@ const environment_options_1 = require("./environment-options");
 function isTTY(stream = process.stdout) {
     return environment_options_1.forceTty ?? (!!stream.isTTY && !environment_options_1.isCI);
 }
+//# sourceMappingURL=tty.js.map

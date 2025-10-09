@@ -279,3 +279,4 @@ exports.CommandModule = CommandModule;
 class CommandModuleError extends Error {
 }
 exports.CommandModuleError = CommandModuleError;
+//# sourceMappingURL=command-module.js.map

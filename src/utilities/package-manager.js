@@ -321,3 +321,4 @@ function getPackageManager(source) {
     }
     return undefined;
 }
+//# sourceMappingURL=package-manager.js.map

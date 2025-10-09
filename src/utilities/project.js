@@ -78,3 +78,4 @@ function containsCliDep(obj) {
     }
     return !!(obj.dependencies?.[pkgName] || obj.devDependencies?.[pkgName]);
 }
+//# sourceMappingURL=project.js.map

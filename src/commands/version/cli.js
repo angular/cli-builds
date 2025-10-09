@@ -114,3 +114,4 @@ class VersionCommandModule extends command_module_1.CommandModule {
     }
 }
 exports.default = VersionCommandModule;
+//# sourceMappingURL=cli.js.map

@@ -26,3 +26,4 @@ function registerInstructionsResource(server) {
         return { contents: [{ uri: 'instructions://best-practices', text }] };
     });
 }
+//# sourceMappingURL=instructions.js.map

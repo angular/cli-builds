@@ -73,3 +73,4 @@ class NewCommandModule extends schematics_command_module_1.SchematicsCommandModu
     }
 }
 exports.default = NewCommandModule;
+//# sourceMappingURL=cli.js.map

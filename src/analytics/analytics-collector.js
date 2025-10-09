@@ -192,3 +192,4 @@ class AnalyticsCollector {
     }
 }
 exports.AnalyticsCollector = AnalyticsCollector;
+//# sourceMappingURL=analytics-collector.js.map

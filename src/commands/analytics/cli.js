@@ -31,3 +31,4 @@ class AnalyticsCommandModule extends command_module_1.CommandModule {
     run(_options) { }
 }
 exports.default = AnalyticsCommandModule;
+//# sourceMappingURL=cli.js.map

@@ -32,3 +32,4 @@ async function registerTools(server, context, declarations) {
         server.registerTool(name, config, handler);
     }
 }
+//# sourceMappingURL=tool-registry.js.map

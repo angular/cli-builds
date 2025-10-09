@@ -235,3 +235,4 @@ function createResponse(text) {
         content: [{ type: 'text', text }],
     };
 }
+//# sourceMappingURL=prompts.js.map
