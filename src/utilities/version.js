@@ -22,4 +22,4 @@ class Version {
         this.patch = patch;
     }
 }
-exports.VERSION = new Version('20.3.5+sha-b45f97a');
+exports.VERSION = new Version('20.3.5+sha-82f8900');
