@@ -17,6 +17,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             root: z.ZodString;
             sourceRoot: z.ZodString;
             selectorPrefix: z.ZodOptional<z.ZodString>;
+            unitTestFramework: z.ZodOptional<z.ZodEnum<["jasmine", "jest", "vitest", "unknown"]>>;
         }, "strip", z.ZodTypeAny, {
             name: string;
             root: string;
@@ -24,6 +25,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
+            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
         }, {
             name: string;
             root: string;
@@ -31,6 +33,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
+            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
         path: string;
@@ -41,6 +44,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
+            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
         }[];
         frameworkVersion?: string | undefined;
     }, {
@@ -52,6 +56,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
+            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
         }[];
         frameworkVersion?: string | undefined;
     }>, "many">;
