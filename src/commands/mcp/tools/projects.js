@@ -109,14 +109,26 @@ their types, and their locations.
 const EXCLUDED_DIRS = new Set(['node_modules', 'dist', 'out', 'coverage']);
 /**
  * Iteratively finds all 'angular.json' files with controlled concurrency and directory exclusions.
- * This non-recursive implementation is suitable for very large directory trees
- * and prevents file descriptor exhaustion (`EMFILE` errors).
+ * This non-recursive implementation is suitable for very large directory trees,
+ * prevents file descriptor exhaustion (`EMFILE` errors), and handles symbolic link loops.
  * @param rootDir The directory to start the search from.
  * @returns An async generator that yields the full path of each found 'angular.json' file.
  */
 async function* findAngularJsonFiles(rootDir) {
     const CONCURRENCY_LIMIT = 50;
     const queue = [rootDir];
+    const seenInodes = new Set();
+    try {
+        const rootStats = await (0, promises_1.stat)(rootDir);
+        seenInodes.add(rootStats.ino);
+    }
+    catch (error) {
+        (0, error_1.assertIsError)(error);
+        if (error.code === 'EACCES' || error.code === 'EPERM' || error.code === 'ENOENT') {
+            return; // Cannot access root, so there's nothing to do.
+        }
+        throw error;
+    }
     while (queue.length > 0) {
         const batch = queue.splice(0, CONCURRENCY_LIMIT);
         const foundFilesInBatch = [];
@@ -129,6 +141,18 @@ async function* findAngularJsonFiles(rootDir) {
                     if (entry.isDirectory()) {
                         // Exclude dot-directories, build/cache directories, and node_modules
                         if (entry.name.startsWith('.') || EXCLUDED_DIRS.has(entry.name)) {
+                            continue;
+                        }
+                        // Check for symbolic link loops
+                        try {
+                            const entryStats = await (0, promises_1.stat)(fullPath);
+                            if (seenInodes.has(entryStats.ino)) {
+                                continue; // Already visited this directory (symlink loop), skip.
+                            }
+                            seenInodes.add(entryStats.ino);
+                        }
+                        catch {
+                            // Ignore errors from stat (e.g., broken symlinks)
                             continue;
                         }
                         subdirectories.push(fullPath);
