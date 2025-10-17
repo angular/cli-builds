@@ -18,6 +18,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             sourceRoot: z.ZodString;
             selectorPrefix: z.ZodOptional<z.ZodString>;
             unitTestFramework: z.ZodOptional<z.ZodEnum<["jasmine", "jest", "vitest", "unknown"]>>;
+            styleLanguage: z.ZodOptional<z.ZodEnum<["css", "scss", "sass", "less"]>>;
         }, "strip", z.ZodTypeAny, {
             name: string;
             root: string;
@@ -26,6 +27,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
             unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }, {
             name: string;
             root: string;
@@ -34,6 +36,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
             unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
         path: string;
@@ -45,6 +48,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
             unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }[];
         frameworkVersion?: string | undefined;
     }, {
@@ -57,6 +61,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
             unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }[];
         frameworkVersion?: string | undefined;
     }>, "many">;

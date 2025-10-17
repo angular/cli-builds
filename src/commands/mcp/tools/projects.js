@@ -19,6 +19,18 @@ const zod_1 = __importDefault(require("zod"));
 const config_1 = require("../../../utilities/config");
 const error_1 = require("../../../utilities/error");
 const tool_registry_1 = require("./tool-registry");
+// Single source of truth for what constitutes a valid style language.
+const styleLanguageSchema = zod_1.default.enum(['css', 'scss', 'sass', 'less']);
+const VALID_STYLE_LANGUAGES = styleLanguageSchema.options;
+// Explicitly ordered for the file system search heuristic.
+const STYLE_LANGUAGE_SEARCH_ORDER = ['scss', 'sass', 'less', 'css'];
+function isStyleLanguage(value) {
+    return (typeof value === 'string' && VALID_STYLE_LANGUAGES.includes(value));
+}
+function getStyleLanguageFromExtension(extension) {
+    const style = extension.toLowerCase().substring(1); // remove leading '.'
+    return isStyleLanguage(style) ? style : undefined;
+}
 const listProjectsOutputSchema = {
     workspaces: zod_1.default.array(zod_1.default.object({
         path: zod_1.default.string().describe('The path to the `angular.json` file for this workspace.'),
@@ -55,6 +67,10 @@ const listProjectsOutputSchema = {
                 .describe('The unit test framework used by the project, such as Jasmine, Jest, or Vitest. ' +
                 'This field is critical for generating correct and idiomatic unit tests. ' +
                 'When writing or modifying tests, you MUST use the APIs corresponding to this framework.'),
+            styleLanguage: styleLanguageSchema
+                .optional()
+                .describe('The default style language for the project (e.g., "scss"). ' +
+                'This determines the file extension for new component styles.'),
         })),
     })),
     parsingErrors: zod_1.default
@@ -87,6 +103,7 @@ their types, and their locations.
 * Finding the correct project name to use in other commands (e.g., \`ng generate component my-comp --project=my-app\`).
 * Identifying the \`root\` and \`sourceRoot\` of a project to read, analyze, or modify its files.
 * Determining a project's unit test framework (\`unitTestFramework\`) before writing or modifying tests.
+* Identifying the project's style language (\`styleLanguage\`) to use the correct file extension (e.g., \`.scss\`).
 * Getting the \`selectorPrefix\` for a project before generating a new component to ensure it follows conventions.
 * Identifying the major version of the Angular framework for each workspace, which is crucial for monorepos.
 * Determining a project's primary function by inspecting its builder (e.g., '@angular-devkit/build-angular:browser' for an application).
@@ -276,6 +293,59 @@ function getUnitTestFramework(testTarget) {
     return undefined;
 }
 /**
+ * Determines the style language for a project using a prioritized heuristic.
+ * It checks project-specific schematics, then workspace-level schematics,
+ * and finally infers from the build target's inlineStyleLanguage option.
+ * @param project The project definition from the workspace configuration.
+ * @param workspace The loaded Angular workspace.
+ * @returns The determined style language ('css', 'scss', 'sass', 'less').
+ */
+async function getProjectStyleLanguage(project, workspace, fullSourceRoot) {
+    const projectSchematics = project.extensions.schematics;
+    const workspaceSchematics = workspace.extensions.schematics;
+    // 1. Check for a project-specific schematic setting.
+    let style = projectSchematics?.['@schematics/angular:component']?.['style'];
+    if (isStyleLanguage(style)) {
+        return style;
+    }
+    // 2. Check for a workspace-level schematic setting.
+    style = workspaceSchematics?.['@schematics/angular:component']?.['style'];
+    if (isStyleLanguage(style)) {
+        return style;
+    }
+    const buildTarget = project.targets.get('build');
+    if (buildTarget?.options) {
+        // 3. Infer from the build target's inlineStyleLanguage option.
+        style = buildTarget.options['inlineStyleLanguage'];
+        if (isStyleLanguage(style)) {
+            return style;
+        }
+        // 4. Infer from the 'styles' array (explicit).
+        const styles = buildTarget.options['styles'];
+        if (Array.isArray(styles)) {
+            for (const stylePath of styles) {
+                const style = getStyleLanguageFromExtension(node_path_1.default.extname(stylePath));
+                if (style) {
+                    return style;
+                }
+            }
+        }
+    }
+    // 5. Infer from implicit default styles file (future-proofing).
+    for (const ext of STYLE_LANGUAGE_SEARCH_ORDER) {
+        try {
+            await (0, promises_1.stat)(node_path_1.default.join(fullSourceRoot, `styles.${ext}`));
+            return ext;
+        }
+        catch {
+            // Silently ignore all errors (e.g., file not found, permissions).
+            // If we can't read the file, we can't use it for detection.
+        }
+    }
+    // 6. Fallback to 'css'.
+    return 'css';
+}
+/**
  * Loads, parses, and transforms a single angular.json file into the tool's output format.
  * It checks a set of seen paths to avoid processing the same workspace multiple times.
  * @param configFile The path to the angular.json file.
@@ -291,16 +361,21 @@ async function loadAndParseWorkspace(configFile, seenPaths) {
         seenPaths.add(resolvedPath);
         const ws = await config_1.AngularWorkspace.load(configFile);
         const projects = [];
+        const workspaceRoot = node_path_1.default.dirname(configFile);
         for (const [name, project] of ws.projects.entries()) {
+            const sourceRoot = node_path_1.default.posix.join(project.root, project.sourceRoot ?? 'src');
+            const fullSourceRoot = node_path_1.default.join(workspaceRoot, sourceRoot);
             const unitTestFramework = getUnitTestFramework(project.targets.get('test'));
+            const styleLanguage = await getProjectStyleLanguage(project, ws, fullSourceRoot);
             projects.push({
                 name,
                 type: project.extensions['projectType'],
                 builder: project.targets.get('build')?.builder,
                 root: project.root,
-                sourceRoot: project.sourceRoot ?? node_path_1.default.posix.join(project.root, 'src'),
+                sourceRoot,
                 selectorPrefix: project.extensions['prefix'],
                 unitTestFramework,
+                styleLanguage,
             });
         }
         return { workspace: { path: configFile, projects }, error: null };
