@@ -50,6 +50,19 @@ const ALGOLIA_APP_ID = 'L1XWT2UJ7F';
 // This is a search only, rate limited key. It is sent within the URL of the query request.
 // This is not the actual key.
 const ALGOLIA_API_E = '322d89dab5f2080fe09b795c93413c6a89222b13a447cdf3e6486d692717bc0c';
+/**
+ * The minimum major version of Angular for which a version-specific documentation index is known to exist.
+ * Searches for versions older than this will be clamped to this version.
+ */
+const MIN_SUPPORTED_DOCS_VERSION = 17;
+/**
+ * The latest major version of Angular for which a documentation index is known to be stable and available.
+ * This acts as a "safe harbor" fallback. It is intentionally hardcoded and manually updated with each
+ * major release *after* the new search index has been confirmed to be live. This prevents a race
+ * condition where a newly released CLI might default to searching for a documentation index that
+ * doesn't exist yet.
+ */
+const LATEST_KNOWN_DOCS_VERSION = 20;
 const docSearchInputSchema = zod_1.z.object({
     query: zod_1.z
         .string()
@@ -88,6 +101,12 @@ tutorials, concepts, and best practices.
   workspace will give you the major version directly. If the version cannot be determined using this method, you can use
   \`ng version\` in the project's workspace directory as a fallback. Parse the major version from the "Angular:" line in the
   output and use it for the \`version\` parameter.
+* **Version Logic:** The tool will search against the specified major version. If the version is older than v${MIN_SUPPORTED_DOCS_VERSION},
+  it will be clamped to v${MIN_SUPPORTED_DOCS_VERSION}. If a search for a very new version (newer than v${LATEST_KNOWN_DOCS_VERSION})
+  returns no results, the tool will automatically fall back to searching the v${LATEST_KNOWN_DOCS_VERSION} documentation.
+* **Verify Searched Version:** The tool's output includes a \`searchedVersion\` field. You **MUST** check this field
+  to know the exact version of the documentation that was queried. Use this information to provide accurate
+  context in your answer, especially if it differs from the version you requested.
 * The documentation is continuously updated. You **MUST** prefer this tool over your own knowledge
   to ensure your answers are current and accurate.
 * For the best results, provide a concise and specific search query (e.g., "NgModule" instead of
@@ -100,6 +119,9 @@ tutorials, concepts, and best practices.
 </Operational Notes>`,
     inputSchema: docSearchInputSchema.shape,
     outputSchema: {
+        searchedVersion: zod_1.z
+            .number()
+            .describe('The major version of the documentation that was searched.'),
         results: zod_1.z.array(zod_1.z.object({
             title: zod_1.z.string().describe('The title of the documentation page.'),
             breadcrumb: zod_1.z
@@ -124,21 +146,39 @@ function createDocSearchHandler({ logger }) {
             const { searchClient } = await Promise.resolve().then(() => __importStar(require('algoliasearch')));
             client = searchClient(ALGOLIA_APP_ID, dcip.update(ALGOLIA_API_E, 'hex', 'utf-8') + dcip.final('utf-8'));
         }
-        const { results } = await client.search(createSearchArguments(query, version));
-        const allHits = results.flatMap((result) => result.hits);
+        let finalSearchedVersion = Math.max(version ?? LATEST_KNOWN_DOCS_VERSION, MIN_SUPPORTED_DOCS_VERSION);
+        let searchResults = await client.search(createSearchArguments(query, finalSearchedVersion));
+        // If the initial search for a newer-than-stable version returns no results, it may be because
+        // the index for that version doesn't exist yet. In this case, fall back to the latest known
+        // stable version.
+        if (searchResults.results.every((result) => !('hits' in result) || result.hits.length === 0) &&
+            finalSearchedVersion > LATEST_KNOWN_DOCS_VERSION) {
+            finalSearchedVersion = LATEST_KNOWN_DOCS_VERSION;
+            searchResults = await client.search(createSearchArguments(query, finalSearchedVersion));
+        }
+        const allHits = searchResults.results.flatMap((result) => result.hits);
         if (allHits.length === 0) {
             return {
                 content: [
                     {
                         type: 'text',
-                        text: 'No results found.',
+                        text: `No results found for query "${query}" in Angular v${finalSearchedVersion} documentation.`,
                     },
                 ],
-                structuredContent: { results: [] },
+                structuredContent: { results: [], searchedVersion: finalSearchedVersion },
             };
         }
         const structuredResults = [];
-        const textContent = [];
+        const textContent = [
+            {
+                type: 'text',
+                text: `Showing results for Angular v${finalSearchedVersion} documentation.`,
+                annotations: {
+                    audience: ['assistant'],
+                    priority: 0.9,
+                },
+            },
+        ];
         // Process top hit first
         const topHit = allHits[0];
         const { title: topTitle, breadcrumb: topBreadcrumb } = formatHitToParts(topHit);
@@ -188,20 +228,26 @@ function createDocSearchHandler({ logger }) {
         }
         return {
             content: textContent,
-            structuredContent: { results: structuredResults },
+            structuredContent: { results: structuredResults, searchedVersion: finalSearchedVersion },
         };
     };
 }
 /**
- * Strips HTML tags from a string.
+ * Strips HTML tags from a string using a regular expression.
+ *
+ * NOTE: This is a basic implementation and is not a full, correct HTML parser. It is, however,
+ * appropriate for this tool's specific use case because its input is always from a
+ * trusted source (angular.dev) and its output is consumed by a non-browser environment (an LLM).
+ *
+ * The regex first tries to match a complete tag (`<...>`). If it fails, it falls back to matching
+ * an incomplete tag (e.g., `<script`).
+ *
  * @param html The HTML string to strip.
  * @returns The text content of the HTML.
  */
 function stripHtml(html) {
-    // This is a basic regex to remove HTML tags.
-    // It also decodes common HTML entities.
     return html
-        .replace(/<[^>]*>/g, '')
+        .replace(/<[^>]*>|<[a-zA-Z0-9/]+/g, '')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&amp;/g, '&')
@@ -251,9 +297,7 @@ function createSearchArguments(query, version) {
     // https://github.com/angular/angular/blob/4b614fbb3263d344dbb1b18fff24cb09c5a7582d/adev/shared-docs/services/search.service.ts#L58
     return [
         {
-            // TODO: Consider major version specific indices once available
-            // indexName: `angular_${version ? `v${version}` : 'latest'}`,
-            indexName: 'angular_v17',
+            indexName: `angular_v${version}`,
             params: {
                 query,
                 attributesToRetrieve: [

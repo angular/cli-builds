@@ -11,6 +11,7 @@ export declare const DOC_SEARCH_TOOL: import("./tool-registry").McpToolDeclarati
     includeTopContent: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     version: z.ZodOptional<z.ZodNumber>;
 }, {
+    searchedVersion: z.ZodNumber;
     results: z.ZodArray<z.ZodObject<{
         title: z.ZodString;
         breadcrumb: z.ZodString;
