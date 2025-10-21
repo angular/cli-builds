@@ -29,6 +29,7 @@ const METADATA_FIELDS = ['name', 'dist-tags', 'versions', 'time'];
 const MANIFEST_FIELDS = [
     'name',
     'version',
+    'deprecated',
     'dependencies',
     'peerDependencies',
     'devDependencies',
@@ -247,7 +248,7 @@ class PackageManager {
             commandArgs.push(...formatter(METADATA_FIELDS));
         }
         const cacheKey = options.registry ? `${packageName}|${options.registry}` : packageName;
-        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryMetadata(stdout, logger), { ...options, cache: this.#metadataCache, cacheKey: packageName });
+        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryMetadata(stdout, logger), { ...options, cache: this.#metadataCache, cacheKey });
     }
     /**
      * Fetches the registry manifest for a specific version of a package.
@@ -268,7 +269,7 @@ class PackageManager {
             commandArgs.push(...formatter(MANIFEST_FIELDS));
         }
         const cacheKey = options.registry ? `${specifier}|${options.registry}` : specifier;
-        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getPackageManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey: specifier });
+        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getPackageManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });
     }
     /**
      * Acquires a package by installing it into a temporary directory. The caller is

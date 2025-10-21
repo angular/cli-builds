@@ -42,6 +42,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DOC_SEARCH_TOOL = void 0;
 const node_crypto_1 = require("node:crypto");
+const node_stream_1 = require("node:stream");
 const zod_1 = require("zod");
 const constants_1 = require("../constants");
 const tool_registry_1 = require("./tool-registry");
@@ -189,12 +190,8 @@ function createDocSearchHandler({ logger }) {
                 // Only fetch content from angular.dev
                 if (url.hostname === 'angular.dev' || url.hostname.endsWith('.angular.dev')) {
                     const response = await fetch(url);
-                    if (response.ok) {
-                        const html = await response.text();
-                        const mainContent = extractMainContent(html);
-                        if (mainContent) {
-                            topContent = stripHtml(mainContent);
-                        }
+                    if (response.ok && response.body) {
+                        topContent = await extractMainContent(node_stream_1.Readable.fromWeb(response.body, { encoding: 'utf-8' }));
                     }
                 }
             }
@@ -233,43 +230,46 @@ function createDocSearchHandler({ logger }) {
     };
 }
 /**
- * Strips HTML tags from a string using a regular expression.
+ * Extracts the text content of the `<main>` element by streaming an HTML response.
  *
- * NOTE: This is a basic implementation and is not a full, correct HTML parser. It is, however,
- * appropriate for this tool's specific use case because its input is always from a
- * trusted source (angular.dev) and its output is consumed by a non-browser environment (an LLM).
- *
- * The regex first tries to match a complete tag (`<...>`). If it fails, it falls back to matching
- * an incomplete tag (e.g., `<script`).
- *
- * @param html The HTML string to strip.
- * @returns The text content of the HTML.
+ * @param htmlStream A readable stream of the HTML content of a page.
+ * @returns A promise that resolves to the text content of the `<main>` element, or `undefined` if not found.
  */
-function stripHtml(html) {
-    return html
-        .replace(/<[^>]*>|<[a-zA-Z0-9/]+/g, '')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
-        .trim();
-}
-/**
- * Extracts the content of the `<main>` element from an HTML string.
- *
- * @param html The HTML content of a page.
- * @returns The content of the `<main>` element, or `undefined` if not found.
- */
-function extractMainContent(html) {
-    const mainTagStart = html.indexOf('<main');
-    if (mainTagStart === -1) {
-        return undefined;
-    }
-    const mainTagEnd = html.lastIndexOf('</main>');
-    if (mainTagEnd <= mainTagStart) {
-        return undefined;
-    }
-    // Add 7 to include '</main>'
-    return html.substring(mainTagStart, mainTagEnd + 7);
+async function extractMainContent(htmlStream) {
+    const { RewritingStream } = await Promise.resolve().then(() => __importStar(require('parse5-html-rewriting-stream')));
+    const rewriter = new RewritingStream();
+    let mainTextContent = '';
+    let inMainElement = false;
+    let mainTagFound = false;
+    rewriter.on('startTag', (tag) => {
+        if (tag.tagName === 'main') {
+            inMainElement = true;
+            mainTagFound = true;
+        }
+    });
+    rewriter.on('endTag', (tag) => {
+        if (tag.tagName === 'main') {
+            inMainElement = false;
+        }
+    });
+    // Only capture text content, and only when inside the <main> element.
+    rewriter.on('text', (text) => {
+        if (inMainElement) {
+            mainTextContent += text.text;
+        }
+    });
+    return new Promise((resolve, reject) => {
+        htmlStream
+            .pipe(rewriter)
+            .on('finish', () => {
+            if (!mainTagFound) {
+                resolve(undefined);
+                return;
+            }
+            resolve(mainTextContent.trim());
+        })
+            .on('error', reject);
+    });
 }
 /**
  * Formats an Algolia search hit into its constituent parts.
