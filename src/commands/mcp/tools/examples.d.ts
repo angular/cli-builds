@@ -7,6 +7,7 @@
  */
 import { z } from 'zod';
 export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclaration<{
+    workspacePath: z.ZodOptional<z.ZodString>;
     query: z.ZodString;
     keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
