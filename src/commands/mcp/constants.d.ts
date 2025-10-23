@@ -6,5 +6,5 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 export declare const k1 = "@angular/cli";
-export declare const at = "QBHBbOdEO4CmBOC2d7jNmg==";
+export declare const at = "gv2tkIHTOiWtI6Su96LXLQ==";
 export declare const iv: Buffer<ArrayBuffer>;
