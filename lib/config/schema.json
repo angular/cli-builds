@@ -1015,6 +1015,15 @@
           "default": false,
           "alias": "S"
         },
+        "testRunner": {
+          "description": "The unit testing runner to use.",
+          "type": "string",
+          "enum": [
+            "vitest",
+            "karma"
+          ],
+          "default": "vitest"
+        },
         "skipPackageJson": {
           "type": "boolean",
           "default": false,
@@ -1796,6 +1805,15 @@
           "type": "boolean",
           "default": false,
           "alias": "S"
+        },
+        "testRunner": {
+          "description": "The unit testing runner to use.",
+          "type": "string",
+          "enum": [
+            "vitest",
+            "karma"
+          ],
+          "default": "vitest"
         },
         "createApplication": {
           "description": "Create a new initial application project in the new workspace. When false, creates an empty workspace with no initial application. You can then use the `ng generate application` command to create applications in the `projects` directory.",

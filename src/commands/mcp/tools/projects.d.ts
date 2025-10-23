@@ -26,7 +26,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
-            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            unitTestFramework?: "vitest" | "unknown" | "jasmine" | "jest" | undefined;
             styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }, {
             name: string;
@@ -35,7 +35,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
-            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            unitTestFramework?: "vitest" | "unknown" | "jasmine" | "jest" | undefined;
             styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
@@ -47,7 +47,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
-            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            unitTestFramework?: "vitest" | "unknown" | "jasmine" | "jest" | undefined;
             styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }[];
         frameworkVersion?: string | undefined;
@@ -60,7 +60,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
             type?: "application" | "library" | undefined;
             builder?: string | undefined;
             selectorPrefix?: string | undefined;
-            unitTestFramework?: "unknown" | "jasmine" | "jest" | "vitest" | undefined;
+            unitTestFramework?: "vitest" | "unknown" | "jasmine" | "jest" | undefined;
             styleLanguage?: "css" | "less" | "sass" | "scss" | undefined;
         }[];
         frameworkVersion?: string | undefined;

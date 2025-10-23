@@ -184,6 +184,10 @@ export type AngularApplicationOptionsSchema = {
      */
     style?: SchematicsAngularApplicationStyle;
     /**
+     * The unit testing runner to use.
+     */
+    testRunner?: TestRunner;
+    /**
      * Sets the view encapsulation mode for the application's components. This determines how
      * component styles are scoped and applied.
      */
@@ -214,6 +218,13 @@ export declare enum SchematicsAngularApplicationStyle {
     Sass = "sass",
     Scss = "scss",
     Tailwind = "tailwind"
+}
+/**
+ * The unit testing runner to use.
+ */
+export declare enum TestRunner {
+    Karma = "karma",
+    Vitest = "vitest"
 }
 /**
  * Sets the view encapsulation mode for the application's components. This determines how
@@ -801,6 +812,10 @@ export type AngularNgNewOptionsSchema = {
      * The type of stylesheet files to be created for components in the initial project.
      */
     style?: SchematicsAngularApplicationStyle;
+    /**
+     * The unit testing runner to use.
+     */
+    testRunner?: TestRunner;
     /**
      * The version of the Angular CLI to use.
      */
