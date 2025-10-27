@@ -23,9 +23,8 @@ const command_module_1 = require("./command-module");
 const command_1 = require("./utilities/command");
 const json_help_1 = require("./utilities/json-help");
 const normalize_options_middleware_1 = require("./utilities/normalize-options-middleware");
-const yargsParser = helpers_1.Parser;
 async function runCommand(args, logger) {
-    const { $0, _, help = false, jsonHelp = false, getYargsCompletions = false, ...rest } = yargsParser(args, {
+    const { $0, _, help = false, jsonHelp = false, getYargsCompletions = false, ...rest } = (0, helpers_1.Parser)(args, {
         boolean: ['help', 'json-help', 'get-yargs-completions'],
         alias: { 'collection': 'c' },
     });
