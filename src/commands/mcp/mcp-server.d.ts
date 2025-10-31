@@ -13,9 +13,12 @@ import { AnyMcpToolDeclaration } from './tools/tool-registry';
  * These tools are considered experimental and may have limitations.
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
+    directories: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
     transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<[string, ...string[]]>, "many">>;
 }, {
     instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
+    stdout: import("zod").ZodOptional<import("zod").ZodString>;
+    stderr: import("zod").ZodOptional<import("zod").ZodString>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
     fileOrDirPath: import("zod").ZodString;
 }, import("zod").ZodRawShape>];
