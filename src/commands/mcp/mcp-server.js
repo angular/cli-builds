@@ -35,12 +35,13 @@ const STABLE_TOOLS = [
     doc_search_1.DOC_SEARCH_TOOL,
     examples_1.FIND_EXAMPLE_TOOL,
     projects_1.LIST_PROJECTS_TOOL,
+    zoneless_migration_1.ZONELESS_MIGRATION_TOOL,
 ];
 /**
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [modernize_1.MODERNIZE_TOOL, zoneless_migration_1.ZONELESS_MIGRATION_TOOL];
+exports.EXPERIMENTAL_TOOLS = [modernize_1.MODERNIZE_TOOL];
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',

@@ -19,9 +19,7 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
     stdout: import("zod").ZodOptional<import("zod").ZodString>;
     stderr: import("zod").ZodOptional<import("zod").ZodString>;
-}>, import("./tools/tool-registry").McpToolDeclaration<{
-    fileOrDirPath: import("zod").ZodString;
-}, import("zod").ZodRawShape>];
+}>];
 export declare function createMcpServer(options: {
     workspace?: AngularWorkspace;
     readOnly?: boolean;
