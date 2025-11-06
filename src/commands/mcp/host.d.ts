@@ -5,15 +5,15 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+import { ChildProcess } from 'node:child_process';
 import { Stats } from 'node:fs';
 /**
  * An error thrown when a command fails to execute.
  */
 export declare class CommandError extends Error {
-    readonly stdout: string;
-    readonly stderr: string;
+    readonly logs: string[];
     readonly code: number | null;
-    constructor(message: string, stdout: string, stderr: string, code: number | null);
+    constructor(message: string, logs: string[], code: number | null);
 }
 /**
  * An abstraction layer for operating-system or file-system operations.
@@ -45,9 +45,24 @@ export interface Host {
         cwd?: string;
         env?: Record<string, string>;
     }): Promise<{
-        stdout: string;
-        stderr: string;
+        logs: string[];
     }>;
+    /**
+     * Spawns a long-running child process and returns the `ChildProcess` object.
+     * @param command The command to run.
+     * @param args The arguments to pass to the command.
+     * @param options Options for the child process.
+     * @returns The spawned `ChildProcess` instance.
+     */
+    spawn(command: string, args: readonly string[], options?: {
+        stdio?: 'pipe' | 'ignore';
+        cwd?: string;
+        env?: Record<string, string>;
+    }): ChildProcess;
+    /**
+     * Finds an available TCP port on the system.
+     */
+    getAvailablePort(): Promise<number>;
 }
 /**
  * A concrete implementation of the `Host` interface that runs on a local workspace.

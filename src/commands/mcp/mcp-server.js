@@ -19,12 +19,20 @@ const version_1 = require("../../utilities/version");
 const instructions_1 = require("./resources/instructions");
 const ai_tutor_1 = require("./tools/ai-tutor");
 const best_practices_1 = require("./tools/best-practices");
+const build_1 = require("./tools/build");
+const start_devserver_1 = require("./tools/devserver/start-devserver");
+const stop_devserver_1 = require("./tools/devserver/stop-devserver");
+const wait_for_devserver_build_1 = require("./tools/devserver/wait-for-devserver-build");
 const doc_search_1 = require("./tools/doc-search");
 const examples_1 = require("./tools/examples");
 const modernize_1 = require("./tools/modernize");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
 const tool_registry_1 = require("./tools/tool-registry");
+/**
+ * Tools to manage devservers. Should be bundled together, then added to experimental or stable as a group.
+ */
+const SERVE_TOOLS = [start_devserver_1.START_DEVSERVER_TOOL, stop_devserver_1.STOP_DEVSERVER_TOOL, wait_for_devserver_build_1.WAIT_FOR_DEVSERVER_BUILD_TOOL];
 /**
  * The set of tools that are enabled by default for the MCP server.
  * These tools are considered stable and suitable for general use.
@@ -41,7 +49,7 @@ const STABLE_TOOLS = [
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [modernize_1.MODERNIZE_TOOL];
+exports.EXPERIMENTAL_TOOLS = [build_1.BUILD_TOOL, modernize_1.MODERNIZE_TOOL, ...SERVE_TOOLS];
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
@@ -91,6 +99,7 @@ equivalent actions.
         workspace: options.workspace,
         logger,
         exampleDatabasePath: node_path_1.default.join(__dirname, '../../../lib/code-examples.db'),
+        devServers: new Map(),
     }, toolDeclarations);
     return server;
 }

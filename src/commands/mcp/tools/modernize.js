@@ -12,6 +12,7 @@ exports.runModernization = runModernization;
 const path_1 = require("path");
 const zod_1 = require("zod");
 const host_1 = require("../host");
+const utils_1 = require("../utils");
 const tool_registry_1 = require("./tool-registry");
 const TRANSFORMATIONS = [
     {
@@ -72,15 +73,8 @@ const modernizeOutputSchema = zod_1.z.object({
         .array(zod_1.z.string())
         .optional()
         .describe('Migration summary, as well as any instructions that need to be performed to complete the migrations.'),
-    stdout: zod_1.z.string().optional().describe('The stdout from the executed commands.'),
-    stderr: zod_1.z.string().optional().describe('The stderr from the executed commands.'),
+    logs: zod_1.z.array(zod_1.z.string()).optional().describe('All logs from all executed commands.'),
 });
-function createToolOutput(structuredContent) {
-    return {
-        content: [{ type: 'text', text: JSON.stringify(structuredContent, null, 2) }],
-        structuredContent,
-    };
-}
 function findAngularJsonDir(startDir, host) {
     let currentDir = startDir;
     while (true) {
@@ -98,7 +92,7 @@ async function runModernization(input, host) {
     const transformationNames = input.transformations ?? [];
     const directories = input.directories ?? [];
     if (transformationNames.length === 0) {
-        return createToolOutput({
+        return (0, utils_1.createStructuredContentOutput)({
             instructions: [
                 'See https://angular.dev/best-practices for Angular best practices. ' +
                     'You can call this tool if you have specific transformation you want to run.',
@@ -106,7 +100,7 @@ async function runModernization(input, host) {
         });
     }
     if (directories.length === 0) {
-        return createToolOutput({
+        return (0, utils_1.createStructuredContentOutput)({
             instructions: [
                 'Provide this tool with a list of directory paths in your workspace ' +
                     'to run the modernization on.',
@@ -117,13 +111,12 @@ async function runModernization(input, host) {
     const executionDir = (await host.stat(firstDir)).isDirectory() ? firstDir : (0, path_1.dirname)(firstDir);
     const angularProjectRoot = findAngularJsonDir(executionDir, host);
     if (!angularProjectRoot) {
-        return createToolOutput({
+        return (0, utils_1.createStructuredContentOutput)({
             instructions: ['Could not find an angular.json file in the current or parent directories.'],
         });
     }
     const instructions = [];
-    const stdoutMessages = [];
-    const stderrMessages = [];
+    let logs = [];
     const transformationsToRun = TRANSFORMATIONS.filter((t) => transformationNames.includes(t.name));
     for (const transformation of transformationsToRun) {
         if (transformation.instructions) {
@@ -141,36 +134,24 @@ async function runModernization(input, host) {
                 const command = 'ng';
                 const args = ['generate', `@angular/core:${transformation.name}`, '--path', relativePath];
                 try {
-                    const { stdout, stderr } = await host.runCommand(command, args, {
+                    logs = (await host.runCommand(command, args, {
                         cwd: angularProjectRoot,
-                    });
-                    if (stdout) {
-                        stdoutMessages.push(stdout);
-                    }
-                    if (stderr) {
-                        stderrMessages.push(stderr);
-                    }
+                    })).logs;
                     instructions.push(`Migration ${transformation.name} on directory ${relativePath} completed successfully.`);
                 }
                 catch (e) {
                     if (e instanceof host_1.CommandError) {
-                        if (e.stdout) {
-                            stdoutMessages.push(e.stdout);
-                        }
-                        if (e.stderr) {
-                            stderrMessages.push(e.stderr);
-                        }
+                        logs = e.logs;
                     }
-                    stderrMessages.push(e.message);
+                    logs.push(e.message);
                     instructions.push(`Migration ${transformation.name} on directory ${relativePath} failed.`);
                 }
             }
         }
     }
-    return createToolOutput({
+    return (0, utils_1.createStructuredContentOutput)({
         instructions: instructions.length > 0 ? instructions : undefined,
-        stdout: stdoutMessages?.join('\n\n') || undefined,
-        stderr: stderrMessages?.join('\n\n') || undefined,
+        logs,
     });
 }
 exports.MODERNIZE_TOOL = (0, tool_registry_1.declareTool)({

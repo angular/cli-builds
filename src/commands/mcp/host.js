@@ -17,17 +17,16 @@ exports.LocalWorkspaceHost = exports.CommandError = void 0;
 const fs_1 = require("fs");
 const node_child_process_1 = require("node:child_process");
 const promises_1 = require("node:fs/promises");
+const node_net_1 = require("node:net");
 /**
  * An error thrown when a command fails to execute.
  */
 class CommandError extends Error {
-    stdout;
-    stderr;
+    logs;
     code;
-    constructor(message, stdout, stderr, code) {
+    constructor(message, logs, code) {
         super(message);
-        this.stdout = stdout;
-        this.stderr = stderr;
+        this.logs = logs;
         this.code = code;
     }
 }
@@ -51,27 +50,59 @@ exports.LocalWorkspaceHost = {
                     ...options.env,
                 },
             });
-            let stdout = '';
-            childProcess.stdout?.on('data', (data) => (stdout += data.toString()));
-            let stderr = '';
-            childProcess.stderr?.on('data', (data) => (stderr += data.toString()));
+            const logs = [];
+            childProcess.stdout?.on('data', (data) => logs.push(data.toString()));
+            childProcess.stderr?.on('data', (data) => logs.push(data.toString()));
             childProcess.on('close', (code) => {
                 if (code === 0) {
-                    resolve({ stdout, stderr });
+                    resolve({ logs });
                 }
                 else {
                     const message = `Process exited with code ${code}.`;
-                    reject(new CommandError(message, stdout, stderr, code));
+                    reject(new CommandError(message, logs, code));
                 }
             });
             childProcess.on('error', (err) => {
                 if (err.name === 'AbortError') {
                     const message = `Process timed out.`;
-                    reject(new CommandError(message, stdout, stderr, null));
+                    reject(new CommandError(message, logs, null));
                     return;
                 }
                 const message = `Process failed with error: ${err.message}`;
-                reject(new CommandError(message, stdout, stderr, null));
+                reject(new CommandError(message, logs, null));
+            });
+        });
+    },
+    spawn(command, args, options = {}) {
+        return (0, node_child_process_1.spawn)(command, args, {
+            shell: false,
+            stdio: options.stdio ?? 'pipe',
+            cwd: options.cwd,
+            env: {
+                ...process.env,
+                ...options.env,
+            },
+        });
+    },
+    getAvailablePort() {
+        return new Promise((resolve, reject) => {
+            // Create a new temporary server from Node's net library.
+            const server = (0, node_net_1.createServer)();
+            server.once('error', (err) => {
+                reject(err);
+            });
+            // Listen on port 0 to let the OS assign an available port.
+            server.listen(0, () => {
+                const address = server.address();
+                // Ensure address is an object with a port property.
+                if (address && typeof address === 'object') {
+                    const port = address.port;
+                    server.close();
+                    resolve(port);
+                }
+                else {
+                    reject(new Error('Unable to retrieve address information from server.'));
+                }
             });
         });
     },

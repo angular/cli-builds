@@ -20,15 +20,12 @@ declare const modernizeInputSchema: z.ZodObject<{
 }>;
 declare const modernizeOutputSchema: z.ZodObject<{
     instructions: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-    stdout: z.ZodOptional<z.ZodString>;
-    stderr: z.ZodOptional<z.ZodString>;
+    logs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
 }, "strip", z.ZodTypeAny, {
-    stdout?: string | undefined;
-    stderr?: string | undefined;
+    logs?: string[] | undefined;
     instructions?: string[] | undefined;
 }, {
-    stdout?: string | undefined;
-    stderr?: string | undefined;
+    logs?: string[] | undefined;
     instructions?: string[] | undefined;
 }>;
 export type ModernizeInput = z.infer<typeof modernizeInputSchema>;
@@ -39,9 +36,16 @@ export declare function runModernization(input: ModernizeInput, host: Host): Pro
         text: string;
     }[];
     structuredContent: {
-        stdout?: string | undefined;
-        stderr?: string | undefined;
-        instructions?: string[] | undefined;
+        instructions: string[];
+    };
+} | {
+    content: {
+        type: "text";
+        text: string;
+    }[];
+    structuredContent: {
+        instructions: string[] | undefined;
+        logs: string[];
     };
 }>;
 export declare const MODERNIZE_TOOL: McpToolDeclaration<typeof modernizeInputSchema.shape, typeof modernizeOutputSchema.shape>;
