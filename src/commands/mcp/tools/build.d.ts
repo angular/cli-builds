@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { Host } from '../host';
-import { McpToolDeclaration } from './tool-registry';
+import { type Host } from '../host';
+import { type McpToolDeclaration } from './tool-registry';
 declare const buildToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
     configuration: z.ZodOptional<z.ZodString>;

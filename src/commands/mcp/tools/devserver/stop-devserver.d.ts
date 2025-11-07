@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { McpToolContext, McpToolDeclaration } from '../tool-registry';
+import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 declare const stopDevserverToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {

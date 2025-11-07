@@ -6,52 +6,19 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZONELESS_MIGRATION_TOOL = void 0;
 exports.registerZonelessMigrationTool = registerZonelessMigrationTool;
-const fs = __importStar(require("node:fs"));
+const node_fs_1 = require("node:fs");
 const promises_1 = require("node:fs/promises");
 const zod_1 = require("zod");
 const tool_registry_1 = require("../tool-registry");
-const analyze_for_unsupported_zone_uses_1 = require("./analyze_for_unsupported_zone_uses");
-const migrate_single_file_1 = require("./migrate_single_file");
-const migrate_test_file_1 = require("./migrate_test_file");
+const analyze_for_unsupported_zone_uses_1 = require("./analyze-for-unsupported-zone-uses");
+const migrate_single_file_1 = require("./migrate-single-file");
+const migrate_test_file_1 = require("./migrate-test-file");
 const prompts_1 = require("./prompts");
-const send_debug_message_1 = require("./send_debug_message");
-const ts_utils_1 = require("./ts_utils");
+const send_debug_message_1 = require("./send-debug-message");
+const ts_utils_1 = require("./ts-utils");
 exports.ZONELESS_MIGRATION_TOOL = (0, tool_registry_1.declareTool)({
     name: 'onpush-zoneless-migration',
     title: 'Plan migration to OnPush and/or zoneless',
@@ -135,7 +102,7 @@ async function discoverAndCategorizeFiles(fileOrDirPath, extras) {
     const zoneFiles = new Set();
     let isDirectory;
     try {
-        isDirectory = fs.statSync(fileOrDirPath).isDirectory();
+        isDirectory = (0, node_fs_1.statSync)(fileOrDirPath).isDirectory();
     }
     catch (e) {
         // Re-throw to be handled by the main function as a user input error
@@ -220,7 +187,7 @@ async function rankComponentFilesForMigration({ sendRequest }, componentFiles) {
 }
 async function getTestFilePath(filePath) {
     const testFilePath = filePath.replace(/\.ts$/, '.spec.ts');
-    if (fs.existsSync(testFilePath)) {
+    if ((0, node_fs_1.existsSync)(testFilePath)) {
         return testFilePath;
     }
     return undefined;

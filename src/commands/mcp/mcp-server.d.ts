@@ -7,7 +7,7 @@
  */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AngularWorkspace } from '../../utilities/config';
-import { AnyMcpToolDeclaration } from './tools/tool-registry';
+import { type AnyMcpToolDeclaration } from './tools/tool-registry';
 /**
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.

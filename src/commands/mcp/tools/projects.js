@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LIST_PROJECTS_TOOL = void 0;
 const promises_1 = require("node:fs/promises");
-const node_path_1 = __importDefault(require("node:path"));
+const node_path_1 = require("node:path");
 const node_url_1 = require("node:url");
 const semver_1 = __importDefault(require("semver"));
-const zod_1 = __importDefault(require("zod"));
+const zod_1 = require("zod");
 const config_1 = require("../../../utilities/config");
 const error_1 = require("../../../utilities/error");
 const tool_registry_1 = require("./tool-registry");
 // Single source of truth for what constitutes a valid style language.
-const styleLanguageSchema = zod_1.default.enum(['css', 'scss', 'sass', 'less']);
+const styleLanguageSchema = zod_1.z.enum(['css', 'scss', 'sass', 'less']);
 const VALID_STYLE_LANGUAGES = styleLanguageSchema.options;
 // Explicitly ordered for the file system search heuristic.
 const STYLE_LANGUAGE_SEARCH_ORDER = ['scss', 'sass', 'less', 'css'];
@@ -32,36 +32,36 @@ function getStyleLanguageFromExtension(extension) {
     return isStyleLanguage(style) ? style : undefined;
 }
 const listProjectsOutputSchema = {
-    workspaces: zod_1.default.array(zod_1.default.object({
-        path: zod_1.default.string().describe('The path to the `angular.json` file for this workspace.'),
-        frameworkVersion: zod_1.default
+    workspaces: zod_1.z.array(zod_1.z.object({
+        path: zod_1.z.string().describe('The path to the `angular.json` file for this workspace.'),
+        frameworkVersion: zod_1.z
             .string()
             .optional()
             .describe('The major version of the Angular framework (`@angular/core`) in this workspace, if found.'),
-        projects: zod_1.default.array(zod_1.default.object({
-            name: zod_1.default
+        projects: zod_1.z.array(zod_1.z.object({
+            name: zod_1.z
                 .string()
                 .describe('The name of the project, as defined in the `angular.json` file.'),
-            type: zod_1.default
+            type: zod_1.z
                 .enum(['application', 'library'])
                 .optional()
                 .describe(`The type of the project, either 'application' or 'library'.`),
-            builder: zod_1.default
+            builder: zod_1.z
                 .string()
                 .optional()
                 .describe('The primary builder for the project, typically from the "build" target.'),
-            root: zod_1.default
+            root: zod_1.z
                 .string()
                 .describe('The root directory of the project, relative to the workspace root.'),
-            sourceRoot: zod_1.default
+            sourceRoot: zod_1.z
                 .string()
                 .describe(`The root directory of the project's source files, relative to the workspace root.`),
-            selectorPrefix: zod_1.default
+            selectorPrefix: zod_1.z
                 .string()
                 .optional()
                 .describe('The prefix to use for component selectors.' +
                 ` For example, a prefix of 'app' would result in selectors like '<app-my-component>'.`),
-            unitTestFramework: zod_1.default
+            unitTestFramework: zod_1.z
                 .enum(['jasmine', 'jest', 'vitest', 'unknown'])
                 .optional()
                 .describe('The unit test framework used by the project, such as Jasmine, Jest, or Vitest. ' +
@@ -73,19 +73,19 @@ const listProjectsOutputSchema = {
                 'This determines the file extension for new component styles.'),
         })),
     })),
-    parsingErrors: zod_1.default
-        .array(zod_1.default.object({
-        filePath: zod_1.default.string().describe('The path to the file that could not be parsed.'),
-        message: zod_1.default.string().describe('The error message detailing why parsing failed.'),
+    parsingErrors: zod_1.z
+        .array(zod_1.z.object({
+        filePath: zod_1.z.string().describe('The path to the file that could not be parsed.'),
+        message: zod_1.z.string().describe('The error message detailing why parsing failed.'),
     }))
         .default([])
         .describe('A list of files that looked like workspaces but failed to parse.'),
-    versioningErrors: zod_1.default
-        .array(zod_1.default.object({
-        filePath: zod_1.default
+    versioningErrors: zod_1.z
+        .array(zod_1.z.object({
+        filePath: zod_1.z
             .string()
             .describe('The path to the workspace `angular.json` for which versioning failed.'),
-        message: zod_1.default.string().describe('The error message detailing why versioning failed.'),
+        message: zod_1.z.string().describe('The error message detailing why versioning failed.'),
     }))
         .default([])
         .describe('A list of workspaces for which the framework version could not be determined.'),
@@ -154,7 +154,7 @@ async function* findAngularJsonFiles(rootDir) {
                 const entries = await (0, promises_1.readdir)(dir, { withFileTypes: true });
                 const subdirectories = [];
                 for (const entry of entries) {
-                    const fullPath = node_path_1.default.join(dir, entry.name);
+                    const fullPath = (0, node_path_1.join)(dir, entry.name);
                     if (entry.isDirectory()) {
                         // Exclude dot-directories, build/cache directories, and node_modules
                         if (entry.name.startsWith('.') || EXCLUDED_DIRS.has(entry.name)) {
@@ -214,7 +214,7 @@ async function findAngularCoreVersion(startDir, cache, searchRoot) {
             }
             return cachedResult;
         }
-        const pkgPath = node_path_1.default.join(currentDir, 'package.json');
+        const pkgPath = (0, node_path_1.join)(currentDir, 'package.json');
         try {
             const pkgContent = await (0, promises_1.readFile)(pkgPath, 'utf-8');
             const pkg = JSON.parse(pkgContent);
@@ -239,7 +239,7 @@ async function findAngularCoreVersion(startDir, cache, searchRoot) {
         if (currentDir === searchRoot) {
             break;
         }
-        const parentDir = node_path_1.default.dirname(currentDir);
+        const parentDir = (0, node_path_1.dirname)(currentDir);
         if (parentDir === currentDir) {
             break; // Reached the filesystem root.
         }
@@ -324,7 +324,7 @@ async function getProjectStyleLanguage(project, workspace, fullSourceRoot) {
         const styles = buildTarget.options['styles'];
         if (Array.isArray(styles)) {
             for (const stylePath of styles) {
-                const style = getStyleLanguageFromExtension(node_path_1.default.extname(stylePath));
+                const style = getStyleLanguageFromExtension((0, node_path_1.extname)(stylePath));
                 if (style) {
                     return style;
                 }
@@ -334,7 +334,7 @@ async function getProjectStyleLanguage(project, workspace, fullSourceRoot) {
     // 5. Infer from implicit default styles file (future-proofing).
     for (const ext of STYLE_LANGUAGE_SEARCH_ORDER) {
         try {
-            await (0, promises_1.stat)(node_path_1.default.join(fullSourceRoot, `styles.${ext}`));
+            await (0, promises_1.stat)((0, node_path_1.join)(fullSourceRoot, `styles.${ext}`));
             return ext;
         }
         catch {
@@ -354,17 +354,17 @@ async function getProjectStyleLanguage(project, workspace, fullSourceRoot) {
  */
 async function loadAndParseWorkspace(configFile, seenPaths) {
     try {
-        const resolvedPath = node_path_1.default.resolve(configFile);
+        const resolvedPath = (0, node_path_1.resolve)(configFile);
         if (seenPaths.has(resolvedPath)) {
             return { workspace: null, error: null }; // Already processed, skip.
         }
         seenPaths.add(resolvedPath);
         const ws = await config_1.AngularWorkspace.load(configFile);
         const projects = [];
-        const workspaceRoot = node_path_1.default.dirname(configFile);
+        const workspaceRoot = (0, node_path_1.dirname)(configFile);
         for (const [name, project] of ws.projects.entries()) {
-            const sourceRoot = node_path_1.default.posix.join(project.root, project.sourceRoot ?? 'src');
-            const fullSourceRoot = node_path_1.default.join(workspaceRoot, sourceRoot);
+            const sourceRoot = node_path_1.posix.join(project.root, project.sourceRoot ?? 'src');
+            const fullSourceRoot = (0, node_path_1.join)(workspaceRoot, sourceRoot);
             const unitTestFramework = getUnitTestFramework(project.targets.get('test'));
             const styleLanguage = await getProjectStyleLanguage(project, ws, fullSourceRoot);
             projects.push({
@@ -408,7 +408,7 @@ async function processConfigFile(configFile, searchRoot, seenPaths, versionCache
         return {}; // Skipped as it was already seen.
     }
     try {
-        const workspaceDir = node_path_1.default.dirname(configFile);
+        const workspaceDir = (0, node_path_1.dirname)(configFile);
         workspace.frameworkVersion = await findAngularCoreVersion(workspaceDir, versionCache, searchRoot);
         return { workspace };
     }
@@ -433,7 +433,7 @@ async function createListProjectsHandler({ server }) {
         const clientCapabilities = server.server.getClientCapabilities();
         if (clientCapabilities?.roots) {
             const { roots } = await server.server.listRoots();
-            searchRoots = roots?.map((r) => node_path_1.default.normalize((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
+            searchRoots = roots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
         }
         else {
             // Fallback to the current working directory if client does not support roots

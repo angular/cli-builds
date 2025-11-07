@@ -8,11 +8,11 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migrateSingleFile = migrateSingleFile;
-const analyze_for_unsupported_zone_uses_1 = require("./analyze_for_unsupported_zone_uses");
-const migrate_test_file_1 = require("./migrate_test_file");
+const analyze_for_unsupported_zone_uses_1 = require("./analyze-for-unsupported-zone-uses");
+const migrate_test_file_1 = require("./migrate-test-file");
 const prompts_1 = require("./prompts");
-const send_debug_message_1 = require("./send_debug_message");
-const ts_utils_1 = require("./ts_utils");
+const send_debug_message_1 = require("./send-debug-message");
+const ts_utils_1 = require("./ts-utils");
 async function migrateSingleFile(sourceFile, extras) {
     const testBedSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core/testing', 'TestBed');
     const isTestFile = sourceFile.fileName.endsWith('.spec.ts') || !!testBedSpecifier;
@@ -70,4 +70,4 @@ async function migrateSingleFile(sourceFile, extras) {
     // Component decorator found, but no change detection strategy.
     return (0, prompts_1.generateZonelessMigrationInstructionsForComponent)(sourceFile.fileName);
 }
-//# sourceMappingURL=migrate_single_file.js.map
+//# sourceMappingURL=migrate-single-file.js.map

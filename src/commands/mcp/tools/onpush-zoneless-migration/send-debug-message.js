@@ -17,4 +17,4 @@ function sendDebugMessage(message, { sendNotification }) {
         },
     });
 }
-//# sourceMappingURL=send_debug_message.js.map
+//# sourceMappingURL=send-debug-message.js.map

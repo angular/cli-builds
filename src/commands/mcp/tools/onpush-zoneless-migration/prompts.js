@@ -13,7 +13,7 @@ exports.generateZonelessMigrationInstructionsForComponent = generateZonelessMigr
 exports.createTestDebuggingGuideForNonActionableInput = createTestDebuggingGuideForNonActionableInput;
 exports.createFixResponseForZoneTests = createFixResponseForZoneTests;
 exports.createResponse = createResponse;
-const ts_utils_1 = require("./ts_utils");
+const ts_utils_1 = require("./ts-utils");
 /* eslint-disable max-len */
 function createProvideZonelessForTestsSetupPrompt(testFilePath) {
     const text = `You are an expert Angular developer assisting with a migration to zoneless. Your task is to update the test file at \`${testFilePath}\` to enable zoneless change detection and identify tests that are not yet compatible.
@@ -34,7 +34,7 @@ function createProvideZonelessForTestsSetupPrompt(testFilePath) {
     \`\`\`diff
     - import {{ SomeImport }} from '@angular/core';
     + import {{ SomeImport, provideZonelessChangeDetection }} from '@angular/core';
-      
+
       describe('MyComponent', () => {
    +    beforeEach(() => {
    +      TestBed.configureTestingModule({providers: [provideZonelessChangeDetection()]});

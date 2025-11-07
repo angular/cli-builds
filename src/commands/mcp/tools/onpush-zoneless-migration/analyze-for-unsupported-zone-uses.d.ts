@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { ImportSpecifier, Node, SourceFile } from 'typescript';
-import { MigrationResponse } from './types';
+import type { MigrationResponse } from './types';
 export declare function analyzeForUnsupportedZoneUses(sourceFile: SourceFile): Promise<MigrationResponse | null>;
 /**
  * Finds usages of `NgZone` that are not supported in zoneless applications.

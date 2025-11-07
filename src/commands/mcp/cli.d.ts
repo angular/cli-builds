@@ -5,8 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-import { Argv } from 'yargs';
-import { CommandModule, CommandModuleImplementation } from '../../command-builder/command-module';
+import type { Argv } from 'yargs';
+import { CommandModule, type CommandModuleImplementation } from '../../command-builder/command-module';
 export default class McpCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: false;

@@ -6,15 +6,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EXPERIMENTAL_TOOLS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
-const node_path_1 = __importDefault(require("node:path"));
+const node_path_1 = require("node:path");
 const version_1 = require("../../utilities/version");
 const instructions_1 = require("./resources/instructions");
 const ai_tutor_1 = require("./tools/ai-tutor");
@@ -98,7 +95,7 @@ equivalent actions.
     await (0, tool_registry_1.registerTools)(server, {
         workspace: options.workspace,
         logger,
-        exampleDatabasePath: node_path_1.default.join(__dirname, '../../../lib/code-examples.db'),
+        exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
         devServers: new Map(),
     }, toolDeclarations);
     return server;

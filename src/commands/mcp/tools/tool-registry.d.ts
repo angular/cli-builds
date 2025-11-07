@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { McpServer, ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { ZodRawShape } from 'zod';
+import type { ZodRawShape } from 'zod';
 import type { AngularWorkspace } from '../../../utilities/config';
-import { DevServer } from '../dev-server';
+import type { DevServer } from '../dev-server';
 type ToolConfig = Parameters<McpServer['registerTool']>[1];
 export interface McpToolContext {
     server: McpServer;

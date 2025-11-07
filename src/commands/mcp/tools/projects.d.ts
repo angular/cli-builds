@@ -5,7 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-import z from 'zod';
+import { z } from 'zod';
 export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclaration<z.ZodRawShape, {
     workspaces: z.ZodArray<z.ZodObject<{
         path: z.ZodString;

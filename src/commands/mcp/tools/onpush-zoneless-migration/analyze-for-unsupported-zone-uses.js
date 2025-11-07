@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeForUnsupportedZoneUses = analyzeForUnsupportedZoneUses;
 exports.findUnsupportedZoneUsages = findUnsupportedZoneUsages;
 const prompts_1 = require("./prompts");
-const ts_utils_1 = require("./ts_utils");
+const ts_utils_1 = require("./ts-utils");
 async function analyzeForUnsupportedZoneUses(sourceFile) {
     const ngZoneImport = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'NgZone');
     if (!ngZoneImport) {
@@ -59,4 +59,4 @@ async function findUnsupportedZoneUsages(sourceFile, ngZoneImport) {
     });
     return unsupportedUsages;
 }
-//# sourceMappingURL=analyze_for_unsupported_zone_uses.js.map
+//# sourceMappingURL=analyze-for-unsupported-zone-uses.js.map

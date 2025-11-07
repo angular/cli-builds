@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { Host } from '../host';
-import { McpToolDeclaration } from './tool-registry';
+import { type Host } from '../host';
+import { type McpToolDeclaration } from './tool-registry';
 declare const modernizeInputSchema: z.ZodObject<{
     directories: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;

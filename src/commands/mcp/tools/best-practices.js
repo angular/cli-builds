@@ -6,9 +6,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BEST_PRACTICES_TOOL = void 0;
 /**
@@ -21,7 +18,7 @@ exports.BEST_PRACTICES_TOOL = void 0;
  */
 const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
-const node_path_1 = __importDefault(require("node:path"));
+const node_path_1 = require("node:path");
 const zod_1 = require("zod");
 const version_1 = require("../../../utilities/version");
 const tool_registry_1 = require("./tool-registry");
@@ -69,7 +66,7 @@ that **MUST** be followed for any task involving the creation, analysis, or modi
  * @returns A promise that resolves to the string content of the bundled markdown file.
  */
 async function getBundledBestPractices() {
-    return (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'resources', 'best-practices.md'), 'utf-8');
+    return (0, promises_1.readFile)((0, node_path_1.join)(__dirname, '../resources/best-practices.md'), 'utf-8');
 }
 /**
  * Attempts to find and read a version-specific best practices guide from the user's installed
@@ -113,13 +110,13 @@ async function getVersionSpecificBestPractices(workspacePath, logger) {
         if (bestPracticesInfo &&
             bestPracticesInfo.format === 'markdown' &&
             typeof bestPracticesInfo.path === 'string') {
-            const packageDirectory = node_path_1.default.dirname(pkgJsonPath);
-            const guidePath = node_path_1.default.resolve(packageDirectory, bestPracticesInfo.path);
+            const packageDirectory = (0, node_path_1.dirname)(pkgJsonPath);
+            const guidePath = (0, node_path_1.resolve)(packageDirectory, bestPracticesInfo.path);
             // Ensure the resolved guide path is within the package boundary.
             // Uses path.relative to create a cross-platform, case-insensitive check.
             // If the relative path starts with '..' or is absolute, it is a traversal attempt.
-            const relativePath = node_path_1.default.relative(packageDirectory, guidePath);
-            if (relativePath.startsWith('..') || node_path_1.default.isAbsolute(relativePath)) {
+            const relativePath = (0, node_path_1.relative)(packageDirectory, guidePath);
+            if (relativePath.startsWith('..') || (0, node_path_1.isAbsolute)(relativePath)) {
                 logger.warn(`Detected a potential path traversal attempt in '${pkgJsonPath}'. ` +
                     `The path '${bestPracticesInfo.path}' escapes the package boundary. ` +
                     'Falling back to the bundled guide.');

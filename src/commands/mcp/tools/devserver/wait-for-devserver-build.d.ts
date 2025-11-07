@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { McpToolContext, McpToolDeclaration } from '../tool-registry';
+import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 /**
  * How long to wait to give "ng serve" time to identify whether the watched workspace has changed.
  */

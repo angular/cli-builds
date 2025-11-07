@@ -75,19 +75,6 @@ const modernizeOutputSchema = zod_1.z.object({
         .describe('Migration summary, as well as any instructions that need to be performed to complete the migrations.'),
     logs: zod_1.z.array(zod_1.z.string()).optional().describe('All logs from all executed commands.'),
 });
-function findAngularJsonDir(startDir, host) {
-    let currentDir = startDir;
-    while (true) {
-        if (host.existsSync((0, path_1.join)(currentDir, 'angular.json'))) {
-            return currentDir;
-        }
-        const parentDir = (0, path_1.dirname)(currentDir);
-        if (parentDir === currentDir) {
-            return null;
-        }
-        currentDir = parentDir;
-    }
-}
 async function runModernization(input, host) {
     const transformationNames = input.transformations ?? [];
     const directories = input.directories ?? [];
@@ -109,7 +96,7 @@ async function runModernization(input, host) {
     }
     const firstDir = directories[0];
     const executionDir = (await host.stat(firstDir)).isDirectory() ? firstDir : (0, path_1.dirname)(firstDir);
-    const angularProjectRoot = findAngularJsonDir(executionDir, host);
+    const angularProjectRoot = (0, utils_1.findAngularJsonDir)(executionDir, host);
     if (!angularProjectRoot) {
         return (0, utils_1.createStructuredContentOutput)({
             instructions: ['Could not find an angular.json file in the current or parent directories.'],

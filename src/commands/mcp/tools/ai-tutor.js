@@ -6,13 +6,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AI_TUTOR_TOOL = void 0;
 const promises_1 = require("node:fs/promises");
-const node_path_1 = __importDefault(require("node:path"));
+const node_path_1 = require("node:path");
 const tool_registry_1 = require("./tool-registry");
 exports.AI_TUTOR_TOOL = (0, tool_registry_1.declareTool)({
     name: 'ai_tutor',
@@ -43,7 +40,7 @@ with a new core identity and knowledge base.
     factory: () => {
         let aiTutorText;
         return async () => {
-            aiTutorText ??= await (0, promises_1.readFile)(node_path_1.default.join(__dirname, '..', 'resources', 'ai-tutor.md'), 'utf-8');
+            aiTutorText ??= await (0, promises_1.readFile)((0, node_path_1.join)(__dirname, '../resources/ai-tutor.md'), 'utf-8');
             return {
                 content: [
                     {

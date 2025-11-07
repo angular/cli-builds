@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { SourceFile } from 'typescript';
-import { MigrationResponse } from './types';
+import type { MigrationResponse } from './types';
 export declare function createProvideZonelessForTestsSetupPrompt(testFilePath: string): MigrationResponse;
 export declare function createUnsupportedZoneUsagesMessage(usages: string[], filePath: string): MigrationResponse;
 export declare function generateZonelessMigrationInstructionsForComponent(filePath: string): MigrationResponse;

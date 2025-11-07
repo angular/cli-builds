@@ -39,15 +39,12 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FIND_EXAMPLE_TOOL = void 0;
 exports.escapeSearchQuery = escapeSearchQuery;
 const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
-const node_path_1 = __importDefault(require("node:path"));
+const node_path_1 = require("node:path");
 const zod_1 = require("zod");
 const tool_registry_1 = require("./tool-registry");
 const findExampleInputSchema = zod_1.z.object({
@@ -237,11 +234,11 @@ async function getVersionSpecificExampleDatabase(workspacePath, logger) {
         const pkgJson = JSON.parse(pkgJsonContent);
         const examplesInfo = pkgJson['angular']?.examples;
         if (examplesInfo && examplesInfo.format === 'sqlite' && typeof examplesInfo.path === 'string') {
-            const packageDirectory = node_path_1.default.dirname(pkgJsonPath);
-            const dbPath = node_path_1.default.resolve(packageDirectory, examplesInfo.path);
+            const packageDirectory = (0, node_path_1.dirname)(pkgJsonPath);
+            const dbPath = (0, node_path_1.resolve)(packageDirectory, examplesInfo.path);
             // Ensure the resolved database path is within the package boundary.
-            const relativePath = node_path_1.default.relative(packageDirectory, dbPath);
-            if (relativePath.startsWith('..') || node_path_1.default.isAbsolute(relativePath)) {
+            const relativePath = (0, node_path_1.relative)(packageDirectory, dbPath);
+            if (relativePath.startsWith('..') || (0, node_path_1.isAbsolute)(relativePath)) {
                 logger.warn(`Detected a potential path traversal attempt in '${pkgJsonPath}'. ` +
                     `The path '${examplesInfo.path}' escapes the package boundary. ` +
                     'Falling back to the bundled examples.');
@@ -565,7 +562,7 @@ async function setupRuntimeExamples(examplesPath) {
         if (!entry.isFile()) {
             continue;
         }
-        const content = await (0, promises_1.readFile)(node_path_1.default.join(entry.parentPath, entry.name), 'utf-8');
+        const content = await (0, promises_1.readFile)((0, node_path_1.join)(entry.parentPath, entry.name), 'utf-8');
         const frontmatter = parseFrontmatter(content);
         const validation = frontmatterSchema.safeParse(frontmatter);
         if (!validation.success) {
