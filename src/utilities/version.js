@@ -22,5 +22,5 @@ class Version {
         this.patch = patch;
     }
 }
-exports.VERSION = new Version('21.1.0-next.0+sha-327e489');
+exports.VERSION = new Version('21.1.0-next.0+sha-4d42a3e');
 //# sourceMappingURL=version.js.map
