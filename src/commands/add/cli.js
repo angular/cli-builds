@@ -393,7 +393,9 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { registry } = options;
         // Only show if installation will actually occur
         task.title = 'Installing package';
-        if (context.savePackage === false) {
+        if (context.savePackage === false && packageManager.name !== workspace_schema_1.PackageManager.Bun) {
+            // Bun has a `--no-save` option which we are using to
+            // install the package and not update the package.json and the lock file.
             task.title += ' in temporary location';
             // Temporary packages are located in a different directory
             // Hence we need to resolve them using the temp path

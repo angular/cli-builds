@@ -26,7 +26,7 @@ export declare class PackageManagerUtils {
     /** Get the package manager version. */
     get version(): string | undefined;
     /** Install a single package. */
-    install(packageName: string, save?: 'dependencies' | 'devDependencies' | true, extraArgs?: string[], cwd?: string): Promise<boolean>;
+    install(packageName: string, save?: 'dependencies' | 'devDependencies' | boolean, extraArgs?: string[], cwd?: string): Promise<boolean>;
     /** Install all packages. */
     installAll(extraArgs?: string[], cwd?: string): Promise<boolean>;
     /** Install a single package temporary. */

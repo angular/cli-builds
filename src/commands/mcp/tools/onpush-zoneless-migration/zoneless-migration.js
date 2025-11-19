@@ -53,7 +53,7 @@ const prompts_1 = require("./prompts");
 const send_debug_message_1 = require("./send_debug_message");
 const ts_utils_1 = require("./ts_utils");
 exports.ZONELESS_MIGRATION_TOOL = (0, tool_registry_1.declareTool)({
-    name: 'onpush-zoneless-migration',
+    name: 'onpush_zoneless_migration',
     title: 'Plan migration to OnPush and/or zoneless',
     description: `
 <Purpose>

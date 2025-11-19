@@ -97,6 +97,9 @@ let PackageManagerUtils = (() => {
             if (save === 'devDependencies') {
                 installArgs.push(packageManagerArgs.saveDev);
             }
+            else if (save === false) {
+                installArgs.push(packageManagerArgs.noLockfile);
+            }
             return this.run([...installArgs, ...extraArgs], { cwd, silent: true });
         }
         /** Install all packages. */
@@ -166,11 +169,11 @@ let PackageManagerUtils = (() => {
                     };
                 case workspace_schema_1.PackageManager.Bun:
                     return {
-                        saveDev: '--development',
+                        saveDev: '--dev',
                         install: 'add',
                         installAll: 'install',
                         prefix: '--cwd',
-                        noLockfile: '',
+                        noLockfile: '--no-save',
                     };
                 default:
                     return {
