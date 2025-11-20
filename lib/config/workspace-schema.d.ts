@@ -702,6 +702,10 @@ export type LibraryOptionsSchema = {
      * This can simplify the structure of your library and its usage in applications.
      */
     standalone?: boolean;
+    /**
+     * The unit testing runner to use.
+     */
+    testRunner?: TestRunner;
 };
 /**
  * Creates a new Angular workspace and an initial project. This schematic sets up the
