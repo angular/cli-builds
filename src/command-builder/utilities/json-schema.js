@@ -227,7 +227,7 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
             // Skip any non-property items.
             return;
         }
-        const name = ptr[ptr.length - 1];
+        const name = ptr.at(-1);
         const types = getSupportedTypes(current);
         if (types.length === 0) {
             // This means it's not usable on the command line. e.g. an Object.
