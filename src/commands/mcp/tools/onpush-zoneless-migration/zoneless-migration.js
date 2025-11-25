@@ -60,9 +60,10 @@ most important action to take in the migration journey.
     factory: () => ({ fileOrDirPath }, requestHandlerExtra) => registerZonelessMigrationTool(fileOrDirPath, requestHandlerExtra),
 });
 async function registerZonelessMigrationTool(fileOrDirPath, extras) {
-    let filesWithComponents, componentTestFiles, zoneFiles;
+    let filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors;
     try {
-        ({ filesWithComponents, componentTestFiles, zoneFiles } = await discoverAndCategorizeFiles(fileOrDirPath, extras));
+        ({ filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors } =
+            await discoverAndCategorizeFiles(fileOrDirPath, extras));
     }
     catch (e) {
         return (0, prompts_1.createResponse)(`Error: Could not access the specified path. Please ensure the following path is correct ` +
@@ -93,13 +94,19 @@ async function registerZonelessMigrationTool(fileOrDirPath, extras) {
             return result;
         }
     }
+    if (categorizationErrors.length > 0) {
+        let errorMessage = 'Migration analysis is complete for all actionable files. However, the following files could not be analyzed due to errors:\n';
+        errorMessage += categorizationErrors.map((e) => `- ${e.filePath}: ${e.message}`).join('\n');
+        return (0, prompts_1.createResponse)(errorMessage);
+    }
     return (0, prompts_1.createTestDebuggingGuideForNonActionableInput)(fileOrDirPath);
 }
 async function discoverAndCategorizeFiles(fileOrDirPath, extras) {
-    let files = [];
+    const filePaths = [];
     const componentTestFiles = new Set();
     const filesWithComponents = new Set();
     const zoneFiles = new Set();
+    const categorizationErrors = [];
     let isDirectory;
     try {
         isDirectory = (0, node_fs_1.statSync)(fileOrDirPath).isDirectory();
@@ -109,44 +116,66 @@ async function discoverAndCategorizeFiles(fileOrDirPath, extras) {
         throw new Error(`Failed to access path: ${fileOrDirPath}`);
     }
     if (isDirectory) {
-        const allFiles = (0, promises_1.glob)(`${fileOrDirPath}/**/*.ts`);
-        for await (const file of allFiles) {
-            files.push(await (0, ts_utils_1.createSourceFile)(file));
+        for await (const file of (0, promises_1.glob)(`${fileOrDirPath}/**/*.ts`)) {
+            filePaths.push(file);
         }
     }
     else {
-        files = [await (0, ts_utils_1.createSourceFile)(fileOrDirPath)];
+        filePaths.push(fileOrDirPath);
         const maybeTestFile = await getTestFilePath(fileOrDirPath);
         if (maybeTestFile) {
-            componentTestFiles.add(await (0, ts_utils_1.createSourceFile)(maybeTestFile));
+            // Eagerly add the test file path for categorization.
+            filePaths.push(maybeTestFile);
         }
     }
-    for (const sourceFile of files) {
-        const content = sourceFile.getFullText();
-        const componentSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'Component');
-        const zoneSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'NgZone');
-        const testBedSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, /(@angular\/core)?\/testing/, 'TestBed');
-        if (testBedSpecifier) {
-            componentTestFiles.add(sourceFile);
-        }
-        else if (componentSpecifier) {
-            if (!content.includes('changeDetectionStrategy: ChangeDetectionStrategy.OnPush') &&
-                !content.includes('changeDetectionStrategy: ChangeDetectionStrategy.Default')) {
-                filesWithComponents.add(sourceFile);
+    const CONCURRENCY_LIMIT = 50;
+    const filesToProcess = [...filePaths];
+    while (filesToProcess.length > 0) {
+        const batch = filesToProcess.splice(0, CONCURRENCY_LIMIT);
+        const results = await Promise.allSettled(batch.map(async (filePath) => {
+            const sourceFile = await (0, ts_utils_1.createSourceFile)(filePath);
+            await categorizeFile(sourceFile, extras, {
+                filesWithComponents,
+                componentTestFiles,
+                zoneFiles,
+            });
+        }));
+        for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+            if (result.status === 'rejected') {
+                const failedFile = batch[i];
+                const reason = result.reason instanceof Error ? result.reason.message : `${result.reason}`;
+                categorizationErrors.push({ filePath: failedFile, message: reason });
             }
-            else {
-                (0, send_debug_message_1.sendDebugMessage)(`Component file already has change detection strategy: ${sourceFile.fileName}. Skipping migration.`, extras);
-            }
-            const testFilePath = await getTestFilePath(sourceFile.fileName);
-            if (testFilePath) {
-                componentTestFiles.add(await (0, ts_utils_1.createSourceFile)(testFilePath));
-            }
-        }
-        else if (zoneSpecifier) {
-            zoneFiles.add(sourceFile);
         }
     }
-    return { filesWithComponents, componentTestFiles, zoneFiles };
+    return { filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors };
+}
+async function categorizeFile(sourceFile, extras, categorizedFiles) {
+    const { filesWithComponents, componentTestFiles, zoneFiles } = categorizedFiles;
+    const content = sourceFile.getFullText();
+    const componentSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'Component');
+    const zoneSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'NgZone');
+    const testBedSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, /(@angular\/core)?\/testing/, 'TestBed');
+    if (testBedSpecifier) {
+        componentTestFiles.add(sourceFile);
+    }
+    else if (componentSpecifier) {
+        if (!content.includes('changeDetectionStrategy: ChangeDetectionStrategy.OnPush') &&
+            !content.includes('changeDetectionStrategy: ChangeDetectionStrategy.Default')) {
+            filesWithComponents.add(sourceFile);
+        }
+        else {
+            (0, send_debug_message_1.sendDebugMessage)(`Component file already has change detection strategy: ${sourceFile.fileName}. Skipping migration.`, extras);
+        }
+        const testFilePath = await getTestFilePath(sourceFile.fileName);
+        if (testFilePath) {
+            componentTestFiles.add(await (0, ts_utils_1.createSourceFile)(testFilePath));
+        }
+    }
+    else if (zoneSpecifier) {
+        zoneFiles.add(sourceFile);
+    }
 }
 async function rankComponentFilesForMigration({ sendRequest }, componentFiles) {
     try {
