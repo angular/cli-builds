@@ -21,7 +21,7 @@ const start_devserver_1 = require("./tools/devserver/start-devserver");
 const stop_devserver_1 = require("./tools/devserver/stop-devserver");
 const wait_for_devserver_build_1 = require("./tools/devserver/wait-for-devserver-build");
 const doc_search_1 = require("./tools/doc-search");
-const examples_1 = require("./tools/examples");
+const index_1 = require("./tools/examples/index");
 const modernize_1 = require("./tools/modernize");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
@@ -38,7 +38,7 @@ const STABLE_TOOLS = [
     ai_tutor_1.AI_TUTOR_TOOL,
     best_practices_1.BEST_PRACTICES_TOOL,
     doc_search_1.DOC_SEARCH_TOOL,
-    examples_1.FIND_EXAMPLE_TOOL,
+    index_1.FIND_EXAMPLE_TOOL,
     projects_1.LIST_PROJECTS_TOOL,
     zoneless_migration_1.ZONELESS_MIGRATION_TOOL,
 ];

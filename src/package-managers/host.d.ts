@@ -23,6 +23,12 @@ export interface Host {
      */
     readdir(path: string): Promise<string[]>;
     /**
+     * Reads the content of a file.
+     * @param path The path to the file.
+     * @returns A promise that resolves to the file content as a string.
+     */
+    readFile(path: string): Promise<string>;
+    /**
      * Creates a new, unique temporary directory.
      * @returns A promise that resolves to the absolute path of the created directory.
      */

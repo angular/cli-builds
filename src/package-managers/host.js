@@ -25,6 +25,7 @@ const error_1 = require("./error");
 exports.NodeJS_HOST = {
     stat: promises_1.stat,
     readdir: promises_1.readdir,
+    readFile: (path) => (0, promises_1.readFile)(path, { encoding: 'utf8' }),
     writeFile: promises_1.writeFile,
     createTempDirectory: () => (0, promises_1.mkdtemp)((0, node_path_1.join)((0, node_os_1.tmpdir)(), 'angular-cli-')),
     deleteDirectory: (path) => (0, promises_1.rm)(path, { recursive: true, force: true }),

@@ -39,7 +39,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         viewCommandFieldArgFormatter: (fields) => [...fields],
         outputParsers: {
             listDependencies: parsers_1.parseNpmLikeDependencies,
-            getPackageManifest: parsers_1.parseNpmLikeManifest,
+            getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
         },
     },
@@ -61,7 +61,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         viewCommandFieldArgFormatter: (fields) => ['--fields', fields.join(',')],
         outputParsers: {
             listDependencies: parsers_1.parseYarnModernDependencies,
-            getPackageManifest: parsers_1.parseNpmLikeManifest,
+            getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
         },
     },
@@ -85,7 +85,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         getManifestCommand: ['info', '--json'],
         outputParsers: {
             listDependencies: parsers_1.parseYarnClassicDependencies,
-            getPackageManifest: parsers_1.parseYarnLegacyManifest,
+            getRegistryManifest: parsers_1.parseYarnLegacyManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
         },
     },
@@ -107,7 +107,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         viewCommandFieldArgFormatter: (fields) => [...fields],
         outputParsers: {
             listDependencies: parsers_1.parseNpmLikeDependencies,
-            getPackageManifest: parsers_1.parseNpmLikeManifest,
+            getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
         },
     },
@@ -129,7 +129,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         viewCommandFieldArgFormatter: (fields) => [...fields],
         outputParsers: {
             listDependencies: parsers_1.parseNpmLikeDependencies,
-            getPackageManifest: parsers_1.parseNpmLikeManifest,
+            getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
         },
     },

@@ -5,6 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+import npa from 'npm-package-arg';
 import { Host } from './host';
 import { Logger } from './logger';
 import { PackageManagerDescriptor } from './package-manager-descriptor';
@@ -120,7 +121,23 @@ export declare class PackageManager {
      * @param options.bypassCache If true, ignores the in-memory cache and fetches fresh data.
      * @returns A promise that resolves to the `PackageManifest` object, or `null` if the package is not found.
      */
-    getPackageManifest(packageName: string, version: string, options?: {
+    getRegistryManifest(packageName: string, version: string, options?: {
+        timeout?: number;
+        registry?: string;
+        bypassCache?: boolean;
+    }): Promise<PackageManifest | null>;
+    /**
+     * Fetches the manifest for a package.
+     *
+     * This method can resolve manifests for packages from the registry, as well
+     * as those specified by file paths, directory paths, and remote tarballs.
+     * Caching is only supported for registry packages.
+     *
+     * @param specifier The package specifier to resolve the manifest for.
+     * @param options Options for the fetch.
+     * @returns A promise that resolves to the `PackageManifest` object, or `null` if the package is not found.
+     */
+    getManifest(specifier: string | npa.Result, options?: {
         timeout?: number;
         registry?: string;
         bypassCache?: boolean;
@@ -130,13 +147,14 @@ export declare class PackageManager {
      * responsible for managing the lifecycle of the temporary directory by calling
      * the returned `cleanup` function.
      *
-     * @param packageName The name of the package to install.
+     * @param specifier The specifier of the package to install.
      * @param options Options for the installation.
      * @returns A promise that resolves to an object containing the temporary path
      *   and a cleanup function.
      */
-    acquireTempPackage(packageName: string, options?: {
+    acquireTempPackage(specifier: string, options?: {
         registry?: string;
+        ignoreScripts?: boolean;
     }): Promise<{
         workingDirectory: string;
         cleanup: () => Promise<void>;

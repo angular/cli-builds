@@ -6,6 +6,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PackageManager = void 0;
 /**
@@ -14,6 +17,7 @@ exports.PackageManager = void 0;
  * a flexible and secure abstraction over the various package managers.
  */
 const node_path_1 = require("node:path");
+const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const error_1 = require("./error");
 /**
  * The fields to request from the registry for package metadata.
@@ -261,7 +265,7 @@ class PackageManager {
      * @param options.bypassCache If true, ignores the in-memory cache and fetches fresh data.
      * @returns A promise that resolves to the `PackageManifest` object, or `null` if the package is not found.
      */
-    async getPackageManifest(packageName, version, options = {}) {
+    async getRegistryManifest(packageName, version, options = {}) {
         const specifier = `${packageName}@${version}`;
         const commandArgs = [...this.descriptor.getManifestCommand, specifier];
         const formatter = this.descriptor.viewCommandFieldArgFormatter;
@@ -269,26 +273,91 @@ class PackageManager {
             commandArgs.push(...formatter(MANIFEST_FIELDS));
         }
         const cacheKey = options.registry ? `${specifier}|${options.registry}` : specifier;
-        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getPackageManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });
+        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });
+    }
+    /**
+     * Fetches the manifest for a package.
+     *
+     * This method can resolve manifests for packages from the registry, as well
+     * as those specified by file paths, directory paths, and remote tarballs.
+     * Caching is only supported for registry packages.
+     *
+     * @param specifier The package specifier to resolve the manifest for.
+     * @param options Options for the fetch.
+     * @returns A promise that resolves to the `PackageManifest` object, or `null` if the package is not found.
+     */
+    async getManifest(specifier, options = {}) {
+        const { name, type, fetchSpec } = typeof specifier === 'string' ? (0, npm_package_arg_1.default)(specifier) : specifier;
+        switch (type) {
+            case 'range':
+            case 'version':
+            case 'tag':
+                if (!name) {
+                    throw new Error(`Could not parse package name from specifier: ${specifier}`);
+                }
+                // `fetchSpec` is the version, range, or tag.
+                return this.getRegistryManifest(name, fetchSpec ?? 'latest', options);
+            case 'directory': {
+                if (!fetchSpec) {
+                    throw new Error(`Could not parse directory path from specifier: ${specifier}`);
+                }
+                const manifestPath = (0, node_path_1.join)(fetchSpec, 'package.json');
+                const manifest = await this.host.readFile(manifestPath);
+                return JSON.parse(manifest);
+            }
+            case 'file':
+            case 'remote':
+            case 'git': {
+                if (!fetchSpec) {
+                    throw new Error(`Could not parse location from specifier: ${specifier}`);
+                }
+                // Caching is not supported for non-registry specifiers.
+                const { workingDirectory, cleanup } = await this.acquireTempPackage(fetchSpec, {
+                    ...options,
+                    ignoreScripts: true,
+                });
+                try {
+                    // Discover the package name by reading the temporary `package.json` file.
+                    // The package manager will have added the package to the `dependencies`.
+                    const tempManifest = await this.host.readFile((0, node_path_1.join)(workingDirectory, 'package.json'));
+                    const { dependencies } = JSON.parse(tempManifest);
+                    const packageName = dependencies && Object.keys(dependencies)[0];
+                    if (!packageName) {
+                        throw new Error(`Could not determine package name for specifier: ${specifier}`);
+                    }
+                    // The package will be installed in `<temp>/node_modules/<name>`.
+                    const packagePath = (0, node_path_1.join)(workingDirectory, 'node_modules', packageName);
+                    const manifestPath = (0, node_path_1.join)(packagePath, 'package.json');
+                    const manifest = await this.host.readFile(manifestPath);
+                    return JSON.parse(manifest);
+                }
+                finally {
+                    await cleanup();
+                }
+            }
+            default:
+                throw new Error(`Unsupported package specifier type: ${type}`);
+        }
     }
     /**
      * Acquires a package by installing it into a temporary directory. The caller is
      * responsible for managing the lifecycle of the temporary directory by calling
      * the returned `cleanup` function.
      *
-     * @param packageName The name of the package to install.
+     * @param specifier The specifier of the package to install.
      * @param options Options for the installation.
      * @returns A promise that resolves to an object containing the temporary path
      *   and a cleanup function.
      */
-    async acquireTempPackage(packageName, options = {}) {
+    async acquireTempPackage(specifier, options = {}) {
         const workingDirectory = await this.host.createTempDirectory();
         const cleanup = () => this.host.deleteDirectory(workingDirectory);
         // Some package managers, like yarn classic, do not write a package.json when adding a package.
         // This can cause issues with subsequent `require.resolve` calls.
         // Writing an empty package.json file beforehand prevents this.
         await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'package.json'), '{}');
-        const args = [this.descriptor.addCommand, packageName];
+        const flags = [options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : ''].filter((flag) => flag);
+        const args = [this.descriptor.addCommand, specifier, ...flags];
         try {
             await this.#run(args, { ...options, cwd: workingDirectory });
         }
