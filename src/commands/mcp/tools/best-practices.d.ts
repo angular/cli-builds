@@ -8,4 +8,6 @@
 import { z } from 'zod';
 export declare const BEST_PRACTICES_TOOL: import("./tool-registry").McpToolDeclaration<{
     workspacePath: z.ZodOptional<z.ZodString>;
-}, z.ZodRawShape>;
+}, Readonly<{
+    [k: string]: z.core.$ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>>;
+}>>;

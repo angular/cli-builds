@@ -10,22 +10,12 @@ import { type Host } from '../../host';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 declare const startDevServerToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
-}, "strip", z.ZodTypeAny, {
-    project?: string | undefined;
-}, {
-    project?: string | undefined;
-}>;
+}, z.core.$strip>;
 export type StartDevserverToolInput = z.infer<typeof startDevServerToolInputSchema>;
 declare const startDevServerToolOutputSchema: z.ZodObject<{
     message: z.ZodString;
     address: z.ZodOptional<z.ZodString>;
-}, "strip", z.ZodTypeAny, {
-    message: string;
-    address?: string | undefined;
-}, {
-    message: string;
-    address?: string | undefined;
-}>;
+}, z.core.$strip>;
 export type StartDevserverToolOutput = z.infer<typeof startDevServerToolOutputSchema>;
 export declare function startDevServer(input: StartDevserverToolInput, context: McpToolContext, host: Host): Promise<{
     content: {

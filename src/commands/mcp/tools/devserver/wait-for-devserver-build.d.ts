@@ -14,24 +14,18 @@ export declare const WATCH_DELAY = 1000;
 declare const waitForDevserverBuildToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
     timeout: z.ZodDefault<z.ZodNumber>;
-}, "strip", z.ZodTypeAny, {
-    timeout: number;
-    project?: string | undefined;
-}, {
-    project?: string | undefined;
-    timeout?: number | undefined;
-}>;
+}, z.core.$strip>;
 export type WaitForDevserverBuildToolInput = z.infer<typeof waitForDevserverBuildToolInputSchema>;
 declare const waitForDevserverBuildToolOutputSchema: z.ZodObject<{
-    status: z.ZodEnum<["success", "failure", "unknown", "timeout", "no_devserver_found"]>;
-    logs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-}, "strip", z.ZodTypeAny, {
-    status: "success" | "timeout" | "failure" | "unknown" | "no_devserver_found";
-    logs?: string[] | undefined;
-}, {
-    status: "success" | "timeout" | "failure" | "unknown" | "no_devserver_found";
-    logs?: string[] | undefined;
-}>;
+    status: z.ZodEnum<{
+        success: "success";
+        timeout: "timeout";
+        failure: "failure";
+        unknown: "unknown";
+        no_devserver_found: "no_devserver_found";
+    }>;
+    logs: z.ZodOptional<z.ZodArray<z.ZodString>>;
+}, z.core.$strip>;
 export type WaitForDevserverBuildToolOutput = z.infer<typeof waitForDevserverBuildToolOutputSchema>;
 export declare function waitForDevserverBuild(input: WaitForDevserverBuildToolInput, context: McpToolContext): Promise<{
     content: {

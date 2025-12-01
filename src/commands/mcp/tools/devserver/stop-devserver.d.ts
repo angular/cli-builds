@@ -9,22 +9,12 @@ import { z } from 'zod';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 declare const stopDevserverToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
-}, "strip", z.ZodTypeAny, {
-    project?: string | undefined;
-}, {
-    project?: string | undefined;
-}>;
+}, z.core.$strip>;
 export type StopDevserverToolInput = z.infer<typeof stopDevserverToolInputSchema>;
 declare const stopDevserverToolOutputSchema: z.ZodObject<{
     message: z.ZodString;
-    logs: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-}, "strip", z.ZodTypeAny, {
-    message: string;
-    logs?: string[] | undefined;
-}, {
-    message: string;
-    logs?: string[] | undefined;
-}>;
+    logs: z.ZodOptional<z.ZodArray<z.ZodString>>;
+}, z.core.$strip>;
 export type StopDevserverToolOutput = z.infer<typeof stopDevserverToolOutputSchema>;
 export declare function stopDevserver(input: StopDevserverToolInput, context: McpToolContext): {
     content: {
