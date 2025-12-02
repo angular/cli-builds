@@ -99,9 +99,9 @@ new or evolving features.
     },
     factory: createFindExampleHandler,
 });
-async function createFindExampleHandler({ logger, exampleDatabasePath }) {
+async function createFindExampleHandler({ logger, exampleDatabasePath, host }) {
     const runtimeDb = process.env['NG_MCP_EXAMPLES_DIR']
-        ? await (0, runtime_database_1.setupRuntimeExamples)(process.env['NG_MCP_EXAMPLES_DIR'])
+        ? await (0, runtime_database_1.setupRuntimeExamples)(process.env['NG_MCP_EXAMPLES_DIR'], host)
         : undefined;
     (0, utils_1.suppressSqliteWarning)();
     return async (input) => {
@@ -112,7 +112,7 @@ async function createFindExampleHandler({ logger, exampleDatabasePath }) {
         const resolvedDbs = [];
         // First, try to get all available version-specific guides.
         if (input.workspacePath) {
-            const versionSpecificDbs = await (0, database_discovery_1.getVersionSpecificExampleDatabases)(input.workspacePath, logger);
+            const versionSpecificDbs = await (0, database_discovery_1.getVersionSpecificExampleDatabases)(input.workspacePath, logger, host);
             for (const db of versionSpecificDbs) {
                 resolvedDbs.push({ path: db.dbPath, source: db.source });
             }

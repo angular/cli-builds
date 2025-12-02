@@ -6,4 +6,5 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { DatabaseSync } from 'node:sqlite';
-export declare function setupRuntimeExamples(examplesPath: string): Promise<DatabaseSync>;
+import type { McpToolContext } from '../tool-registry';
+export declare function setupRuntimeExamples(examplesPath: string, host: McpToolContext['host']): Promise<DatabaseSync>;

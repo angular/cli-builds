@@ -25,9 +25,10 @@ import type { McpToolContext } from '../tool-registry';
  *
  * @param workspacePath The absolute path to the user's `angular.json` file.
  * @param logger The MCP tool context logger for reporting warnings.
+ * @param host The host interface for file system and module resolution operations.
  * @returns A promise that resolves to an array of objects, each containing a database path and source.
  */
-export declare function getVersionSpecificExampleDatabases(workspacePath: string, logger: McpToolContext['logger']): Promise<{
+export declare function getVersionSpecificExampleDatabases(workspacePath: string, logger: McpToolContext['logger'], host: McpToolContext['host']): Promise<{
     dbPath: string;
     source: string;
 }[]>;

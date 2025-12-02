@@ -41,7 +41,6 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupRuntimeExamples = setupRuntimeExamples;
-const promises_1 = require("node:fs/promises");
 const node_path_1 = require("node:path");
 const zod_1 = require("zod");
 /**
@@ -106,7 +105,7 @@ function parseFrontmatter(content) {
     }
     return data;
 }
-async function setupRuntimeExamples(examplesPath) {
+async function setupRuntimeExamples(examplesPath, host) {
     const { DatabaseSync } = await Promise.resolve().then(() => __importStar(require('node:sqlite')));
     const db = new DatabaseSync(':memory:');
     // Create a relational table to store the structured example data.
@@ -172,11 +171,11 @@ async function setupRuntimeExamples(examplesPath) {
         experimental: zod_1.z.boolean().optional(),
     });
     db.exec('BEGIN TRANSACTION');
-    for await (const entry of (0, promises_1.glob)('**/*.md', { cwd: examplesPath, withFileTypes: true })) {
+    for await (const entry of host.glob('**/*.md', { cwd: examplesPath })) {
         if (!entry.isFile()) {
             continue;
         }
-        const content = await (0, promises_1.readFile)((0, node_path_1.join)(entry.parentPath, entry.name), 'utf-8');
+        const content = await host.readFile((0, node_path_1.join)(entry.parentPath, entry.name), 'utf-8');
         const frontmatter = parseFrontmatter(content);
         const validation = frontmatterSchema.safeParse(frontmatter);
         if (!validation.success) {

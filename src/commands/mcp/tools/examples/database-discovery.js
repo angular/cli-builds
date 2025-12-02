@@ -8,8 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getVersionSpecificExampleDatabases = getVersionSpecificExampleDatabases;
-const promises_1 = require("node:fs/promises");
-const node_module_1 = require("node:module");
 const node_path_1 = require("node:path");
 /**
  * A list of known Angular packages that may contain example databases.
@@ -35,16 +33,16 @@ const KNOWN_EXAMPLE_PACKAGES = ['@angular/core', '@angular/aria', '@angular/form
  *
  * @param workspacePath The absolute path to the user's `angular.json` file.
  * @param logger The MCP tool context logger for reporting warnings.
+ * @param host The host interface for file system and module resolution operations.
  * @returns A promise that resolves to an array of objects, each containing a database path and source.
  */
-async function getVersionSpecificExampleDatabases(workspacePath, logger) {
-    const workspaceRequire = (0, node_module_1.createRequire)(workspacePath);
+async function getVersionSpecificExampleDatabases(workspacePath, logger, host) {
     const databases = [];
     for (const packageName of KNOWN_EXAMPLE_PACKAGES) {
         // 1. Resolve the path to package.json
         let pkgJsonPath;
         try {
-            pkgJsonPath = workspaceRequire.resolve(`${packageName}/package.json`);
+            pkgJsonPath = host.resolveModule(`${packageName}/package.json`, workspacePath);
         }
         catch (e) {
             // This is not a warning because the user may not have all known packages installed.
@@ -52,7 +50,7 @@ async function getVersionSpecificExampleDatabases(workspacePath, logger) {
         }
         // 2. Read and parse package.json, then find the database.
         try {
-            const pkgJsonContent = await (0, promises_1.readFile)(pkgJsonPath, 'utf-8');
+            const pkgJsonContent = await host.readFile(pkgJsonPath, 'utf-8');
             const pkgJson = JSON.parse(pkgJsonContent);
             const examplesInfo = pkgJson['angular']?.examples;
             if (examplesInfo &&
@@ -69,7 +67,7 @@ async function getVersionSpecificExampleDatabases(workspacePath, logger) {
                     continue;
                 }
                 // Check the file size to prevent reading a very large file.
-                const stats = await (0, promises_1.stat)(dbPath);
+                const stats = await host.stat(dbPath);
                 if (stats.size > 10 * 1024 * 1024) {
                     // 10MB
                     logger.warn(`The example database at '${dbPath}' is larger than 10MB (${stats.size} bytes). ` +

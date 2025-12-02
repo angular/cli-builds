@@ -17,6 +17,7 @@ exports.LocalWorkspaceHost = exports.CommandError = void 0;
 const fs_1 = require("fs");
 const node_child_process_1 = require("node:child_process");
 const promises_1 = require("node:fs/promises");
+const node_module_1 = require("node:module");
 const node_net_1 = require("node:net");
 /**
  * An error thrown when a command fails to execute.
@@ -37,6 +38,13 @@ exports.CommandError = CommandError;
 exports.LocalWorkspaceHost = {
     stat: promises_1.stat,
     existsSync: fs_1.existsSync,
+    readFile: promises_1.readFile,
+    glob: function (pattern, options) {
+        return (0, promises_1.glob)(pattern, { ...options, withFileTypes: true });
+    },
+    resolveModule(request, from) {
+        return (0, node_module_1.createRequire)(from).resolve(request);
+    },
     runCommand: async (command, args, options = {}) => {
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;
         return new Promise((resolve, reject) => {

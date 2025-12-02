@@ -32,6 +32,33 @@ export interface Host {
      */
     existsSync(path: string): boolean;
     /**
+     * Reads a file and returns its content.
+     * @param path The path to the file.
+     * @param encoding The encoding to use.
+     * @returns A promise that resolves to the file content.
+     */
+    readFile(path: string, encoding: 'utf-8'): Promise<string>;
+    /**
+     * Finds files matching a glob pattern.
+     * @param pattern The glob pattern.
+     * @param options Options for the glob search.
+     * @returns An async iterable of file entries.
+     */
+    glob(pattern: string, options: {
+        cwd: string;
+    }): AsyncIterable<{
+        name: string;
+        parentPath: string;
+        isFile(): boolean;
+    }>;
+    /**
+     * Resolves a module request from a given path.
+     * @param request The module request to resolve.
+     * @param from The path from which to resolve the request.
+     * @returns The resolved module path.
+     */
+    resolveModule(request: string, from: string): string;
+    /**
      * Spawns a child process and returns a promise that resolves with the process's
      * output or rejects with a structured error.
      * @param command The command to run.

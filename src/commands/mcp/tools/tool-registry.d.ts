@@ -10,6 +10,7 @@ import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types';
 import type { ZodRawShape } from 'zod';
 import type { AngularWorkspace } from '../../../utilities/config';
 import type { DevServer } from '../dev-server';
+import type { Host } from '../host';
 export interface McpToolContext {
     server: McpServer;
     workspace?: AngularWorkspace;
@@ -18,6 +19,7 @@ export interface McpToolContext {
     };
     exampleDatabasePath?: string;
     devServers: Map<string, DevServer>;
+    host: Host;
 }
 export type McpToolFactory<TInput extends ZodRawShape> = (context: McpToolContext) => ToolCallback<TInput> | Promise<ToolCallback<TInput>>;
 export interface McpToolDeclaration<TInput extends ZodRawShape, TOutput extends ZodRawShape> {

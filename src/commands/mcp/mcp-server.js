@@ -13,6 +13,7 @@ exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
 const node_path_1 = require("node:path");
 const version_1 = require("../../utilities/version");
+const host_1 = require("./host");
 const instructions_1 = require("./resources/instructions");
 const ai_tutor_1 = require("./tools/ai-tutor");
 const best_practices_1 = require("./tools/best-practices");
@@ -97,6 +98,7 @@ equivalent actions.
         logger,
         exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
         devServers: new Map(),
+        host: host_1.LocalWorkspaceHost,
     }, toolDeclarations);
     return server;
 }
