@@ -9,39 +9,21 @@ import { z } from 'zod';
 export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclaration<{
     workspacePath: z.ZodOptional<z.ZodString>;
     query: z.ZodString;
-    keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-    required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-    related_concepts: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    keywords: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    required_packages: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    related_concepts: z.ZodOptional<z.ZodArray<z.ZodString>>;
     includeExperimental: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, {
     examples: z.ZodArray<z.ZodObject<{
         title: z.ZodString;
         summary: z.ZodString;
-        keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-        required_packages: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-        related_concepts: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-        related_tools: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        keywords: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        required_packages: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        related_concepts: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        related_tools: z.ZodOptional<z.ZodArray<z.ZodString>>;
         content: z.ZodString;
         snippet: z.ZodOptional<z.ZodString>;
-    }, "strip", z.ZodTypeAny, {
-        title: string;
-        content: string;
-        summary: string;
-        keywords?: string[] | undefined;
-        required_packages?: string[] | undefined;
-        related_concepts?: string[] | undefined;
-        related_tools?: string[] | undefined;
-        snippet?: string | undefined;
-    }, {
-        title: string;
-        content: string;
-        summary: string;
-        keywords?: string[] | undefined;
-        required_packages?: string[] | undefined;
-        related_concepts?: string[] | undefined;
-        related_tools?: string[] | undefined;
-        snippet?: string | undefined;
-    }>, "many">;
+    }, z.core.$strip>>;
 }>;
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.

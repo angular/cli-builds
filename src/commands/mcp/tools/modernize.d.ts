@@ -9,28 +9,16 @@ import { z } from 'zod';
 import { Host } from '../host';
 import { McpToolDeclaration } from './tool-registry';
 declare const modernizeInputSchema: z.ZodObject<{
-    directories: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
-    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;
-}, "strip", z.ZodTypeAny, {
-    directories?: string[] | undefined;
-    transformations?: string[] | undefined;
-}, {
-    directories?: string[] | undefined;
-    transformations?: string[] | undefined;
-}>;
+    directories: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<{
+        [x: string]: string;
+    }>>>;
+}, z.core.$strip>;
 declare const modernizeOutputSchema: z.ZodObject<{
-    instructions: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    instructions: z.ZodOptional<z.ZodArray<z.ZodString>>;
     stdout: z.ZodOptional<z.ZodString>;
     stderr: z.ZodOptional<z.ZodString>;
-}, "strip", z.ZodTypeAny, {
-    stdout?: string | undefined;
-    stderr?: string | undefined;
-    instructions?: string[] | undefined;
-}, {
-    stdout?: string | undefined;
-    stderr?: string | undefined;
-    instructions?: string[] | undefined;
-}>;
+}, z.core.$strip>;
 export type ModernizeInput = z.infer<typeof modernizeInputSchema>;
 export type ModernizeOutput = z.infer<typeof modernizeOutputSchema>;
 export declare function runModernization(input: ModernizeInput, host: Host): Promise<{
@@ -39,9 +27,9 @@ export declare function runModernization(input: ModernizeInput, host: Host): Pro
         text: string;
     }[];
     structuredContent: {
+        instructions?: string[] | undefined;
         stdout?: string | undefined;
         stderr?: string | undefined;
-        instructions?: string[] | undefined;
     };
 }>;
 export declare const MODERNIZE_TOOL: McpToolDeclaration<typeof modernizeInputSchema.shape, typeof modernizeOutputSchema.shape>;

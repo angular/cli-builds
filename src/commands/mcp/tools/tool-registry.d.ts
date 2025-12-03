@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { McpServer, ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { ZodRawShape } from 'zod';
+import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types';
+import type { ZodRawShape } from 'zod';
 import type { AngularWorkspace } from '../../../utilities/config';
-type ToolConfig = Parameters<McpServer['registerTool']>[1];
 export interface McpToolContext {
     server: McpServer;
     workspace?: AngularWorkspace;
@@ -22,7 +22,7 @@ export interface McpToolDeclaration<TInput extends ZodRawShape, TOutput extends 
     name: string;
     title?: string;
     description: string;
-    annotations?: ToolConfig['annotations'];
+    annotations?: ToolAnnotations;
     inputSchema?: TInput;
     outputSchema?: TOutput;
     factory: McpToolFactory<TInput>;
@@ -33,4 +33,3 @@ export interface McpToolDeclaration<TInput extends ZodRawShape, TOutput extends 
 export type AnyMcpToolDeclaration = McpToolDeclaration<any, any>;
 export declare function declareTool<TInput extends ZodRawShape, TOutput extends ZodRawShape>(declaration: McpToolDeclaration<TInput, TOutput>): McpToolDeclaration<TInput, TOutput>;
 export declare function registerTools(server: McpServer, context: Omit<McpToolContext, 'server'>, declarations: AnyMcpToolDeclaration[]): Promise<void>;
-export {};

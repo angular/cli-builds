@@ -10,5 +10,7 @@ import { ServerNotification, ServerRequest } from '@modelcontextprotocol/sdk/typ
 import { z } from 'zod';
 export declare const ZONELESS_MIGRATION_TOOL: import("../tool-registry").McpToolDeclaration<{
     fileOrDirPath: z.ZodString;
-}, z.ZodRawShape>;
+}, Readonly<{
+    [k: string]: z.core.$ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>>;
+}>>;
 export declare function registerZonelessMigrationTool(fileOrDirPath: string, extras: RequestHandlerExtra<ServerRequest, ServerNotification>): Promise<import("./types").MigrationResponse>;
