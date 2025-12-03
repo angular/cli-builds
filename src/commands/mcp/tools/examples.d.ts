@@ -11,11 +11,7 @@ export declare const FIND_EXAMPLE_TOOL: import("./tool-registry").McpToolDeclara
 }, {
     examples: z.ZodArray<z.ZodObject<{
         content: z.ZodString;
-    }, "strip", z.ZodTypeAny, {
-        content: string;
-    }, {
-        content: string;
-    }>, "many">;
+    }, z.core.$strip>>;
 }>;
 /**
  * Escapes a search query for FTS5 by tokenizing and quoting terms.

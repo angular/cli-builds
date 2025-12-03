@@ -7,12 +7,10 @@
  */
 import { z } from 'zod';
 declare const modernizeInputSchema: z.ZodObject<{
-    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;
-}, "strip", z.ZodTypeAny, {
-    transformations?: string[] | undefined;
-}, {
-    transformations?: string[] | undefined;
-}>;
+    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<{
+        [x: string]: string;
+    }>>>;
+}, z.core.$strip>;
 export type ModernizeInput = z.infer<typeof modernizeInputSchema>;
 export declare function runModernization(input: ModernizeInput): Promise<{
     content: {
@@ -24,8 +22,10 @@ export declare function runModernization(input: ModernizeInput): Promise<{
     };
 }>;
 export declare const MODERNIZE_TOOL: import("./tool-registry").McpToolDeclaration<{
-    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<[string, ...string[]]>, "many">>;
+    transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<{
+        [x: string]: string;
+    }>>>;
 }, {
-    instructions: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    instructions: z.ZodOptional<z.ZodArray<z.ZodString>>;
 }>;
 export {};

@@ -17,18 +17,18 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
 }, {
     examples: import("zod").ZodArray<import("zod").ZodObject<{
         content: import("zod").ZodString;
-    }, "strip", import("zod").ZodTypeAny, {
-        content: string;
-    }, {
-        content: string;
-    }>, "many">;
+    }, import("zod/v4/core").$strip>>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
-    transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<[string, ...string[]]>, "many">>;
+    transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<{
+        [x: string]: string;
+    }>>>;
 }, {
-    instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString, "many">>;
+    instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
     fileOrDirPath: import("zod").ZodString;
-}, import("zod").ZodRawShape>];
+}, Readonly<{
+    [k: string]: import("zod/v4/core").$ZodType<unknown, unknown, import("zod/v4/core").$ZodTypeInternals<unknown, unknown>>;
+}>>];
 export declare function createMcpServer(options: {
     workspace?: AngularWorkspace;
     readOnly?: boolean;
