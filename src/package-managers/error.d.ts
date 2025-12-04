@@ -29,3 +29,15 @@ export declare class PackageManagerError extends Error {
      */
     constructor(message: string, stdout: string, stderr: string, exitCode: number | null);
 }
+/**
+ * Represents structured information about an error returned by a package manager command.
+ * This is a data interface, not an `Error` subclass.
+ */
+export interface ErrorInfo {
+    /** A specific error code (e.g. 'E404', 'EACCES'). */
+    readonly code: string;
+    /** A short, human-readable summary of the error. */
+    readonly summary: string;
+    /** An optional, detailed description of the error. */
+    readonly detail?: string;
+}

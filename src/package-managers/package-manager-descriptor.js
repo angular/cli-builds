@@ -9,6 +9,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PACKAGE_MANAGER_PRECEDENCE = exports.SUPPORTED_PACKAGE_MANAGERS = void 0;
 const parsers_1 = require("./parsers");
+/** A set of error codes that are known to indicate a "package not found" error. */
+const NOT_FOUND_ERROR_CODES = new Set(['E404']);
+/**
+ * A shared function to check if a structured error represents a "package not found" error.
+ * @param error The structured error to check.
+ * @returns True if the error code is a known "not found" code, false otherwise.
+ */
+function isKnownNotFound(error) {
+    return NOT_FOUND_ERROR_CODES.has(error.code);
+}
 /**
  * A map of supported package managers to their descriptors.
  * This is the single source of truth for all package-manager-specific
@@ -41,7 +51,9 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseNpmLikeDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
+            getError: parsers_1.parseNpmLikeError,
         },
+        isNotFound: isKnownNotFound,
     },
     yarn: {
         binary: 'yarn',
@@ -63,7 +75,9 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseYarnModernDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
+            getError: parsers_1.parseNpmLikeError,
         },
+        isNotFound: isKnownNotFound,
     },
     'yarn-classic': {
         binary: 'yarn',
@@ -82,13 +96,15 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         getRegistryOptions: (registry) => ({ args: ['--registry', registry] }),
         versionCommand: ['--version'],
         listDependenciesCommand: ['list', '--depth=0', '--json'],
-        getManifestCommand: ['info', '--json'],
+        getManifestCommand: ['info', '--json', '--verbose'],
         requiresManifestVersionLookup: true,
         outputParsers: {
             listDependencies: parsers_1.parseYarnClassicDependencies,
             getRegistryManifest: parsers_1.parseYarnClassicManifest,
             getRegistryMetadata: parsers_1.parseYarnClassicMetadata,
+            getError: parsers_1.parseYarnClassicError,
         },
+        isNotFound: isKnownNotFound,
     },
     pnpm: {
         binary: 'pnpm',
@@ -110,7 +126,9 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseNpmLikeDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
+            getError: parsers_1.parseNpmLikeError,
         },
+        isNotFound: isKnownNotFound,
     },
     bun: {
         binary: 'bun',
@@ -132,7 +150,9 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseNpmLikeDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
+            getError: parsers_1.parseNpmLikeError,
         },
+        isNotFound: isKnownNotFound,
     },
 };
 /**

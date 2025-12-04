@@ -10,10 +10,11 @@
  * supported package managers. It is the single source of truth for all
  * package-manager-specific commands, flags, and output parsing.
  */
+import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseNpmLikeDependencies, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
+import { parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -61,10 +62,20 @@ export interface PackageManagerDescriptor {
         getRegistryManifest: (stdout: string, logger?: Logger) => PackageManifest | null;
         /** A function to parse the output of `getManifestCommand` for the full package metadata. */
         getRegistryMetadata: (stdout: string, logger?: Logger) => PackageMetadata | null;
+        /** A function to parse the output when a command fails. */
+        getError?: (output: string, logger?: Logger) => ErrorInfo | null;
     };
+    /** A function that checks if a structured error represents a "package not found" error. */
+    readonly isNotFound: (error: ErrorInfo) => boolean;
 }
 /** A type that represents the name of a supported package manager. */
 export type PackageManagerName = keyof typeof SUPPORTED_PACKAGE_MANAGERS;
+/**
+ * A shared function to check if a structured error represents a "package not found" error.
+ * @param error The structured error to check.
+ * @returns True if the error code is a known "not found" code, false otherwise.
+ */
+declare function isKnownNotFound(error: ErrorInfo): boolean;
 /**
  * A map of supported package managers to their descriptors.
  * This is the single source of truth for all package-manager-specific
@@ -99,7 +110,9 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseNpmLikeDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
+            getError: typeof parseNpmLikeError;
         };
+        isNotFound: typeof isKnownNotFound;
     };
     yarn: {
         binary: string;
@@ -125,7 +138,9 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseYarnModernDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
+            getError: typeof parseNpmLikeError;
         };
+        isNotFound: typeof isKnownNotFound;
     };
     'yarn-classic': {
         binary: string;
@@ -149,7 +164,9 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseYarnClassicDependencies;
             getRegistryManifest: typeof parseYarnClassicManifest;
             getRegistryMetadata: typeof parseYarnClassicMetadata;
+            getError: typeof parseYarnClassicError;
         };
+        isNotFound: typeof isKnownNotFound;
     };
     pnpm: {
         binary: string;
@@ -173,7 +190,9 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseNpmLikeDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
+            getError: typeof parseNpmLikeError;
         };
+        isNotFound: typeof isKnownNotFound;
     };
     bun: {
         binary: string;
@@ -197,7 +216,9 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseNpmLikeDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
+            getError: typeof parseNpmLikeError;
         };
+        isNotFound: typeof isKnownNotFound;
     };
 };
 /**
@@ -205,3 +226,4 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
  * This is a best-effort ordering based on estimated Angular community usage and default presence.
  */
 export declare const PACKAGE_MANAGER_PRECEDENCE: readonly PackageManagerName[];
+export {};
