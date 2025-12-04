@@ -84,9 +84,16 @@ export declare function parseNpmLikeManifest(stdout: string, logger?: Logger): P
  */
 export declare function parseNpmLikeMetadata(stdout: string, logger?: Logger): PackageMetadata | null;
 /**
- * Parses the output of `yarn info` (classic).
+ * Parses the output of `yarn info` (classic) to get a package manifest.
  * @param stdout The standard output of the command.
  * @param logger An optional logger instance.
  * @returns The package manifest object.
  */
-export declare function parseYarnLegacyManifest(stdout: string, logger?: Logger): PackageManifest | null;
+export declare function parseYarnClassicManifest(stdout: string, logger?: Logger): PackageManifest | null;
+/**
+ * Parses the output of `yarn info` (classic) to get package metadata.
+ * @param stdout The standard output of the command.
+ * @param logger An optional logger instance.
+ * @returns The package metadata object.
+ */
+export declare function parseYarnClassicMetadata(stdout: string, logger?: Logger): PackageMetadata | null;

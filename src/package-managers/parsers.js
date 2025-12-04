@@ -12,7 +12,8 @@ exports.parseYarnClassicDependencies = parseYarnClassicDependencies;
 exports.parseYarnModernDependencies = parseYarnModernDependencies;
 exports.parseNpmLikeManifest = parseNpmLikeManifest;
 exports.parseNpmLikeMetadata = parseNpmLikeMetadata;
-exports.parseYarnLegacyManifest = parseYarnLegacyManifest;
+exports.parseYarnClassicManifest = parseYarnClassicManifest;
+exports.parseYarnClassicMetadata = parseYarnClassicMetadata;
 const MAX_LOG_LENGTH = 1024;
 function logStdout(stdout, logger) {
     if (!logger) {
@@ -215,12 +216,12 @@ function parseNpmLikeMetadata(stdout, logger) {
     return JSON.parse(stdout);
 }
 /**
- * Parses the output of `yarn info` (classic).
+ * Parses the output of `yarn info` (classic) to get a package manifest.
  * @param stdout The standard output of the command.
  * @param logger An optional logger instance.
  * @returns The package manifest object.
  */
-function parseYarnLegacyManifest(stdout, logger) {
+function parseYarnClassicManifest(stdout, logger) {
     logger?.debug(`Parsing yarn classic manifest...`);
     logStdout(stdout, logger);
     if (!stdout) {
@@ -229,6 +230,35 @@ function parseYarnLegacyManifest(stdout, logger) {
     }
     const data = JSON.parse(stdout);
     // Yarn classic wraps the manifest in a `data` property.
-    return data.data ?? data;
+    const manifest = data.data;
+    // Yarn classic removes any field with a falsy value
+    // https://github.com/yarnpkg/yarn/blob/7cafa512a777048ce0b666080a24e80aae3d66a9/src/cli/commands/info.js#L26-L29
+    // Add a default of 'false' for the `save` field when the `ng-add` object is present but does not have any fields.
+    // There is a small chance this causes an incorrect value. However, the use of `ng-add` is rare and, in the cases
+    // it is used, save is set to either a `false` literal or a truthy value. Special cases can be added for specific
+    // packages if discovered.
+    if (manifest['ng-add'] &&
+        typeof manifest['ng-add'] === 'object' &&
+        Object.keys(manifest['ng-add']).length === 0) {
+        manifest['ng-add'].save ??= false;
+    }
+    return manifest;
+}
+/**
+ * Parses the output of `yarn info` (classic) to get package metadata.
+ * @param stdout The standard output of the command.
+ * @param logger An optional logger instance.
+ * @returns The package metadata object.
+ */
+function parseYarnClassicMetadata(stdout, logger) {
+    logger?.debug(`Parsing yarn classic metadata...`);
+    logStdout(stdout, logger);
+    if (!stdout) {
+        logger?.debug('  stdout is empty. No metadata found.');
+        return null;
+    }
+    const data = JSON.parse(stdout);
+    // Yarn classic wraps the metadata in a `data` property.
+    return data.data;
 }
 //# sourceMappingURL=parsers.js.map

@@ -13,7 +13,7 @@
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseNpmLikeDependencies, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnLegacyManifest, parseYarnModernDependencies } from './parsers';
+import { parseNpmLikeDependencies, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -49,6 +49,8 @@ export interface PackageManagerDescriptor {
     readonly listDependenciesCommand: readonly string[];
     /** The command to fetch the registry manifest of a package. */
     readonly getManifestCommand: readonly string[];
+    /** Whether a specific version lookup is needed prior to fetching a registry manifest. */
+    readonly requiresManifestVersionLookup?: boolean;
     /** A function that formats the arguments for field-filtered registry views. */
     readonly viewCommandFieldArgFormatter?: (fields: readonly string[]) => string[];
     /** A collection of functions to parse the output of specific commands. */
@@ -142,10 +144,11 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         versionCommand: string[];
         listDependenciesCommand: string[];
         getManifestCommand: string[];
+        requiresManifestVersionLookup: true;
         outputParsers: {
             listDependencies: typeof parseYarnClassicDependencies;
-            getRegistryManifest: typeof parseYarnLegacyManifest;
-            getRegistryMetadata: typeof parseNpmLikeMetadata;
+            getRegistryManifest: typeof parseYarnClassicManifest;
+            getRegistryMetadata: typeof parseYarnClassicMetadata;
         };
     };
     pnpm: {

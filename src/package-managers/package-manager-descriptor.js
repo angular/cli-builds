@@ -83,10 +83,11 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         versionCommand: ['--version'],
         listDependenciesCommand: ['list', '--depth=0', '--json'],
         getManifestCommand: ['info', '--json'],
+        requiresManifestVersionLookup: true,
         outputParsers: {
             listDependencies: parsers_1.parseYarnClassicDependencies,
-            getRegistryManifest: parsers_1.parseYarnLegacyManifest,
-            getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
+            getRegistryManifest: parsers_1.parseYarnClassicManifest,
+            getRegistryMetadata: parsers_1.parseYarnClassicMetadata,
         },
     },
     pnpm: {
