@@ -31,9 +31,10 @@ exports.NodeJS_HOST = {
     deleteDirectory: (path) => (0, promises_1.rm)(path, { recursive: true, force: true }),
     runCommand: async (command, args, options = {}) => {
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;
+        const isWin32 = (0, node_os_1.platform)() === 'win32';
         return new Promise((resolve, reject) => {
-            const childProcess = (0, node_child_process_1.spawn)(command, args, {
-                shell: false,
+            const spawnOptions = {
+                shell: isWin32,
                 stdio: options.stdio ?? 'pipe',
                 signal,
                 cwd: options.cwd,
@@ -41,7 +42,10 @@ exports.NodeJS_HOST = {
                     ...process.env,
                     ...options.env,
                 },
-            });
+            };
+            const childProcess = isWin32
+                ? (0, node_child_process_1.spawn)(`${command} ${args.join(' ')}`, spawnOptions)
+                : (0, node_child_process_1.spawn)(command, args, spawnOptions);
             let stdout = '';
             childProcess.stdout?.on('data', (data) => (stdout += data.toString()));
             let stderr = '';
