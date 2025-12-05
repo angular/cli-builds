@@ -211,7 +211,6 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         versionCommand: string[];
         listDependenciesCommand: string[];
         getManifestCommand: string[];
-        viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
         outputParsers: {
             listDependencies: typeof parseNpmLikeDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
