@@ -44,15 +44,6 @@ export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs
      * @return Whether or not the commit was successful.
      */
     private commit;
-    private checkCleanGit;
-    /**
-     * Checks if the current installed CLI version is older or newer than a compatible version.
-     * @returns the version to install or null when there is no update to install.
-     */
-    private checkCLIVersion;
-    private getCLIUpdateRunnerVersion;
-    private runTempBinary;
-    private packageManagerForce;
     private getOptionalMigrationsToRun;
 }
 export {};
