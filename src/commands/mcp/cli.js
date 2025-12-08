@@ -48,7 +48,10 @@ class McpCommandModule extends command_module_1.CommandModule {
             alias: 'E',
             array: true,
             describe: 'Enable an experimental tool.',
-            choices: mcp_server_1.EXPERIMENTAL_TOOLS.map(({ name }) => name),
+            choices: [
+                ...mcp_server_1.EXPERIMENTAL_TOOLS.map(({ name }) => name),
+                ...Object.keys(mcp_server_1.EXPERIMENTAL_TOOL_GROUPS),
+            ],
             hidden: true,
         });
     }

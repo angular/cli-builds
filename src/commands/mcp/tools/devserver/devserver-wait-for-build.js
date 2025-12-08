@@ -7,10 +7,10 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WAIT_FOR_DEVSERVER_BUILD_TOOL = exports.WATCH_DELAY = void 0;
+exports.DEVSERVER_WAIT_FOR_BUILD_TOOL = exports.WATCH_DELAY = void 0;
 exports.waitForDevserverBuild = waitForDevserverBuild;
 const zod_1 = require("zod");
-const dev_server_1 = require("../../dev-server");
+const devserver_1 = require("../../devserver");
 const utils_1 = require("../../utils");
 const tool_registry_1 = require("../tool-registry");
 /**
@@ -21,7 +21,7 @@ exports.WATCH_DELAY = 1000;
  * Default timeout for waiting for the build to complete.
  */
 const DEFAULT_TIMEOUT = 180_000; // In milliseconds
-const waitForDevserverBuildToolInputSchema = zod_1.z.object({
+const devserverWaitForBuildToolInputSchema = zod_1.z.object({
     project: zod_1.z
         .string()
         .optional()
@@ -31,7 +31,7 @@ const waitForDevserverBuildToolInputSchema = zod_1.z.object({
         .default(DEFAULT_TIMEOUT)
         .describe(`The maximum time to wait for the build to complete, in milliseconds. This can't be lower than ${exports.WATCH_DELAY}.`),
 });
-const waitForDevserverBuildToolOutputSchema = zod_1.z.object({
+const devserverWaitForBuildToolOutputSchema = zod_1.z.object({
     status: zod_1.z
         .enum(['success', 'failure', 'unknown', 'timeout', 'no_devserver_found'])
         .describe("The status of the build if it's complete, or a status indicating why the wait operation failed."),
@@ -44,8 +44,8 @@ function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function waitForDevserverBuild(input, context) {
-    const projectKey = (0, dev_server_1.devServerKey)(input.project);
-    const devServer = context.devServers.get(projectKey);
+    const projectKey = (0, devserver_1.devserverKey)(input.project);
+    const devServer = context.devservers.get(projectKey);
     const deadline = Date.now() + input.timeout;
     if (!devServer) {
         return (0, utils_1.createStructuredContentOutput)({
@@ -65,36 +65,36 @@ async function waitForDevserverBuild(input, context) {
         ...devServer.getMostRecentBuild(),
     });
 }
-exports.WAIT_FOR_DEVSERVER_BUILD_TOOL = (0, tool_registry_1.declareTool)({
-    name: 'wait_for_devserver_build',
+exports.DEVSERVER_WAIT_FOR_BUILD_TOOL = (0, tool_registry_1.declareTool)({
+    name: 'devserver/wait_for_build',
     title: 'Wait for Devserver Build',
     description: `
 <Purpose>
-Waits for a dev server that was started with the "start_devserver" tool to complete its build, then reports the build logs from its most
+Waits for a dev server that was started with the "devserver/start" tool to complete its build, then reports the build logs from its most
 recent build.
 </Purpose>
 <Use Cases>
-* **Waiting for a build:** As long as a devserver is alive ("start_devserver" was called for this project and "stop_devserver" wasn't
+* **Waiting for a build:** As long as a devserver is alive ("devserver/start" was called for this project and "devserver_stop" wasn't
   called yet), then if you're making a file change and want to ensure it was successfully built, call this tool instead of any other build
   tool or command. When it retuns you'll get build logs back **and** you'll know the user's devserver is up-to-date with the latest changes.
 </Use Cases>
 <Operational Notes>
-* This tool expects that a dev server was launched on the same project with the "start_devserver" tool, otherwise a "no_devserver_found"
+* This tool expects that a dev server was launched on the same project with the "devserver/start" tool, otherwise a "no_devserver_found"
   status will be returned.
 * This tool will block until the build is complete or the timeout is reached. If you expect a long build process, consider increasing the
-  timeout. Timeouts on initial run (right after "start_devserver" calls) or after a big change are not necessarily indicative of an error.
+  timeout. Timeouts on initial run (right after "devserver/start" calls) or after a big change are not necessarily indicative of an error.
 * If you encountered a timeout and it might be reasonable, just call this tool again.
 * If the dev server is not building, it will return quickly, with the logs from the last build.
-* A 'no_devserver_found' status can indicate the underlying server was stopped for some reason. Try first to call the "start_devserver"
+* A 'no_devserver_found' status can indicate the underlying server was stopped for some reason. Try first to call the "devserver/start"
   tool again, before giving up.
 </Operational Notes>
 `,
     isReadOnly: true,
     isLocalOnly: true,
-    inputSchema: waitForDevserverBuildToolInputSchema.shape,
-    outputSchema: waitForDevserverBuildToolOutputSchema.shape,
+    inputSchema: devserverWaitForBuildToolInputSchema.shape,
+    outputSchema: devserverWaitForBuildToolOutputSchema.shape,
     factory: (context) => (input) => {
         return waitForDevserverBuild(input, context);
     },
 });
-//# sourceMappingURL=wait-for-devserver-build.js.map
+//# sourceMappingURL=devserver-wait-for-build.js.map

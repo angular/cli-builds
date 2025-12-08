@@ -10,7 +10,7 @@ export type BuildStatus = 'success' | 'failure' | 'unknown';
 /**
  * An Angular development server managed by the MCP server.
  */
-export interface DevServer {
+export interface Devserver {
     /**
      * Launches the dev server and returns immediately.
      *
@@ -41,15 +41,15 @@ export interface DevServer {
      */
     port: number;
 }
-export declare function devServerKey(project?: string): string;
+export declare function devserverKey(project?: string): string;
 /**
  * A local Angular development server managed by the MCP server.
  */
-export declare class LocalDevServer implements DevServer {
+export declare class LocalDevserver implements Devserver {
     readonly host: Host;
     readonly port: number;
     readonly project?: string;
-    private devServerProcess;
+    private devserverProcess;
     private serverLogs;
     private buildInProgress;
     private latestBuildLogStartIndex?;

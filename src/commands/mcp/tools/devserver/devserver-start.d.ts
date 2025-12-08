@@ -6,18 +6,17 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { type Host } from '../../host';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
-declare const startDevServerToolInputSchema: z.ZodObject<{
+declare const devserverStartToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
-export type StartDevserverToolInput = z.infer<typeof startDevServerToolInputSchema>;
-declare const startDevServerToolOutputSchema: z.ZodObject<{
+export type DevserverStartToolInput = z.infer<typeof devserverStartToolInputSchema>;
+declare const devserverStartToolOutputSchema: z.ZodObject<{
     message: z.ZodString;
     address: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
-export type StartDevserverToolOutput = z.infer<typeof startDevServerToolOutputSchema>;
-export declare function startDevServer(input: StartDevserverToolInput, context: McpToolContext, host: Host): Promise<{
+export type DevserverStartToolOutput = z.infer<typeof devserverStartToolOutputSchema>;
+export declare function startDevserver(input: DevserverStartToolInput, context: McpToolContext): Promise<{
     content: {
         type: "text";
         text: string;
@@ -27,5 +26,5 @@ export declare function startDevServer(input: StartDevserverToolInput, context: 
         address: string;
     };
 }>;
-export declare const START_DEVSERVER_TOOL: McpToolDeclaration<typeof startDevServerToolInputSchema.shape, typeof startDevServerToolOutputSchema.shape>;
+export declare const DEVSERVER_START_TOOL: McpToolDeclaration<typeof devserverStartToolInputSchema.shape, typeof devserverStartToolOutputSchema.shape>;
 export {};

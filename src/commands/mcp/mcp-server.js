@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EXPERIMENTAL_TOOLS = void 0;
+exports.EXPERIMENTAL_TOOLS = exports.EXPERIMENTAL_TOOL_GROUPS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
@@ -18,9 +18,9 @@ const instructions_1 = require("./resources/instructions");
 const ai_tutor_1 = require("./tools/ai-tutor");
 const best_practices_1 = require("./tools/best-practices");
 const build_1 = require("./tools/build");
-const start_devserver_1 = require("./tools/devserver/start-devserver");
-const stop_devserver_1 = require("./tools/devserver/stop-devserver");
-const wait_for_devserver_build_1 = require("./tools/devserver/wait-for-devserver-build");
+const devserver_start_1 = require("./tools/devserver/devserver-start");
+const devserver_stop_1 = require("./tools/devserver/devserver-stop");
+const devserver_wait_for_build_1 = require("./tools/devserver/devserver-wait-for-build");
 const doc_search_1 = require("./tools/doc-search");
 const index_1 = require("./tools/examples/index");
 const modernize_1 = require("./tools/modernize");
@@ -30,7 +30,15 @@ const tool_registry_1 = require("./tools/tool-registry");
 /**
  * Tools to manage devservers. Should be bundled together, then added to experimental or stable as a group.
  */
-const SERVE_TOOLS = [start_devserver_1.START_DEVSERVER_TOOL, stop_devserver_1.STOP_DEVSERVER_TOOL, wait_for_devserver_build_1.WAIT_FOR_DEVSERVER_BUILD_TOOL];
+const DEVSERVER_TOOLS = [devserver_start_1.DEVSERVER_START_TOOL, devserver_stop_1.DEVSERVER_STOP_TOOL, devserver_wait_for_build_1.DEVSERVER_WAIT_FOR_BUILD_TOOL];
+/**
+ * Experimental tools that are grouped together under a single name.
+ *
+ * Used for enabling them as a group.
+ */
+exports.EXPERIMENTAL_TOOL_GROUPS = {
+    'devserver': DEVSERVER_TOOLS,
+};
 /**
  * The set of tools that are enabled by default for the MCP server.
  * These tools are considered stable and suitable for general use.
@@ -47,7 +55,7 @@ const STABLE_TOOLS = [
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [build_1.BUILD_TOOL, modernize_1.MODERNIZE_TOOL, ...SERVE_TOOLS];
+exports.EXPERIMENTAL_TOOLS = [build_1.BUILD_TOOL, modernize_1.MODERNIZE_TOOL, ...DEVSERVER_TOOLS];
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',
@@ -97,7 +105,7 @@ equivalent actions.
         workspace: options.workspace,
         logger,
         exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
-        devServers: new Map(),
+        devservers: new Map(),
         host: host_1.LocalWorkspaceHost,
     }, toolDeclarations);
     return server;
@@ -113,6 +121,13 @@ function assembleToolDeclarations(stableDeclarations, experimentalDeclarations, 
     const enabledExperimentalTools = new Set(options.experimentalTools);
     if (process.env['NG_MCP_CODE_EXAMPLES'] === '1') {
         enabledExperimentalTools.add('find_examples');
+    }
+    for (const [toolGroupName, toolGroup] of Object.entries(exports.EXPERIMENTAL_TOOL_GROUPS)) {
+        if (enabledExperimentalTools.delete(toolGroupName)) {
+            for (const tool of toolGroup) {
+                enabledExperimentalTools.add(tool.name);
+            }
+        }
     }
     if (enabledExperimentalTools.size > 0) {
         const experimentalToolsMap = new Map(experimentalDeclarations.map((tool) => [tool.name, tool]));

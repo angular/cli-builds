@@ -173,6 +173,6 @@ ${TRANSFORMATIONS.map((t) => `  * ${t.name}: ${t.description}`).join('\n')}
     outputSchema: modernizeOutputSchema.shape,
     isLocalOnly: true,
     isReadOnly: false,
-    factory: () => (input) => runModernization(input, host_1.LocalWorkspaceHost),
+    factory: (context) => (input) => runModernization(input, context.host),
 });
 //# sourceMappingURL=modernize.js.map

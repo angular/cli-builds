@@ -7,8 +7,8 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LocalDevServer = void 0;
-exports.devServerKey = devServerKey;
+exports.LocalDevserver = void 0;
+exports.devserverKey = devserverKey;
 // Log messages that we want to catch to identify the build status.
 const BUILD_SUCCEEDED_MESSAGE = 'Application bundle generation complete.';
 const BUILD_FAILED_MESSAGE = 'Application bundle generation failed.';
@@ -22,17 +22,17 @@ const BUILD_END_MESSAGES = [
     WAITING_FOR_CHANGES_MESSAGE,
     CHANGES_DETECTED_SUCCESS_MESSAGE,
 ];
-function devServerKey(project) {
+function devserverKey(project) {
     return project ?? '<default>';
 }
 /**
  * A local Angular development server managed by the MCP server.
  */
-class LocalDevServer {
+class LocalDevserver {
     host;
     port;
     project;
-    devServerProcess = null;
+    devserverProcess = null;
     serverLogs = [];
     buildInProgress = false;
     latestBuildLogStartIndex = undefined;
@@ -43,7 +43,7 @@ class LocalDevServer {
         this.port = port;
     }
     start() {
-        if (this.devServerProcess) {
+        if (this.devserverProcess) {
             throw Error('Dev server already started.');
         }
         const args = ['serve'];
@@ -51,14 +51,14 @@ class LocalDevServer {
             args.push(this.project);
         }
         args.push(`--port=${this.port}`);
-        this.devServerProcess = this.host.spawn('ng', args, { stdio: 'pipe' });
-        this.devServerProcess.stdout?.on('data', (data) => {
+        this.devserverProcess = this.host.spawn('ng', args, { stdio: 'pipe' });
+        this.devserverProcess.stdout?.on('data', (data) => {
             this.addLog(data.toString());
         });
-        this.devServerProcess.stderr?.on('data', (data) => {
+        this.devserverProcess.stderr?.on('data', (data) => {
             this.addLog(data.toString());
         });
-        this.devServerProcess.stderr?.on('close', () => {
+        this.devserverProcess.stderr?.on('close', () => {
             this.stop();
         });
         this.buildInProgress = true;
@@ -76,8 +76,8 @@ class LocalDevServer {
         }
     }
     stop() {
-        this.devServerProcess?.kill();
-        this.devServerProcess = null;
+        this.devserverProcess?.kill();
+        this.devserverProcess = null;
     }
     getServerLogs() {
         return [...this.serverLogs];
@@ -92,5 +92,5 @@ class LocalDevServer {
         return this.buildInProgress;
     }
 }
-exports.LocalDevServer = LocalDevServer;
-//# sourceMappingURL=dev-server.js.map
+exports.LocalDevserver = LocalDevserver;
+//# sourceMappingURL=devserver.js.map

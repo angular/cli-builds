@@ -7,16 +7,16 @@
  */
 import { z } from 'zod';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
-declare const stopDevserverToolInputSchema: z.ZodObject<{
+declare const devserverStopToolInputSchema: z.ZodObject<{
     project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
-export type StopDevserverToolInput = z.infer<typeof stopDevserverToolInputSchema>;
-declare const stopDevserverToolOutputSchema: z.ZodObject<{
+export type DevserverStopToolInput = z.infer<typeof devserverStopToolInputSchema>;
+declare const devserverStopToolOutputSchema: z.ZodObject<{
     message: z.ZodString;
     logs: z.ZodOptional<z.ZodArray<z.ZodString>>;
 }, z.core.$strip>;
-export type StopDevserverToolOutput = z.infer<typeof stopDevserverToolOutputSchema>;
-export declare function stopDevserver(input: StopDevserverToolInput, context: McpToolContext): {
+export type DevserverStopToolOutput = z.infer<typeof devserverStopToolOutputSchema>;
+export declare function stopDevserver(input: DevserverStopToolInput, context: McpToolContext): {
     content: {
         type: "text";
         text: string;
@@ -35,5 +35,5 @@ export declare function stopDevserver(input: StopDevserverToolInput, context: Mc
         logs: string[];
     };
 };
-export declare const STOP_DEVSERVER_TOOL: McpToolDeclaration<typeof stopDevserverToolInputSchema.shape, typeof stopDevserverToolOutputSchema.shape>;
+export declare const DEVSERVER_STOP_TOOL: McpToolDeclaration<typeof devserverStopToolInputSchema.shape, typeof devserverStopToolOutputSchema.shape>;
 export {};
