@@ -28,22 +28,7 @@ export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs
     longDescriptionPath: string;
     builder(localYargs: Argv): Argv<UpdateCommandArgs>;
     run(options: Options<UpdateCommandArgs>): Promise<number | void>;
-    private executeSchematic;
-    /**
-     * @return Whether or not the migration was performed successfully.
-     */
-    private executeMigration;
-    /**
-     * @return Whether or not the migrations were performed successfully.
-     */
-    private executeMigrations;
-    private executePackageMigrations;
     private migrateOnly;
     private updatePackagesAndMigrate;
-    /**
-     * @return Whether or not the commit was successful.
-     */
-    private commit;
-    private getOptionalMigrationsToRun;
 }
 export {};
