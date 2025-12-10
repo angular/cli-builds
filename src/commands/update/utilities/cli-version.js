@@ -49,8 +49,6 @@ const node_child_process_1 = require("node:child_process");
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
 const semver = __importStar(require("semver"));
-const workspace_schema_1 = require("../../../../lib/config/workspace-schema");
-const package_metadata_1 = require("../../../utilities/package-metadata");
 const version_1 = require("../../../utilities/version");
 const constants_1 = require("./constants");
 /**
@@ -88,11 +86,14 @@ function coerceVersionNumber(version) {
  * @param next Whether to check for the next version.
  * @returns The version of the CLI to install, or null if the current version is compatible.
  */
-async function checkCLIVersion(packagesToUpdate, logger, packageManager, verbose = false, next = false) {
-    const { version } = await (0, package_metadata_1.fetchPackageManifest)(`@angular/cli@${getCLIUpdateRunnerVersion(packagesToUpdate, next)}`, logger, {
-        verbose,
-        usingYarn: packageManager.name === workspace_schema_1.PackageManager.Yarn,
-    });
+async function checkCLIVersion(packagesToUpdate, logger, packageManager, next = false) {
+    const runnerVersion = getCLIUpdateRunnerVersion(packagesToUpdate, next);
+    const manifest = await packageManager.getManifest(`@angular/cli@${runnerVersion}`);
+    if (!manifest) {
+        logger.warn(`Could not find @angular/cli version '${runnerVersion}'.`);
+        return null;
+    }
+    const version = manifest.version;
     return version_1.VERSION.full === version ? null : version;
 }
 /**
@@ -131,42 +132,44 @@ function getCLIUpdateRunnerVersion(packagesToUpdate, next) {
  * @returns The exit code of the binary.
  */
 async function runTempBinary(packageName, packageManager, args = []) {
-    const { success, tempNodeModules } = await packageManager.installTemp(packageName);
-    if (!success) {
-        return 1;
-    }
-    // Remove version/tag etc... from package name
-    // Ex: @angular/cli@latest -> @angular/cli
-    const packageNameNoVersion = packageName.substring(0, packageName.lastIndexOf('@'));
-    const pkgLocation = (0, node_path_1.join)(tempNodeModules, packageNameNoVersion);
-    const packageJsonPath = (0, node_path_1.join)(pkgLocation, 'package.json');
-    // Get a binary location for this package
-    let binPath;
-    if ((0, node_fs_1.existsSync)(packageJsonPath)) {
-        const content = await node_fs_1.promises.readFile(packageJsonPath, 'utf-8');
-        if (content) {
-            const { bin = {} } = JSON.parse(content);
-            const binKeys = Object.keys(bin);
-            if (binKeys.length) {
-                binPath = (0, node_path_1.resolve)(pkgLocation, bin[binKeys[0]]);
+    const { workingDirectory, cleanup } = await packageManager.acquireTempPackage(packageName);
+    try {
+        // Remove version/tag etc... from package name
+        // Ex: @angular/cli@latest -> @angular/cli
+        const packageNameNoVersion = packageName.substring(0, packageName.lastIndexOf('@'));
+        const pkgLocation = (0, node_path_1.join)(workingDirectory, 'node_modules', packageNameNoVersion);
+        const packageJsonPath = (0, node_path_1.join)(pkgLocation, 'package.json');
+        // Get a binary location for this package
+        let binPath;
+        if ((0, node_fs_1.existsSync)(packageJsonPath)) {
+            const content = await node_fs_1.promises.readFile(packageJsonPath, 'utf-8');
+            if (content) {
+                const { bin = {} } = JSON.parse(content);
+                const binKeys = Object.keys(bin);
+                if (binKeys.length) {
+                    binPath = (0, node_path_1.resolve)(pkgLocation, bin[binKeys[0]]);
+                }
             }
         }
+        if (!binPath) {
+            throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
+        }
+        const { status, error } = (0, node_child_process_1.spawnSync)(process.execPath, [binPath, ...args], {
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                NG_DISABLE_VERSION_CHECK: 'true',
+                NG_CLI_ANALYTICS: 'false',
+            },
+        });
+        if (status === null && error) {
+            throw error;
+        }
+        return status ?? 0;
     }
-    if (!binPath) {
-        throw new Error(`Cannot locate bin for temporary package: ${packageNameNoVersion}.`);
+    finally {
+        await cleanup();
     }
-    const { status, error } = (0, node_child_process_1.spawnSync)(process.execPath, [binPath, ...args], {
-        stdio: 'inherit',
-        env: {
-            ...process.env,
-            NG_DISABLE_VERSION_CHECK: 'true',
-            NG_CLI_ANALYTICS: 'false',
-        },
-    });
-    if (status === null && error) {
-        throw error;
-    }
-    return status ?? 0;
 }
 /**
  * Determines whether to force the package manager to ignore peer dependency warnings.
@@ -175,23 +178,18 @@ async function runTempBinary(packageName, packageManager, args = []) {
  * @param verbose Whether to log verbose output.
  * @returns True if the package manager should be forced, false otherwise.
  */
-function shouldForcePackageManager(packageManager, logger, verbose) {
+async function shouldForcePackageManager(packageManager, logger, verbose) {
     // npm 7+ can fail due to it incorrectly resolving peer dependencies that have valid SemVer
     // ranges during an update. Update will set correct versions of dependencies within the
     // package.json file. The force option is set to workaround these errors.
-    // Example error:
-    // npm ERR! Conflicting peer dependency: @angular/compiler-cli@14.0.0-rc.0
-    // npm ERR! node_modules/@angular/compiler-cli
-    // npm ERR!   peer @angular/compiler-cli@"^14.0.0 || ^14.0.0-rc" from @angular-devkit/build-angular@14.0.0-rc.0
-    // npm ERR!   node_modules/@angular-devkit/build-angular
-    // npm ERR!     dev @angular-devkit/build-angular@"~14.0.0-rc.0" from the root project
-    if (packageManager.name === workspace_schema_1.PackageManager.Npm &&
-        packageManager.version &&
-        semver.gte(packageManager.version, '7.0.0')) {
-        if (verbose) {
-            logger.info('NPM 7+ detected -- enabling force option for package installation');
+    if (packageManager.name === 'npm') {
+        const version = await packageManager.getVersion();
+        if (semver.gte(version, '7.0.0')) {
+            if (verbose) {
+                logger.info('NPM 7+ detected -- enabling force option for package installation');
+            }
+            return true;
         }
-        return true;
     }
     return false;
 }

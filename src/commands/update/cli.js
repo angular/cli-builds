@@ -49,13 +49,12 @@ const node_fs_1 = require("node:fs");
 const node_module_1 = require("node:module");
 const path = __importStar(require("node:path"));
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
-const semver = __importStar(require("semver"));
 const command_module_1 = require("../../command-builder/command-module");
 const schematic_engine_host_1 = require("../../command-builder/utilities/schematic-engine-host");
+const package_managers_1 = require("../../package-managers");
 const color_1 = require("../../utilities/color");
 const environment_options_1 = require("../../utilities/environment-options");
 const error_1 = require("../../utilities/error");
-const package_metadata_1 = require("../../utilities/package-metadata");
 const package_tree_1 = require("../../utilities/package-tree");
 const cli_version_1 = require("./utilities/cli-version");
 const constants_1 = require("./utilities/constants");
@@ -155,11 +154,17 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             .strict();
     }
     async run(options) {
-        const { logger, packageManager } = this.context;
+        const { logger } = this.context;
+        // Instantiate the package manager
+        const packageManager = await (0, package_managers_1.createPackageManager)({
+            cwd: this.context.root,
+            logger,
+            configuredPackageManager: this.context.packageManager.name,
+        });
         // Check if the current installed CLI version is older than the latest compatible version.
         // Skip when running `ng update` without a package name as this will not trigger an actual update.
         if (!environment_options_1.disableVersionCheck && options.packages?.length) {
-            const cliVersionToInstall = await (0, cli_version_1.checkCLIVersion)(options.packages, logger, packageManager, options.verbose, options.next);
+            const cliVersionToInstall = await (0, cli_version_1.checkCLIVersion)(options.packages, logger, packageManager, options.next);
             if (cliVersionToInstall) {
                 logger.warn('The installed Angular CLI version is outdated.\n' +
                     `Installing a temporary Angular CLI versioned ${cliVersionToInstall} to perform the update.`);
@@ -202,7 +207,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         logger.info(`Found ${rootDependencies.size} dependencies.`);
         const workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: packageManager.name,
-            packageManagerForce: (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose),
+            packageManagerForce: await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose),
             // __dirname -> favor @schematics/update from this package
             // Otherwise, use packages from the active workspace (migrations)
             resolvePaths: this.resolvePaths,
@@ -222,7 +227,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         }
         return options.migrateOnly
             ? this.migrateOnly(workflow, (options.packages ?? [])[0], rootDependencies, options)
-            : this.updatePackagesAndMigrate(workflow, rootDependencies, options, packages);
+            : this.updatePackagesAndMigrate(workflow, rootDependencies, options, packages, packageManager);
     }
     async migrateOnly(workflow, packageName, rootDependencies, options) {
         const { logger } = this.context;
@@ -301,7 +306,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         return (0, migration_1.executeMigrations)(workflow, logger, packageName, migrations, from, options.to || packageNode.version, options.createCommits);
     }
     // eslint-disable-next-line max-lines-per-function
-    async updatePackagesAndMigrate(workflow, rootDependencies, options, packages) {
+    async updatePackagesAndMigrate(workflow, rootDependencies, options, packages, packageManager) {
         const { logger } = this.context;
         const logVerbose = (message) => {
             if (options.verbose) {
@@ -311,6 +316,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const requests = [];
         // Validate packages actually are part of the workspace
         for (const pkg of packages) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const node = rootDependencies.get(pkg.name);
             if (!node?.package) {
                 logger.error(`Package '${pkg.name}' is not a dependency.`);
@@ -330,55 +336,14 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const packagesToUpdate = [];
         for (const { identifier: requestIdentifier, node } of requests) {
             const packageName = requestIdentifier.name;
-            let metadata;
+            let manifest = null;
             try {
-                // Metadata requests are internally cached; multiple requests for same name
-                // does not result in additional network traffic
-                metadata = await (0, package_metadata_1.fetchPackageMetadata)(packageName, logger, {
-                    verbose: options.verbose,
-                });
+                manifest = await packageManager.getManifest(requestIdentifier);
             }
             catch (e) {
                 (0, error_1.assertIsError)(e);
-                logger.error(`Error fetching metadata for '${packageName}': ` + e.message);
+                logger.error(`Error fetching manifest for '${packageName}': ` + e.message);
                 return 1;
-            }
-            // Try to find a package version based on the user requested package specifier
-            // registry specifier types are either version, range, or tag
-            let manifest;
-            switch (requestIdentifier.type) {
-                case 'tag':
-                    manifest = metadata.tags[requestIdentifier.fetchSpec];
-                    // If not found and next option was used and user did not provide a specifier, try latest.
-                    // Package may not have a next tag.
-                    if (!manifest &&
-                        requestIdentifier.fetchSpec === 'next' &&
-                        requestIdentifier.rawSpec === '*') {
-                        manifest = metadata.tags['latest'];
-                    }
-                    break;
-                case 'version':
-                    manifest = metadata.versions[requestIdentifier.fetchSpec];
-                    break;
-                case 'range':
-                    for (const potentialManifest of Object.values(metadata.versions)) {
-                        // Ignore deprecated package versions
-                        if (potentialManifest.deprecated) {
-                            continue;
-                        }
-                        // Only consider versions that are within the range
-                        if (!semver.satisfies(potentialManifest.version, requestIdentifier.fetchSpec, {
-                            loose: true,
-                        })) {
-                            continue;
-                        }
-                        // Update the used manifest if current potential is newer than existing or there is not one yet
-                        if (!manifest ||
-                            semver.gt(potentialManifest.version, manifest.version, { loose: true })) {
-                            manifest = potentialManifest;
-                        }
-                    }
-                    break;
             }
             if (!manifest) {
                 logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
@@ -423,10 +388,8 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             packages: packagesToUpdate,
         });
         if (success) {
-            const { root: commandRoot, packageManager } = this.context;
-            const installArgs = (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose)
-                ? ['--force']
-                : [];
+            const { root: commandRoot } = this.context;
+            const force = await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose);
             const tasks = new listr2_1.Listr([
                 {
                     title: 'Cleaning node modules directory',
@@ -449,8 +412,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 {
                     title: 'Installing packages',
                     async task() {
-                        const installationSuccess = await packageManager.installAll(installArgs, commandRoot);
-                        if (!installationSuccess) {
+                        try {
+                            await packageManager.install({
+                                force,
+                            });
+                        }
+                        catch (e) {
                             throw new CommandError('Unable to install packages');
                         }
                     },

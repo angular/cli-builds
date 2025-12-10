@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { logging } from '@angular-devkit/core';
-import { PackageManagerUtils } from '../../../utilities/package-manager';
+import { PackageManager } from '../../../package-managers';
 /**
  * Coerces a string into a valid semantic version number.
  * @param version The version string to coerce.
@@ -22,7 +22,7 @@ export declare function coerceVersionNumber(version: string | undefined): string
  * @param next Whether to check for the next version.
  * @returns The version of the CLI to install, or null if the current version is compatible.
  */
-export declare function checkCLIVersion(packagesToUpdate: string[], logger: logging.LoggerApi, packageManager: PackageManagerUtils, verbose?: boolean, next?: boolean): Promise<string | null>;
+export declare function checkCLIVersion(packagesToUpdate: string[], logger: logging.LoggerApi, packageManager: PackageManager, next?: boolean): Promise<string | null>;
 /**
  * Determines the version of the CLI to use for the update process.
  * @param packagesToUpdate The list of packages being updated.
@@ -37,7 +37,7 @@ export declare function getCLIUpdateRunnerVersion(packagesToUpdate: string[] | u
  * @param args The arguments to pass to the binary.
  * @returns The exit code of the binary.
  */
-export declare function runTempBinary(packageName: string, packageManager: PackageManagerUtils, args?: string[]): Promise<number>;
+export declare function runTempBinary(packageName: string, packageManager: PackageManager, args?: string[]): Promise<number>;
 /**
  * Determines whether to force the package manager to ignore peer dependency warnings.
  * @param packageManager The package manager instance.
@@ -45,4 +45,4 @@ export declare function runTempBinary(packageName: string, packageManager: Packa
  * @param verbose Whether to log verbose output.
  * @returns True if the package manager should be forced, false otherwise.
  */
-export declare function shouldForcePackageManager(packageManager: PackageManagerUtils, logger: logging.LoggerApi, verbose: boolean): boolean;
+export declare function shouldForcePackageManager(packageManager: PackageManager, logger: logging.LoggerApi, verbose: boolean): Promise<boolean>;
