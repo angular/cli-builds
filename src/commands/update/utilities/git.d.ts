@@ -7,13 +7,15 @@
  */
 /**
  * Checks if the git repository is clean.
- * @param root The root directory of the project.
- * @returns True if the repository is clean, false otherwise.
+ * This function only checks for changes that are within the specified root directory.
+ * Changes outside the root directory are ignored.
+ * @param root The root directory of the project to check.
+ * @returns True if the repository is clean within the root, false otherwise.
  */
 export declare function checkCleanGit(root: string): boolean;
 /**
  * Checks if the working directory has pending changes to commit.
- * @returns Whether or not the working directory has Git changes to commit.
+ * @returns Whether or not the working directory has Git changes to commit. Returns false if not in a Git repository.
  */
 export declare function hasChangesToCommit(): boolean;
 /**
@@ -22,8 +24,8 @@ export declare function hasChangesToCommit(): boolean;
  */
 export declare function createCommit(message: string): void;
 /**
- * Finds the Git SHA hash of the HEAD commit.
- * @returns The Git SHA hash of the HEAD commit. Returns null if unable to retrieve the hash.
+ * Finds the full Git SHA hash of the HEAD commit.
+ * @returns The full Git SHA hash of the HEAD commit. Returns null if unable to retrieve the hash.
  */
 export declare function findCurrentGitSha(): string | null;
 /**
