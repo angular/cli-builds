@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LIST_PROJECTS_TOOL = void 0;
+const node_fs_1 = require("node:fs");
 const promises_1 = require("node:fs/promises");
 const node_path_1 = require("node:path");
 const node_url_1 = require("node:url");
@@ -124,14 +125,19 @@ their types, and their locations.
     factory: createListProjectsHandler,
 });
 const EXCLUDED_DIRS = new Set(['node_modules', 'dist', 'out', 'coverage']);
+const IGNORED_FILE_SYSTEM_ERRORS = new Set(['EACCES', 'EPERM', 'ENOENT', 'EBUSY']);
+function isIgnorableFileError(error) {
+    return !!error.code && IGNORED_FILE_SYSTEM_ERRORS.has(error.code);
+}
 /**
  * Iteratively finds all 'angular.json' files with controlled concurrency and directory exclusions.
  * This non-recursive implementation is suitable for very large directory trees,
  * prevents file descriptor exhaustion (`EMFILE` errors), and handles symbolic link loops.
  * @param rootDir The directory to start the search from.
+ * @param allowedRealRoots A list of allowed real root directories (resolved paths) to restrict symbolic link traversal.
  * @returns An async generator that yields the full path of each found 'angular.json' file.
  */
-async function* findAngularJsonFiles(rootDir) {
+async function* findAngularJsonFiles(rootDir, allowedRealRoots) {
     const CONCURRENCY_LIMIT = 50;
     const queue = [rootDir];
     const seenInodes = new Set();
@@ -141,7 +147,7 @@ async function* findAngularJsonFiles(rootDir) {
     }
     catch (error) {
         (0, error_1.assertIsError)(error);
-        if (error.code === 'EACCES' || error.code === 'EPERM' || error.code === 'ENOENT') {
+        if (isIgnorableFileError(error)) {
             return; // Cannot access root, so there's nothing to do.
         }
         throw error;
@@ -155,23 +161,44 @@ async function* findAngularJsonFiles(rootDir) {
                 const subdirectories = [];
                 for (const entry of entries) {
                     const fullPath = (0, node_path_1.join)(dir, entry.name);
-                    if (entry.isDirectory()) {
+                    if (entry.isDirectory() || entry.isSymbolicLink()) {
                         // Exclude dot-directories, build/cache directories, and node_modules
                         if (entry.name.startsWith('.') || EXCLUDED_DIRS.has(entry.name)) {
                             continue;
                         }
-                        // Check for symbolic link loops
+                        let entryStats;
                         try {
-                            const entryStats = await (0, promises_1.stat)(fullPath);
+                            entryStats = await (0, promises_1.stat)(fullPath);
                             if (seenInodes.has(entryStats.ino)) {
                                 continue; // Already visited this directory (symlink loop), skip.
                             }
-                            seenInodes.add(entryStats.ino);
+                            // Only process actual directories or symlinks to directories.
+                            if (!entryStats.isDirectory()) {
+                                continue;
+                            }
                         }
                         catch {
                             // Ignore errors from stat (e.g., broken symlinks)
                             continue;
                         }
+                        if (entry.isSymbolicLink()) {
+                            try {
+                                const targetPath = (0, node_fs_1.realpathSync)(fullPath);
+                                // Ensure the link target is within one of the allowed roots.
+                                const isAllowed = allowedRealRoots.some((root) => {
+                                    const rel = (0, node_path_1.relative)(root, targetPath);
+                                    return !rel.startsWith('..') && !(0, node_path_1.isAbsolute)(rel);
+                                });
+                                if (!isAllowed) {
+                                    continue;
+                                }
+                            }
+                            catch {
+                                // Ignore broken links.
+                                continue;
+                            }
+                        }
+                        seenInodes.add(entryStats.ino);
                         subdirectories.push(fullPath);
                     }
                     else if (entry.name === 'angular.json') {
@@ -182,7 +209,7 @@ async function* findAngularJsonFiles(rootDir) {
             }
             catch (error) {
                 (0, error_1.assertIsError)(error);
-                if (error.code === 'EACCES' || error.code === 'EPERM') {
+                if (isIgnorableFileError(error)) {
                     return []; // Silently ignore permission errors.
                 }
                 throw error;
@@ -439,8 +466,20 @@ async function createListProjectsHandler({ server }) {
             // Fallback to the current working directory if client does not support roots
             searchRoots = [process.cwd()];
         }
+        // Pre-resolve allowed roots to handle their own symlinks or normalizations.
+        // We ignore failures here; if a root is broken, we simply won't match against it.
+        const realAllowedRoots = searchRoots
+            .map((r) => {
+            try {
+                return (0, node_fs_1.realpathSync)(r);
+            }
+            catch {
+                return null;
+            }
+        })
+            .filter((r) => r !== null);
         for (const root of searchRoots) {
-            for await (const configFile of findAngularJsonFiles(root)) {
+            for await (const configFile of findAngularJsonFiles(root, realAllowedRoots)) {
                 const { workspace, parsingError, versioningError } = await processConfigFile(configFile, root, seenPaths, versionCache);
                 if (workspace) {
                     workspaces.push(workspace);
