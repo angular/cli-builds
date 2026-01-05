@@ -127,7 +127,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         ignoreScriptsFlag: string;
         getRegistryOptions: (registry: string) => {
             env: {
-                NPM_CONFIG_REGISTRY: string;
+                YARN_NPM_REGISTRY_SERVER: string;
             };
         };
         versionCommand: string[];

@@ -206,7 +206,8 @@ function parseNpmLikeManifest(stdout, logger) {
         logger?.debug('  stdout is empty. No manifest found.');
         return null;
     }
-    return JSON.parse(stdout);
+    const result = JSON.parse(stdout);
+    return Array.isArray(result) ? result[result.length - 1] : result;
 }
 /**
  * Parses the output of `npm view` or a compatible command to get package metadata.
