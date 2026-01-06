@@ -22,6 +22,14 @@ export declare function startDevserver(input: DevserverStartToolInput, context: 
         text: string;
     }[];
     structuredContent: {
+        message: string[];
+    };
+} | {
+    content: {
+        type: "text";
+        text: string;
+    }[];
+    structuredContent: {
         message: string;
         address: string;
     };

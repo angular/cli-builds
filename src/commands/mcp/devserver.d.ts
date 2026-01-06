@@ -41,7 +41,6 @@ export interface Devserver {
      */
     port: number;
 }
-export declare function devserverKey(project?: string): string;
 /**
  * A local Angular development server managed by the MCP server.
  */

@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEVSERVER_STOP_TOOL = void 0;
 exports.stopDevserver = stopDevserver;
 const zod_1 = require("zod");
-const devserver_1 = require("../../devserver");
 const utils_1 = require("../../utils");
 const tool_registry_1 = require("../tool-registry");
 const devserverStopToolInputSchema = zod_1.z.object({
@@ -24,18 +23,36 @@ const devserverStopToolOutputSchema = zod_1.z.object({
     logs: zod_1.z.array(zod_1.z.string()).optional().describe('The full logs from the dev server.'),
 });
 function stopDevserver(input, context) {
-    const projectKey = (0, devserver_1.devserverKey)(input.project);
-    const devServer = context.devservers.get(projectKey);
+    if (context.devservers.size === 0) {
+        return (0, utils_1.createStructuredContentOutput)({
+            message: ['No development servers are currently running.'],
+            logs: undefined,
+        });
+    }
+    let projectName = input.project ?? (0, utils_1.getDefaultProjectName)(context);
+    if (!projectName) {
+        // This should not happen. But if there's just a single running devserver, stop it.
+        if (context.devservers.size === 1) {
+            projectName = Array.from(context.devservers.keys())[0];
+        }
+        else {
+            return (0, utils_1.createStructuredContentOutput)({
+                message: ['Project name not provided, and no default project found.'],
+                logs: undefined,
+            });
+        }
+    }
+    const devServer = context.devservers.get(projectName);
     if (!devServer) {
         return (0, utils_1.createStructuredContentOutput)({
-            message: `Development server for project '${projectKey}' was not running.`,
+            message: `Development server for project '${projectName}' was not running.`,
             logs: undefined,
         });
     }
     devServer.stop();
-    context.devservers.delete(projectKey);
+    context.devservers.delete(projectName);
     return (0, utils_1.createStructuredContentOutput)({
-        message: `Development server for project '${projectKey}' stopped.`,
+        message: `Development server for project '${projectName}' stopped.`,
         logs: devServer.getServerLogs(),
     });
 }

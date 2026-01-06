@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EXPERIMENTAL_TOOLS = exports.EXPERIMENTAL_TOOL_GROUPS = void 0;
+exports.EXPERIMENTAL_TOOL_GROUPS = exports.EXPERIMENTAL_TOOLS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
@@ -22,23 +22,17 @@ const devserver_start_1 = require("./tools/devserver/devserver-start");
 const devserver_stop_1 = require("./tools/devserver/devserver-stop");
 const devserver_wait_for_build_1 = require("./tools/devserver/devserver-wait-for-build");
 const doc_search_1 = require("./tools/doc-search");
+const e2e_1 = require("./tools/e2e");
 const index_1 = require("./tools/examples/index");
 const modernize_1 = require("./tools/modernize");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
+const test_1 = require("./tools/test");
 const tool_registry_1 = require("./tools/tool-registry");
 /**
  * Tools to manage devservers. Should be bundled together, then added to experimental or stable as a group.
  */
 const DEVSERVER_TOOLS = [devserver_start_1.DEVSERVER_START_TOOL, devserver_stop_1.DEVSERVER_STOP_TOOL, devserver_wait_for_build_1.DEVSERVER_WAIT_FOR_BUILD_TOOL];
-/**
- * Experimental tools that are grouped together under a single name.
- *
- * Used for enabling them as a group.
- */
-exports.EXPERIMENTAL_TOOL_GROUPS = {
-    'devserver': DEVSERVER_TOOLS,
-};
 /**
  * The set of tools that are enabled by default for the MCP server.
  * These tools are considered stable and suitable for general use.
@@ -55,7 +49,22 @@ const STABLE_TOOLS = [
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [build_1.BUILD_TOOL, modernize_1.MODERNIZE_TOOL, ...DEVSERVER_TOOLS];
+exports.EXPERIMENTAL_TOOLS = [
+    build_1.BUILD_TOOL,
+    e2e_1.E2E_TOOL,
+    modernize_1.MODERNIZE_TOOL,
+    test_1.TEST_TOOL,
+    ...DEVSERVER_TOOLS,
+];
+/**
+ * Experimental tools that are grouped together under a single name.
+ *
+ * Used for enabling them as a group.
+ */
+exports.EXPERIMENTAL_TOOL_GROUPS = {
+    'all': exports.EXPERIMENTAL_TOOLS,
+    'devserver': DEVSERVER_TOOLS,
+};
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
         name: 'angular-cli-server',

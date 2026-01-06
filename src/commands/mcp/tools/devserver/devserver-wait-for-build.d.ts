@@ -33,6 +33,15 @@ export declare function waitForDevserverBuild(input: DevserverWaitForBuildToolIn
         text: string;
     }[];
     structuredContent: {
+        status: string;
+        logs: undefined;
+    };
+} | {
+    content: {
+        type: "text";
+        text: string;
+    }[];
+    structuredContent: {
         status: "success" | "timeout" | "failure" | "unknown" | "no_devserver_found";
         logs?: string[] | undefined;
     };

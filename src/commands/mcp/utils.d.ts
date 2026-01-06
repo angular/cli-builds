@@ -6,6 +6,12 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 /**
+ * @fileoverview
+ * Utility functions shared across MCP tools.
+ */
+import { workspaces } from '@angular-devkit/core';
+import { McpToolContext } from './tools/tool-registry';
+/**
  * Returns simple structured content output from an MCP tool.
  *
  * @returns A structure with both `content` and `structuredContent` for maximum compatibility.
@@ -31,3 +37,20 @@ export declare function createStructuredContentOutput<OutputType>(structuredCont
  * - The root of the filesystem is reached (returns null)
  */
 export declare function findAngularJsonDir(startDir: string, host?: import("./host").Host): string | null;
+/**
+ * Searches for a project in the current workspace, by name.
+ */
+export declare function getProject(context: McpToolContext, name: string): workspaces.ProjectDefinition | undefined;
+/**
+ * Returns the name of the default project in the current workspace, or undefined if none exists.
+ *
+ * If no default project is defined but there's only a single project in the workspace, its name will
+ * be returned.
+ */
+export declare function getDefaultProjectName(context: McpToolContext): string | undefined;
+/**
+ * Get the logs of a failing command.
+ *
+ * This call has fallbacks in case the exception was thrown from the command-calling code itself.
+ */
+export declare function getCommandErrorLogs(e: unknown): string[];

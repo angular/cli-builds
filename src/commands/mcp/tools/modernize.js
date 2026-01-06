@@ -11,7 +11,6 @@ exports.MODERNIZE_TOOL = void 0;
 exports.runModernization = runModernization;
 const path_1 = require("path");
 const zod_1 = require("zod");
-const host_1 = require("../host");
 const utils_1 = require("../utils");
 const tool_registry_1 = require("./tool-registry");
 const TRANSFORMATIONS = [
@@ -127,10 +126,7 @@ async function runModernization(input, host) {
                     instructions.push(`Migration ${transformation.name} on directory ${relativePath} completed successfully.`);
                 }
                 catch (e) {
-                    if (e instanceof host_1.CommandError) {
-                        logs = e.logs;
-                    }
-                    logs.push(e.message);
+                    logs = (0, utils_1.getCommandErrorLogs)(e);
                     instructions.push(`Migration ${transformation.name} on directory ${relativePath} failed.`);
                 }
             }

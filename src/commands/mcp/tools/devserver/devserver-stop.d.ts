@@ -22,6 +22,15 @@ export declare function stopDevserver(input: DevserverStopToolInput, context: Mc
         text: string;
     }[];
     structuredContent: {
+        message: string[];
+        logs: undefined;
+    };
+} | {
+    content: {
+        type: "text";
+        text: string;
+    }[];
+    structuredContent: {
         message: string;
         logs: undefined;
     };

@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEVSERVER_WAIT_FOR_BUILD_TOOL = exports.WATCH_DELAY = void 0;
 exports.waitForDevserverBuild = waitForDevserverBuild;
 const zod_1 = require("zod");
-const devserver_1 = require("../../devserver");
 const utils_1 = require("../../utils");
 const tool_registry_1 = require("../tool-registry");
 /**
@@ -44,19 +43,39 @@ function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function waitForDevserverBuild(input, context) {
-    const projectKey = (0, devserver_1.devserverKey)(input.project);
-    const devServer = context.devservers.get(projectKey);
-    const deadline = Date.now() + input.timeout;
+    if (context.devservers.size === 0) {
+        return (0, utils_1.createStructuredContentOutput)({
+            status: 'no_devserver_found',
+            logs: undefined,
+        });
+    }
+    let projectName = input.project ?? (0, utils_1.getDefaultProjectName)(context);
+    if (!projectName) {
+        // This should not happen. But if there's just a single running devserver, wait for it.
+        if (context.devservers.size === 1) {
+            projectName = Array.from(context.devservers.keys())[0];
+        }
+        else {
+            return (0, utils_1.createStructuredContentOutput)({
+                status: 'no_devserver_found',
+                logs: undefined,
+            });
+        }
+    }
+    const devServer = context.devservers.get(projectName);
     if (!devServer) {
         return (0, utils_1.createStructuredContentOutput)({
             status: 'no_devserver_found',
+            logs: undefined,
         });
     }
+    const deadline = Date.now() + input.timeout;
     await wait(exports.WATCH_DELAY);
     while (devServer.isBuilding()) {
         if (Date.now() > deadline) {
             return (0, utils_1.createStructuredContentOutput)({
                 status: 'timeout',
+                logs: undefined,
             });
         }
         await wait(exports.WATCH_DELAY);

@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BUILD_TOOL = void 0;
 exports.runBuild = runBuild;
 const zod_1 = require("zod");
-const host_1 = require("../host");
 const utils_1 = require("../utils");
 const tool_registry_1 = require("./tool-registry");
 const DEFAULT_CONFIGURATION = 'development';
@@ -45,15 +44,7 @@ async function runBuild(input, host) {
     }
     catch (e) {
         status = 'failure';
-        if (e instanceof host_1.CommandError) {
-            logs = e.logs;
-        }
-        else if (e instanceof Error) {
-            logs = [e.message];
-        }
-        else {
-            logs = [String(e)];
-        }
+        logs = (0, utils_1.getCommandErrorLogs)(e);
     }
     for (const line of logs) {
         const match = line.match(/Output location: (.*)/);

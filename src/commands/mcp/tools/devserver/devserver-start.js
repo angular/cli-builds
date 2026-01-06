@@ -30,20 +30,25 @@ function localhostAddress(port) {
     return `http://localhost:${port}/`;
 }
 async function startDevserver(input, context) {
-    const projectKey = (0, devserver_1.devserverKey)(input.project);
-    let devserver = context.devservers.get(projectKey);
+    const projectName = input.project ?? (0, utils_1.getDefaultProjectName)(context);
+    if (!projectName) {
+        return (0, utils_1.createStructuredContentOutput)({
+            message: ['Project name not provided, and no default project found.'],
+        });
+    }
+    let devserver = context.devservers.get(projectName);
     if (devserver) {
         return (0, utils_1.createStructuredContentOutput)({
-            message: `Development server for project '${projectKey}' is already running.`,
+            message: `Development server for project '${projectName}' is already running.`,
             address: localhostAddress(devserver.port),
         });
     }
     const port = await context.host.getAvailablePort();
     devserver = new devserver_1.LocalDevserver({ host: context.host, project: input.project, port });
     devserver.start();
-    context.devservers.set(projectKey, devserver);
+    context.devservers.set(projectName, devserver);
     return (0, utils_1.createStructuredContentOutput)({
-        message: `Development server for project '${projectKey}' started and watching for workspace changes.`,
+        message: `Development server for project '${projectName}' started and watching for workspace changes.`,
         address: localhostAddress(port),
     });
 }

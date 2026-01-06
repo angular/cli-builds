@@ -8,7 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalDevserver = void 0;
-exports.devserverKey = devserverKey;
 // Log messages that we want to catch to identify the build status.
 const BUILD_SUCCEEDED_MESSAGE = 'Application bundle generation complete.';
 const BUILD_FAILED_MESSAGE = 'Application bundle generation failed.';
@@ -22,9 +21,6 @@ const BUILD_END_MESSAGES = [
     WAITING_FOR_CHANGES_MESSAGE,
     CHANGES_DETECTED_SUCCESS_MESSAGE,
 ];
-function devserverKey(project) {
-    return project ?? '<default>';
-}
 /**
  * A local Angular development server managed by the MCP server.
  */

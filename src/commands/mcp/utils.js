@@ -9,10 +9,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createStructuredContentOutput = createStructuredContentOutput;
 exports.findAngularJsonDir = findAngularJsonDir;
-/**
- * @fileoverview
- * Utility functions shared across MCP tools.
- */
+exports.getProject = getProject;
+exports.getDefaultProjectName = getDefaultProjectName;
+exports.getCommandErrorLogs = getCommandErrorLogs;
 const node_path_1 = require("node:path");
 const host_1 = require("./host");
 /**
@@ -50,6 +49,53 @@ function findAngularJsonDir(startDir, host = host_1.LocalWorkspaceHost) {
             return null;
         }
         currentDir = parentDir;
+    }
+}
+/**
+ * Searches for a project in the current workspace, by name.
+ */
+function getProject(context, name) {
+    const projects = context.workspace?.projects;
+    if (!projects) {
+        return undefined;
+    }
+    return projects.get(name);
+}
+/**
+ * Returns the name of the default project in the current workspace, or undefined if none exists.
+ *
+ * If no default project is defined but there's only a single project in the workspace, its name will
+ * be returned.
+ */
+function getDefaultProjectName(context) {
+    const projects = context.workspace?.projects;
+    if (!projects) {
+        return undefined;
+    }
+    const defaultProjectName = context.workspace?.extensions['defaultProject'];
+    if (defaultProjectName) {
+        return defaultProjectName;
+    }
+    // No default project defined? This might still be salvageable if only a single project exists.
+    if (projects.size === 1) {
+        return Array.from(projects.keys())[0];
+    }
+    return undefined;
+}
+/**
+ * Get the logs of a failing command.
+ *
+ * This call has fallbacks in case the exception was thrown from the command-calling code itself.
+ */
+function getCommandErrorLogs(e) {
+    if (e instanceof host_1.CommandError) {
+        return [...e.logs, e.message];
+    }
+    else if (e instanceof Error) {
+        return [e.message];
+    }
+    else {
+        return [String(e)];
     }
 }
 //# sourceMappingURL=utils.js.map
