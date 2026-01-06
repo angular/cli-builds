@@ -78,6 +78,7 @@ export declare class PackageManager {
         force?: boolean;
         registry?: string;
         ignoreScripts?: boolean;
+        ignorePeerDependencies?: boolean;
     }): Promise<void>;
     /**
      * Gets the version of the package manager binary.

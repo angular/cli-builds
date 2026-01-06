@@ -237,6 +237,7 @@ class PackageManager {
         const flags = [
             options.force ? this.descriptor.forceFlag : '',
             options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : '',
+            options.ignorePeerDependencies ? (this.descriptor.ignorePeerDependenciesFlag ?? '') : '',
         ].filter((flag) => flag);
         const args = [...this.descriptor.installCommand, ...flags];
         await this.#run(args, options);

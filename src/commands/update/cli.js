@@ -389,7 +389,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         });
         if (success) {
             const { root: commandRoot } = this.context;
-            const force = await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose);
+            const ignorePeerDependencies = await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose);
             const tasks = new listr2_1.Listr([
                 {
                     title: 'Cleaning node modules directory',
@@ -414,7 +414,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                     async task() {
                         try {
                             await packageManager.install({
-                                force,
+                                ignorePeerDependencies,
                             });
                         }
                         catch (e) {

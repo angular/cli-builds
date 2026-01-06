@@ -39,6 +39,8 @@ export interface PackageManagerDescriptor {
     readonly noLockfileFlag: string;
     /** The flag to prevent lifecycle scripts from being executed. */
     readonly ignoreScriptsFlag: string;
+    /** The flag to ignore peer dependency warnings/errors. */
+    readonly ignorePeerDependenciesFlag?: string;
     /** A function that returns the arguments and environment variables to use a custom registry. */
     readonly getRegistryOptions?: (registry: string) => {
         args?: string[];
@@ -99,6 +101,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         saveDevFlag: string;
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
+        ignorePeerDependenciesFlag: string;
         getRegistryOptions: (registry: string) => {
             args: string[];
         };
@@ -179,6 +182,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         saveDevFlag: string;
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
+        ignorePeerDependenciesFlag: string;
         getRegistryOptions: (registry: string) => {
             args: string[];
         };
