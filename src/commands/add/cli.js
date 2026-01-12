@@ -55,6 +55,7 @@ const package_managers_1 = require("../../package-managers");
 const error_1 = require("../../utilities/error");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
+const utilities_1 = require("../cache/utilities");
 class CommandError extends Error {
 }
 /**
@@ -250,10 +251,30 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
     }
     async determinePackageManagerTask(context, task) {
+        let tempDirectory;
+        const tempOptions = ['node_modules'];
+        const cacheConfig = (0, utilities_1.getCacheConfig)(this.context.workspace);
+        if (cacheConfig.enabled) {
+            const cachePath = (0, node_path_1.resolve)(this.context.root, cacheConfig.path);
+            if (!(0, node_path_1.relative)(this.context.root, cachePath).startsWith('..')) {
+                tempOptions.push(cachePath);
+            }
+        }
+        for (const tempOption of tempOptions) {
+            try {
+                const directory = (0, node_path_1.resolve)(this.context.root, tempOption);
+                if ((await promises_1.default.stat(directory)).isDirectory()) {
+                    tempDirectory = directory;
+                    break;
+                }
+            }
+            catch { }
+        }
         context.packageManager = await (0, package_managers_1.createPackageManager)({
             cwd: this.context.root,
             logger: this.context.logger,
             dryRun: context.dryRun,
+            tempDirectory,
         });
         task.output = `Using package manager: ${listr2_1.color.dim(context.packageManager.name)}`;
     }
@@ -439,22 +460,33 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { packageManager, packageIdentifier, savePackage } = context;
         // Only show if installation will actually occur
         task.title = 'Installing package';
-        if (context.savePackage === false) {
-            task.title += ' in temporary location';
-            // Temporary packages are located in a different directory
-            // Hence we need to resolve them using the temp path
-            const { workingDirectory } = await packageManager.acquireTempPackage(packageIdentifier.toString(), {
-                registry,
-            });
-            const tempRequire = (0, node_module_1.createRequire)(workingDirectory + '/');
-            (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
-            const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
-            context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
+        try {
+            if (context.savePackage === false) {
+                task.title += ' in temporary location';
+                // Temporary packages are located in a different directory
+                // Hence we need to resolve them using the temp path
+                const { workingDirectory } = await packageManager.acquireTempPackage(packageIdentifier.toString(), {
+                    registry,
+                });
+                const tempRequire = (0, node_module_1.createRequire)(workingDirectory + '/');
+                (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
+                const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
+                context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
+            }
+            else {
+                await packageManager.add(packageIdentifier.toString(), 'none', savePackage !== 'dependencies', false, true, {
+                    registry,
+                });
+            }
         }
-        else {
-            await packageManager.add(packageIdentifier.toString(), 'none', savePackage !== 'dependencies', false, true, {
-                registry,
-            });
+        catch (e) {
+            if (e instanceof package_managers_1.PackageManagerError) {
+                const output = e.stderr || e.stdout;
+                if (output) {
+                    throw new CommandError(`Package installation failed: ${e.message}\nOutput: ${output}`);
+                }
+            }
+            throw e;
         }
     }
     async isProjectVersionValid(packageIdentifier) {

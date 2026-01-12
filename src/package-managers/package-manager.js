@@ -414,12 +414,24 @@ class PackageManager {
      *   and a cleanup function.
      */
     async acquireTempPackage(specifier, options = {}) {
-        const workingDirectory = await this.host.createTempDirectory();
+        const workingDirectory = await this.host.createTempDirectory(this.options.tempDirectory);
         const cleanup = () => this.host.deleteDirectory(workingDirectory);
         // Some package managers, like yarn classic, do not write a package.json when adding a package.
         // This can cause issues with subsequent `require.resolve` calls.
         // Writing an empty package.json file beforehand prevents this.
         await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'package.json'), '{}');
+        // Copy configuration files if the package manager requires it (e.g., bun).
+        if (this.descriptor.copyConfigFromProject) {
+            for (const configFile of this.descriptor.configFiles) {
+                try {
+                    const configPath = (0, node_path_1.join)(this.cwd, configFile);
+                    await this.host.copyFile(configPath, (0, node_path_1.join)(workingDirectory, configFile));
+                }
+                catch {
+                    // Ignore missing config files.
+                }
+            }
+        }
         const flags = [options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : ''].filter((flag) => flag);
         const args = [this.descriptor.addCommand, specifier, ...flags];
         try {

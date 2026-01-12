@@ -41,6 +41,13 @@ export interface PackageManagerDescriptor {
     readonly ignoreScriptsFlag: string;
     /** The flag to ignore peer dependency warnings/errors. */
     readonly ignorePeerDependenciesFlag?: string;
+    /** The configuration files used by the package manager. */
+    readonly configFiles: readonly string[];
+    /**
+     * Whether to copy configuration files from the project root to the temporary directory.
+     * This is necessary for package managers that do not inherit configuration from parent directories (e.g., bun).
+     */
+    readonly copyConfigFromProject?: boolean;
     /** A function that returns the arguments and environment variables to use a custom registry. */
     readonly getRegistryOptions?: (registry: string) => {
         args?: string[];
@@ -102,6 +109,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
         ignorePeerDependenciesFlag: string;
+        configFiles: string[];
         getRegistryOptions: (registry: string) => {
             args: string[];
         };
@@ -128,6 +136,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         saveDevFlag: string;
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
+        configFiles: string[];
         getRegistryOptions: (registry: string) => {
             env: {
                 YARN_NPM_REGISTRY_SERVER: string;
@@ -156,6 +165,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         saveDevFlag: string;
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
+        configFiles: string[];
         getRegistryOptions: (registry: string) => {
             args: string[];
         };
@@ -183,6 +193,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
         ignorePeerDependenciesFlag: string;
+        configFiles: string[];
         getRegistryOptions: (registry: string) => {
             args: string[];
         };
@@ -209,6 +220,8 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         saveDevFlag: string;
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
+        configFiles: string[];
+        copyConfigFromProject: true;
         getRegistryOptions: (registry: string) => {
             args: string[];
         };

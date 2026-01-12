@@ -22,6 +22,11 @@ export interface PackageManagerOptions {
     dryRun?: boolean;
     /** A logger instance for debugging and dry run output. */
     logger?: Logger;
+    /**
+     * The path to use as the base for temporary directories.
+     * If not specified, the system's temporary directory will be used.
+     */
+    tempDirectory?: string;
 }
 /**
  * A class that provides a high-level, package-manager-agnostic API for
