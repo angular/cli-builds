@@ -15,6 +15,7 @@ exports.NodeJS_HOST = void 0;
  * enabling the injection of mock or test-specific implementations.
  */
 const node_child_process_1 = require("node:child_process");
+const node_fs_1 = require("node:fs");
 const promises_1 = require("node:fs/promises");
 const node_os_1 = require("node:os");
 const node_path_1 = require("node:path");
@@ -26,8 +27,9 @@ exports.NodeJS_HOST = {
     stat: promises_1.stat,
     readdir: promises_1.readdir,
     readFile: (path) => (0, promises_1.readFile)(path, { encoding: 'utf8' }),
+    copyFile: (src, dest) => (0, promises_1.copyFile)(src, dest, node_fs_1.constants.COPYFILE_FICLONE),
     writeFile: promises_1.writeFile,
-    createTempDirectory: () => (0, promises_1.mkdtemp)((0, node_path_1.join)((0, node_os_1.tmpdir)(), 'angular-cli-')),
+    createTempDirectory: (baseDir) => (0, promises_1.mkdtemp)((0, node_path_1.join)(baseDir ?? (0, node_os_1.tmpdir)(), 'angular-cli-')),
     deleteDirectory: (path) => (0, promises_1.rm)(path, { recursive: true, force: true }),
     runCommand: async (command, args, options = {}) => {
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;

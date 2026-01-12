@@ -22,4 +22,5 @@ export declare function createPackageManager(options: {
     configuredPackageManager?: PackageManagerName;
     logger?: Logger;
     dryRun?: boolean;
+    tempDirectory?: string;
 }): Promise<PackageManager>;

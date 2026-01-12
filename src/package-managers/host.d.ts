@@ -29,10 +29,18 @@ export interface Host {
      */
     readFile(path: string): Promise<string>;
     /**
+     * Copies a file from the source path to the destination path.
+     * @param src The path to the source file.
+     * @param dest The path to the destination file.
+     * @returns A promise that resolves when the copy is complete.
+     */
+    copyFile(src: string, dest: string): Promise<void>;
+    /**
      * Creates a new, unique temporary directory.
+     * @param baseDir The base directory in which to create the temporary directory.
      * @returns A promise that resolves to the absolute path of the created directory.
      */
-    createTempDirectory(): Promise<string>;
+    createTempDirectory(baseDir?: string): Promise<string>;
     /**
      * Deletes a directory recursively.
      * @param path The path to the directory to delete.
