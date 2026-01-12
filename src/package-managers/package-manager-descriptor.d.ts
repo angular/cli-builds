@@ -14,7 +14,7 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
+import { parseBunDependencies, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -229,7 +229,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         listDependenciesCommand: string[];
         getManifestCommand: string[];
         outputParsers: {
-            listDependencies: typeof parseNpmLikeDependencies;
+            listDependencies: typeof parseBunDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
             getError: typeof parseNpmLikeError;

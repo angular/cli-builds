@@ -52,25 +52,6 @@ export declare function parseNpmLikeDependencies(stdout: string, logger?: Logger
  */
 export declare function parseYarnClassicDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;
 /**
- * Parses the output of `yarn list` (modern).
- *
- * The expected JSON structure is a single object.
- * Yarn modern does not provide a path, so the `path` property will be `undefined`.
- *
- * ```json
- * {
- *   "trees": [
- *     { "name": "@angular/cli@18.0.0", "children": [] }
- *   ]
- * }
- * ```
- *
- * @param stdout The standard output of the command.
- * @param logger An optional logger instance.
- * @returns A map of package names to their installed package details.
- */
-export declare function parseYarnModernDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;
-/**
  * Parses the output of `npm view` or a compatible command to get a package manifest.
  * @param stdout The standard output of the command.
  * @param logger An optional logger instance.
@@ -155,3 +136,35 @@ export declare function parseNpmLikeError(output: string, logger?: Logger): Erro
  * @returns An `ErrorInfo` object if parsing is successful, otherwise `null`.
  */
 export declare function parseYarnClassicError(output: string, logger?: Logger): ErrorInfo | null;
+/**
+ * Parses the output of `bun pm ls`.
+ *
+ * Bun does not support JSON output for `pm ls`. The output is a tree structure:
+ * ```
+ * /path/to/project node_modules (1084)
+ * ├── @angular/core@20.3.15
+ * ├── rxjs @7.8.2
+ * └── zone.js @0.15.1
+ * ```
+ *
+ * @param stdout The standard output of the command.
+ * @param logger An optional logger instance.
+ * @returns A map of package names to their installed package details.
+ */
+export declare function parseBunDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;
+/**
+ * Parses the output of `yarn info --name-only --json`.
+ *
+ * The expected output is a JSON stream (JSONL) of strings.
+ * Each string represents a package locator.
+ *
+ * ```
+ * "karma@npm:6.4.4"
+ * "@angular/core@npm:20.3.15"
+ * ```
+ *
+ * @param stdout The standard output of the command.
+ * @param logger An optional logger instance.
+ * @returns A map of package names to their installed package details.
+ */
+export declare function parseYarnModernDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;

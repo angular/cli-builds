@@ -203,7 +203,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         }
         logger.info(`Using package manager: ${color_1.colors.gray(packageManager.name)}`);
         logger.info('Collecting installed dependencies...');
-        const rootDependencies = await (0, package_tree_1.getProjectDependencies)(this.context.root);
+        const rootDependencies = await packageManager.getProjectDependencies();
         logger.info(`Found ${rootDependencies.size} dependencies.`);
         const workflow = new tools_1.NodeWorkflow(this.context.root, {
             packageManager: packageManager.name,
@@ -226,26 +226,31 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             return success ? 0 : 1;
         }
         return options.migrateOnly
-            ? this.migrateOnly(workflow, (options.packages ?? [])[0], rootDependencies, options)
+            ? this.migrateOnly(workflow, (options.packages ?? [])[0], rootDependencies, options, packageManager)
             : this.updatePackagesAndMigrate(workflow, rootDependencies, options, packages, packageManager);
     }
-    async migrateOnly(workflow, packageName, rootDependencies, options) {
+    async migrateOnly(workflow, packageName, rootDependencies, options, packageManager) {
         const { logger } = this.context;
-        const packageDependency = rootDependencies.get(packageName);
+        let packageDependency = rootDependencies.get(packageName);
         let packagePath = packageDependency?.path;
-        let packageNode = packageDependency?.package;
-        if (packageDependency && !packageNode) {
-            logger.error('Package found in package.json but is not installed.');
-            return 1;
+        let packageNode;
+        if (!packageDependency) {
+            const installed = await packageManager.getInstalledPackage(packageName);
+            if (installed) {
+                packageDependency = installed;
+                packagePath = installed.path;
+            }
         }
-        else if (!packageDependency) {
-            // Allow running migrations on transitively installed dependencies
-            // There can technically be nested multiple versions
-            // TODO: If multiple, this should find all versions and ask which one to use
-            const packageJson = (0, package_tree_1.findPackageJson)(this.context.root, packageName);
-            if (packageJson) {
-                packagePath = path.dirname(packageJson);
-                packageNode = await (0, package_tree_1.readPackageJson)(packageJson);
+        if (packagePath) {
+            packageNode = await readPackageManifest(path.join(packagePath, 'package.json'));
+        }
+        if (!packageNode) {
+            const jsonPath = (0, package_tree_1.findPackageJson)(this.context.root, packageName);
+            if (jsonPath) {
+                packageNode = await readPackageManifest(jsonPath);
+                if (!packagePath) {
+                    packagePath = path.dirname(jsonPath);
+                }
             }
         }
         if (!packageNode || !packagePath) {
@@ -318,12 +323,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         for (const pkg of packages) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const node = rootDependencies.get(pkg.name);
-            if (!node?.package) {
+            if (!node) {
                 logger.error(`Package '${pkg.name}' is not a dependency.`);
                 return 1;
             }
             // If a specific version is requested and matches the installed version, skip.
-            if (pkg.type === 'version' && node.package.version === pkg.fetchSpec) {
+            if (pkg.type === 'version' && node.version === pkg.fetchSpec) {
                 logger.info(`Package '${pkg.name}' is already at '${pkg.fetchSpec}'.`);
                 continue;
             }
@@ -349,12 +354,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
                 return 1;
             }
-            if (manifest.version === node.package?.version) {
+            if (manifest.version === node.version) {
                 logger.info(`Package '${packageName}' is already up to date.`);
                 continue;
             }
-            if (node.package && constants_1.ANGULAR_PACKAGES_REGEXP.test(node.package.name)) {
-                const { name, version } = node.package;
+            if (constants_1.ANGULAR_PACKAGES_REGEXP.test(node.name)) {
+                const { name, version } = node;
                 const toBeInstalledMajorVersion = +manifest.version.split('.')[0];
                 const currentMajorVersion = +version.split('.')[0];
                 if (toBeInstalledMajorVersion - currentMajorVersion > 1) {
@@ -512,4 +517,13 @@ class UpdateCommandModule extends command_module_1.CommandModule {
     }
 }
 exports.default = UpdateCommandModule;
+async function readPackageManifest(manifestPath) {
+    try {
+        const content = await node_fs_1.promises.readFile(manifestPath, 'utf8');
+        return JSON.parse(content);
+    }
+    catch {
+        return undefined;
+    }
+}
 //# sourceMappingURL=cli.js.map

@@ -71,7 +71,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         configFiles: ['.yarnrc.yml', '.yarnrc.yaml'],
         getRegistryOptions: (registry) => ({ env: { YARN_NPM_REGISTRY_SERVER: registry } }),
         versionCommand: ['--version'],
-        listDependenciesCommand: ['list', '--depth=0', '--json', '--recursive=false'],
+        listDependenciesCommand: ['info', '--name-only', '--json'],
         getManifestCommand: ['npm', 'info', '--json'],
         viewCommandFieldArgFormatter: (fields) => ['--fields', fields.join(',')],
         outputParsers: {
@@ -151,10 +151,10 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         copyConfigFromProject: true,
         getRegistryOptions: (registry) => ({ args: ['--registry', registry] }),
         versionCommand: ['--version'],
-        listDependenciesCommand: ['pm', 'ls', '--json'],
+        listDependenciesCommand: ['pm', 'ls'],
         getManifestCommand: ['pm', 'view', '--json'],
         outputParsers: {
-            listDependencies: parsers_1.parseNpmLikeDependencies,
+            listDependencies: parsers_1.parseBunDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
             getError: parsers_1.parseNpmLikeError,
