@@ -78,6 +78,18 @@ const BUILT_IN_SCHEMATICS = {
         collection: '@schematics/angular',
         name: 'tailwind',
     },
+    '@vitest/browser-playwright': {
+        collection: '@schematics/angular',
+        name: 'vitest-browser',
+    },
+    '@vitest/browser-webdriverio': {
+        collection: '@schematics/angular',
+        name: 'vitest-browser',
+    },
+    '@vitest/browser-preview': {
+        collection: '@schematics/angular',
+        name: 'vitest-browser',
+    },
 };
 class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
@@ -223,6 +235,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                             ...options,
                             collection: builtInSchematic.collection,
                             schematicName: builtInSchematic.name,
+                            package: packageName,
                         });
                     }
                 }
