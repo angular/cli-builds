@@ -55,7 +55,6 @@ const package_managers_1 = require("../../package-managers");
 const color_1 = require("../../utilities/color");
 const environment_options_1 = require("../../utilities/environment-options");
 const error_1 = require("../../utilities/error");
-const package_tree_1 = require("../../utilities/package-tree");
 const cli_version_1 = require("./utilities/cli-version");
 const constants_1 = require("./utilities/constants");
 const git_1 = require("./utilities/git");
@@ -245,7 +244,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             packageNode = await readPackageManifest(path.join(packagePath, 'package.json'));
         }
         if (!packageNode) {
-            const jsonPath = (0, package_tree_1.findPackageJson)(this.context.root, packageName);
+            const jsonPath = findPackageJson(this.context.root, packageName);
             if (jsonPath) {
                 packageNode = await readPackageManifest(jsonPath);
                 if (!packagePath) {
@@ -521,6 +520,16 @@ async function readPackageManifest(manifestPath) {
     try {
         const content = await node_fs_1.promises.readFile(manifestPath, 'utf8');
         return JSON.parse(content);
+    }
+    catch {
+        return undefined;
+    }
+}
+function findPackageJson(workspaceDir, packageName) {
+    try {
+        const projectRequire = (0, node_module_1.createRequire)(path.join(workspaceDir, 'package.json'));
+        const packageJsonPath = projectRequire.resolve(`${packageName}/package.json`);
+        return packageJsonPath;
     }
     catch {
         return undefined;
