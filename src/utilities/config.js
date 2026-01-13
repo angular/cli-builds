@@ -102,12 +102,12 @@ function xdgConfigHomeOld(home) {
     const p = process.env['XDG_CONFIG_HOME'] || path.join(home, '.config', 'angular');
     return path.join(p, '.angular-config.json');
 }
-function projectFilePath(projectPath) {
+async function projectFilePath(projectPath) {
     // Find the configuration, either where specified, in the Angular CLI project
     // (if it's in node_modules) or from the current process.
-    return ((projectPath && (0, find_up_1.findUp)(configNames, projectPath)) ||
-        (0, find_up_1.findUp)(configNames, process.cwd()) ||
-        (0, find_up_1.findUp)(configNames, __dirname));
+    return ((projectPath && (await (0, find_up_1.findUp)(configNames, projectPath))) ||
+        (await (0, find_up_1.findUp)(configNames, process.cwd())) ||
+        (await (0, find_up_1.findUp)(configNames, __dirname)));
 }
 function globalFilePath() {
     const home = os.homedir();
@@ -175,7 +175,7 @@ async function getWorkspace(level) {
     if (cachedWorkspaces.has(level)) {
         return cachedWorkspaces.get(level);
     }
-    const configPath = level === 'local' ? projectFilePath() : globalFilePath();
+    const configPath = level === 'local' ? await projectFilePath() : globalFilePath();
     if (!configPath) {
         if (level === 'global') {
             // Unlike a local config, a global config is not mandatory.
@@ -204,7 +204,7 @@ async function getWorkspace(level) {
  * NB: This method is intended to be used only for `ng config`.
  */
 async function getWorkspaceRaw(level = 'local') {
-    let configPath = level === 'local' ? projectFilePath() : globalFilePath();
+    let configPath = level === 'local' ? await projectFilePath() : globalFilePath();
     if (!configPath) {
         if (level === 'global') {
             configPath = defaultGlobalFilePath;
