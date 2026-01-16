@@ -59,6 +59,7 @@ class PackageManager {
     #manifestCache = new Map();
     #metadataCache = new Map();
     #dependencyCache = null;
+    #version;
     /**
      * Creates a new `PackageManager` instance.
      * @param host A `Host` instance for interacting with the file system and running commands.
@@ -74,6 +75,7 @@ class PackageManager {
         if (this.options.dryRun && !this.options.logger) {
             throw new Error('A logger must be provided when dryRun is enabled.');
         }
+        this.#version = options.version;
     }
     /**
      * The name of the package manager's binary.
@@ -248,8 +250,12 @@ class PackageManager {
      * @returns A promise that resolves to the trimmed version string.
      */
     async getVersion() {
+        if (this.#version) {
+            return this.#version;
+        }
         const { stdout } = await this.#run(this.descriptor.versionCommand);
-        return stdout.trim();
+        this.#version = stdout.trim();
+        return this.#version;
     }
     /**
      * Gets the installed details of a package from the project's dependencies.

@@ -27,6 +27,12 @@ export interface PackageManagerOptions {
      * If not specified, the system's temporary directory will be used.
      */
     tempDirectory?: string;
+    /**
+     * The version of the package manager.
+     * If provided, the `getVersion` method will return this version
+     * instead of running the version command.
+     */
+    version?: string;
 }
 /**
  * A class that provides a high-level, package-manager-agnostic API for

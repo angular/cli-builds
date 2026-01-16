@@ -6,8 +6,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPackageManager = createPackageManager;
+const strict_1 = __importDefault(require("node:assert/strict"));
 const semver_1 = require("semver");
 const discovery_1 = require("./discovery");
 const host_1 = require("./host");
@@ -18,24 +22,20 @@ const package_manager_descriptor_1 = require("./package-manager-descriptor");
  */
 const DEFAULT_PACKAGE_MANAGER = 'npm';
 /**
- * Gets the version of yarn installed on the system.
+ * Gets the version of the package manager.
  * @param host A `Host` instance for running commands.
  * @param cwd The absolute path to the working directory.
+ * @param name The name of the package manager.
  * @param logger An optional logger instance.
- * @returns A promise that resolves to the yarn version string, or null if yarn is not installed.
+ * @returns A promise that resolves to the version string.
  */
-async function getYarnVersion(host, cwd, logger) {
-    logger?.debug(`Getting yarn version...`);
-    try {
-        const { stdout } = await host.runCommand('yarn', ['--version'], { cwd });
-        const version = stdout.trim();
-        logger?.debug(`Yarn version is '${version}'.`);
-        return version;
-    }
-    catch (e) {
-        logger?.debug('Failed to get yarn version.');
-        return null;
-    }
+async function getPackageManagerVersion(host, cwd, name, logger) {
+    const descriptor = package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS[name];
+    logger?.debug(`Getting ${name} version...`);
+    const { stdout } = await host.runCommand(descriptor.binary, descriptor.versionCommand, { cwd });
+    const version = stdout.trim();
+    logger?.debug(`${name} version is '${version}'.`);
+    return version;
 }
 /**
  * Determines the package manager to use for a given project.
@@ -71,17 +71,24 @@ async function determinePackageManager(host, cwd, configured, logger, dryRun) {
             logger?.debug(`No lockfile found. Using default package manager: '${DEFAULT_PACKAGE_MANAGER}'.`);
         }
     }
+    let version;
     if (name === 'yarn' && !dryRun) {
-        const version = await getYarnVersion(host, cwd, logger);
-        if (version && (0, semver_1.major)(version) < 2) {
-            name = 'yarn-classic';
-            logger?.debug(`Detected yarn classic. Using 'yarn-classic'.`);
+        strict_1.default.deepStrictEqual(package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS.yarn.versionCommand, package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS['yarn-classic'].versionCommand, 'Yarn and Yarn Classic version commands must match for detection logic to be valid.');
+        try {
+            version = await getPackageManagerVersion(host, cwd, name, logger);
+            if (version && (0, semver_1.major)(version) < 2) {
+                name = 'yarn-classic';
+                logger?.debug(`Detected yarn classic. Using 'yarn-classic'.`);
+            }
+        }
+        catch {
+            logger?.debug('Failed to get yarn version.');
         }
     }
     else if (name === 'yarn') {
         logger?.debug('Skipping yarn version check due to dry run. Assuming modern yarn.');
     }
-    return { name, source };
+    return { name, source, version };
 }
 /**
  * Creates a new `PackageManager` instance for a given project.
@@ -95,20 +102,17 @@ async function determinePackageManager(host, cwd, configured, logger, dryRun) {
 async function createPackageManager(options) {
     const { cwd, configuredPackageManager, logger, dryRun, tempDirectory } = options;
     const host = host_1.NodeJS_HOST;
-    const { name, source } = await determinePackageManager(host, cwd, configuredPackageManager, logger, dryRun);
+    const result = await determinePackageManager(host, cwd, configuredPackageManager, logger, dryRun);
+    const { name, source } = result;
+    let { version } = result;
     const descriptor = package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS[name];
     if (!descriptor) {
         throw new Error(`Unsupported package manager: "${name}"`);
     }
-    const packageManager = new package_manager_1.PackageManager(host, cwd, descriptor, {
-        dryRun,
-        logger,
-        tempDirectory,
-    });
     // Do not verify if the package manager is installed during a dry run.
-    if (!dryRun) {
+    if (!dryRun && !version) {
         try {
-            await packageManager.getVersion();
+            version = await getPackageManagerVersion(host, cwd, name, logger);
         }
         catch {
             if (source === 'default') {
@@ -121,6 +125,12 @@ async function createPackageManager(options) {
             }
         }
     }
+    const packageManager = new package_manager_1.PackageManager(host, cwd, descriptor, {
+        dryRun,
+        logger,
+        tempDirectory,
+        version,
+    });
     logger?.debug(`Successfully created PackageManager for '${name}'.`);
     return packageManager;
 }
