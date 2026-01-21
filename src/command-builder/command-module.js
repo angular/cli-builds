@@ -84,16 +84,9 @@ const analytics_collector_1 = require("../analytics/analytics-collector");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
 const completion_1 = require("../utilities/completion");
 const memoize_1 = require("../utilities/memoize");
+const definitions_1 = require("./definitions");
+Object.defineProperty(exports, "CommandScope", { enumerable: true, get: function () { return definitions_1.CommandScope; } });
 const json_schema_1 = require("./utilities/json-schema");
-var CommandScope;
-(function (CommandScope) {
-    /** Command can only run inside an Angular workspace. */
-    CommandScope[CommandScope["In"] = 0] = "In";
-    /** Command can only run outside an Angular workspace. */
-    CommandScope[CommandScope["Out"] = 1] = "Out";
-    /** Command can run inside and outside an Angular workspace. */
-    CommandScope[CommandScope["Both"] = 2] = "Both";
-})(CommandScope || (exports.CommandScope = CommandScope = {}));
 let CommandModule = (() => {
     let _instanceExtraInitializers = [];
     let _getAnalytics_decorators;
@@ -106,7 +99,7 @@ let CommandModule = (() => {
         }
         context = __runInitializers(this, _instanceExtraInitializers);
         shouldReportAnalytics = true;
-        scope = CommandScope.Both;
+        scope = definitions_1.CommandScope.Both;
         optionsWithAnalytics = new Map();
         constructor(context) {
             this.context = context;
