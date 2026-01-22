@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { logging } from '@angular-devkit/core';
-import { PackageManager } from '../../../package-managers';
+import type { PackageManager } from '../../../package-managers';
 /**
  * Coerces a string into a valid semantic version number.
  * @param version The version string to coerce.

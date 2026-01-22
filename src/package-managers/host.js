@@ -26,10 +26,11 @@ const error_1 = require("./error");
 exports.NodeJS_HOST = {
     stat: promises_1.stat,
     readdir: promises_1.readdir,
+    mkdir: promises_1.mkdir,
     readFile: (path) => (0, promises_1.readFile)(path, { encoding: 'utf8' }),
     copyFile: (src, dest) => (0, promises_1.copyFile)(src, dest, node_fs_1.constants.COPYFILE_FICLONE),
     writeFile: promises_1.writeFile,
-    createTempDirectory: (baseDir) => (0, promises_1.mkdtemp)((0, node_path_1.join)(baseDir ?? (0, node_os_1.tmpdir)(), 'angular-cli-')),
+    createTempDirectory: (baseDir) => (0, promises_1.mkdtemp)((0, node_path_1.join)(baseDir ?? (0, node_os_1.tmpdir)(), 'angular-cli-tmp-packages-')),
     deleteDirectory: (path) => (0, promises_1.rm)(path, { recursive: true, force: true }),
     runCommand: async (command, args, options = {}) => {
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;

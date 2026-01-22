@@ -55,7 +55,6 @@ const package_managers_1 = require("../../package-managers");
 const error_1 = require("../../utilities/error");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
-const utilities_1 = require("../cache/utilities");
 class CommandError extends Error {
 }
 /**
@@ -172,7 +171,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const tasks = new listr2_1.Listr([
             {
                 title: 'Determining Package Manager',
-                task: (context, task) => this.determinePackageManagerTask(context, task),
+                task: (_context, task) => (task.output = `Using package manager: ${listr2_1.color.dim(this.context.packageManager.name)}`),
                 rendererOptions: { persistentOutput: true },
             },
             {
@@ -263,37 +262,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             throw e;
         }
     }
-    async determinePackageManagerTask(context, task) {
-        let tempDirectory;
-        const tempOptions = ['node_modules'];
-        const cacheConfig = (0, utilities_1.getCacheConfig)(this.context.workspace);
-        if (cacheConfig.enabled) {
-            const cachePath = (0, node_path_1.resolve)(this.context.root, cacheConfig.path);
-            if (!(0, node_path_1.relative)(this.context.root, cachePath).startsWith('..')) {
-                tempOptions.push(cachePath);
-            }
-        }
-        for (const tempOption of tempOptions) {
-            try {
-                const directory = (0, node_path_1.resolve)(this.context.root, tempOption);
-                if ((await promises_1.default.stat(directory)).isDirectory()) {
-                    tempDirectory = directory;
-                    break;
-                }
-            }
-            catch { }
-        }
-        context.packageManager = await (0, package_managers_1.createPackageManager)({
-            cwd: this.context.root,
-            logger: this.context.logger,
-            dryRun: context.dryRun,
-            tempDirectory,
-        });
-        task.output = `Using package manager: ${listr2_1.color.dim(context.packageManager.name)}`;
-    }
     async findCompatiblePackageVersionTask(context, task, options) {
         const { registry, verbose } = options;
-        const { packageManager, packageIdentifier } = context;
+        const { packageIdentifier } = context;
+        const { packageManager } = this.context;
         const packageName = packageIdentifier.name;
         (0, node_assert_1.default)(packageName, 'Registry package identifiers should always have a name.');
         const rejectionReasons = [];
@@ -370,7 +342,8 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
     }
     async #findCompatibleVersion(context, versions, options) {
-        const { packageManager, packageIdentifier } = context;
+        const { packageIdentifier } = context;
+        const { packageManager } = this.context;
         const { registry, verbose, rejectionReasons } = options;
         const packageName = packageIdentifier.name;
         (0, node_assert_1.default)(packageName, 'Package name must be defined.');
@@ -429,7 +402,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { registry } = options;
         let manifest;
         try {
-            manifest = await context.packageManager.getManifest(context.packageIdentifier.toString(), {
+            manifest = await this.context.packageManager.getManifest(context.packageIdentifier.toString(), {
                 registry,
             });
         }
@@ -470,7 +443,8 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
     }
     async installPackageTask(context, task, options) {
         const { registry } = options;
-        const { packageManager, packageIdentifier, savePackage } = context;
+        const { packageIdentifier, savePackage } = context;
+        const { packageManager } = this.context;
         // Only show if installation will actually occur
         task.title = 'Installing package';
         try {

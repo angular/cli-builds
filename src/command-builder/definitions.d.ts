@@ -7,8 +7,8 @@
  */
 import { logging } from '@angular-devkit/core';
 import type { Argv, CamelCaseKey } from 'yargs';
+import type { PackageManager } from '../package-managers/package-manager';
 import { AngularWorkspace } from '../utilities/config';
-import { PackageManagerUtils } from '../utilities/package-manager';
 export declare enum CommandScope {
     /** Command can only run inside an Angular workspace. */
     In = 0,
@@ -23,7 +23,7 @@ export interface CommandContext {
     workspace?: AngularWorkspace;
     globalConfiguration: AngularWorkspace;
     logger: logging.Logger;
-    packageManager: PackageManagerUtils;
+    packageManager: PackageManager;
     yargsInstance: Argv<{}>;
     /** Arguments parsed in free-from without parser configuration. */
     args: {

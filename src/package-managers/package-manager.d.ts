@@ -23,8 +23,7 @@ export interface PackageManagerOptions {
     /** A logger instance for debugging and dry run output. */
     logger?: Logger;
     /**
-     * The path to use as the base for temporary directories.
-     * If not specified, the system's temporary directory will be used.
+     * The base path to use for temporary directories.
      */
     tempDirectory?: string;
     /**
@@ -93,7 +92,6 @@ export declare class PackageManager {
     }): Promise<void>;
     /**
      * Gets the version of the package manager binary.
-     * @returns A promise that resolves to the trimmed version string.
      */
     getVersion(): Promise<string>;
     /**
@@ -154,6 +152,7 @@ export declare class PackageManager {
         registry?: string;
         bypassCache?: boolean;
     }): Promise<PackageManifest | null>;
+    private getTemporaryDirectory;
     /**
      * Acquires a package by installing it into a temporary directory. The caller is
      * responsible for managing the lifecycle of the temporary directory by calling

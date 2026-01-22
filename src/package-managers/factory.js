@@ -50,11 +50,10 @@ async function getPackageManagerVersion(host, cwd, name, logger) {
  * @param logger An optional logger instance.
  * @returns A promise that resolves to an object containing the name and source of the package manager.
  */
-async function determinePackageManager(host, cwd, configured, logger, dryRun) {
-    let name;
+async function determinePackageManager(host, cwd, configured = [], logger, dryRun) {
+    let [name, version] = configured;
     let source;
-    if (configured) {
-        name = configured;
+    if (name) {
         source = 'configured';
         logger?.debug(`Using configured package manager: '${name}'.`);
     }
@@ -71,11 +70,10 @@ async function determinePackageManager(host, cwd, configured, logger, dryRun) {
             logger?.debug(`No lockfile found. Using default package manager: '${DEFAULT_PACKAGE_MANAGER}'.`);
         }
     }
-    let version;
     if (name === 'yarn' && !dryRun) {
         strict_1.default.deepStrictEqual(package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS.yarn.versionCommand, package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS['yarn-classic'].versionCommand, 'Yarn and Yarn Classic version commands must match for detection logic to be valid.');
         try {
-            version = await getPackageManagerVersion(host, cwd, name, logger);
+            version ??= await getPackageManagerVersion(host, cwd, name, logger);
             if (version && (0, semver_1.major)(version) < 2) {
                 name = 'yarn-classic';
                 logger?.debug(`Detected yarn classic. Using 'yarn-classic'.`);

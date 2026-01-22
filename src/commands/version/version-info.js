@@ -35,7 +35,7 @@ const PACKAGE_PATTERNS = [
  * Gathers all the version information from the environment and workspace.
  * @returns An object containing all the version information.
  */
-function gatherVersionInfo(context) {
+async function gatherVersionInfo(context) {
     // Trailing slash is used to allow the path to be treated as a directory
     const workspaceRequire = (0, node_module_1.createRequire)(context.root + '/');
     let workspacePackage;
@@ -78,7 +78,7 @@ function gatherVersionInfo(context) {
             },
             packageManager: {
                 name: context.packageManager.name,
-                version: context.packageManager.version,
+                version: await context.packageManager.getVersion(),
             },
         },
         packages,

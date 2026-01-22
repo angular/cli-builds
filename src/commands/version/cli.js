@@ -49,7 +49,7 @@ class VersionCommandModule extends command_module_1.CommandModule {
      */
     async run(options) {
         const { logger } = this.context;
-        const versionInfo = (0, version_info_1.gatherVersionInfo)(this.context);
+        const versionInfo = await (0, version_info_1.gatherVersionInfo)(this.context);
         if (options.json) {
             // eslint-disable-next-line no-console
             console.log(JSON.stringify(versionInfo, null, 2));

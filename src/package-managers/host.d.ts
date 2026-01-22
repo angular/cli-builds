@@ -11,6 +11,15 @@ import { Stats } from 'node:fs';
  */
 export interface Host {
     /**
+     * Creates a directory.
+     * @param path The path to the directory.
+     * @param options Options for the directory creation.
+     * @returns A promise that resolves when the directory is created.
+     */
+    mkdir(path: string, options?: {
+        recursive?: boolean;
+    }): Promise<string | undefined>;
+    /**
      * Gets the stats of a file or directory.
      * @param path The path to the file or directory.
      * @returns A promise that resolves to the stats.

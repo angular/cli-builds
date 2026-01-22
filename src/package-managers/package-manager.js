@@ -247,7 +247,6 @@ class PackageManager {
     }
     /**
      * Gets the version of the package manager binary.
-     * @returns A promise that resolves to the trimmed version string.
      */
     async getVersion() {
         if (this.#version) {
@@ -409,6 +408,29 @@ class PackageManager {
                 throw new Error(`Unsupported package specifier type: ${type}`);
         }
     }
+    async getTemporaryDirectory() {
+        const { tempDirectory } = this.options;
+        if (tempDirectory && !(0, node_path_1.relative)(this.cwd, tempDirectory).startsWith('..')) {
+            try {
+                await this.host.stat(tempDirectory);
+            }
+            catch {
+                // If the cache directory doesn't exist, create it.
+                await this.host.mkdir(tempDirectory, { recursive: true });
+            }
+            return tempDirectory;
+        }
+        const tempOptions = ['node_modules'];
+        for (const tempOption of tempOptions) {
+            try {
+                const directory = (0, node_path_1.resolve)(this.cwd, tempOption);
+                if ((await this.host.stat(directory)).isDirectory()) {
+                    return directory;
+                }
+            }
+            catch { }
+        }
+    }
     /**
      * Acquires a package by installing it into a temporary directory. The caller is
      * responsible for managing the lifecycle of the temporary directory by calling
@@ -420,7 +442,7 @@ class PackageManager {
      *   and a cleanup function.
      */
     async acquireTempPackage(specifier, options = {}) {
-        const workingDirectory = await this.host.createTempDirectory(this.options.tempDirectory);
+        const workingDirectory = await this.host.createTempDirectory(await this.getTemporaryDirectory());
         const cleanup = () => this.host.deleteDirectory(workingDirectory);
         // Some package managers, like yarn classic, do not write a package.json when adding a package.
         // This can cause issues with subsequent `require.resolve` calls.

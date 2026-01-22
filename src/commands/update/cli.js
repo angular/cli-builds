@@ -51,7 +51,6 @@ const path = __importStar(require("node:path"));
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const command_module_1 = require("../../command-builder/command-module");
 const schematic_engine_host_1 = require("../../command-builder/utilities/schematic-engine-host");
-const package_managers_1 = require("../../package-managers");
 const color_1 = require("../../utilities/color");
 const environment_options_1 = require("../../utilities/environment-options");
 const error_1 = require("../../utilities/error");
@@ -153,13 +152,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             .strict();
     }
     async run(options) {
-        const { logger } = this.context;
-        // Instantiate the package manager
-        const packageManager = await (0, package_managers_1.createPackageManager)({
-            cwd: this.context.root,
-            logger,
-            configuredPackageManager: this.context.packageManager.name,
-        });
+        const { logger, packageManager } = this.context;
         // Check if the current installed CLI version is older than the latest compatible version.
         // Skip when running `ng update` without a package name as this will not trigger an actual update.
         if (!environment_options_1.disableVersionCheck && options.packages?.length) {

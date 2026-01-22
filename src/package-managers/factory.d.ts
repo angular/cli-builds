@@ -9,6 +9,10 @@ import { Logger } from './logger';
 import { PackageManager } from './package-manager';
 import { PackageManagerName } from './package-manager-descriptor';
 /**
+ * Information about the package manager to use for a given project.
+ */
+export type ConfiguredPackageManagerInfo = [name?: PackageManagerName, version?: string];
+/**
  * Creates a new `PackageManager` instance for a given project.
  *
  * This function is the main entry point for the package manager abstraction.
@@ -19,7 +23,7 @@ import { PackageManagerName } from './package-manager-descriptor';
  */
 export declare function createPackageManager(options: {
     cwd: string;
-    configuredPackageManager?: PackageManagerName;
+    configuredPackageManager?: ConfiguredPackageManagerInfo;
     logger?: Logger;
     dryRun?: boolean;
     tempDirectory?: string;

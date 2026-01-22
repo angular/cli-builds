@@ -5,6 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+import { CommandContext } from '../../command-builder/definitions';
 /**
  * An object containing version information for a single package.
  */
@@ -42,10 +43,4 @@ export interface VersionInfo {
  * Gathers all the version information from the environment and workspace.
  * @returns An object containing all the version information.
  */
-export declare function gatherVersionInfo(context: {
-    packageManager: {
-        name: string;
-        version: string | undefined;
-    };
-    root: string;
-}): VersionInfo;
+export declare function gatherVersionInfo(context: CommandContext): Promise<VersionInfo>;
