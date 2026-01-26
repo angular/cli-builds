@@ -74,6 +74,10 @@ export interface PackageManifest {
     dependencies?: Record<string, string>;
     /** A mapping of peer dependencies. */
     peerDependencies?: Record<string, string>;
+    /** A mapping of peer dependency metadata */
+    peerDependenciesMeta?: Record<string, {
+        optional?: boolean;
+    }>;
     /** A mapping of development dependencies. */
     devDependencies?: Record<string, string>;
     /** The URL to the package's homepage. */
