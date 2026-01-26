@@ -13,8 +13,9 @@ import { type AnyMcpToolDeclaration } from './tools/tool-registry';
  * These tools are considered experimental and may have limitations.
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
-    project: import("zod").ZodOptional<import("zod").ZodString>;
     configuration: import("zod").ZodOptional<import("zod").ZodString>;
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
+    project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     status: import("zod").ZodEnum<{
         success: "success";
@@ -23,6 +24,7 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     path: import("zod").ZodOptional<import("zod").ZodString>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
     project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     status: import("zod").ZodEnum<{
@@ -31,16 +33,19 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     }>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
-    directories: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<{
         [x: string]: string;
     }>>>;
+    path: import("zod").ZodOptional<import("zod").ZodString>;
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
+    project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
-    project: import("zod").ZodOptional<import("zod").ZodString>;
     filter: import("zod").ZodOptional<import("zod").ZodString>;
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
+    project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     status: import("zod").ZodEnum<{
         success: "success";
@@ -48,25 +53,27 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     }>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, ...(import("./tools/tool-registry").McpToolDeclaration<{
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
     project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     message: import("zod").ZodString;
     address: import("zod").ZodOptional<import("zod").ZodString>;
 }> | import("./tools/tool-registry").McpToolDeclaration<{
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
     project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     message: import("zod").ZodString;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }> | import("./tools/tool-registry").McpToolDeclaration<{
-    project: import("zod").ZodOptional<import("zod").ZodString>;
     timeout: import("zod").ZodDefault<import("zod").ZodNumber>;
+    workspace: import("zod").ZodOptional<import("zod").ZodString>;
+    project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
     status: import("zod").ZodEnum<{
         success: "success";
         timeout: "timeout";
         failure: "failure";
         unknown: "unknown";
-        no_devserver_found: "no_devserver_found";
     }>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>)[]];
@@ -77,8 +84,9 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
  */
 export declare const EXPERIMENTAL_TOOL_GROUPS: {
     all: readonly [import("./tools/tool-registry").McpToolDeclaration<{
-        project: import("zod").ZodOptional<import("zod").ZodString>;
         configuration: import("zod").ZodOptional<import("zod").ZodString>;
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
+        project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         status: import("zod").ZodEnum<{
             success: "success";
@@ -87,6 +95,7 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
         path: import("zod").ZodOptional<import("zod").ZodString>;
     }>, import("./tools/tool-registry").McpToolDeclaration<{
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         status: import("zod").ZodEnum<{
@@ -95,16 +104,19 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
         }>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>, import("./tools/tool-registry").McpToolDeclaration<{
-        directories: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
         transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<{
             [x: string]: string;
         }>>>;
+        path: import("zod").ZodOptional<import("zod").ZodString>;
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
+        project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>, import("./tools/tool-registry").McpToolDeclaration<{
-        project: import("zod").ZodOptional<import("zod").ZodString>;
         filter: import("zod").ZodOptional<import("zod").ZodString>;
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
+        project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         status: import("zod").ZodEnum<{
             success: "success";
@@ -112,48 +124,52 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
         }>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>, ...(import("./tools/tool-registry").McpToolDeclaration<{
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         message: import("zod").ZodString;
         address: import("zod").ZodOptional<import("zod").ZodString>;
     }> | import("./tools/tool-registry").McpToolDeclaration<{
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         message: import("zod").ZodString;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }> | import("./tools/tool-registry").McpToolDeclaration<{
-        project: import("zod").ZodOptional<import("zod").ZodString>;
         timeout: import("zod").ZodDefault<import("zod").ZodNumber>;
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
+        project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         status: import("zod").ZodEnum<{
             success: "success";
             timeout: "timeout";
             failure: "failure";
             unknown: "unknown";
-            no_devserver_found: "no_devserver_found";
         }>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>)[]];
     devserver: (import("./tools/tool-registry").McpToolDeclaration<{
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         message: import("zod").ZodString;
         address: import("zod").ZodOptional<import("zod").ZodString>;
     }> | import("./tools/tool-registry").McpToolDeclaration<{
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         message: import("zod").ZodString;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }> | import("./tools/tool-registry").McpToolDeclaration<{
-        project: import("zod").ZodOptional<import("zod").ZodString>;
         timeout: import("zod").ZodDefault<import("zod").ZodNumber>;
+        workspace: import("zod").ZodOptional<import("zod").ZodString>;
+        project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
         status: import("zod").ZodEnum<{
             success: "success";
             timeout: "timeout";
             failure: "failure";
             unknown: "unknown";
-            no_devserver_found: "no_devserver_found";
         }>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>)[];

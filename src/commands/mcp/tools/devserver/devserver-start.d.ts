@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 declare const devserverStartToolInputSchema: z.ZodObject<{
+    workspace: z.ZodOptional<z.ZodString>;
     project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type DevserverStartToolInput = z.infer<typeof devserverStartToolInputSchema>;
@@ -17,14 +18,6 @@ declare const devserverStartToolOutputSchema: z.ZodObject<{
 }, z.core.$strip>;
 export type DevserverStartToolOutput = z.infer<typeof devserverStartToolOutputSchema>;
 export declare function startDevserver(input: DevserverStartToolInput, context: McpToolContext): Promise<{
-    content: {
-        type: "text";
-        text: string;
-    }[];
-    structuredContent: {
-        message: string[];
-    };
-} | {
     content: {
         type: "text";
         text: string;

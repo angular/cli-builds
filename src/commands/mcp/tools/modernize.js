@@ -9,9 +9,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MODERNIZE_TOOL = void 0;
 exports.runModernization = runModernization;
-const path_1 = require("path");
 const zod_1 = require("zod");
+const shared_options_1 = require("../shared-options");
 const utils_1 = require("../utils");
+const workspace_utils_1 = require("../workspace-utils");
 const tool_registry_1 = require("./tool-registry");
 const TRANSFORMATIONS = [
     {
@@ -58,14 +59,15 @@ const TRANSFORMATIONS = [
     },
 ];
 const modernizeInputSchema = zod_1.z.object({
-    directories: zod_1.z
-        .array(zod_1.z.string())
-        .optional()
-        .describe('A list of paths to directories with files to modernize.'),
+    ...shared_options_1.workspaceAndProjectOptions,
     transformations: zod_1.z
         .array(zod_1.z.enum(TRANSFORMATIONS.map((t) => t.name)))
         .optional()
         .describe('A list of specific transformations to apply.'),
+    path: zod_1.z
+        .string()
+        .optional()
+        .describe('The path to the file or directory to modernize, relative to the workspace root.'),
 });
 const modernizeOutputSchema = zod_1.z.object({
     instructions: zod_1.z
@@ -74,9 +76,8 @@ const modernizeOutputSchema = zod_1.z.object({
         .describe('Migration summary, as well as any instructions that need to be performed to complete the migrations.'),
     logs: zod_1.z.array(zod_1.z.string()).optional().describe('All logs from all executed commands.'),
 });
-async function runModernization(input, host) {
+async function runModernization(input, context) {
     const transformationNames = input.transformations ?? [];
-    const directories = input.directories ?? [];
     if (transformationNames.length === 0) {
         return (0, utils_1.createStructuredContentOutput)({
             instructions: [
@@ -85,22 +86,12 @@ async function runModernization(input, host) {
             ],
         });
     }
-    if (directories.length === 0) {
-        return (0, utils_1.createStructuredContentOutput)({
-            instructions: [
-                'Provide this tool with a list of directory paths in your workspace ' +
-                    'to run the modernization on.',
-            ],
-        });
-    }
-    const firstDir = directories[0];
-    const executionDir = (await host.stat(firstDir)).isDirectory() ? firstDir : (0, path_1.dirname)(firstDir);
-    const angularProjectRoot = (0, utils_1.findAngularJsonDir)(executionDir, host);
-    if (!angularProjectRoot) {
-        return (0, utils_1.createStructuredContentOutput)({
-            instructions: ['Could not find an angular.json file in the current or parent directories.'],
-        });
-    }
+    const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
+        host: context.host,
+        workspacePathInput: input.workspace,
+        projectNameInput: input.project,
+        mcpWorkspace: context.workspace,
+    });
     const instructions = [];
     let logs = [];
     const transformationsToRun = TRANSFORMATIONS.filter((t) => transformationNames.includes(t.name));
@@ -115,20 +106,20 @@ async function runModernization(input, host) {
         }
         else {
             // Simple case, run the command.
-            for (const dir of directories) {
-                const relativePath = (0, path_1.relative)(angularProjectRoot, dir) || '.';
-                const command = 'ng';
-                const args = ['generate', `@angular/core:${transformation.name}`, '--path', relativePath];
-                try {
-                    logs = (await host.runCommand(command, args, {
-                        cwd: angularProjectRoot,
-                    })).logs;
-                    instructions.push(`Migration ${transformation.name} on directory ${relativePath} completed successfully.`);
-                }
-                catch (e) {
-                    logs = (0, utils_1.getCommandErrorLogs)(e);
-                    instructions.push(`Migration ${transformation.name} on directory ${relativePath} failed.`);
-                }
+            const command = 'ng';
+            const args = ['generate', `@angular/core:${transformation.name}`, '--project', projectName];
+            if (input.path) {
+                args.push('--path', input.path);
+            }
+            try {
+                logs = (await context.host.runCommand(command, args, {
+                    cwd: workspacePath,
+                })).logs;
+                instructions.push(`Migration ${transformation.name} completed successfully.`);
+            }
+            catch (e) {
+                logs = (0, utils_1.getCommandErrorLogs)(e);
+                instructions.push(`Migration ${transformation.name} failed.`);
             }
         }
     }
@@ -169,6 +160,6 @@ ${TRANSFORMATIONS.map((t) => `  * ${t.name}: ${t.description}`).join('\n')}
     outputSchema: modernizeOutputSchema.shape,
     isLocalOnly: true,
     isReadOnly: false,
-    factory: (context) => (input) => runModernization(input, context.host),
+    factory: (context) => (input) => runModernization(input, context),
 });
 //# sourceMappingURL=modernize.js.map

@@ -6,13 +6,14 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { type Host } from '../host';
-import { type McpToolDeclaration } from './tool-registry';
+import { type McpToolContext, type McpToolDeclaration } from './tool-registry';
 declare const modernizeInputSchema: z.ZodObject<{
-    directories: z.ZodOptional<z.ZodArray<z.ZodString>>;
     transformations: z.ZodOptional<z.ZodArray<z.ZodEnum<{
         [x: string]: string;
     }>>>;
+    path: z.ZodOptional<z.ZodString>;
+    workspace: z.ZodOptional<z.ZodString>;
+    project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 declare const modernizeOutputSchema: z.ZodObject<{
     instructions: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -20,7 +21,7 @@ declare const modernizeOutputSchema: z.ZodObject<{
 }, z.core.$strip>;
 export type ModernizeInput = z.infer<typeof modernizeInputSchema>;
 export type ModernizeOutput = z.infer<typeof modernizeOutputSchema>;
-export declare function runModernization(input: ModernizeInput, host: Host): Promise<{
+export declare function runModernization(input: ModernizeInput, context: McpToolContext): Promise<{
     content: {
         type: "text";
         text: string;

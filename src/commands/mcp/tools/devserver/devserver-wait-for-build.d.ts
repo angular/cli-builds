@@ -12,8 +12,9 @@ import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
  */
 export declare const WATCH_DELAY = 1000;
 declare const devserverWaitForBuildToolInputSchema: z.ZodObject<{
-    project: z.ZodOptional<z.ZodString>;
     timeout: z.ZodDefault<z.ZodNumber>;
+    workspace: z.ZodOptional<z.ZodString>;
+    project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type DevserverWaitForBuildToolInput = z.infer<typeof devserverWaitForBuildToolInputSchema>;
 declare const devserverWaitForBuildToolOutputSchema: z.ZodObject<{
@@ -22,7 +23,6 @@ declare const devserverWaitForBuildToolOutputSchema: z.ZodObject<{
         timeout: "timeout";
         failure: "failure";
         unknown: "unknown";
-        no_devserver_found: "no_devserver_found";
     }>;
     logs: z.ZodOptional<z.ZodArray<z.ZodString>>;
 }, z.core.$strip>;
@@ -33,16 +33,7 @@ export declare function waitForDevserverBuild(input: DevserverWaitForBuildToolIn
         text: string;
     }[];
     structuredContent: {
-        status: string;
-        logs: undefined;
-    };
-} | {
-    content: {
-        type: "text";
-        text: string;
-    }[];
-    structuredContent: {
-        status: "success" | "timeout" | "failure" | "unknown" | "no_devserver_found";
+        status: "success" | "timeout" | "failure" | "unknown";
         logs?: string[] | undefined;
     };
 }>;

@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { z } from 'zod';
-import { type Host } from '../host';
-import { type McpToolDeclaration } from './tool-registry';
+import { type McpToolContext, type McpToolDeclaration } from './tool-registry';
 declare const buildToolInputSchema: z.ZodObject<{
-    project: z.ZodOptional<z.ZodString>;
     configuration: z.ZodOptional<z.ZodString>;
+    workspace: z.ZodOptional<z.ZodString>;
+    project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type BuildToolInput = z.infer<typeof buildToolInputSchema>;
 declare const buildToolOutputSchema: z.ZodObject<{
@@ -22,7 +22,7 @@ declare const buildToolOutputSchema: z.ZodObject<{
     path: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type BuildToolOutput = z.infer<typeof buildToolOutputSchema>;
-export declare function runBuild(input: BuildToolInput, host: Host): Promise<{
+export declare function runBuild(input: BuildToolInput, context: McpToolContext): Promise<{
     content: {
         type: "text";
         text: string;

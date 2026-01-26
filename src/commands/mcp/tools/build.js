@@ -10,15 +10,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BUILD_TOOL = void 0;
 exports.runBuild = runBuild;
 const zod_1 = require("zod");
+const shared_options_1 = require("../shared-options");
 const utils_1 = require("../utils");
+const workspace_utils_1 = require("../workspace-utils");
 const tool_registry_1 = require("./tool-registry");
 const DEFAULT_CONFIGURATION = 'development';
 const buildStatusSchema = zod_1.z.enum(['success', 'failure']);
 const buildToolInputSchema = zod_1.z.object({
-    project: zod_1.z
-        .string()
-        .optional()
-        .describe('Which project to build in a monorepo context. If not provided, builds the default project.'),
+    ...shared_options_1.workspaceAndProjectOptions,
     configuration: zod_1.z
         .string()
         .optional()
@@ -29,18 +28,20 @@ const buildToolOutputSchema = zod_1.z.object({
     logs: zod_1.z.array(zod_1.z.string()).optional().describe('Output logs from `ng build`.'),
     path: zod_1.z.string().optional().describe('The output location for the build, if successful.'),
 });
-async function runBuild(input, host) {
+async function runBuild(input, context) {
+    const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
+        host: context.host,
+        workspacePathInput: input.workspace,
+        projectNameInput: input.project,
+        mcpWorkspace: context.workspace,
+    });
     // Build "ng"'s command line.
-    const args = ['build'];
-    if (input.project) {
-        args.push(input.project);
-    }
-    args.push('-c', input.configuration ?? DEFAULT_CONFIGURATION);
+    const args = ['build', projectName, '-c', input.configuration ?? DEFAULT_CONFIGURATION];
     let status = 'success';
     let logs = [];
     let outputPath;
     try {
-        logs = (await host.runCommand('ng', args)).logs;
+        logs = (await context.host.runCommand('ng', args, { cwd: workspacePath })).logs;
     }
     catch (e) {
         status = 'failure';
@@ -83,6 +84,6 @@ Perform a one-off, non-watched build using "ng build". Use this tool whenever th
     isLocalOnly: true,
     inputSchema: buildToolInputSchema.shape,
     outputSchema: buildToolOutputSchema.shape,
-    factory: (context) => (input) => runBuild(input, context.host),
+    factory: (context) => (input) => runBuild(input, context),
 });
 //# sourceMappingURL=build.js.map

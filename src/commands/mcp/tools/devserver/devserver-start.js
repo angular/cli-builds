@@ -11,13 +11,12 @@ exports.DEVSERVER_START_TOOL = void 0;
 exports.startDevserver = startDevserver;
 const zod_1 = require("zod");
 const devserver_1 = require("../../devserver");
+const shared_options_1 = require("../../shared-options");
 const utils_1 = require("../../utils");
+const workspace_utils_1 = require("../../workspace-utils");
 const tool_registry_1 = require("../tool-registry");
 const devserverStartToolInputSchema = zod_1.z.object({
-    project: zod_1.z
-        .string()
-        .optional()
-        .describe('Which project to serve in a monorepo context. If not provided, serves the default project.'),
+    ...shared_options_1.workspaceAndProjectOptions,
 });
 const devserverStartToolOutputSchema = zod_1.z.object({
     message: zod_1.z.string().describe('A message indicating the result of the operation.'),
@@ -30,13 +29,14 @@ function localhostAddress(port) {
     return `http://localhost:${port}/`;
 }
 async function startDevserver(input, context) {
-    const projectName = input.project ?? (0, utils_1.getDefaultProjectName)(context);
-    if (!projectName) {
-        return (0, utils_1.createStructuredContentOutput)({
-            message: ['Project name not provided, and no default project found.'],
-        });
-    }
-    let devserver = context.devservers.get(projectName);
+    const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
+        host: context.host,
+        workspacePathInput: input.workspace,
+        projectNameInput: input.project,
+        mcpWorkspace: context.workspace,
+    });
+    const key = (0, devserver_1.getDevserverKey)(workspacePath, projectName);
+    let devserver = context.devservers.get(key);
     if (devserver) {
         return (0, utils_1.createStructuredContentOutput)({
             message: `Development server for project '${projectName}' is already running.`,
@@ -44,9 +44,14 @@ async function startDevserver(input, context) {
         });
     }
     const port = await context.host.getAvailablePort();
-    devserver = new devserver_1.LocalDevserver({ host: context.host, project: input.project, port });
+    devserver = new devserver_1.LocalDevserver({
+        host: context.host,
+        project: projectName,
+        port,
+        workspacePath,
+    });
     devserver.start();
-    context.devservers.set(projectName, devserver);
+    context.devservers.set(key, devserver);
     return (0, utils_1.createStructuredContentOutput)({
         message: `Development server for project '${projectName}' started and watching for workspace changes.`,
         address: localhostAddress(port),

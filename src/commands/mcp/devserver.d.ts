@@ -40,6 +40,14 @@ export interface Devserver {
      * `ng serve` port to use.
      */
     port: number;
+    /**
+     * The workspace path for this server.
+     */
+    workspacePath: string;
+    /**
+     * The project name for this server.
+     */
+    project: string;
 }
 /**
  * A local Angular development server managed by the MCP server.
@@ -47,16 +55,18 @@ export interface Devserver {
 export declare class LocalDevserver implements Devserver {
     readonly host: Host;
     readonly port: number;
-    readonly project?: string;
+    readonly workspacePath: string;
+    readonly project: string;
     private devserverProcess;
     private serverLogs;
     private buildInProgress;
     private latestBuildLogStartIndex?;
     private latestBuildStatus;
-    constructor({ host, port, project }: {
+    constructor({ host, port, workspacePath, project, }: {
         host: Host;
         port: number;
-        project?: string;
+        workspacePath: string;
+        project: string;
     });
     start(): void;
     private addLog;
@@ -68,3 +78,8 @@ export declare class LocalDevserver implements Devserver {
     };
     isBuilding(): boolean;
 }
+export declare function getDevserverKey(workspacePath: string, projectName: string): string;
+export declare function createDevServerNotFoundError(devservers: Map<string, {
+    project: string;
+    workspacePath: string;
+}>): Error;

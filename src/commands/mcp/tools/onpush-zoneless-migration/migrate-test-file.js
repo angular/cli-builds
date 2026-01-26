@@ -11,7 +11,7 @@ exports.migrateTestFile = migrateTestFile;
 exports.searchForGlobalZoneless = searchForGlobalZoneless;
 const node_fs_1 = require("node:fs");
 const promises_1 = require("node:fs/promises");
-const utils_1 = require("../../utils");
+const workspace_utils_1 = require("../../workspace-utils");
 const prompts_1 = require("./prompts");
 const ts_utils_1 = require("./ts-utils");
 async function migrateTestFile(sourceFile) {
@@ -36,7 +36,7 @@ async function migrateTestFile(sourceFile) {
     return (0, prompts_1.createFixResponseForZoneTests)(sourceFile);
 }
 async function searchForGlobalZoneless(startPath) {
-    const angularJsonDir = (0, utils_1.findAngularJsonDir)(startPath);
+    const angularJsonDir = (0, workspace_utils_1.findAngularJsonDir)(startPath);
     if (!angularJsonDir) {
         // Cannot determine project root, fallback to original behavior or assume false.
         // For now, let's assume no global setup if angular.json is not found.

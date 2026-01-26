@@ -10,27 +10,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TEST_TOOL = void 0;
 exports.runTest = runTest;
 const zod_1 = require("zod");
-const host_1 = require("../host");
+const shared_options_1 = require("../shared-options");
 const utils_1 = require("../utils");
+const workspace_utils_1 = require("../workspace-utils");
 const tool_registry_1 = require("./tool-registry");
 const testStatusSchema = zod_1.z.enum(['success', 'failure']);
 const testToolInputSchema = zod_1.z.object({
-    project: zod_1.z
-        .string()
-        .optional()
-        .describe('Which project to test in a monorepo context. If not provided, tests all projects.'),
+    ...shared_options_1.workspaceAndProjectOptions,
     filter: zod_1.z.string().optional().describe('Filter the executed tests by spec name.'),
 });
 const testToolOutputSchema = zod_1.z.object({
     status: testStatusSchema.describe('Test execution status.'),
     logs: zod_1.z.array(zod_1.z.string()).optional().describe('Output logs from `ng test`.'),
 });
-async function runTest(input, host) {
+async function runTest(input, context) {
+    const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
+        host: context.host,
+        workspacePathInput: input.workspace,
+        projectNameInput: input.project,
+        mcpWorkspace: context.workspace,
+    });
     // Build "ng"'s command line.
-    const args = ['test'];
-    if (input.project) {
-        args.push(input.project);
-    }
+    const args = ['test', projectName];
     // This is ran by the agent so we want a non-watched, headless test.
     args.push('--browsers', 'ChromeHeadless');
     args.push('--watch', 'false');
@@ -40,7 +41,7 @@ async function runTest(input, host) {
     let status = 'success';
     let logs = [];
     try {
-        logs = (await host.runCommand('ng', args)).logs;
+        logs = (await context.host.runCommand('ng', args, { cwd: workspacePath })).logs;
     }
     catch (e) {
         status = 'failure';
@@ -73,6 +74,6 @@ Perform a one-off, non-watched unit test execution with ng test.
     isLocalOnly: true,
     inputSchema: testToolInputSchema.shape,
     outputSchema: testToolOutputSchema.shape,
-    factory: () => (input) => runTest(input, host_1.LocalWorkspaceHost),
+    factory: (context) => (input) => runTest(input, context),
 });
 //# sourceMappingURL=test.js.map

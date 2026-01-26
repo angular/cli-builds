@@ -8,6 +8,8 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalDevserver = void 0;
+exports.getDevserverKey = getDevserverKey;
+exports.createDevServerNotFoundError = createDevServerNotFoundError;
 // Log messages that we want to catch to identify the build status.
 const BUILD_SUCCEEDED_MESSAGE = 'Application bundle generation complete.';
 const BUILD_FAILED_MESSAGE = 'Application bundle generation failed.';
@@ -27,16 +29,18 @@ const BUILD_END_MESSAGES = [
 class LocalDevserver {
     host;
     port;
+    workspacePath;
     project;
     devserverProcess = null;
     serverLogs = [];
     buildInProgress = false;
     latestBuildLogStartIndex = undefined;
     latestBuildStatus = 'unknown';
-    constructor({ host, port, project }) {
+    constructor({ host, port, workspacePath, project, }) {
         this.host = host;
-        this.project = project;
         this.port = port;
+        this.workspacePath = workspacePath;
+        this.project = project;
     }
     start() {
         if (this.devserverProcess) {
@@ -47,7 +51,10 @@ class LocalDevserver {
             args.push(this.project);
         }
         args.push(`--port=${this.port}`);
-        this.devserverProcess = this.host.spawn('ng', args, { stdio: 'pipe' });
+        this.devserverProcess = this.host.spawn('ng', args, {
+            stdio: 'pipe',
+            cwd: this.workspacePath,
+        });
         this.devserverProcess.stdout?.on('data', (data) => {
             this.addLog(data.toString());
         });
@@ -89,4 +96,17 @@ class LocalDevserver {
     }
 }
 exports.LocalDevserver = LocalDevserver;
+function getDevserverKey(workspacePath, projectName) {
+    return `${workspacePath}:${projectName}`;
+}
+function createDevServerNotFoundError(devservers) {
+    if (devservers.size === 0) {
+        return new Error('No development servers are currently running.');
+    }
+    const runningServers = Array.from(devservers.values())
+        .map((server) => `- Project '${server.project}' in workspace path '${server.workspacePath}'`)
+        .join('\n');
+    return new Error(`Dev server not found. Currently running servers:\n${runningServers}\n` +
+        'Please provide the correct workspace and project arguments.');
+}
 //# sourceMappingURL=devserver.js.map

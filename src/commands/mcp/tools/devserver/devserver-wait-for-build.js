@@ -10,7 +10,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEVSERVER_WAIT_FOR_BUILD_TOOL = exports.WATCH_DELAY = void 0;
 exports.waitForDevserverBuild = waitForDevserverBuild;
 const zod_1 = require("zod");
+const devserver_1 = require("../../devserver");
+const shared_options_1 = require("../../shared-options");
 const utils_1 = require("../../utils");
+const workspace_utils_1 = require("../../workspace-utils");
 const tool_registry_1 = require("../tool-registry");
 /**
  * How long to wait to give "ng serve" time to identify whether the watched workspace has changed.
@@ -21,10 +24,7 @@ exports.WATCH_DELAY = 1000;
  */
 const DEFAULT_TIMEOUT = 180_000; // In milliseconds
 const devserverWaitForBuildToolInputSchema = zod_1.z.object({
-    project: zod_1.z
-        .string()
-        .optional()
-        .describe('Which project to wait for in a monorepo context. If not provided, waits for the default project server.'),
+    ...shared_options_1.workspaceAndProjectOptions,
     timeout: zod_1.z
         .number()
         .default(DEFAULT_TIMEOUT)
@@ -32,7 +32,7 @@ const devserverWaitForBuildToolInputSchema = zod_1.z.object({
 });
 const devserverWaitForBuildToolOutputSchema = zod_1.z.object({
     status: zod_1.z
-        .enum(['success', 'failure', 'unknown', 'timeout', 'no_devserver_found'])
+        .enum(['success', 'failure', 'unknown', 'timeout'])
         .describe("The status of the build if it's complete, or a status indicating why the wait operation failed."),
     logs: zod_1.z
         .array(zod_1.z.string())
@@ -43,35 +43,23 @@ function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function waitForDevserverBuild(input, context) {
-    if (context.devservers.size === 0) {
-        return (0, utils_1.createStructuredContentOutput)({
-            status: 'no_devserver_found',
-            logs: undefined,
-        });
+    const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
+        host: context.host,
+        workspacePathInput: input.workspace,
+        projectNameInput: input.project,
+        mcpWorkspace: context.workspace,
+    });
+    const key = (0, devserver_1.getDevserverKey)(workspacePath, projectName);
+    const devserver = context.devservers.get(key);
+    if (!devserver) {
+        throw (0, devserver_1.createDevServerNotFoundError)(context.devservers);
     }
-    let projectName = input.project ?? (0, utils_1.getDefaultProjectName)(context);
-    if (!projectName) {
-        // This should not happen. But if there's just a single running devserver, wait for it.
-        if (context.devservers.size === 1) {
-            projectName = Array.from(context.devservers.keys())[0];
-        }
-        else {
-            return (0, utils_1.createStructuredContentOutput)({
-                status: 'no_devserver_found',
-                logs: undefined,
-            });
-        }
-    }
-    const devServer = context.devservers.get(projectName);
-    if (!devServer) {
-        return (0, utils_1.createStructuredContentOutput)({
-            status: 'no_devserver_found',
-            logs: undefined,
-        });
-    }
-    const deadline = Date.now() + input.timeout;
+    return performWait(devserver, input.timeout);
+}
+async function performWait(devserver, timeout) {
+    const deadline = Date.now() + timeout;
     await wait(exports.WATCH_DELAY);
-    while (devServer.isBuilding()) {
+    while (devserver.isBuilding()) {
         if (Date.now() > deadline) {
             return (0, utils_1.createStructuredContentOutput)({
                 status: 'timeout',
@@ -81,7 +69,7 @@ async function waitForDevserverBuild(input, context) {
         await wait(exports.WATCH_DELAY);
     }
     return (0, utils_1.createStructuredContentOutput)({
-        ...devServer.getMostRecentBuild(),
+        ...devserver.getMostRecentBuild(),
     });
 }
 exports.DEVSERVER_WAIT_FOR_BUILD_TOOL = (0, tool_registry_1.declareTool)({
@@ -98,14 +86,11 @@ recent build.
   tool or command. When it retuns you'll get build logs back **and** you'll know the user's devserver is up-to-date with the latest changes.
 </Use Cases>
 <Operational Notes>
-* This tool expects that a dev server was launched on the same project with the "devserver.start" tool, otherwise a "no_devserver_found"
-  status will be returned.
+* This tool expects that a dev server was launched on the same project with the "devserver.start" tool, otherwise the tool will fail.
 * This tool will block until the build is complete or the timeout is reached. If you expect a long build process, consider increasing the
   timeout. Timeouts on initial run (right after "devserver.start" calls) or after a big change are not necessarily indicative of an error.
 * If you encountered a timeout and it might be reasonable, just call this tool again.
 * If the dev server is not building, it will return quickly, with the logs from the last build.
-* A 'no_devserver_found' status can indicate the underlying server was stopped for some reason. Try first to call the "devserver.start"
-  tool again, before giving up.
 </Operational Notes>
 `,
     isReadOnly: true,

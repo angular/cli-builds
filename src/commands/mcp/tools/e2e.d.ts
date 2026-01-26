@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { type Host } from '../host';
 import { type McpToolContext, type McpToolDeclaration } from './tool-registry';
 declare const e2eToolInputSchema: z.ZodObject<{
+    workspace: z.ZodOptional<z.ZodString>;
     project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type E2eToolInput = z.infer<typeof e2eToolInputSchema>;
