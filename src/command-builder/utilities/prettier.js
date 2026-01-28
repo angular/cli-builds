@@ -20,6 +20,7 @@ let prettierCliPath;
  * File types that can be formatted using Prettier.
  */
 const fileTypes = new Set([
+    '.md',
     '.ts',
     '.html',
     '.js',
