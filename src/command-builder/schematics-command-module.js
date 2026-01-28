@@ -87,6 +87,7 @@ const memoize_1 = require("../utilities/memoize");
 const tty_1 = require("../utilities/tty");
 const command_module_1 = require("./command-module");
 const json_schema_1 = require("./utilities/json-schema");
+const prettier_1 = require("./utilities/prettier");
 const schematic_engine_host_1 = require("./utilities/schematic-engine-host");
 const schematic_workflow_1 = require("./utilities/schematic-workflow");
 exports.DEFAULT_SCHEMATICS_COLLECTION = '@schematics/angular';
@@ -345,7 +346,19 @@ let SchematicsCommandModule = (() => {
                 }
                 if (executionOptions.dryRun) {
                     logger.warn(`\nNOTE: The "--dry-run" option means no changes were made.`);
+                    return 0;
                 }
+                if (files.size) {
+                    // Note: we could use a task executor to format the files but this is simpler.
+                    try {
+                        await (0, prettier_1.formatFiles)(this.context.root, files);
+                    }
+                    catch (error) {
+                        (0, error_1.assertIsError)(error);
+                        logger.warn(`WARNING: Formatting of files failed with the following error: ${error.message}`);
+                    }
+                }
+                return 0;
             }
             catch (err) {
                 // In case the workflow was not successful, show an appropriate error message.
@@ -362,7 +375,6 @@ let SchematicsCommandModule = (() => {
             finally {
                 unsubscribe();
             }
-            return 0;
         }
         getProjectName() {
             const { workspace } = this.context;
