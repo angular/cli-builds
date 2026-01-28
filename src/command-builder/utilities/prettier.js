@@ -57,13 +57,13 @@ async function formatFiles(cwd, files) {
     const filesToFormat = [];
     for (const file of files) {
         if (fileTypes.has((0, node_path_1.extname)(file))) {
-            filesToFormat.push((0, node_path_1.relative)(cwd, file));
+            filesToFormat.push(file);
         }
     }
     if (!filesToFormat.length) {
         return;
     }
-    await execFileAsync(prettierCliPath, ['--write', ...filesToFormat], {
+    await execFileAsync(prettierCliPath, ['--write', '--no-error-on-unmatched-pattern', ...filesToFormat], {
         cwd,
         shell: (0, node_os_1.platform)() === 'win32',
     });
