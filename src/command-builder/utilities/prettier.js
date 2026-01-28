@@ -11,6 +11,7 @@ exports.formatFiles = formatFiles;
 const node_child_process_1 = require("node:child_process");
 const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
+const node_os_1 = require("node:os");
 const node_path_1 = require("node:path");
 const node_util_1 = require("node:util");
 const execFileAsync = (0, node_util_1.promisify)(node_child_process_1.execFile);
@@ -62,6 +63,9 @@ async function formatFiles(cwd, files) {
     if (!filesToFormat.length) {
         return;
     }
-    await execFileAsync(prettierCliPath, ['--write', ...filesToFormat], { cwd });
+    await execFileAsync(prettierCliPath, ['--write', ...filesToFormat], {
+        cwd,
+        shell: (0, node_os_1.platform)() === 'win32',
+    });
 }
 //# sourceMappingURL=prettier.js.map
