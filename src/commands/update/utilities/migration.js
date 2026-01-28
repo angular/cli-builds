@@ -50,6 +50,7 @@ const schematic_workflow_1 = require("../../../command-builder/utilities/schemat
 const color_1 = require("../../../utilities/color");
 const error_1 = require("../../../utilities/error");
 const log_file_1 = require("../../../utilities/log-file");
+const prettier_1 = require("../../../utilities/prettier");
 const prompt_1 = require("../../../utilities/prompt");
 const tty_1 = require("../../../utilities/tty");
 const cli_version_1 = require("./cli-version");
@@ -162,6 +163,15 @@ async function executePackageMigrations(workflow, logger, migrations, packageNam
             default:
                 modifiedFilesText = `${files.size} files modified`;
                 break;
+        }
+        if (files.size) {
+            try {
+                await (0, prettier_1.formatFiles)(process.cwd(), files);
+            }
+            catch (error) {
+                (0, error_1.assertIsError)(error);
+                logger.warn(`WARNING: Formatting of files failed with the following error: ${error.message}`);
+            }
         }
         logger.info(`  Migration completed (${modifiedFilesText}).`);
         // Commit migration
