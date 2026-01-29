@@ -40,10 +40,12 @@ function subscribeToWorkflow(workflow, logger) {
                 logs.push(`${color_1.colors.yellow('DELETE')} ${eventPath}`);
                 files.add(eventPath);
                 break;
-            case 'rename':
-                logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${removeLeadingSlash(event.to)}`);
-                files.add(eventPath);
+            case 'rename': {
+                const newFilename = removeLeadingSlash(event.to);
+                logs.push(`${color_1.colors.blue('RENAME')} ${eventPath} => ${newFilename}`);
+                files.add(newFilename);
                 break;
+            }
         }
     });
     const lifecycleSubscription = workflow.lifeCycle.subscribe((event) => {

@@ -16,22 +16,6 @@ const node_util_1 = require("node:util");
 const execFileAsync = (0, node_util_1.promisify)(node_child_process_1.execFile);
 let prettierCliPath;
 /**
- * File types that can be formatted using Prettier.
- */
-const fileTypes = new Set([
-    '.md',
-    '.ts',
-    '.html',
-    '.js',
-    '.mjs',
-    '.cjs',
-    '.json',
-    '.css',
-    '.less',
-    '.scss',
-    '.sass',
-]);
-/**
  * Formats files using Prettier.
  * @param cwd The current working directory.
  * @param files The files to format.
@@ -54,16 +38,7 @@ async function formatFiles(cwd, files) {
     if (!prettierCliPath) {
         return;
     }
-    const filesToFormat = [];
-    for (const file of files) {
-        if (fileTypes.has((0, node_path_1.extname)(file))) {
-            filesToFormat.push(file);
-        }
-    }
-    if (!filesToFormat.length) {
-        return;
-    }
-    await execFileAsync(process.execPath, [prettierCliPath, '--write', '--no-error-on-unmatched-pattern', ...filesToFormat], {
+    await execFileAsync(process.execPath, [prettierCliPath, '--write', '--no-error-on-unmatched-pattern', ...files], {
         cwd,
         shell: false,
     });
