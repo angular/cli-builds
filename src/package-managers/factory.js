@@ -108,17 +108,18 @@ async function createPackageManager(options) {
         throw new Error(`Unsupported package manager: "${name}"`);
     }
     // Do not verify if the package manager is installed during a dry run.
+    let initializationError;
     if (!dryRun && !version) {
         try {
             version = await getPackageManagerVersion(host, cwd, name, logger);
         }
         catch {
             if (source === 'default') {
-                throw new Error(`'${DEFAULT_PACKAGE_MANAGER}' was selected as the default package manager, but it is not installed or` +
+                initializationError = new Error(`'${DEFAULT_PACKAGE_MANAGER}' was selected as the default package manager, but it is not installed or` +
                     ` cannot be found in the PATH. Please install '${DEFAULT_PACKAGE_MANAGER}' to continue.`);
             }
             else {
-                throw new Error(`The project is configured to use '${name}', but it is not installed or cannot be` +
+                initializationError = new Error(`The project is configured to use '${name}', but it is not installed or cannot be` +
                     ` found in the PATH. Please install '${name}' to continue.`);
             }
         }
@@ -128,6 +129,7 @@ async function createPackageManager(options) {
         logger,
         tempDirectory,
         version,
+        initializationError,
     });
     logger?.debug(`Successfully created PackageManager for '${name}'.`);
     return packageManager;

@@ -58,6 +58,7 @@ class PackageManager {
     options;
     #manifestCache = new Map();
     #metadataCache = new Map();
+    #initializationError;
     #dependencyCache = null;
     #version;
     /**
@@ -76,12 +77,24 @@ class PackageManager {
             throw new Error('A logger must be provided when dryRun is enabled.');
         }
         this.#version = options.version;
+        this.#initializationError = options.initializationError;
     }
     /**
      * The name of the package manager's binary.
      */
     get name() {
         return this.descriptor.binary;
+    }
+    /**
+     * Ensures that the package manager is installed and available in the PATH.
+     * If it is not, this method will throw an error with instructions on how to install it.
+     *
+     * @throws {Error} If the package manager is not installed.
+     */
+    ensureInstalled() {
+        if (this.#initializationError) {
+            throw this.#initializationError;
+        }
     }
     /**
      * A private method to lazily populate the dependency cache.
@@ -103,6 +116,7 @@ class PackageManager {
      * @returns A promise that resolves with the standard output and standard error of the command.
      */
     async #run(args, options = {}) {
+        this.ensureInstalled();
         const { registry, cwd, ...runOptions } = options;
         const finalArgs = [...args];
         let finalEnv;

@@ -32,6 +32,11 @@ export interface PackageManagerOptions {
      * instead of running the version command.
      */
     version?: string;
+    /**
+     * An error that occurred during the initialization of the package manager.
+     * If provided, this error will be thrown when attempting to execute any command.
+     */
+    initializationError?: Error;
 }
 /**
  * A class that provides a high-level, package-manager-agnostic API for
@@ -59,6 +64,13 @@ export declare class PackageManager {
      * The name of the package manager's binary.
      */
     get name(): string;
+    /**
+     * Ensures that the package manager is installed and available in the PATH.
+     * If it is not, this method will throw an error with instructions on how to install it.
+     *
+     * @throws {Error} If the package manager is not installed.
+     */
+    ensureInstalled(): void;
     /**
      * Adds a package to the project's dependencies.
      * @param packageName The name of the package to add.
