@@ -16,17 +16,6 @@ exports.discover = discover;
 const node_path_1 = require("node:path");
 const package_manager_descriptor_1 = require("./package-manager-descriptor");
 /**
- * A map from lockfile names to their corresponding package manager.
- * This is a performance optimization to avoid iterating over all possible
- * lockfiles in every directory.
- */
-const LOCKFILE_TO_PACKAGE_MANAGER = new Map();
-for (const [name, descriptor] of Object.entries(package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS)) {
-    for (const lockfile of descriptor.lockfiles) {
-        LOCKFILE_TO_PACKAGE_MANAGER.set(lockfile, name);
-    }
-}
-/**
  * Searches a directory for lockfiles and returns a set of package managers that correspond to them.
  * @param host A `Host` instance for interacting with the file system.
  * @param directory The directory to search.
@@ -35,23 +24,28 @@ for (const [name, descriptor] of Object.entries(package_manager_descriptor_1.SUP
  */
 async function findLockfiles(host, directory, logger) {
     logger?.debug(`Searching for lockfiles in '${directory}'...`);
-    try {
-        const files = await host.readdir(directory);
-        const foundPackageManagers = new Set();
-        for (const file of files) {
-            const packageManager = LOCKFILE_TO_PACKAGE_MANAGER.get(file);
-            if (packageManager) {
-                logger?.debug(`  Found '${file}'.`);
-                foundPackageManagers.add(packageManager);
-            }
+    const foundPackageManagers = new Set();
+    const checks = [];
+    for (const [name, descriptor] of Object.entries(package_manager_descriptor_1.SUPPORTED_PACKAGE_MANAGERS)) {
+        const manager = name;
+        for (const lockfile of descriptor.lockfiles) {
+            checks.push((async () => {
+                try {
+                    const path = (0, node_path_1.join)(directory, lockfile);
+                    const stats = await host.stat(path);
+                    if (stats.isFile()) {
+                        logger?.debug(`  Found '${lockfile}'.`);
+                        foundPackageManagers.add(manager);
+                    }
+                }
+                catch {
+                    // File does not exist or cannot be accessed.
+                }
+            })());
         }
-        return foundPackageManagers;
     }
-    catch (e) {
-        logger?.debug(`  Failed to read directory: ${e}`);
-        // Ignore directories that don't exist or can't be read.
-        return new Set();
-    }
+    await Promise.all(checks);
+    return foundPackageManagers;
 }
 /**
  * Checks if a given path is a directory.
