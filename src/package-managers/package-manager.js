@@ -268,6 +268,9 @@ class PackageManager {
         }
         const { stdout } = await this.#run(this.descriptor.versionCommand);
         this.#version = stdout.trim();
+        if (!(0, semver_1.valid)(this.#version)) {
+            throw new Error(`Invalid semver version for ${this.name}: "${this.#version}"`);
+        }
         return this.#version;
     }
     /**
