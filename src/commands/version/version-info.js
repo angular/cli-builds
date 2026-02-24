@@ -14,7 +14,7 @@ const version_1 = require("../../utilities/version");
  * Major versions of Node.js that are officially supported by Angular.
  * @see https://angular.dev/reference/versions#supported-node-js-versions
  */
-const SUPPORTED_NODE_MAJORS = [20, 22, 24];
+const SUPPORTED_NODE_MAJORS = [22, 24];
 /**
  * A list of regular expression patterns that match package names that should be included in the
  * version output.
