@@ -11,6 +11,11 @@ import { Stats } from 'node:fs';
  */
 export interface Host {
     /**
+     * Whether shell quoting is required for package manager specifiers.
+     * This is typically true on Windows, where commands are executed in a shell.
+     */
+    readonly requiresQuoting?: boolean;
+    /**
      * Creates a directory.
      * @param path The path to the directory.
      * @param options Options for the directory creation.

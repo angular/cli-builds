@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PackageManager = void 0;
+exports.PackageManager = exports.MANIFEST_FIELDS = void 0;
 /**
  * @fileoverview This file contains the `PackageManager` class, which is the
  * core execution engine for all package manager commands. It is designed to be
@@ -31,7 +31,7 @@ const METADATA_FIELDS = ['name', 'dist-tags', 'versions', 'time'];
  * This is a performance optimization to avoid downloading unnecessary data.
  * These fields are the ones required by the CLI for operations like `ng add` and `ng update`.
  */
-const MANIFEST_FIELDS = [
+exports.MANIFEST_FIELDS = [
     'name',
     'version',
     'deprecated',
@@ -322,11 +322,13 @@ class PackageManager {
      * @returns A promise that resolves to the `PackageManifest` object, or `null` if the package is not found.
      */
     async getRegistryManifest(packageName, version, options = {}) {
-        const specifier = `${packageName}@${version}`;
+        const specifier = this.host.requiresQuoting
+            ? `"${packageName}@${version}"`
+            : `${packageName}@${version}`;
         const commandArgs = [...this.descriptor.getManifestCommand, specifier];
         const formatter = this.descriptor.viewCommandFieldArgFormatter;
         if (formatter) {
-            commandArgs.push(...formatter(MANIFEST_FIELDS));
+            commandArgs.push(...formatter(exports.MANIFEST_FIELDS));
         }
         const cacheKey = options.registry ? `${specifier}|${options.registry}` : specifier;
         const manifest = await this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });

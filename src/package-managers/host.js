@@ -25,6 +25,7 @@ const error_1 = require("./error");
  */
 exports.NodeJS_HOST = {
     stat: promises_1.stat,
+    requiresQuoting: (0, node_os_1.platform)() === 'win32',
     mkdir: promises_1.mkdir,
     readFile: (path) => (0, promises_1.readFile)(path, { encoding: 'utf8' }),
     copyFile: (src, dest) => (0, promises_1.copyFile)(src, dest, node_fs_1.constants.COPYFILE_FICLONE),

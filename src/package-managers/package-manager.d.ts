@@ -12,6 +12,12 @@ import { PackageManagerDescriptor } from './package-manager-descriptor';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
 /**
+ * The fields to request from the registry for a package's manifest.
+ * This is a performance optimization to avoid downloading unnecessary data.
+ * These fields are the ones required by the CLI for operations like `ng add` and `ng update`.
+ */
+export declare const MANIFEST_FIELDS: readonly ["name", "version", "deprecated", "dependencies", "peerDependencies", "devDependencies", "homepage", "schematics", "ng-add", "ng-update"];
+/**
  * Options to configure the `PackageManager` instance.
  */
 export interface PackageManagerOptions {
