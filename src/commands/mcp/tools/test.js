@@ -39,7 +39,7 @@ async function runTest(input, context) {
         args.push('--filter', input.filter);
     }
     let status = 'success';
-    let logs = [];
+    let logs;
     try {
         logs = (await context.host.runCommand('ng', args, { cwd: workspacePath })).logs;
     }

@@ -38,7 +38,7 @@ async function runBuild(input, context) {
     // Build "ng"'s command line.
     const args = ['build', projectName, '-c', input.configuration ?? DEFAULT_CONFIGURATION];
     let status = 'success';
-    let logs = [];
+    let logs;
     let outputPath;
     try {
         logs = (await context.host.runCommand('ng', args, { cwd: workspacePath })).logs;

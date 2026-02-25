@@ -48,7 +48,7 @@ async function runE2e(input, host, context) {
     // Build "ng"'s command line.
     const args = ['e2e', projectName];
     let status = 'success';
-    let logs = [];
+    let logs;
     try {
         logs = (await host.runCommand('ng', args, { cwd: workspacePath })).logs;
     }

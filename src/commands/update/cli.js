@@ -223,13 +223,12 @@ class UpdateCommandModule extends command_module_1.CommandModule {
     }
     async migrateOnly(workflow, packageName, rootDependencies, options, packageManager) {
         const { logger } = this.context;
-        let packageDependency = rootDependencies.get(packageName);
+        const packageDependency = rootDependencies.get(packageName);
         let packagePath = packageDependency?.path;
         let packageNode;
         if (!packageDependency) {
             const installed = await packageManager.getInstalledPackage(packageName);
             if (installed) {
-                packageDependency = installed;
                 packagePath = installed.path;
             }
         }
@@ -333,7 +332,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const packagesToUpdate = [];
         for (const { identifier: requestIdentifier, node } of requests) {
             const packageName = requestIdentifier.name;
-            let manifest = null;
+            let manifest;
             try {
                 manifest = await packageManager.getManifest(requestIdentifier);
             }

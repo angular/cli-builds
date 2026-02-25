@@ -399,7 +399,8 @@ function _usageMessage(options, infoMap, logger) {
     }
     const pads = [namePad, 25, 0];
     logger.info('  ' + ['Name', 'Version', 'Command to update'].map((x, i) => x.padEnd(pads[i])).join(''));
-    logger.info(' ' + '-'.repeat(pads.reduce((s, x) => (s += x), 0) + 20));
+    const totalWidth = pads.reduce((sum, width) => sum + width, 20);
+    logger.info(` ${'-'.repeat(totalWidth)}`);
     packagesToUpdate.forEach((fields) => {
         if (!fields) {
             return;
@@ -526,7 +527,7 @@ function _addPackageGroup(tree, packages, allDependencies, npmPackageJson, logge
     if (!packageGroup) {
         return;
     }
-    let packageGroupNormalized = {};
+    let packageGroupNormalized;
     if (Array.isArray(packageGroup) && !packageGroup.some((x) => typeof x != 'string')) {
         packageGroupNormalized = packageGroup.reduce((acc, curr) => {
             acc[curr] = maybePackage;

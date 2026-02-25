@@ -113,7 +113,7 @@ async function discoverAndCategorizeFiles(fileOrDirPath, extras) {
     }
     catch (e) {
         // Re-throw to be handled by the main function as a user input error
-        throw new Error(`Failed to access path: ${fileOrDirPath}`);
+        throw new Error(`Failed to access path: ${fileOrDirPath}`, { cause: e });
     }
     if (isDirectory) {
         for await (const file of (0, promises_1.glob)(`${fileOrDirPath}/**/*.ts`)) {
