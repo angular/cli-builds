@@ -38,7 +38,7 @@ async function formatFiles(cwd, files) {
     if (!prettierCliPath) {
         return;
     }
-    await execFileAsync(process.execPath, [prettierCliPath, '--write', '--no-error-on-unmatched-pattern', ...files], {
+    await execFileAsync(process.execPath, [prettierCliPath, '--write', '--no-error-on-unmatched-pattern', '--ignore-unknown', ...files], {
         cwd,
         shell: false,
     });
