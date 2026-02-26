@@ -9,12 +9,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gatherVersionInfo = gatherVersionInfo;
 const node_module_1 = require("node:module");
+const node_version_1 = require("../../utilities/node-version");
 const version_1 = require("../../utilities/version");
-/**
- * Major versions of Node.js that are officially supported by Angular.
- * @see https://angular.dev/reference/versions#supported-node-js-versions
- */
-const SUPPORTED_NODE_MAJORS = [22, 24];
 /**
  * A list of regular expression patterns that match package names that should be included in the
  * version output.
@@ -43,8 +39,6 @@ async function gatherVersionInfo(context) {
         workspacePackage = workspaceRequire('./package.json');
     }
     catch { }
-    const [nodeMajor] = process.versions.node.split('.').map((part) => Number(part));
-    const unsupportedNodeVersion = !SUPPORTED_NODE_MAJORS.includes(nodeMajor);
     const allDependencies = {
         ...workspacePackage?.dependencies,
         ...workspacePackage?.devDependencies,
@@ -70,7 +64,7 @@ async function gatherVersionInfo(context) {
         system: {
             node: {
                 version: process.versions.node,
-                unsupported: unsupportedNodeVersion,
+                unsupported: !(0, node_version_1.isNodeVersionSupported)(),
             },
             os: {
                 platform: process.platform,
