@@ -461,7 +461,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                 context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
             }
             else {
-                await packageManager.add(packageIdentifier.toString(), 'none', savePackage !== 'dependencies', false, true, {
+                await packageManager.add(packageIdentifier.toString(), 'none', savePackage === 'devDependencies', false, true, {
                     registry,
                 });
             }
