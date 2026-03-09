@@ -402,7 +402,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { registry } = options;
         let manifest;
         try {
-            manifest = await this.context.packageManager.getManifest(context.packageIdentifier.toString(), {
+            manifest = await this.context.packageManager.getManifest(context.packageIdentifier, {
                 registry,
             });
         }
@@ -412,6 +412,14 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         if (!manifest) {
             throw new CommandError(`Unable to fetch package information for '${context.packageIdentifier}'.`);
+        }
+        // Avoid fully resolving the package version from the registry again in later steps
+        if (context.packageIdentifier.registry) {
+            (0, node_assert_1.default)(context.packageIdentifier.name, 'Registry package identifier must have a name');
+            context.packageIdentifier = npm_package_arg_1.default.resolve(context.packageIdentifier.name, 
+            // `save-prefix` option is ignored by some package managers so the caret is needed to ensure
+            // that the value in the project package.json is correct.
+            '^' + manifest.version);
         }
         context.hasSchematics = !!manifest.schematics;
         context.savePackage = manifest['ng-add']?.save;
