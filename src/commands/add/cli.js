@@ -45,6 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const listr2_1 = require("listr2");
 const node_assert_1 = __importDefault(require("node:assert"));
+const node_fs_1 = require("node:fs");
 const promises_1 = __importDefault(require("node:fs/promises"));
 const node_module_1 = require("node:module");
 const node_path_1 = require("node:path");
@@ -99,6 +100,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
     schematicName = 'ng-add';
     rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');
     #projectVersionCache = new Map();
+    #rootManifestCache = null;
     async builder(argv) {
         const localYargs = (await super.builder(argv))
             .positional('collection', {
@@ -141,6 +143,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
     }
     async run(options) {
         this.#projectVersionCache.clear();
+        this.#rootManifestCache = null;
         const { logger } = this.context;
         const { collection, skipConfirmation } = options;
         let packageIdentifier;
@@ -402,7 +405,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { registry } = options;
         let manifest;
         try {
-            manifest = await this.context.packageManager.getManifest(context.packageIdentifier.toString(), {
+            manifest = await this.context.packageManager.getManifest(context.packageIdentifier, {
                 registry,
             });
         }
@@ -412,6 +415,14 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         if (!manifest) {
             throw new CommandError(`Unable to fetch package information for '${context.packageIdentifier}'.`);
+        }
+        // Avoid fully resolving the package version from the registry again in later steps
+        if (context.packageIdentifier.registry) {
+            (0, node_assert_1.default)(context.packageIdentifier.name, 'Registry package identifier must have a name');
+            context.packageIdentifier = npm_package_arg_1.default.resolve(context.packageIdentifier.name, 
+            // `save-prefix` option is ignored by some package managers so the caret is needed to ensure
+            // that the value in the project package.json is correct.
+            '^' + manifest.version);
         }
         context.hasSchematics = !!manifest.schematics;
         context.savePackage = manifest['ng-add']?.save;
@@ -519,17 +530,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         return collectionName;
     }
     isPackageInstalled(name) {
-        try {
-            this.rootRequire.resolve((0, node_path_1.join)(name, 'package.json'));
-            return true;
-        }
-        catch (e) {
-            (0, error_1.assertIsError)(e);
-            if (e.code !== 'MODULE_NOT_FOUND') {
-                throw e;
-            }
-        }
-        return false;
+        return !!this.resolvePackageJson(name);
     }
     executeSchematic(options) {
         const { verbose, skipConfirmation, interactive, force, dryRun, registry, defaults, collection: collectionName, schematicName, ...schematicOptions } = options;
@@ -551,12 +552,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         if (cachedVersion !== undefined) {
             return cachedVersion;
         }
-        const { root } = this.context;
-        let installedPackagePath;
-        try {
-            installedPackagePath = this.rootRequire.resolve((0, node_path_1.join)(name, 'package.json'));
-        }
-        catch { }
+        const installedPackagePath = this.resolvePackageJson(name);
         if (installedPackagePath) {
             try {
                 const installedPackage = JSON.parse(await promises_1.default.readFile(installedPackagePath, 'utf-8'));
@@ -565,11 +561,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             }
             catch { }
         }
-        let projectManifest;
-        try {
-            projectManifest = JSON.parse(await promises_1.default.readFile((0, node_path_1.join)(root, 'package.json'), 'utf-8'));
-        }
-        catch { }
+        const projectManifest = await this.getProjectManifest();
         if (projectManifest) {
             const version = projectManifest.dependencies?.[name] || projectManifest.devDependencies?.[name];
             if (version) {
@@ -579,6 +571,50 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         this.#projectVersionCache.set(name, null);
         return null;
+    }
+    async getProjectManifest() {
+        if (this.#rootManifestCache) {
+            return this.#rootManifestCache;
+        }
+        const { root } = this.context;
+        try {
+            this.#rootManifestCache = JSON.parse(await promises_1.default.readFile((0, node_path_1.join)(root, 'package.json'), 'utf-8'));
+            return this.#rootManifestCache;
+        }
+        catch {
+            return null;
+        }
+    }
+    resolvePackageJson(name) {
+        try {
+            return this.rootRequire.resolve((0, node_path_1.join)(name, 'package.json'));
+        }
+        catch (e) {
+            (0, error_1.assertIsError)(e);
+            if (e.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
+                try {
+                    const mainPath = this.rootRequire.resolve(name);
+                    let directory = (0, node_path_1.dirname)(mainPath);
+                    // Stop at the node_modules boundary or the root of the file system
+                    while (directory && (0, node_path_1.basename)(directory) !== 'node_modules') {
+                        const packageJsonPath = (0, node_path_1.join)(directory, 'package.json');
+                        if ((0, node_fs_1.existsSync)(packageJsonPath)) {
+                            return packageJsonPath;
+                        }
+                        const parent = (0, node_path_1.dirname)(directory);
+                        if (parent === directory) {
+                            break;
+                        }
+                        directory = parent;
+                    }
+                }
+                catch (e) {
+                    (0, error_1.assertIsError)(e);
+                    this.context.logger.debug(`Failed to resolve package '${name}' during fallback: ${e.message}`);
+                }
+            }
+        }
+        return undefined;
     }
     async getPeerDependencyConflicts(manifest) {
         if (!manifest.peerDependencies) {

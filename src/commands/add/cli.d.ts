@@ -33,6 +33,8 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     private isPackageInstalled;
     private executeSchematic;
     private findProjectVersion;
+    private getProjectManifest;
+    private resolvePackageJson;
     private getPeerDependencyConflicts;
 }
 export {};
