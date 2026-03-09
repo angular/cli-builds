@@ -167,6 +167,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         }
         const taskContext = {
             packageIdentifier,
+            isExactVersion: packageIdentifier.type === 'version',
             executeSchematic: this.executeSchematic.bind(this),
             getPeerDependencyConflicts: this.getPeerDependencyConflicts.bind(this),
             dryRun: options.dryRun,
@@ -422,7 +423,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             context.packageIdentifier = npm_package_arg_1.default.resolve(context.packageIdentifier.name, 
             // `save-prefix` option is ignored by some package managers so the caret is needed to ensure
             // that the value in the project package.json is correct.
-            '^' + manifest.version);
+            (context.isExactVersion ? '' : '^') + manifest.version);
         }
         context.hasSchematics = !!manifest.schematics;
         context.savePackage = manifest['ng-add']?.save;
