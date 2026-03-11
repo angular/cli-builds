@@ -161,8 +161,7 @@ async function categorizeFile(sourceFile, extras, categorizedFiles) {
         componentTestFiles.add(sourceFile);
     }
     else if (componentSpecifier) {
-        if (!content.includes('changeDetectionStrategy: ChangeDetectionStrategy.OnPush') &&
-            !content.includes('changeDetectionStrategy: ChangeDetectionStrategy.Default')) {
+        if (!/changeDetectionStrategy:\s*ChangeDetectionStrategy\.(?:OnPush|Default|Eager)/.test(content)) {
             filesWithComponents.add(sourceFile);
         }
         else {

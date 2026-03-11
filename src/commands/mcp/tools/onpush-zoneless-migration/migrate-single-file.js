@@ -13,6 +13,7 @@ const migrate_test_file_1 = require("./migrate-test-file");
 const prompts_1 = require("./prompts");
 const send_debug_message_1 = require("./send-debug-message");
 const ts_utils_1 = require("./ts-utils");
+const supportedStrategies = new Set(['OnPush', 'Default', 'Eager']);
 async function migrateSingleFile(sourceFile, extras) {
     const testBedSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core/testing', 'TestBed');
     const isTestFile = sourceFile.fileName.endsWith('.spec.ts') || !!testBedSpecifier;
@@ -47,7 +48,7 @@ async function migrateSingleFile(sourceFile, extras) {
                             if (ts.isPropertyAccessExpression(prop.initializer) &&
                                 prop.initializer.expression.getText(sourceFile) === 'ChangeDetectionStrategy') {
                                 const strategy = prop.initializer.name.text;
-                                if (strategy === 'OnPush' || strategy === 'Default') {
+                                if (supportedStrategies.has(strategy)) {
                                     detectedStrategy = strategy;
                                     return;
                                 }
@@ -59,11 +60,7 @@ async function migrateSingleFile(sourceFile, extras) {
         }
         ts.forEachChild(node, visit);
     });
-    if (!hasComponentDecorator ||
-        // component uses OnPush. We don't have anything more to do here.
-        detectedStrategy === 'OnPush' ||
-        // Explicit default strategy, assume there's a reason for it (already migrated, or is a library that hosts Default components) and skip.
-        detectedStrategy === 'Default') {
+    if (!hasComponentDecorator || (detectedStrategy && supportedStrategies.has(detectedStrategy))) {
         (0, send_debug_message_1.sendDebugMessage)(`Component decorator found with strategy: ${detectedStrategy} in file: ${sourceFile.fileName}. Skipping migration for file.`, extras);
         return null;
     }

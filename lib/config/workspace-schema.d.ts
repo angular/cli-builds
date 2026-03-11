@@ -393,7 +393,7 @@ export type AngularComponentOptionsSchema = {
  * Configures the change detection strategy for the component.
  */
 export declare enum ChangeDetection {
-    Default = "Default",
+    Eager = "Eager",
     OnPush = "OnPush"
 }
 /**
