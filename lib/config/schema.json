@@ -1135,7 +1135,7 @@
             "OnPush"
           ],
           "type": "string",
-          "default": "Eager",
+          "default": "OnPush",
           "alias": "c"
         },
         "prefix": {
