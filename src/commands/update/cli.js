@@ -218,7 +218,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             return success ? 0 : 1;
         }
         return options.migrateOnly
-            ? this.migrateOnly(workflow, (options.packages ?? [])[0], rootDependencies, options, packageManager)
+            ? this.migrateOnly(workflow, packages[0].name, rootDependencies, options, packageManager)
             : this.updatePackagesAndMigrate(workflow, rootDependencies, options, packages, packageManager);
     }
     async migrateOnly(workflow, packageName, rootDependencies, options, packageManager) {
