@@ -114,5 +114,16 @@ exports.LocalWorkspaceHost = {
             });
         });
     },
+    isPortAvailable(port) {
+        return new Promise((resolve) => {
+            const server = (0, node_net_1.createServer)();
+            server.once('error', () => resolve(false));
+            server.listen(port, () => {
+                server.close(() => {
+                    resolve(true);
+                });
+            });
+        });
+    },
 };
 //# sourceMappingURL=host.js.map

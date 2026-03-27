@@ -90,6 +90,10 @@ export interface Host {
      * Finds an available TCP port on the system.
      */
     getAvailablePort(): Promise<number>;
+    /**
+     * Checks whether a TCP port is available on the system.
+     */
+    isPortAvailable(port: number): Promise<boolean>;
 }
 /**
  * A concrete implementation of the `Host` interface that runs on a local workspace.
