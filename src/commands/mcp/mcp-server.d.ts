@@ -53,6 +53,7 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     }>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, ...(import("./tools/tool-registry").McpToolDeclaration<{
+    port: import("zod").ZodOptional<import("zod").ZodNumber>;
     workspace: import("zod").ZodOptional<import("zod").ZodString>;
     project: import("zod").ZodOptional<import("zod").ZodString>;
 }, {
@@ -124,6 +125,7 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
         }>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>, ...(import("./tools/tool-registry").McpToolDeclaration<{
+        port: import("zod").ZodOptional<import("zod").ZodNumber>;
         workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {
@@ -149,6 +151,7 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>)[]];
     devserver: (import("./tools/tool-registry").McpToolDeclaration<{
+        port: import("zod").ZodOptional<import("zod").ZodNumber>;
         workspace: import("zod").ZodOptional<import("zod").ZodString>;
         project: import("zod").ZodOptional<import("zod").ZodString>;
     }, {

@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { type McpToolContext, type McpToolDeclaration } from '../tool-registry';
 declare const devserverStartToolInputSchema: z.ZodObject<{
+    port: z.ZodOptional<z.ZodNumber>;
     workspace: z.ZodOptional<z.ZodString>;
     project: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
