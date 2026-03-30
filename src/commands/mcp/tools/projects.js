@@ -390,7 +390,7 @@ async function loadAndParseWorkspace(configFile, seenPaths) {
         const projects = [];
         const workspaceRoot = (0, node_path_1.dirname)(configFile);
         for (const [name, project] of ws.projects.entries()) {
-            const sourceRoot = node_path_1.posix.join(project.root, project.sourceRoot ?? 'src');
+            const sourceRoot = project.sourceRoot ?? node_path_1.posix.join(project.root, 'src');
             const fullSourceRoot = (0, node_path_1.join)(workspaceRoot, sourceRoot);
             const unitTestFramework = getUnitTestFramework(project.targets.get('test'));
             const styleLanguage = await getProjectStyleLanguage(project, ws, fullSourceRoot);
@@ -449,6 +449,26 @@ async function processConfigFile(configFile, searchRoot, seenPaths, versionCache
         };
     }
 }
+/**
+ * Deduplicates overlapping search roots (e.g., if one is a child of another).
+ * Sorting by length ensures parent directories are processed before children.
+ * @param roots A list of normalized absolute paths used as search roots.
+ * @returns A deduplicated list of search roots.
+ */
+function deduplicateSearchRoots(roots) {
+    const sortedRoots = [...roots].sort((a, b) => a.length - b.length);
+    const deduplicated = [];
+    for (const root of sortedRoots) {
+        const isSubdirectory = deduplicated.some((existing) => {
+            const rel = (0, node_path_1.relative)(existing, root);
+            return rel === '' || (!rel.startsWith('..') && !(0, node_path_1.isAbsolute)(rel));
+        });
+        if (!isSubdirectory) {
+            deduplicated.push(root);
+        }
+    }
+    return deduplicated;
+}
 async function createListProjectsHandler({ server }) {
     return async () => {
         const workspaces = [];
@@ -466,6 +486,7 @@ async function createListProjectsHandler({ server }) {
             // Fallback to the current working directory if client does not support roots
             searchRoots = [process.cwd()];
         }
+        searchRoots = deduplicateSearchRoots(searchRoots);
         // Pre-resolve allowed roots to handle their own symlinks or normalizations.
         // We ignore failures here; if a root is broken, we simply won't match against it.
         const realAllowedRoots = searchRoots
