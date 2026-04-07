@@ -140,12 +140,20 @@ let CommandModule = (() => {
             const userId = await (0, analytics_1.getAnalyticsUserId)(this.context, 
             // Don't prompt on `ng update`, 'ng version' or `ng analytics`.
             ['version', 'update', 'analytics'].includes(this.commandName));
-            return userId
-                ? new analytics_collector_1.AnalyticsCollector(this.context.logger, userId, {
-                    name: this.context.packageManager.name,
-                    version: await this.context.packageManager.getVersion(),
-                })
-                : undefined;
+            if (!userId) {
+                return undefined;
+            }
+            let version;
+            try {
+                version = await this.context.packageManager.getVersion();
+            }
+            catch {
+                // Ignore errors if the package manager is not available.
+            }
+            return new analytics_collector_1.AnalyticsCollector(this.context.logger, userId, {
+                name: this.context.packageManager.name,
+                version,
+            });
         }
         /**
          * Adds schema options to a command also this keeps track of options that are required for analytics.
