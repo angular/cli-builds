@@ -19,6 +19,7 @@ const node_child_process_1 = require("node:child_process");
 const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
 const node_net_1 = require("node:net");
+const node_path_1 = require("node:path");
 /**
  * An error thrown when a command fails to execute.
  */
@@ -32,6 +33,28 @@ class CommandError extends Error {
     }
 }
 exports.CommandError = CommandError;
+function resolveCommand(command, args, cwd) {
+    if (command !== 'ng' || !cwd) {
+        return { command, args };
+    }
+    try {
+        const workspaceRequire = (0, node_module_1.createRequire)((0, node_path_1.join)(cwd, 'package.json'));
+        const pkgJsonPath = workspaceRequire.resolve('@angular/cli/package.json');
+        const pkgJson = workspaceRequire(pkgJsonPath);
+        const binPath = typeof pkgJson.bin === 'string' ? pkgJson.bin : pkgJson.bin?.['ng'];
+        if (binPath) {
+            const ngJsPath = (0, node_path_1.resolve)((0, node_path_1.dirname)(pkgJsonPath), binPath);
+            return {
+                command: process.execPath,
+                args: [ngJsPath, ...args],
+            };
+        }
+    }
+    catch {
+        // Failed to resolve the CLI binary, fall back to assuming `ng` is on PATH.
+    }
+    return { command, args };
+}
 /**
  * A concrete implementation of the `Host` interface that runs on a local workspace.
  */
@@ -46,9 +69,10 @@ exports.LocalWorkspaceHost = {
         return (0, node_module_1.createRequire)(from).resolve(request);
     },
     runCommand: async (command, args, options = {}) => {
+        const resolved = resolveCommand(command, args, options.cwd);
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;
         return new Promise((resolve, reject) => {
-            const childProcess = (0, node_child_process_1.spawn)(command, args, {
+            const childProcess = (0, node_child_process_1.spawn)(resolved.command, resolved.args, {
                 shell: false,
                 stdio: options.stdio ?? 'pipe',
                 signal,
@@ -82,7 +106,8 @@ exports.LocalWorkspaceHost = {
         });
     },
     spawn(command, args, options = {}) {
-        return (0, node_child_process_1.spawn)(command, args, {
+        const resolved = resolveCommand(command, args, options.cwd);
+        return (0, node_child_process_1.spawn)(resolved.command, resolved.args, {
             shell: false,
             stdio: options.stdio ?? 'pipe',
             cwd: options.cwd,

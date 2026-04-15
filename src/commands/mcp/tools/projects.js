@@ -125,7 +125,7 @@ their types, and their locations.
     factory: createListProjectsHandler,
 });
 const EXCLUDED_DIRS = new Set(['node_modules', 'dist', 'out', 'coverage']);
-const IGNORED_FILE_SYSTEM_ERRORS = new Set(['EACCES', 'EPERM', 'ENOENT', 'EBUSY']);
+const IGNORED_FILE_SYSTEM_ERRORS = new Set(['EACCES', 'EPERM', 'ENOENT', 'EBUSY', 'EBADF']);
 function isIgnorableFileError(error) {
     return !!error.code && IGNORED_FILE_SYSTEM_ERRORS.has(error.code);
 }
