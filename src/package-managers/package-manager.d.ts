@@ -109,6 +109,10 @@ export declare class PackageManager {
         ignorePeerDependencies?: boolean;
     }): Promise<void>;
     /**
+     * Gets the name of the package in the current project.
+     */
+    getCurrentPackageName(): Promise<string | undefined>;
+    /**
      * Gets the version of the package manager binary.
      */
     getVersion(): Promise<string>;

@@ -47,6 +47,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         getRegistryOptions: (registry) => ({ args: ['--registry', registry] }),
         versionCommand: ['--version'],
         listDependenciesCommand: ['list', '--depth=0', '--json=true', '--all=true'],
+        getPackageNameCommand: ['pkg', 'get', 'name'],
         getManifestCommand: ['view', '--json'],
         viewCommandFieldArgFormatter: (fields) => [...fields],
         outputParsers: {
@@ -126,6 +127,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         getRegistryOptions: (registry) => ({ args: ['--registry', registry] }),
         versionCommand: ['--version'],
         listDependenciesCommand: ['list', '--depth=0', '--json'],
+        getPackageNameCommand: ['pkg', 'get', 'name'],
         getManifestCommand: ['view', '--json'],
         viewCommandFieldArgFormatter: (fields) => [...fields],
         outputParsers: {

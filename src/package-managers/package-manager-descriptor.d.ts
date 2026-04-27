@@ -57,6 +57,8 @@ export interface PackageManagerDescriptor {
     readonly versionCommand: readonly string[];
     /** The command to list all installed dependencies. */
     readonly listDependenciesCommand: readonly string[];
+    /** The command to get the current package name. */
+    readonly getPackageNameCommand?: readonly string[];
     /** The command to fetch the registry manifest of a package. */
     readonly getManifestCommand: readonly string[];
     /** Whether a specific version lookup is needed prior to fetching a registry manifest. */
@@ -66,7 +68,9 @@ export interface PackageManagerDescriptor {
     /** A collection of functions to parse the output of specific commands. */
     readonly outputParsers: {
         /** A function to parse the output of `listDependenciesCommand`. */
-        listDependencies: (stdout: string, logger?: Logger) => Map<string, InstalledPackage>;
+        listDependencies: (stdout: string, logger?: Logger, options?: {
+            workspacePackageName?: string;
+        }) => Map<string, InstalledPackage>;
         /** A function to parse the output of `getManifestCommand` for a specific version. */
         getRegistryManifest: (stdout: string, logger?: Logger) => PackageManifest | null;
         /** A function to parse the output of `getManifestCommand` for the full package metadata. */
@@ -115,6 +119,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        getPackageNameCommand: string[];
         getManifestCommand: string[];
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
         outputParsers: {
@@ -199,6 +204,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        getPackageNameCommand: string[];
         getManifestCommand: string[];
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
         outputParsers: {

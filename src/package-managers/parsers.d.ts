@@ -34,7 +34,9 @@ import { InstalledPackage } from './package-tree';
  * @param logger An optional logger instance.
  * @returns A map of package names to their installed package details.
  */
-export declare function parseNpmLikeDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;
+export declare function parseNpmLikeDependencies(stdout: string, logger?: Logger, options?: {
+    workspacePackageName?: string;
+}): Map<string, InstalledPackage>;
 /**
  * Parses the output of `yarn list` (classic).
  *
