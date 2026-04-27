@@ -40,8 +40,6 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchPackageMetadata = fetchPackageMetadata;
-exports.fetchPackageManifest = fetchPackageManifest;
 exports.getNpmPackageJson = getNpmPackageJson;
 const lockfile = __importStar(require("@yarnpkg/lockfile"));
 const ini = __importStar(require("ini"));
@@ -192,53 +190,6 @@ function normalizeOptions(rawOptions, location = process.cwd(), existingNormaliz
         }
     }
     return options;
-}
-async function fetchPackageMetadata(name, logger, options) {
-    const { usingYarn, verbose, registry } = {
-        registry: undefined,
-        usingYarn: false,
-        verbose: false,
-        ...options,
-    };
-    ensureNpmrc(logger, usingYarn, verbose);
-    const { packument } = await Promise.resolve().then(() => __importStar(require('pacote')));
-    const response = await packument(name, {
-        fullMetadata: true,
-        ...npmrc,
-        ...(registry ? { registry } : {}),
-    });
-    if (!response.versions) {
-        // While pacote type declares that versions cannot be undefined this is not the case.
-        response.versions = {};
-    }
-    // Normalize the response
-    const metadata = {
-        ...response,
-        tags: {},
-    };
-    if (response['dist-tags']) {
-        for (const [tag, version] of Object.entries(response['dist-tags'])) {
-            const manifest = metadata.versions[version];
-            if (manifest) {
-                metadata.tags[tag] = manifest;
-            }
-            else if (verbose) {
-                logger.warn(`Package ${metadata.name} has invalid version metadata for '${tag}'.`);
-            }
-        }
-    }
-    return metadata;
-}
-async function fetchPackageManifest(name, logger, options = {}) {
-    const { usingYarn = false, verbose = false, registry } = options;
-    ensureNpmrc(logger, usingYarn, verbose);
-    const { manifest } = await Promise.resolve().then(() => __importStar(require('pacote')));
-    const response = await manifest(name, {
-        fullMetadata: true,
-        ...npmrc,
-        ...(registry ? { registry } : {}),
-    });
-    return response;
 }
 async function getNpmPackageJson(packageName, logger, options = {}) {
     const cachedResponse = npmPackageJsonCache.get(packageName);

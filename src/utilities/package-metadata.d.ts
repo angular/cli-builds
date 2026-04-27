@@ -41,16 +41,6 @@ export interface PackageManifest extends Manifest, NgPackageManifestProperties {
         optional?: boolean;
     }>;
 }
-export declare function fetchPackageMetadata(name: string, logger: logging.LoggerApi, options?: {
-    registry?: string;
-    usingYarn?: boolean;
-    verbose?: boolean;
-}): Promise<PackageMetadata>;
-export declare function fetchPackageManifest(name: string, logger: logging.LoggerApi, options?: {
-    registry?: string;
-    usingYarn?: boolean;
-    verbose?: boolean;
-}): Promise<PackageManifest>;
 export declare function getNpmPackageJson(packageName: string, logger: logging.LoggerApi, options?: {
     registry?: string;
     usingYarn?: boolean;
