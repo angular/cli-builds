@@ -68,7 +68,7 @@ function* parseJsonLines(output, logger) {
  * @param logger An optional logger instance.
  * @returns A map of package names to their installed package details.
  */
-function parseNpmLikeDependencies(stdout, logger) {
+function parseNpmLikeDependencies(stdout, logger, options) {
     logger?.debug(`Parsing npm-like dependency list...`);
     logStdout(stdout, logger);
     const dependencies = new Map();
@@ -86,13 +86,48 @@ function parseNpmLikeDependencies(stdout, logger) {
         logger?.debug('  `dependencies` property not found. No dependencies found.');
         return dependencies;
     }
+    const workspacePackageName = options?.workspacePackageName;
+    if (workspacePackageName) {
+        for (const dependencyMap of dependencyMaps) {
+            const info = dependencyMap[workspacePackageName];
+            if (info && typeof info === 'object') {
+                const nestedMaps = [
+                    info.dependencies,
+                    info.devDependencies,
+                    info.unsavedDependencies,
+                ].filter((d) => !!d);
+                for (const nestedMap of nestedMaps) {
+                    for (const [name, nestedInfo] of Object.entries(nestedMap)) {
+                        if (nestedInfo && typeof nestedInfo === 'object' && nestedInfo.version) {
+                            dependencies.set(name, {
+                                name,
+                                version: nestedInfo.version,
+                                path: nestedInfo.path,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // Extract top-level dependencies (root), without overwriting subproject dependencies
     for (const dependencyMap of dependencyMaps) {
         for (const [name, info] of Object.entries(dependencyMap)) {
-            dependencies.set(name, {
-                name,
-                version: info.version,
-                path: info.path,
-            });
+            if (!info || typeof info !== 'object') {
+                continue;
+            }
+            // Exclude local monorepo workspace packages (which originate from a local file/dir
+            // and contain nested dependency maps in the output of `npm list --depth=0`),
+            // while preserving third-party packages installed from local paths.
+            const isWorkspacePackage = info.resolved?.startsWith('file:') &&
+                (!!info.dependencies || !!info.devDependencies || !!info.unsavedDependencies);
+            if (info.version && !dependencies.has(name) && !isWorkspacePackage) {
+                dependencies.set(name, {
+                    name,
+                    version: info.version,
+                    path: info.path,
+                });
+            }
         }
     }
     logger?.debug(`  Found ${dependencies.size} dependencies.`);

@@ -106,7 +106,8 @@ class PackageManager {
             return this.#dependencyCache;
         }
         const args = this.descriptor.listDependenciesCommand;
-        const dependencies = await this.#fetchAndParse(args, (stdout, logger) => this.descriptor.outputParsers.listDependencies(stdout, logger));
+        const workspacePackageName = await this.getCurrentPackageName();
+        const dependencies = await this.#fetchAndParse(args, (stdout, logger) => this.descriptor.outputParsers.listDependencies(stdout, logger, { workspacePackageName }));
         return (this.#dependencyCache = dependencies ?? new Map());
     }
     /**
@@ -259,6 +260,30 @@ class PackageManager {
         const args = [...this.descriptor.installCommand, ...flags];
         await this.#run(args, options);
         this.#dependencyCache = null;
+    }
+    /**
+     * Gets the name of the package in the current project.
+     */
+    async getCurrentPackageName() {
+        if (this.descriptor.getPackageNameCommand) {
+            try {
+                const { stdout } = await this.#run(this.descriptor.getPackageNameCommand);
+                if (stdout) {
+                    return JSON.parse(stdout);
+                }
+            }
+            catch {
+                // Fall back to reading file if command fails
+            }
+        }
+        try {
+            const content = await this.host.readFile((0, node_path_1.join)(this.cwd, 'package.json'));
+            const pkgJson = JSON.parse(content);
+            return pkgJson.name;
+        }
+        catch {
+            return undefined;
+        }
     }
     /**
      * Gets the version of the package manager binary.
