@@ -23,7 +23,6 @@ const devserver_stop_1 = require("./tools/devserver/devserver-stop");
 const devserver_wait_for_build_1 = require("./tools/devserver/devserver-wait-for-build");
 const doc_search_1 = require("./tools/doc-search");
 const e2e_1 = require("./tools/e2e");
-const index_1 = require("./tools/examples/index");
 const modernize_1 = require("./tools/modernize");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
@@ -41,7 +40,6 @@ const STABLE_TOOLS = [
     ai_tutor_1.AI_TUTOR_TOOL,
     best_practices_1.BEST_PRACTICES_TOOL,
     doc_search_1.DOC_SEARCH_TOOL,
-    index_1.FIND_EXAMPLE_TOOL,
     projects_1.LIST_PROJECTS_TOOL,
     zoneless_migration_1.ZONELESS_MIGRATION_TOOL,
 ];
@@ -94,7 +92,6 @@ equivalent actions.
 
 * **3. Answer User Questions:**
     - For conceptual questions ("what is..."), use \`search_documentation\`.
-    - For code examples ("show me how to..."), use \`find_examples\`.
 </Core Workflows & Tool Guide>
 
 <Key Concepts>
@@ -128,9 +125,6 @@ function assembleToolDeclarations(stableDeclarations, experimentalDeclarations, 
         toolDeclarations = toolDeclarations.filter((tool) => tool.isLocalOnly);
     }
     const enabledExperimentalTools = new Set(options.experimentalTools);
-    if (process.env['NG_MCP_CODE_EXAMPLES'] === '1') {
-        enabledExperimentalTools.add('find_examples');
-    }
     for (const [toolGroupName, toolGroup] of Object.entries(exports.EXPERIMENTAL_TOOL_GROUPS)) {
         if (enabledExperimentalTools.delete(toolGroupName)) {
             for (const tool of toolGroup) {
