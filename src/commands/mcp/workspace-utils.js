@@ -11,7 +11,9 @@ exports.findAngularJsonDir = findAngularJsonDir;
 exports.getProject = getProject;
 exports.getDefaultProjectName = getDefaultProjectName;
 exports.resolveWorkspaceAndProject = resolveWorkspaceAndProject;
+const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
+const node_url_1 = require("node:url");
 const config_1 = require("../../utilities/config");
 const host_1 = require("./host");
 /**
@@ -71,6 +73,36 @@ function getDefaultProjectName(workspace) {
     }
     return undefined;
 }
+function isWithinAllowedRoot(root, targetPath) {
+    const rel = (0, node_path_1.relative)(root, targetPath);
+    return !rel.startsWith('..') && !(0, node_path_1.isAbsolute)(rel);
+}
+async function getAllowedWorkspaceRoots(server) {
+    let roots;
+    const clientCapabilities = server.server.getClientCapabilities();
+    if (clientCapabilities?.roots) {
+        const { roots: clientRoots } = await server.server.listRoots();
+        roots = clientRoots?.map((root) => (0, node_url_1.fileURLToPath)(root.uri)) ?? [];
+    }
+    else {
+        roots = [process.cwd()];
+    }
+    return roots
+        .map((root) => {
+        try {
+            return (0, node_fs_1.realpathSync)(root);
+        }
+        catch {
+            return null;
+        }
+    })
+        .filter((root) => root !== null);
+}
+async function isAllowedWorkspacePath(server, workspacePath) {
+    const allowedRoots = await getAllowedWorkspaceRoots(server);
+    const resolvedWorkspacePath = (0, node_fs_1.realpathSync)(workspacePath);
+    return allowedRoots.some((root) => isWithinAllowedRoot(root, resolvedWorkspacePath));
+}
 /**
  * Resolves workspace and project for tools to operate on.
  *
@@ -78,7 +110,7 @@ function getDefaultProjectName(workspace) {
  * current directory as the workspace.
  * If `projectNameInput` is absent, uses the default project in the workspace.
  */
-async function resolveWorkspaceAndProject({ host, workspacePathInput, projectNameInput, mcpWorkspace, }) {
+async function resolveWorkspaceAndProject({ host, server, workspacePathInput, projectNameInput, mcpWorkspace, }) {
     let workspacePath;
     let workspace;
     if (workspacePathInput) {
@@ -89,6 +121,12 @@ async function resolveWorkspaceAndProject({ host, workspacePathInput, projectNam
         if (!host.existsSync((0, node_path_1.join)(workspacePathInput, 'angular.json'))) {
             throw new Error(`No angular.json found at ${workspacePathInput}. ` +
                 "You can use 'list_projects' to find available workspaces.");
+        }
+        if (server) {
+            if (!(await isAllowedWorkspacePath(server, workspacePathInput))) {
+                throw new Error(`Workspace path is outside the allowed MCP roots: ${workspacePathInput}. ` +
+                    "You can use 'list_projects' to find available workspaces.");
+            }
         }
         workspacePath = workspacePathInput;
         const configPath = (0, node_path_1.join)(workspacePath, 'angular.json');
@@ -107,6 +145,10 @@ async function resolveWorkspaceAndProject({ host, workspacePathInput, projectNam
         const found = findAngularJsonDir(process.cwd(), host);
         if (!found) {
             throw new Error('Could not find an Angular workspace (angular.json) in the current directory. ' +
+                "You can use 'list_projects' to find available workspaces.");
+        }
+        if (server && !(await isAllowedWorkspacePath(server, found))) {
+            throw new Error(`The current directory resolves to a workspace outside the allowed MCP roots: ${found}. ` +
                 "You can use 'list_projects' to find available workspaces.");
         }
         workspacePath = found;

@@ -25,6 +25,7 @@ const e2eToolOutputSchema = zod_1.z.object({
 async function runE2e(input, host, context) {
     const { workspacePath, workspace, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
         host,
+        server: context.server,
         workspacePathInput: input.workspace,
         projectNameInput: input.project,
         mcpWorkspace: context.workspace,
