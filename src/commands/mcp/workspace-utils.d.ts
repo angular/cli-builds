@@ -41,8 +41,9 @@ export declare function getDefaultProjectName(workspace: AngularWorkspace | unde
  * current directory as the workspace.
  * If `projectNameInput` is absent, uses the default project in the workspace.
  */
-export declare function resolveWorkspaceAndProject({ host, workspacePathInput, projectNameInput, mcpWorkspace, }: {
+export declare function resolveWorkspaceAndProject({ host, server, workspacePathInput, projectNameInput, mcpWorkspace, }: {
     host: Host;
+    server?: McpToolContext['server'];
     workspacePathInput?: string;
     projectNameInput?: string;
     mcpWorkspace?: AngularWorkspace;

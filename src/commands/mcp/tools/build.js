@@ -31,6 +31,7 @@ const buildToolOutputSchema = zod_1.z.object({
 async function runBuild(input, context) {
     const { workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
         host: context.host,
+        server: context.server,
         workspacePathInput: input.workspace,
         projectNameInput: input.project,
         mcpWorkspace: context.workspace,
