@@ -33,16 +33,6 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
     }>;
     logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
 }>, import("./tools/tool-registry").McpToolDeclaration<{
-    transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<{
-        [x: string]: string;
-    }>>>;
-    path: import("zod").ZodOptional<import("zod").ZodString>;
-    workspace: import("zod").ZodOptional<import("zod").ZodString>;
-    project: import("zod").ZodOptional<import("zod").ZodString>;
-}, {
-    instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-    logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-}>, import("./tools/tool-registry").McpToolDeclaration<{
     filter: import("zod").ZodOptional<import("zod").ZodString>;
     workspace: import("zod").ZodOptional<import("zod").ZodString>;
     project: import("zod").ZodOptional<import("zod").ZodString>;
@@ -103,16 +93,6 @@ export declare const EXPERIMENTAL_TOOL_GROUPS: {
             success: "success";
             failure: "failure";
         }>;
-        logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-    }>, import("./tools/tool-registry").McpToolDeclaration<{
-        transformations: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodEnum<{
-            [x: string]: string;
-        }>>>;
-        path: import("zod").ZodOptional<import("zod").ZodString>;
-        workspace: import("zod").ZodOptional<import("zod").ZodString>;
-        project: import("zod").ZodOptional<import("zod").ZodString>;
-    }, {
-        instructions: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
         logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
     }>, import("./tools/tool-registry").McpToolDeclaration<{
         filter: import("zod").ZodOptional<import("zod").ZodString>;
