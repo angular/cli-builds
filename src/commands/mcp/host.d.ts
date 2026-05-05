@@ -94,8 +94,13 @@ export interface Host {
      * Checks whether a TCP port is available on the system.
      */
     isPortAvailable(port: number): Promise<boolean>;
+    /**
+     * Sets the allowed roots for this host.
+     */
+    setRoots(roots: string[]): void;
 }
 /**
  * A concrete implementation of the `Host` interface that runs on a local workspace.
  */
 export declare const LocalWorkspaceHost: Host;
+export declare function createRootRestrictedHost(baseHost: Host, initialRoots?: string[]): Host;

@@ -11,7 +11,9 @@ exports.EXPERIMENTAL_TOOL_GROUPS = exports.EXPERIMENTAL_TOOLS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
 const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
+const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
 const node_path_1 = require("node:path");
+const node_url_1 = require("node:url");
 const version_1 = require("../../utilities/version");
 const host_1 = require("./host");
 const instructions_1 = require("./resources/instructions");
@@ -110,12 +112,40 @@ equivalent actions.
         ...options,
         logger,
     });
+    const restrictedHost = (0, host_1.createRootRestrictedHost)(host_1.LocalWorkspaceHost);
+    server.server.oninitialized = () => {
+        void (async () => {
+            try {
+                const clientCapabilities = server.server.getClientCapabilities();
+                if (clientCapabilities?.roots) {
+                    const { roots } = await server.server.listRoots();
+                    const searchRoots = roots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
+                    restrictedHost.setRoots(searchRoots);
+                    if (clientCapabilities.roots.listChanged) {
+                        server.server.setNotificationHandler(types_js_1.RootsListChangedNotificationSchema, async () => {
+                            try {
+                                const { roots: updatedRoots } = await server.server.listRoots();
+                                const updatedSearchRoots = updatedRoots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
+                                restrictedHost.setRoots(updatedSearchRoots);
+                            }
+                            catch (e) {
+                                logger.warn(`Failed to update roots on notification: ${e instanceof Error ? e.message : e}`);
+                            }
+                        });
+                    }
+                }
+            }
+            catch (e) {
+                logger.warn(`Failed to initialize roots on connection: ${e instanceof Error ? e.message : e}`);
+            }
+        })();
+    };
     await (0, tool_registry_1.registerTools)(server, {
         workspace: options.workspace,
         logger,
         exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
         devservers: new Map(),
-        host: host_1.LocalWorkspaceHost,
+        host: restrictedHost,
     }, toolDeclarations);
     return server;
 }

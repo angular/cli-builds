@@ -8,6 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalWorkspaceHost = exports.CommandError = void 0;
+exports.createRootRestrictedHost = createRootRestrictedHost;
 /**
  * @fileoverview
  * This file defines an abstraction layer for operating-system or file-system operations, such as
@@ -16,6 +17,7 @@ exports.LocalWorkspaceHost = exports.CommandError = void 0;
  */
 const fs_1 = require("fs");
 const node_child_process_1 = require("node:child_process");
+const node_fs_1 = require("node:fs");
 const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
 const node_net_1 = require("node:net");
@@ -150,5 +152,96 @@ exports.LocalWorkspaceHost = {
             });
         });
     },
+    setRoots(roots) {
+        // LocalWorkspaceHost does not enforce roots, so this is a no-op.
+    },
 };
+function createRootRestrictedHost(baseHost, initialRoots = [process.cwd()]) {
+    let roots = initialRoots;
+    function checkPath(path) {
+        const resolvedPath = (0, node_path_1.resolve)(path);
+        let realPath;
+        try {
+            realPath = (0, node_fs_1.realpathSync)(resolvedPath);
+        }
+        catch (e) {
+            if (e.code === 'ENOENT') {
+                // Path does not exist. Find the first existing ancestor.
+                let current = resolvedPath;
+                while (current) {
+                    try {
+                        realPath = (0, node_fs_1.realpathSync)(current);
+                        break;
+                    }
+                    catch (err) {
+                        if (err.code !== 'ENOENT') {
+                            throw err;
+                        }
+                        const parent = (0, node_path_1.dirname)(current);
+                        if (parent === current) {
+                            // Reached filesystem root
+                            throw err;
+                        }
+                        current = parent;
+                    }
+                }
+            }
+            else {
+                throw e;
+            }
+        }
+        const isAllowed = roots.some((root) => {
+            const rel = (0, node_path_1.relative)(root, realPath);
+            return !rel.startsWith('..') && !(0, node_path_1.isAbsolute)(rel);
+        });
+        if (!isAllowed) {
+            throw new Error(`Access denied: path '${path}' is outside allowed roots.`);
+        }
+    }
+    return {
+        ...baseHost,
+        setRoots(newRoots) {
+            roots = newRoots;
+        },
+        stat(path) {
+            checkPath(path);
+            return baseHost.stat(path);
+        },
+        existsSync(path) {
+            checkPath(path);
+            return baseHost.existsSync(path);
+        },
+        readFile(path, encoding) {
+            checkPath(path);
+            return baseHost.readFile(path, encoding);
+        },
+        glob(pattern, options) {
+            if (pattern.includes('..')) {
+                throw new Error(`Access denied: glob pattern '${pattern}' contains path traversal sequences.`);
+            }
+            checkPath(options.cwd);
+            const firstWildcardIndex = pattern.search(/[*?[{]/);
+            const basePath = firstWildcardIndex >= 0 ? pattern.substring(0, firstWildcardIndex) : pattern;
+            const targetDir = (0, node_path_1.resolve)(options.cwd, basePath);
+            checkPath(targetDir);
+            return baseHost.glob(pattern, options);
+        },
+        runCommand(command, args, options = {}) {
+            const effectiveCwd = options.cwd ?? process.cwd();
+            checkPath(effectiveCwd);
+            if (command.includes('/') || command.includes('\\')) {
+                checkPath((0, node_path_1.resolve)(effectiveCwd, command));
+            }
+            return baseHost.runCommand(command, args, options);
+        },
+        spawn(command, args, options = {}) {
+            const effectiveCwd = options.cwd ?? process.cwd();
+            checkPath(effectiveCwd);
+            if (command.includes('/') || command.includes('\\')) {
+                checkPath((0, node_path_1.resolve)(effectiveCwd, command));
+            }
+            return baseHost.spawn(command, args, options);
+        },
+    };
+}
 //# sourceMappingURL=host.js.map
