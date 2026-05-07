@@ -17,6 +17,12 @@ exports.parseNpmLikeError = parseNpmLikeError;
 exports.parseYarnClassicError = parseYarnClassicError;
 exports.parseBunDependencies = parseBunDependencies;
 exports.parseYarnModernDependencies = parseYarnModernDependencies;
+/**
+ * @fileoverview This file contains the parser functions that are used to
+ * interpret the output of various package manager commands. Separating these
+ * into their own file improves modularity and allows for focused testing.
+ */
+const semver_1 = require("semver");
 const MAX_LOG_LENGTH = 1024;
 function logStdout(stdout, logger) {
     if (!logger) {
@@ -172,6 +178,15 @@ function parseYarnClassicDependencies(stdout, logger) {
     logger?.debug(`  Found ${dependencies.size} dependencies.`);
     return dependencies;
 }
+function isValidManifest(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+        return false;
+    }
+    const record = obj;
+    const name = record.name;
+    const version = record.version;
+    return typeof name === 'string' && typeof version === 'string' && (0, semver_1.valid)(version) !== null;
+}
 /**
  * Parses the output of `npm view` or a compatible command to get a package manifest.
  * @param stdout The standard output of the command.
@@ -186,7 +201,30 @@ function parseNpmLikeManifest(stdout, logger) {
         return null;
     }
     const result = JSON.parse(stdout);
-    return Array.isArray(result) ? result[result.length - 1] : result;
+    // npm view returns an array of manifests if the query matches multiple versions
+    // (e.g. when using a version range). We find the highest version to ensure
+    // we get the latest relevant manifest, even if the output is not sorted.
+    if (Array.isArray(result)) {
+        let maxManifest = null;
+        for (const manifest of result) {
+            if (!isValidManifest(manifest)) {
+                logger?.debug('  Skipping invalid manifest in array (missing name, version, or invalid SemVer).');
+                continue;
+            }
+            if (!maxManifest || (0, semver_1.compare)(manifest.version, maxManifest.version) > 0) {
+                maxManifest = manifest;
+            }
+        }
+        if (!maxManifest) {
+            logger?.debug('  No valid manifests found in the array.');
+        }
+        return maxManifest;
+    }
+    if (!isValidManifest(result)) {
+        logger?.debug('  Parsed JSON is not a valid manifest (missing name, version, or invalid SemVer).');
+        return null;
+    }
+    return result;
 }
 /**
  * Parses the output of `npm view` or a compatible command to get package metadata.
@@ -246,6 +284,10 @@ function parseYarnClassicManifest(stdout, logger) {
         typeof manifest['ng-add'] === 'object' &&
         Object.keys(manifest['ng-add']).length === 0) {
         manifest['ng-add'].save ??= false;
+    }
+    if (!isValidManifest(manifest)) {
+        logger?.debug('  Parsed JSON is not a valid manifest (missing name, version, or invalid SemVer).');
+        return null;
     }
     return manifest;
 }
