@@ -5,11 +5,6 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-/**
- * @fileoverview This file contains the parser functions that are used to
- * interpret the output of various package manager commands. Separating these
- * into their own file improves modularity and allows for focused testing.
- */
 import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
