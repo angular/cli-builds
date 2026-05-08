@@ -49,7 +49,7 @@ async function runTest(input, context) {
     let status = 'success';
     let logs;
     try {
-        logs = (await context.host.runCommand('ng', args, { cwd: workspacePath })).logs;
+        logs = (await context.host.executeNgCommand(args, { cwd: workspacePath })).logs;
     }
     catch (e) {
         status = 'failure';

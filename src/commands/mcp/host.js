@@ -35,9 +35,10 @@ class CommandError extends Error {
     }
 }
 exports.CommandError = CommandError;
-function resolveCommand(command, args, cwd) {
-    if (command !== 'ng' || !cwd) {
-        return { command, args };
+function resolveNgCommand(args, cwd) {
+    const defaultCommand = { command: 'ng', args };
+    if (!cwd) {
+        return defaultCommand;
     }
     try {
         const workspaceRequire = (0, node_module_1.createRequire)((0, node_path_1.join)(cwd, 'package.json'));
@@ -55,7 +56,7 @@ function resolveCommand(command, args, cwd) {
     catch {
         // Failed to resolve the CLI binary, fall back to assuming `ng` is on PATH.
     }
-    return { command, args };
+    return defaultCommand;
 }
 /**
  * A concrete implementation of the `Host` interface that runs on a local workspace.
@@ -67,8 +68,8 @@ exports.LocalWorkspaceHost = {
     glob: function (pattern, options) {
         return (0, promises_1.glob)(pattern, { ...options, withFileTypes: true });
     },
-    runCommand: async (command, args, options = {}) => {
-        const resolved = resolveCommand(command, args, options.cwd);
+    executeNgCommand: async (args, options = {}) => {
+        const resolved = resolveNgCommand(args, options.cwd);
         const signal = options.timeout ? AbortSignal.timeout(options.timeout) : undefined;
         return new Promise((resolve, reject) => {
             const childProcess = (0, node_child_process_1.spawn)(resolved.command, resolved.args, {
@@ -104,8 +105,8 @@ exports.LocalWorkspaceHost = {
             });
         });
     },
-    spawn(command, args, options = {}) {
-        const resolved = resolveCommand(command, args, options.cwd);
+    startNgProcess(args, options = {}) {
+        const resolved = resolveNgCommand(args, options.cwd);
         return (0, node_child_process_1.spawn)(resolved.command, resolved.args, {
             shell: false,
             stdio: options.stdio ?? 'pipe',
@@ -223,21 +224,15 @@ function createRootRestrictedHost(baseHost, initialRoots = [process.cwd()]) {
             checkPath(targetDir);
             return baseHost.glob(pattern, options);
         },
-        runCommand(command, args, options = {}) {
-            const effectiveCwd = options.cwd ?? process.cwd();
+        executeNgCommand(args, options = {}) {
+            const effectiveCwd = options?.cwd ?? process.cwd();
             checkPath(effectiveCwd);
-            if (command.includes('/') || command.includes('\\')) {
-                checkPath((0, node_path_1.resolve)(effectiveCwd, command));
-            }
-            return baseHost.runCommand(command, args, options);
+            return baseHost.executeNgCommand(args, options);
         },
-        spawn(command, args, options = {}) {
-            const effectiveCwd = options.cwd ?? process.cwd();
+        startNgProcess(args, options = {}) {
+            const effectiveCwd = options?.cwd ?? process.cwd();
             checkPath(effectiveCwd);
-            if (command.includes('/') || command.includes('\\')) {
-                checkPath((0, node_path_1.resolve)(effectiveCwd, command));
-            }
-            return baseHost.spawn(command, args, options);
+            return baseHost.startNgProcess(args, options);
         },
     };
 }
