@@ -37,7 +37,7 @@ export interface Host {
      * @param encoding The encoding to use.
      * @returns A promise that resolves to the file content.
      */
-    readFile(path: string, encoding: 'utf-8'): Promise<string>;
+    readFile(path: string, encoding: BufferEncoding): Promise<string>;
     /**
      * Finds files matching a glob pattern.
      * @param pattern The glob pattern.
