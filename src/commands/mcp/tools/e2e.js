@@ -51,7 +51,7 @@ async function runE2e(input, host, context) {
     let status = 'success';
     let logs;
     try {
-        logs = (await host.executeNgCommand(args, { cwd: workspacePath })).logs;
+        logs = (await host.runCommand('ng', args, { cwd: workspacePath })).logs;
     }
     catch (e) {
         status = 'failure';

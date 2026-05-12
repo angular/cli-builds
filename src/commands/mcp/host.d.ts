@@ -37,7 +37,7 @@ export interface Host {
      * @param encoding The encoding to use.
      * @returns A promise that resolves to the file content.
      */
-    readFile(path: string, encoding: BufferEncoding): Promise<string>;
+    readFile(path: string, encoding: 'utf-8'): Promise<string>;
     /**
      * Finds files matching a glob pattern.
      * @param pattern The glob pattern.
@@ -54,11 +54,12 @@ export interface Host {
     /**
      * Spawns a child process and returns a promise that resolves with the process's
      * output or rejects with a structured error.
+     * @param command The command to run.
      * @param args The arguments to pass to the command.
      * @param options Options for the child process.
      * @returns A promise that resolves with the standard output and standard error of the command.
      */
-    executeNgCommand(args: readonly string[], options?: {
+    runCommand(command: string, args: readonly string[], options?: {
         timeout?: number;
         stdio?: 'pipe' | 'ignore';
         cwd?: string;
@@ -68,11 +69,12 @@ export interface Host {
     }>;
     /**
      * Spawns a long-running child process and returns the `ChildProcess` object.
+     * @param command The command to run.
      * @param args The arguments to pass to the command.
      * @param options Options for the child process.
      * @returns The spawned `ChildProcess` instance.
      */
-    startNgProcess(args: readonly string[], options?: {
+    spawn(command: string, args: readonly string[], options?: {
         stdio?: 'pipe' | 'ignore';
         cwd?: string;
         env?: Record<string, string>;

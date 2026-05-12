@@ -9,7 +9,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZONELESS_MIGRATION_TOOL = void 0;
 exports.registerZonelessMigrationTool = registerZonelessMigrationTool;
-const node_path_1 = require("node:path");
+const node_fs_1 = require("node:fs");
+const promises_1 = require("node:fs/promises");
 const zod_1 = require("zod");
 const tool_registry_1 = require("../tool-registry");
 const analyze_for_unsupported_zone_uses_1 = require("./analyze-for-unsupported-zone-uses");
@@ -56,13 +57,13 @@ most important action to take in the migration journey.
             .describe('The absolute path of the directory or file with the component(s), directive(s), or service(s) to migrate.' +
             ' The contents are read with fs.readFileSync.'),
     },
-    factory: ({ host }) => ({ fileOrDirPath }, requestHandlerExtra) => registerZonelessMigrationTool(fileOrDirPath, host, requestHandlerExtra),
+    factory: () => ({ fileOrDirPath }, requestHandlerExtra) => registerZonelessMigrationTool(fileOrDirPath, requestHandlerExtra),
 });
-async function registerZonelessMigrationTool(fileOrDirPath, host, extras) {
+async function registerZonelessMigrationTool(fileOrDirPath, extras) {
     let filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors;
     try {
         ({ filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors } =
-            await discoverAndCategorizeFiles(fileOrDirPath, host, extras));
+            await discoverAndCategorizeFiles(fileOrDirPath, extras));
     }
     catch (e) {
         return (0, prompts_1.createResponse)(`Error: Could not access the specified path. Please ensure the following path is correct ` +
@@ -81,14 +82,14 @@ async function registerZonelessMigrationTool(fileOrDirPath, host, extras) {
             ? await rankComponentFilesForMigration(extras, Array.from(filesWithComponents))
             : Array.from(filesWithComponents);
         for (const file of rankedFiles) {
-            const result = await (0, migrate_single_file_1.migrateSingleFile)(file, host, extras);
+            const result = await (0, migrate_single_file_1.migrateSingleFile)(file, extras);
             if (result !== null) {
                 return result;
             }
         }
     }
     for (const file of componentTestFiles) {
-        const result = await (0, migrate_test_file_1.migrateTestFile)(file, host);
+        const result = await (0, migrate_test_file_1.migrateTestFile)(file);
         if (result !== null) {
             return result;
         }
@@ -100,7 +101,7 @@ async function registerZonelessMigrationTool(fileOrDirPath, host, extras) {
     }
     return (0, prompts_1.createTestDebuggingGuideForNonActionableInput)(fileOrDirPath);
 }
-async function discoverAndCategorizeFiles(fileOrDirPath, host, extras) {
+async function discoverAndCategorizeFiles(fileOrDirPath, extras) {
     const filePaths = [];
     const componentTestFiles = new Set();
     const filesWithComponents = new Set();
@@ -108,21 +109,20 @@ async function discoverAndCategorizeFiles(fileOrDirPath, host, extras) {
     const categorizationErrors = [];
     let isDirectory;
     try {
-        isDirectory = (await host.stat(fileOrDirPath)).isDirectory();
+        isDirectory = (0, node_fs_1.statSync)(fileOrDirPath).isDirectory();
     }
     catch (e) {
         // Re-throw to be handled by the main function as a user input error
         throw new Error(`Failed to access path: ${fileOrDirPath}`, { cause: e });
     }
     if (isDirectory) {
-        const files = host.glob('**/*.ts', { cwd: fileOrDirPath });
-        for await (const file of files) {
-            filePaths.push((0, node_path_1.join)(file.parentPath, file.name));
+        for await (const file of (0, promises_1.glob)(`${fileOrDirPath}/**/*.ts`)) {
+            filePaths.push(file);
         }
     }
     else {
         filePaths.push(fileOrDirPath);
-        const maybeTestFile = await getTestFilePath(fileOrDirPath, host);
+        const maybeTestFile = await getTestFilePath(fileOrDirPath);
         if (maybeTestFile) {
             // Eagerly add the test file path for categorization.
             filePaths.push(maybeTestFile);
@@ -133,8 +133,8 @@ async function discoverAndCategorizeFiles(fileOrDirPath, host, extras) {
     while (filesToProcess.length > 0) {
         const batch = filesToProcess.splice(0, CONCURRENCY_LIMIT);
         const results = await Promise.allSettled(batch.map(async (filePath) => {
-            const sourceFile = await (0, ts_utils_1.createSourceFile)(filePath, host);
-            await categorizeFile(sourceFile, host, extras, {
+            const sourceFile = await (0, ts_utils_1.createSourceFile)(filePath);
+            await categorizeFile(sourceFile, extras, {
                 filesWithComponents,
                 componentTestFiles,
                 zoneFiles,
@@ -151,7 +151,7 @@ async function discoverAndCategorizeFiles(fileOrDirPath, host, extras) {
     }
     return { filesWithComponents, componentTestFiles, zoneFiles, categorizationErrors };
 }
-async function categorizeFile(sourceFile, host, extras, categorizedFiles) {
+async function categorizeFile(sourceFile, extras, categorizedFiles) {
     const { filesWithComponents, componentTestFiles, zoneFiles } = categorizedFiles;
     const content = sourceFile.getFullText();
     const componentSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core', 'Component');
@@ -167,9 +167,9 @@ async function categorizeFile(sourceFile, host, extras, categorizedFiles) {
         else {
             (0, send_debug_message_1.sendDebugMessage)(`Component file already has change detection strategy: ${sourceFile.fileName}. Skipping migration.`, extras);
         }
-        const testFilePath = await getTestFilePath(sourceFile.fileName, host);
+        const testFilePath = await getTestFilePath(sourceFile.fileName);
         if (testFilePath) {
-            componentTestFiles.add(await (0, ts_utils_1.createSourceFile)(testFilePath, host));
+            componentTestFiles.add(await (0, ts_utils_1.createSourceFile)(testFilePath));
         }
     }
     else if (zoneSpecifier) {
@@ -213,9 +213,9 @@ async function rankComponentFilesForMigration({ sendRequest }, componentFiles) {
     catch { }
     return componentFiles; // Fallback to original order if the response fails
 }
-async function getTestFilePath(filePath, host) {
+async function getTestFilePath(filePath) {
     const testFilePath = filePath.replace(/\.ts$/, '.spec.ts');
-    if (host.existsSync(testFilePath)) {
+    if ((0, node_fs_1.existsSync)(testFilePath)) {
         return testFilePath;
     }
     return undefined;

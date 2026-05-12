@@ -14,11 +14,11 @@ const prompts_1 = require("./prompts");
 const send_debug_message_1 = require("./send-debug-message");
 const ts_utils_1 = require("./ts-utils");
 const supportedStrategies = new Set(['OnPush', 'Default', 'Eager']);
-async function migrateSingleFile(sourceFile, host, extras) {
+async function migrateSingleFile(sourceFile, extras) {
     const testBedSpecifier = await (0, ts_utils_1.getImportSpecifier)(sourceFile, '@angular/core/testing', 'TestBed');
     const isTestFile = sourceFile.fileName.endsWith('.spec.ts') || !!testBedSpecifier;
     if (isTestFile) {
-        return (0, migrate_test_file_1.migrateTestFile)(sourceFile, host);
+        return (0, migrate_test_file_1.migrateTestFile)(sourceFile);
     }
     const unsupportedZoneUseResponse = await (0, analyze_for_unsupported_zone_uses_1.analyzeForUnsupportedZoneUses)(sourceFile);
     if (unsupportedZoneUseResponse) {

@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type ts from 'typescript';
-import type { Host } from '../../host';
 export declare function loadTypescript(): Promise<typeof ts>;
 /**
  * Gets a top-level import specifier with a specific name that is imported from a particular module.
@@ -33,4 +32,4 @@ export declare function getImportSpecifier(sourceFile: ts.SourceFile, moduleName
  */
 export declare function findImportSpecifier(nodes: ts.NodeArray<ts.ImportSpecifier>, specifierName: string): ts.ImportSpecifier | undefined;
 /** Creates a TypeScript source file from a file path. */
-export declare function createSourceFile(file: string, host: Host): Promise<ts.SourceFile>;
+export declare function createSourceFile(file: string): Promise<ts.SourceFile>;

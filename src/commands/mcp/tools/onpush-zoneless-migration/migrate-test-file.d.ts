@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import type { SourceFile } from 'typescript';
-import { type Host } from '../../host';
 import { MigrationResponse } from './types';
-export declare function migrateTestFile(sourceFile: SourceFile, host: Host): Promise<MigrationResponse | null>;
-export declare function searchForGlobalZoneless(startPath: string, host: Host): Promise<boolean>;
+export declare function migrateTestFile(sourceFile: SourceFile): Promise<MigrationResponse | null>;
+export declare function searchForGlobalZoneless(startPath: string): Promise<boolean>;

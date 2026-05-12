@@ -51,7 +51,7 @@ class LocalDevserver {
             args.push(this.project);
         }
         args.push(`--port=${this.port}`);
-        this.devserverProcess = this.host.startNgProcess(args, {
+        this.devserverProcess = this.host.spawn('ng', args, {
             stdio: 'pipe',
             cwd: this.workspacePath,
         });

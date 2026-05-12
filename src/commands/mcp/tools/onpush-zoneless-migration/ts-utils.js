@@ -44,6 +44,7 @@ exports.loadTypescript = loadTypescript;
 exports.getImportSpecifier = getImportSpecifier;
 exports.findImportSpecifier = findImportSpecifier;
 exports.createSourceFile = createSourceFile;
+const node_fs_1 = require("node:fs");
 let typescriptModule;
 async function loadTypescript() {
     return (typescriptModule ??= await Promise.resolve().then(() => __importStar(require('typescript'))));
@@ -127,8 +128,8 @@ function findImportSpecifier(nodes, specifierName) {
     });
 }
 /** Creates a TypeScript source file from a file path. */
-async function createSourceFile(file, host) {
-    const content = await host.readFile(file, 'utf8');
+async function createSourceFile(file) {
+    const content = (0, node_fs_1.readFileSync)(file, 'utf8');
     const ts = await loadTypescript();
     return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true);
 }

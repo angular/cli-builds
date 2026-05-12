@@ -9,14 +9,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migrateTestFile = migrateTestFile;
 exports.searchForGlobalZoneless = searchForGlobalZoneless;
-const node_path_1 = require("node:path");
+const node_fs_1 = require("node:fs");
+const promises_1 = require("node:fs/promises");
 const workspace_utils_1 = require("../../workspace-utils");
 const prompts_1 = require("./prompts");
 const ts_utils_1 = require("./ts-utils");
-async function migrateTestFile(sourceFile, host) {
+async function migrateTestFile(sourceFile) {
     const ts = await (0, ts_utils_1.loadTypescript)();
     // Check if tests use zoneless either by default through `initTestEnvironment` or by explicitly calling `provideZonelessChangeDetection`.
-    let testsUseZonelessChangeDetection = await searchForGlobalZoneless(sourceFile.fileName, host);
+    let testsUseZonelessChangeDetection = await searchForGlobalZoneless(sourceFile.fileName);
     if (!testsUseZonelessChangeDetection) {
         ts.forEachChild(sourceFile, function visit(node) {
             if (ts.isCallExpression(node) &&
@@ -34,18 +35,17 @@ async function migrateTestFile(sourceFile, host) {
     // At this point, tests are using zoneless, so we look for any explicit uses of `provideZoneChangeDetection` that need to be fixed.
     return (0, prompts_1.createFixResponseForZoneTests)(sourceFile);
 }
-async function searchForGlobalZoneless(startPath, host) {
-    const angularJsonDir = (0, workspace_utils_1.findAngularJsonDir)(startPath, host);
+async function searchForGlobalZoneless(startPath) {
+    const angularJsonDir = (0, workspace_utils_1.findAngularJsonDir)(startPath);
     if (!angularJsonDir) {
         // Cannot determine project root, fallback to original behavior or assume false.
         // For now, let's assume no global setup if angular.json is not found.
         return false;
     }
     try {
-        const files = host.glob('**/*.ts', { cwd: angularJsonDir });
+        const files = (0, promises_1.glob)(`${angularJsonDir}/**/*.ts`);
         for await (const file of files) {
-            const fullPath = (0, node_path_1.join)(file.parentPath, file.name);
-            const content = await host.readFile(fullPath, 'utf-8');
+            const content = (0, node_fs_1.readFileSync)(file, 'utf-8');
             if (content.includes('initTestEnvironment') &&
                 content.includes('provideZonelessChangeDetection')) {
                 return true;
