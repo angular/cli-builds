@@ -97,3 +97,9 @@ export interface Host {
  */
 export declare const LocalWorkspaceHost: Host;
 export declare function createRootRestrictedHost(baseHost: Host, initialRoots?: string[]): Host;
+/**
+ * Binds a readline interface to the given stream to process each line.
+ * Sanitizes lines by removing VT/ANSI control characters, trimming trailing whitespace,
+ * and preserving leading indentation.
+ */
+export declare function processStreamLines(stream: NodeJS.ReadableStream | undefined | null, lineCallback: (line: string) => void): void;
