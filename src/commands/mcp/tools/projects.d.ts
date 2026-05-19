@@ -34,6 +34,7 @@ export declare const LIST_PROJECTS_TOOL: import("./tool-registry").McpToolDeclar
                 sass: "sass";
                 scss: "scss";
             }>>;
+            targets: z.ZodArray<z.ZodString>;
         }, z.core.$strip>>;
     }, z.core.$strip>>;
     parsingErrors: z.ZodDefault<z.ZodArray<z.ZodObject<{

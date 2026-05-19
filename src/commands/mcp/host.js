@@ -9,6 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalWorkspaceHost = exports.CommandError = void 0;
 exports.createRootRestrictedHost = createRootRestrictedHost;
+exports.processStreamLines = processStreamLines;
 /**
  * @fileoverview
  * This file defines an abstraction layer for operating-system or file-system operations, such as
@@ -22,6 +23,8 @@ const promises_1 = require("node:fs/promises");
 const node_module_1 = require("node:module");
 const node_net_1 = require("node:net");
 const node_path_1 = require("node:path");
+const node_readline_1 = require("node:readline");
+const node_util_1 = require("node:util");
 /**
  * An error thrown when a command fails to execute.
  */
@@ -83,8 +86,8 @@ exports.LocalWorkspaceHost = {
                 },
             });
             const logs = [];
-            childProcess.stdout?.on('data', (data) => logs.push(data.toString()));
-            childProcess.stderr?.on('data', (data) => logs.push(data.toString()));
+            processStreamLines(childProcess.stdout, (line) => logs.push(line));
+            processStreamLines(childProcess.stderr, (line) => logs.push(line));
             childProcess.on('close', (code) => {
                 if (code === 0) {
                     resolve({ logs });
@@ -235,5 +238,22 @@ function createRootRestrictedHost(baseHost, initialRoots = [process.cwd()]) {
             return baseHost.startNgProcess(args, options);
         },
     };
+}
+/**
+ * Binds a readline interface to the given stream to process each line.
+ * Sanitizes lines by removing VT/ANSI control characters, trimming trailing whitespace,
+ * and preserving leading indentation.
+ */
+function processStreamLines(stream, lineCallback) {
+    if (!stream) {
+        return;
+    }
+    const rl = (0, node_readline_1.createInterface)({ input: stream, terminal: false });
+    rl.on('line', (line) => {
+        const cleanLine = (0, node_util_1.stripVTControlCharacters)(line).trimEnd();
+        if (cleanLine.length > 0) {
+            lineCallback(cleanLine);
+        }
+    });
 }
 //# sourceMappingURL=host.js.map

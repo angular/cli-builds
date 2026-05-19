@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalDevserver = void 0;
 exports.getDevserverKey = getDevserverKey;
 exports.createDevServerNotFoundError = createDevServerNotFoundError;
+const host_1 = require("./host");
 // Log messages that we want to catch to identify the build status.
 const BUILD_SUCCEEDED_MESSAGE = 'Application bundle generation complete.';
 const BUILD_FAILED_MESSAGE = 'Application bundle generation failed.';
@@ -55,13 +56,9 @@ class LocalDevserver {
             stdio: 'pipe',
             cwd: this.workspacePath,
         });
-        this.devserverProcess.stdout?.on('data', (data) => {
-            this.addLog(data.toString());
-        });
-        this.devserverProcess.stderr?.on('data', (data) => {
-            this.addLog(data.toString());
-        });
-        this.devserverProcess.stderr?.on('close', () => {
+        (0, host_1.processStreamLines)(this.devserverProcess.stdout, (line) => this.addLog(line));
+        (0, host_1.processStreamLines)(this.devserverProcess.stderr, (line) => this.addLog(line));
+        this.devserverProcess.on('close', () => {
             this.stop();
         });
         this.buildInProgress = true;
