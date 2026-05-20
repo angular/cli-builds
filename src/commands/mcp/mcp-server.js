@@ -27,6 +27,7 @@ const doc_search_1 = require("./tools/doc-search");
 const e2e_1 = require("./tools/e2e");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
+const run_target_1 = require("./tools/run-target/run-target");
 const test_1 = require("./tools/test");
 const tool_registry_1 = require("./tools/tool-registry");
 /**
@@ -48,7 +49,13 @@ const STABLE_TOOLS = [
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [build_1.BUILD_TOOL, e2e_1.E2E_TOOL, test_1.TEST_TOOL, ...DEVSERVER_TOOLS];
+exports.EXPERIMENTAL_TOOLS = [
+    build_1.BUILD_TOOL,
+    e2e_1.E2E_TOOL,
+    test_1.TEST_TOOL,
+    run_target_1.RUN_TARGET_TOOL,
+    ...DEVSERVER_TOOLS,
+];
 /**
  * Experimental tools that are grouped together under a single name.
  *
