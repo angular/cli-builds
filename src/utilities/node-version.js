@@ -17,7 +17,7 @@ exports.isNodeVersionMinSupported = isNodeVersionMinSupported;
 /**
  * The supported Node.js version for the Angular CLI.
  */
-const SUPPORTED_NODE_VERSIONS = '^22.22.0 || ^24.13.1 || >=26.0.0';
+const SUPPORTED_NODE_VERSIONS = '^22.22.3 || ^24.15.0 || >=26.0.0';
 /**
  * The supported Node.js versions.
  */

@@ -8,7 +8,7 @@
 import type { McpToolContext } from '../tool-registry';
 import type { TargetStrategy } from './strategy';
 import type { RunTargetOutput, StrategyExecutionContext } from './types';
-export declare class GenericTargetStrategy implements TargetStrategy {
+export declare class UnitTestTargetStrategy implements TargetStrategy {
     canHandle(targetName: string, builder?: string): boolean;
     execute(input: StrategyExecutionContext, context: McpToolContext): Promise<RunTargetOutput>;
 }
