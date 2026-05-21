@@ -19,16 +19,13 @@ const host_1 = require("./host");
 const instructions_1 = require("./resources/instructions");
 const ai_tutor_1 = require("./tools/ai-tutor");
 const best_practices_1 = require("./tools/best-practices");
-const build_1 = require("./tools/build");
 const devserver_start_1 = require("./tools/devserver/devserver-start");
 const devserver_stop_1 = require("./tools/devserver/devserver-stop");
 const devserver_wait_for_build_1 = require("./tools/devserver/devserver-wait-for-build");
 const doc_search_1 = require("./tools/doc-search");
-const e2e_1 = require("./tools/e2e");
 const zoneless_migration_1 = require("./tools/onpush-zoneless-migration/zoneless-migration");
 const projects_1 = require("./tools/projects");
 const run_target_1 = require("./tools/run-target/run-target");
-const test_1 = require("./tools/test");
 const tool_registry_1 = require("./tools/tool-registry");
 /**
  * Tools to manage devservers. Should be bundled together, then added to experimental or stable as a group.
@@ -49,13 +46,7 @@ const STABLE_TOOLS = [
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [
-    build_1.BUILD_TOOL,
-    e2e_1.E2E_TOOL,
-    test_1.TEST_TOOL,
-    run_target_1.RUN_TARGET_TOOL,
-    ...DEVSERVER_TOOLS,
-];
+exports.EXPERIMENTAL_TOOLS = [run_target_1.RUN_TARGET_TOOL, ...DEVSERVER_TOOLS];
 /**
  * Experimental tools that are grouped together under a single name.
  *

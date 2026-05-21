@@ -12,10 +12,12 @@ exports.runTarget = runTarget;
 const utils_1 = require("../../utils");
 const workspace_utils_1 = require("../../workspace-utils");
 const tool_registry_1 = require("../tool-registry");
+const build_target_strategy_1 = require("./build-target-strategy");
 const generic_target_strategy_1 = require("./generic-target-strategy");
 const types_1 = require("./types");
+const unit_test_strategy_1 = require("./unit-test-strategy");
 const FALLBACK_STRATEGY = new generic_target_strategy_1.GenericTargetStrategy();
-const STRATEGIES = [];
+const STRATEGIES = [new build_target_strategy_1.BuildTargetStrategy(), new unit_test_strategy_1.UnitTestTargetStrategy()];
 async function runTarget(input, context) {
     const { workspace, workspacePath, projectName } = await (0, workspace_utils_1.resolveWorkspaceAndProject)({
         host: context.host,
@@ -30,7 +32,8 @@ async function runTarget(input, context) {
     const result = await strategy.execute({
         workspacePath,
         projectName,
-        target: input.target,
+        targetName: input.target,
+        targetDefinition,
         configuration: input.configuration,
         options: input.options,
     }, context);
@@ -51,6 +54,9 @@ This is the single, unified interface for executing all project tasks natively.
 </Use Cases>
 <Operational Notes>
 * Mandatory Discovery: You MUST discover available project targets by calling 'list_projects' first.
+* Headless Testing: For official builders, the test target automatically runs in headless mode
+  and disables watch mode to guarantee clean execution.
+* Output Paths: For official builders, successful builds return the build directory in 'outputPath' under the extensions metadata.
 * Watch mode (serve target or watch options) is NOT yet supported in this version of run_target.
   You MUST use the legacy 'devserver.*' tools for background server lifecycles.
 </Operational Notes>`,

@@ -9,6 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenericTargetStrategy = void 0;
 const utils_1 = require("../../utils");
+const options_serializer_1 = require("./options-serializer");
 const BUILT_IN_COMMANDS = new Set([
     'build',
     'test',
@@ -19,49 +20,32 @@ const BUILT_IN_COMMANDS = new Set([
     'lint',
 ]);
 class GenericTargetStrategy {
-    canHandle(target, builder) {
+    canHandle(targetName, builder) {
         return true; // Universal fallback strategy
     }
     async execute(input, context) {
-        if (input.target === 'serve' || input.options?.['watch'] === true) {
+        if (input.targetName === 'serve' || input.options?.['watch'] === true) {
             throw new Error(`Watch mode execution (serve target or watch option) is not yet supported by 'run_target'. ` +
                 `Please use the legacy 'devserver.start' / 'devserver.wait_for_build' tools instead.`);
         }
         const args = [];
-        if (BUILT_IN_COMMANDS.has(input.target)) {
-            args.push(input.target, input.projectName);
+        if (BUILT_IN_COMMANDS.has(input.targetName)) {
+            args.push(input.targetName, input.projectName);
         }
         else {
-            args.push('run', `${input.projectName}:${input.target}`);
+            args.push('run', `${input.projectName}:${input.targetName}`);
         }
         if (input.configuration) {
             args.push('-c', input.configuration);
         }
         let options = input.options;
-        if (input.target === 'test') {
+        if (input.targetName === 'test') {
             options = {
                 ...options,
                 watch: false,
             };
         }
-        if (options) {
-            for (const [key, value] of Object.entries(options)) {
-                if (!/^[a-zA-Z0-9-_]+$/.test(key)) {
-                    throw new Error(`Invalid option key: '${key}'. Option keys must be alphanumeric, hyphens, or underscores.`);
-                }
-                if (typeof value === 'boolean') {
-                    args.push(value ? `--${key}` : `--no-${key}`);
-                }
-                else if (Array.isArray(value)) {
-                    for (const item of value) {
-                        args.push(`--${key}=${item}`);
-                    }
-                }
-                else if (value !== null && value !== undefined) {
-                    args.push(`--${key}=${value}`);
-                }
-            }
-        }
+        args.push(...(0, options_serializer_1.serializeOptions)(options));
         let status = 'success';
         let logs;
         try {

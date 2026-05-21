@@ -13,36 +13,6 @@ import { type AnyMcpToolDeclaration } from './tools/tool-registry';
  * These tools are considered experimental and may have limitations.
  */
 export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry").McpToolDeclaration<{
-    configuration: import("zod").ZodOptional<import("zod").ZodString>;
-    workspace: import("zod").ZodOptional<import("zod").ZodString>;
-    project: import("zod").ZodOptional<import("zod").ZodString>;
-}, {
-    status: import("zod").ZodEnum<{
-        success: "success";
-        failure: "failure";
-    }>;
-    logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-    path: import("zod").ZodOptional<import("zod").ZodString>;
-}>, import("./tools/tool-registry").McpToolDeclaration<{
-    workspace: import("zod").ZodOptional<import("zod").ZodString>;
-    project: import("zod").ZodOptional<import("zod").ZodString>;
-}, {
-    status: import("zod").ZodEnum<{
-        success: "success";
-        failure: "failure";
-    }>;
-    logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-}>, import("./tools/tool-registry").McpToolDeclaration<{
-    filter: import("zod").ZodOptional<import("zod").ZodString>;
-    workspace: import("zod").ZodOptional<import("zod").ZodString>;
-    project: import("zod").ZodOptional<import("zod").ZodString>;
-}, {
-    status: import("zod").ZodEnum<{
-        success: "success";
-        failure: "failure";
-    }>;
-    logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-}>, import("./tools/tool-registry").McpToolDeclaration<{
     target: import("zod").ZodString;
     configuration: import("zod").ZodOptional<import("zod").ZodString>;
     options: import("zod").ZodOptional<import("zod").ZodRecord<import("zod").ZodString, import("zod").ZodUnion<readonly [import("zod").ZodString, import("zod").ZodNumber, import("zod").ZodBoolean, import("zod").ZodArray<import("zod").ZodUnion<readonly [import("zod").ZodString, import("zod").ZodNumber]>>]>>>;
@@ -88,36 +58,6 @@ export declare const EXPERIMENTAL_TOOLS: readonly [import("./tools/tool-registry
  */
 export declare const EXPERIMENTAL_TOOL_GROUPS: {
     all: readonly [import("./tools/tool-registry").McpToolDeclaration<{
-        configuration: import("zod").ZodOptional<import("zod").ZodString>;
-        workspace: import("zod").ZodOptional<import("zod").ZodString>;
-        project: import("zod").ZodOptional<import("zod").ZodString>;
-    }, {
-        status: import("zod").ZodEnum<{
-            success: "success";
-            failure: "failure";
-        }>;
-        logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-        path: import("zod").ZodOptional<import("zod").ZodString>;
-    }>, import("./tools/tool-registry").McpToolDeclaration<{
-        workspace: import("zod").ZodOptional<import("zod").ZodString>;
-        project: import("zod").ZodOptional<import("zod").ZodString>;
-    }, {
-        status: import("zod").ZodEnum<{
-            success: "success";
-            failure: "failure";
-        }>;
-        logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-    }>, import("./tools/tool-registry").McpToolDeclaration<{
-        filter: import("zod").ZodOptional<import("zod").ZodString>;
-        workspace: import("zod").ZodOptional<import("zod").ZodString>;
-        project: import("zod").ZodOptional<import("zod").ZodString>;
-    }, {
-        status: import("zod").ZodEnum<{
-            success: "success";
-            failure: "failure";
-        }>;
-        logs: import("zod").ZodOptional<import("zod").ZodArray<import("zod").ZodString>>;
-    }>, import("./tools/tool-registry").McpToolDeclaration<{
         target: import("zod").ZodString;
         configuration: import("zod").ZodOptional<import("zod").ZodString>;
         options: import("zod").ZodOptional<import("zod").ZodRecord<import("zod").ZodString, import("zod").ZodUnion<readonly [import("zod").ZodString, import("zod").ZodNumber, import("zod").ZodBoolean, import("zod").ZodArray<import("zod").ZodUnion<readonly [import("zod").ZodString, import("zod").ZodNumber]>>]>>>;
