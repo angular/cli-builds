@@ -1824,13 +1824,11 @@
             "type": "string",
             "enum": [
               "none",
-              "gemini",
-              "copilot",
-              "claude",
+              "claude-code",
               "cursor",
-              "jetbrains",
-              "windsurf",
-              "agents"
+              "gemini-cli",
+              "open-ai-codex",
+              "vscode"
             ]
           }
         },
