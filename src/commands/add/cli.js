@@ -213,6 +213,22 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         try {
             const result = await tasks.run(taskContext);
             (0, node_assert_1.default)(result.collectionName, 'Collection name should always be available');
+            let shouldCleanUp = false;
+            if (!result.hasSchematics && !options.dryRun) {
+                const packageJsonPath = this.resolvePackageJson(result.collectionName);
+                if (packageJsonPath && (0, node_fs_1.existsSync)(packageJsonPath)) {
+                    try {
+                        const localManifest = JSON.parse(await promises_1.default.readFile(packageJsonPath, 'utf-8'));
+                        if (localManifest.schematics) {
+                            result.hasSchematics = true;
+                            if (localManifest['ng-add']?.save === false) {
+                                shouldCleanUp = true;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
             // Check if the installed package has actual add actions and not just schematic support
             if (result.hasSchematics && !options.dryRun) {
                 const workflow = this.getOrCreateWorkflowForBuilder(result.collectionName);
@@ -256,7 +272,14 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                 logger.info("The package's `ng add` actions would be executed next.");
                 return;
             }
-            return this.executeSchematic({ ...options, collection: result.collectionName });
+            const schematicExitCode = await this.executeSchematic({
+                ...options,
+                collection: result.collectionName,
+            });
+            if (shouldCleanUp) {
+                await this.cleanUpTemporaryDependency(result.collectionName);
+            }
+            return schematicExitCode;
         }
         catch (e) {
             if (e instanceof CommandError) {
@@ -451,6 +474,28 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         });
         if (!shouldProceed) {
             throw new CommandError('Command aborted');
+        }
+    }
+    async cleanUpTemporaryDependency(packageName) {
+        try {
+            this.context.logger.info(`Cleaning up temporary dependency '${packageName}'...`);
+            // 1. Remove from root package.json
+            const projectManifest = await this.getProjectManifest();
+            if (projectManifest) {
+                if (projectManifest.dependencies) {
+                    delete projectManifest.dependencies[packageName];
+                }
+                if (projectManifest.devDependencies) {
+                    delete projectManifest.devDependencies[packageName];
+                }
+                await promises_1.default.writeFile((0, node_path_1.join)(this.context.root, 'package.json'), JSON.stringify(projectManifest, null, 2) + '\n');
+            }
+            // 2. Silent install pass to prune files from node_modules and update the lockfile
+            await this.context.packageManager.install({ ignoreScripts: true });
+        }
+        catch (error) {
+            this.context.logger.warn(`Failed to clean up temporary dependency '${packageName}': ` +
+                `${error instanceof Error ? error.message : error}`);
         }
     }
     async installPackageTask(context, task, options) {

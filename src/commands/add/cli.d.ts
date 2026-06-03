@@ -27,6 +27,7 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     private findCompatiblePackageVersionTask;
     private loadPackageInfoTask;
     private confirmInstallationTask;
+    private cleanUpTemporaryDependency;
     private installPackageTask;
     private isProjectVersionValid;
     private getCollectionName;
