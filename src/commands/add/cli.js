@@ -51,6 +51,7 @@ const node_module_1 = require("node:module");
 const node_path_1 = require("node:path");
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const semver_1 = __importStar(require("semver"));
+const command_module_1 = require("../../command-builder/command-module");
 const schematics_command_module_1 = require("../../command-builder/schematics-command-module");
 const package_managers_1 = require("../../package-managers");
 const error_1 = require("../../utilities/error");
@@ -119,6 +120,15 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                 'Ensure package name is correct prior to using this option.',
             type: 'boolean',
             default: false,
+        })
+            .check(({ registry }) => {
+            if (registry === undefined) {
+                return true;
+            }
+            if (typeof registry === 'string' && URL.canParse(registry)) {
+                return true;
+            }
+            throw new command_module_1.CommandModuleError('Option --registry must be a valid URL.');
         })
             // Prior to downloading we don't know the full schema and therefore we cannot be strict on the options.
             // Possibly in the future update the logic to use the following syntax:
