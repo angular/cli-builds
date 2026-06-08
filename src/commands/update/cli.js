@@ -214,6 +214,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 verbose: options.verbose,
                 packageManager: packageManager.name,
                 packages: [],
+                workspaceRoot: this.context.root,
             });
             return success ? 0 : 1;
         }
@@ -382,6 +383,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             next: options.next,
             packageManager: this.context.packageManager.name,
             packages: packagesToUpdate,
+            workspaceRoot: this.context.root,
         });
         if (success) {
             const { root: commandRoot } = this.context;

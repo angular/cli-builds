@@ -38,6 +38,10 @@ export type Schema = {
      * Display additional details during the update process.
      */
     verbose?: boolean;
+    /**
+     * The path to the workspace root directory.
+     */
+    workspaceRoot?: string;
     [property: string]: any;
 };
 /**

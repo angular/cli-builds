@@ -44,6 +44,9 @@ exports.angularMajorCompatGuarantee = angularMajorCompatGuarantee;
 exports.default = default_1;
 const core_1 = require("@angular-devkit/core");
 const schematics_1 = require("@angular-devkit/schematics");
+const node_fs_1 = require("node:fs");
+const node_module_1 = require("node:module");
+const path = __importStar(require("node:path"));
 const npa = __importStar(require("npm-package-arg"));
 const semver = __importStar(require("semver"));
 const package_metadata_1 = require("../../../utilities/package-metadata");
@@ -320,13 +323,11 @@ function _usageMessage(options, infoMap, logger) {
     const packageGroups = new Map();
     const packagesToUpdate = [...infoMap.entries()]
         .map(([name, info]) => {
-        let tag = options.next
-            ? info.npmPackageJson['dist-tags']['next']
-                ? 'next'
-                : 'latest'
-            : 'latest';
-        let version = info.npmPackageJson['dist-tags'][tag];
-        let target = info.npmPackageJson.versions[version];
+        const distTags = info.npmPackageJson['dist-tags'] ?? {};
+        let tag = options.next ? (distTags['next'] ? 'next' : 'latest') : 'latest';
+        let version = distTags[tag] ?? info.installed.version;
+        const versions = info.npmPackageJson.versions ?? {};
+        let target = versions[version];
         const versionDiff = semver.diff(info.installed.version, version);
         if (versionDiff !== 'patch' &&
             versionDiff !== 'minor' &&
@@ -337,12 +338,12 @@ function _usageMessage(options, infoMap, logger) {
                 toInstallMajorVersion !== undefined &&
                 installedMajorVersion < toInstallMajorVersion - 1) {
                 const nextMajorVersion = `${installedMajorVersion + 1}.`;
-                const nextMajorVersions = Object.keys(info.npmPackageJson.versions)
+                const nextMajorVersions = Object.keys(versions)
                     .filter((v) => v.startsWith(nextMajorVersion))
                     .sort((a, b) => (a > b ? -1 : 1));
                 if (nextMajorVersions.length) {
                     version = nextMajorVersions[0];
-                    target = info.npmPackageJson.versions[version];
+                    target = versions[version];
                     tag = '';
                 }
             }
@@ -411,24 +412,120 @@ function _usageMessage(options, infoMap, logger) {
         `You can update the additional packages by running the update command of your package manager.`);
     return;
 }
-function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger) {
+/**
+ * Resolves a semver range or npm dist-tag to a specific version based on the package's registry metadata.
+ * It prioritizes non-deprecated versions and handles fallback to deprecated versions if necessary.
+ *
+ * @private
+ */
+function resolvePackageVersion(metadata, range, next = false) {
+    // Check if range matches an npm dist-tag directly (e.g. "latest", "next")
+    const distTags = metadata['dist-tags'] ?? {};
+    if (distTags[range]) {
+        return distTags[range];
+    }
+    // If 'next' is requested (e.g. via the --next CLI flag) but the package doesn't publish
+    // a 'next' pre-release tag, fallback to 'latest'.
+    if (range === 'next') {
+        return distTags['latest'] ?? null;
+    }
+    // Split deprecated and non-deprecated versions from registry metadata
+    const packageVersionsNonDeprecated = [];
+    const packageVersionsDeprecated = [];
+    for (const [v, { deprecated }] of Object.entries(metadata.versions ?? {})) {
+        if (deprecated) {
+            packageVersionsDeprecated.push(v);
+        }
+        else {
+            packageVersionsNonDeprecated.push(v);
+        }
+    }
+    // Find the highest satisfying version, prioritizing non-deprecated versions
+    return (semver.maxSatisfying(packageVersionsNonDeprecated, range, {
+        includePrerelease: next || undefined,
+    }) ??
+        semver.maxSatisfying(packageVersionsDeprecated, range, {
+            includePrerelease: next || undefined,
+        }));
+}
+/**
+ * Checks if Yarn Plug'n'Play is active in the current workspace.
+ *
+ * @private
+ */
+function isPnpActive(workspaceRoot) {
+    return (process.versions.pnp !== undefined ||
+        (0, node_fs_1.existsSync)(path.join(workspaceRoot, '.pnp.cjs')) ||
+        (0, node_fs_1.existsSync)(path.join(workspaceRoot, '.pnp.js')));
+}
+/**
+ * Resolves and reads the installed package.json manifest for a package.
+ * It checks the virtual schematic Tree first (vital for unit tests/mocks),
+ * and falls back to physical disk resolution using createRequire only if Yarn PnP is active.
+ *
+ * @private
+ */
+function getInstalledPackageJson(tree, packageName, workspaceRoot) {
+    // First, check the virtual tree (critical for testing mocks)
+    const pkgJsonPath = `/node_modules/${packageName}/package.json`;
+    if (tree.exists(pkgJsonPath)) {
+        try {
+            return tree.readJson(pkgJsonPath);
+        }
+        catch { }
+    }
+    // In Yarn PnP, mock package trees are not written to node_modules in the virtual tree,
+    // so we resolve the manifest physically from Yarn's zip cache via createRequire.
+    // Note: This fallback resolution is strictly gated on Yarn PnP being active. Because schematics
+    // operate on a virtual file system (Tree), running disk lookups in non-PnP
+    // environments could cause tests to resolve dependencies from this monorepo's own node_modules
+    // instead of the simulated virtual file system.
+    if (isPnpActive(workspaceRoot)) {
+        try {
+            const workspaceRequire = (0, node_module_1.createRequire)(path.join(workspaceRoot, 'package.json'));
+            const manifestPath = workspaceRequire.resolve(`${packageName}/package.json`);
+            const content = (0, node_fs_1.readFileSync)(manifestPath, 'utf8');
+            return JSON.parse(content);
+        }
+        catch { }
+    }
+    return null;
+}
+function getInstalledVersion(tree, packageName, workspaceRoot) {
+    const pkgJson = getInstalledPackageJson(tree, packageName, workspaceRoot);
+    return pkgJson?.version ?? null;
+}
+function _buildLocalPackageInfo(tree, name, allDependencies, workspaceRoot, logger) {
+    const packageJsonRange = allDependencies.get(name);
+    if (!packageJsonRange) {
+        throw new schematics_1.SchematicsException(`Package ${JSON.stringify(name)} was not found in package.json.`);
+    }
+    const localPkgJson = getInstalledPackageJson(tree, name, workspaceRoot);
+    if (!localPkgJson) {
+        throw new schematics_1.SchematicsException(`Package ${name} is not installed.`);
+    }
+    return {
+        name,
+        npmPackageJson: {},
+        installed: {
+            version: localPkgJson.version,
+            packageJson: localPkgJson,
+            updateMetadata: _getUpdateMetadata(localPkgJson, logger),
+        },
+        packageJsonRange,
+    };
+}
+function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, workspaceRoot, logger) {
     const name = npmPackageJson.name;
     const packageJsonRange = allDependencies.get(name);
     if (!packageJsonRange) {
         throw new schematics_1.SchematicsException(`Package ${JSON.stringify(name)} was not found in package.json.`);
     }
-    // Find out the currently installed version. Either from the package.json or the node_modules/
-    // TODO: figure out a way to read package-lock.json and/or yarn.lock.
-    const pkgJsonPath = `/node_modules/${name}/package.json`;
-    const pkgJsonExists = tree.exists(pkgJsonPath);
-    let installedVersion;
-    if (pkgJsonExists) {
-        const { version } = tree.readJson(pkgJsonPath);
-        installedVersion = version;
-    }
+    const localPkgJson = getInstalledPackageJson(tree, name, workspaceRoot);
+    let installedVersion = localPkgJson?.version;
     const packageVersionsNonDeprecated = [];
     const packageVersionsDeprecated = [];
-    for (const [version, { deprecated }] of Object.entries(npmPackageJson.versions)) {
+    for (const [version, { deprecated }] of Object.entries(npmPackageJson.versions ?? {})) {
         if (deprecated) {
             packageVersionsDeprecated.push(version);
         }
@@ -446,17 +543,19 @@ function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logg
     if (!installedVersion) {
         throw new schematics_1.SchematicsException(`An unexpected error happened; could not determine version for package ${name}.`);
     }
-    const installedPackageJson = npmPackageJson.versions[installedVersion] || pkgJsonExists;
+    const versions = npmPackageJson.versions ?? {};
+    const installedPackageJson = versions[installedVersion] || localPkgJson;
     if (!installedPackageJson) {
         throw new schematics_1.SchematicsException(`An unexpected error happened; package ${name} has no version ${installedVersion}.`);
     }
     let targetVersion = packages.get(name);
     if (targetVersion) {
-        if (npmPackageJson['dist-tags'][targetVersion]) {
-            targetVersion = npmPackageJson['dist-tags'][targetVersion];
+        const distTags = npmPackageJson['dist-tags'] ?? {};
+        if (distTags[targetVersion]) {
+            targetVersion = distTags[targetVersion];
         }
         else if (targetVersion == 'next') {
-            targetVersion = npmPackageJson['dist-tags']['latest'];
+            targetVersion = distTags['latest'];
         }
         else {
             targetVersion = findSatisfyingVersion(targetVersion);
@@ -469,11 +568,10 @@ function _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logg
     const target = targetVersion
         ? {
             version: targetVersion,
-            packageJson: npmPackageJson.versions[targetVersion],
-            updateMetadata: _getUpdateMetadata(npmPackageJson.versions[targetVersion], logger),
+            packageJson: versions[targetVersion],
+            updateMetadata: _getUpdateMetadata(versions[targetVersion], logger),
         }
         : undefined;
-    // Check if there's an installed version.
     return {
         name,
         npmPackageJson,
@@ -512,14 +610,36 @@ function _addPackageGroup(tree, packages, allDependencies, npmPackageJson, logge
     if (!maybePackage) {
         return;
     }
-    const info = _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger);
-    const version = (info.target && info.target.version) ||
-        npmPackageJson['dist-tags'][maybePackage] ||
-        maybePackage;
-    if (!npmPackageJson.versions[version]) {
+    const distTags = npmPackageJson['dist-tags'] ?? {};
+    let version = maybePackage;
+    if (distTags[version]) {
+        version = distTags[version];
+    }
+    else if (version === 'next') {
+        version = distTags['latest'];
+    }
+    else {
+        const packageVersionsNonDeprecated = [];
+        const packageVersionsDeprecated = [];
+        const versions = npmPackageJson.versions ?? {};
+        for (const [v, { deprecated }] of Object.entries(versions)) {
+            if (deprecated) {
+                packageVersionsDeprecated.push(v);
+            }
+            else {
+                packageVersionsNonDeprecated.push(v);
+            }
+        }
+        version =
+            (semver.maxSatisfying(packageVersionsNonDeprecated, version) ??
+                semver.maxSatisfying(packageVersionsDeprecated, version)) ??
+                version;
+    }
+    const versions = npmPackageJson.versions ?? {};
+    if (!versions[version]) {
         return;
     }
-    const ngUpdateMetadata = npmPackageJson.versions[version]['ng-update'];
+    const ngUpdateMetadata = versions[version]['ng-update'];
     if (!ngUpdateMetadata) {
         return;
     }
@@ -558,35 +678,52 @@ function _addPackageGroup(tree, packages, allDependencies, npmPackageJson, logge
  * be ignored by the --force flag).
  * @private
  */
-function _addPeerDependencies(tree, packages, allDependencies, npmPackageJson, npmPackageJsonMap, logger) {
+async function _addPeerDependencies(tree, packages, allDependencies, npmPackageJson, workspaceRoot, fetchMetadata, logger) {
     const maybePackage = packages.get(npmPackageJson.name);
     if (!maybePackage) {
         return;
     }
-    const info = _buildPackageInfo(tree, packages, allDependencies, npmPackageJson, logger);
-    const version = (info.target && info.target.version) ||
-        npmPackageJson['dist-tags'][maybePackage] ||
-        maybePackage;
-    if (!npmPackageJson.versions[version]) {
+    const distTags = npmPackageJson['dist-tags'] ?? {};
+    const version = distTags[maybePackage] || maybePackage;
+    const versions = npmPackageJson.versions ?? {};
+    const packageJson = versions[version];
+    if (!packageJson) {
         return;
     }
-    const packageJson = npmPackageJson.versions[version];
-    const error = false;
     for (const [peer, range] of Object.entries(packageJson.peerDependencies || {})) {
         if (packages.has(peer)) {
             continue;
         }
-        const peerPackageJson = npmPackageJsonMap.get(peer);
-        if (peerPackageJson) {
-            const peerInfo = _buildPackageInfo(tree, packages, allDependencies, peerPackageJson, logger);
-            if (semver.satisfies(peerInfo.installed.version, range)) {
+        const installedVersion = getInstalledVersion(tree, peer, workspaceRoot);
+        if (installedVersion) {
+            if (semver.satisfies(installedVersion, range)) {
                 continue;
             }
         }
+        else {
+            const packageJsonRange = allDependencies.get(peer);
+            if (packageJsonRange) {
+                const peerMetadata = await fetchMetadata(peer);
+                if (peerMetadata) {
+                    const packageVersionsNonDeprecated = [];
+                    const packageVersionsDeprecated = [];
+                    for (const [v, { deprecated }] of Object.entries(peerMetadata.versions ?? {})) {
+                        if (deprecated) {
+                            packageVersionsDeprecated.push(v);
+                        }
+                        else {
+                            packageVersionsNonDeprecated.push(v);
+                        }
+                    }
+                    const resolvedInstalledVersion = semver.maxSatisfying(packageVersionsNonDeprecated, packageJsonRange) ??
+                        semver.maxSatisfying(packageVersionsDeprecated, packageJsonRange);
+                    if (resolvedInstalledVersion && semver.satisfies(resolvedInstalledVersion, range)) {
+                        continue;
+                    }
+                }
+            }
+        }
         packages.set(peer, range);
-    }
-    if (error) {
-        throw new schematics_1.SchematicsException('An error occured, see above.');
     }
 }
 function _getAllDependencies(tree) {
@@ -653,53 +790,84 @@ function default_1(options) {
             }
         }));
         const packages = _buildPackageList(options, npmDeps, logger);
-        // Grab all package.json from the npm repository. This requires a lot of HTTP calls so we
-        // try to parallelize as many as possible.
-        const allPackageMetadata = await Promise.all(Array.from(npmDeps.keys()).map((depName) => (0, package_metadata_1.getNpmPackageJson)(depName, logger, {
-            registry: options.registry,
-            usingYarn,
-            verbose: options.verbose,
-        })));
-        // Build a map of all dependencies and their packageJson.
-        const npmPackageJsonMap = allPackageMetadata.reduce((acc, npmPackageJson) => {
-            // If the package was not found on the registry. It could be private, so we will just
-            // ignore. If the package was part of the list, we will error out, but will simply ignore
-            // if it's either not requested (so just part of package.json. silently).
-            if (!npmPackageJson.name) {
-                if (npmPackageJson.requestedName && packages.has(npmPackageJson.requestedName)) {
-                    throw new schematics_1.SchematicsException(`Package ${JSON.stringify(npmPackageJson.requestedName)} was not found on the ` +
-                        'registry. Cannot continue as this may be an error.');
+        const workspaceRoot = options.workspaceRoot ?? process.cwd();
+        const npmPackageJsonMap = new Map();
+        const getOrFetchPackageMetadata = async (packageName) => {
+            let metadata = npmPackageJsonMap.get(packageName);
+            if (!metadata) {
+                const raw = await (0, package_metadata_1.getNpmPackageJson)(packageName, logger, {
+                    registry: options.registry,
+                    usingYarn,
+                    verbose: options.verbose,
+                });
+                if (raw.name) {
+                    metadata = raw;
+                    npmPackageJsonMap.set(packageName, metadata);
+                }
+            }
+            return metadata ?? null;
+        };
+        if (packages.size === 0) {
+            // User ran just `ng update` to see the outdated package list.
+            // We must fetch metadata for all npm dependencies to generate the usage message.
+            await Promise.all(Array.from(npmDeps.keys()).map(async (depName) => {
+                await getOrFetchPackageMetadata(depName);
+            }));
+        }
+        else {
+            // User requested updates. We resolve dependencies lazily.
+            let lastPackagesSize;
+            do {
+                lastPackagesSize = packages.size;
+                let lastGroupSize;
+                do {
+                    lastGroupSize = packages.size;
+                    for (const name of Array.from(packages.keys())) {
+                        const metadata = await getOrFetchPackageMetadata(name);
+                        const spec = packages.get(name);
+                        if (metadata && spec) {
+                            const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                            if (resolvedVersion) {
+                                packages.set(name, resolvedVersion);
+                            }
+                            _addPackageGroup(tree, packages, npmDeps, metadata, logger);
+                        }
+                    }
+                } while (packages.size > lastGroupSize);
+                for (const name of Array.from(packages.keys())) {
+                    const metadata = await getOrFetchPackageMetadata(name);
+                    const spec = packages.get(name);
+                    if (metadata && spec) {
+                        const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                        if (resolvedVersion) {
+                            packages.set(name, resolvedVersion);
+                        }
+                        await _addPeerDependencies(tree, packages, npmDeps, metadata, workspaceRoot, getOrFetchPackageMetadata, logger);
+                    }
+                }
+            } while (packages.size > lastPackagesSize);
+        }
+        // Build the PackageInfo for each module.
+        const packageInfoMap = new Map();
+        for (const depName of npmDeps.keys()) {
+            const isUpdating = packages.has(depName);
+            const localPkgJson = getInstalledPackageJson(tree, depName, workspaceRoot);
+            if (isUpdating || !localPkgJson) {
+                // If updating OR not installed locally, resolve via registry metadata
+                const metadata = await getOrFetchPackageMetadata(depName);
+                if (metadata) {
+                    packageInfoMap.set(depName, _buildPackageInfo(tree, packages, npmDeps, metadata, workspaceRoot, logger));
+                }
+                else {
+                    // Fallback if metadata could not be fetched
+                    packageInfoMap.set(depName, _buildLocalPackageInfo(tree, depName, npmDeps, workspaceRoot, logger));
                 }
             }
             else {
-                // If a name is present, it is assumed to be fully populated
-                acc.set(npmPackageJson.name, npmPackageJson);
+                // If not updating and installed locally, resolve purely locally
+                packageInfoMap.set(depName, _buildLocalPackageInfo(tree, depName, npmDeps, workspaceRoot, logger));
             }
-            return acc;
-        }, new Map());
-        // Augment the command line package list with packageGroups and forward peer dependencies.
-        // Each added package may uncover new package groups and peer dependencies, so we must
-        // repeat this process until the package list stabilizes.
-        let lastPackagesSize;
-        do {
-            lastPackagesSize = packages.size;
-            let lastGroupSize;
-            do {
-                lastGroupSize = packages.size;
-                npmPackageJsonMap.forEach((npmPackageJson) => {
-                    _addPackageGroup(tree, packages, npmDeps, npmPackageJson, logger);
-                });
-            } while (packages.size > lastGroupSize);
-            // This is done in seperate loop to ensure that package groups are added before peer dependencies.
-            npmPackageJsonMap.forEach((npmPackageJson) => {
-                _addPeerDependencies(tree, packages, npmDeps, npmPackageJson, npmPackageJsonMap, logger);
-            });
-        } while (packages.size > lastPackagesSize);
-        // Build the PackageInfo for each module.
-        const packageInfoMap = new Map();
-        npmPackageJsonMap.forEach((npmPackageJson) => {
-            packageInfoMap.set(npmPackageJson.name, _buildPackageInfo(tree, packages, npmDeps, npmPackageJson, logger));
-        });
+        }
         // Now that we have all the information, check the flags.
         if (packages.size > 0) {
             if (options.migrateOnly && options.from && options.packages) {
