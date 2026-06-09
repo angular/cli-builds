@@ -1,0 +1,801 @@
+"use strict";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.dev/license
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.angularMajorCompatGuarantee = angularMajorCompatGuarantee;
+exports.isPnpActive = isPnpActive;
+exports.findPackageJson = findPackageJson;
+exports.resolveUserUpdatePlan = resolveUserUpdatePlan;
+exports.printUpdateUsageMessage = printUpdateUsageMessage;
+exports.applyUpdatePlan = applyUpdatePlan;
+const core_1 = require("@angular-devkit/core");
+const node_fs_1 = require("node:fs");
+const node_module_1 = require("node:module");
+const path = __importStar(require("node:path"));
+const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
+const semver = __importStar(require("semver"));
+const package_metadata_1 = require("../../utilities/package-metadata");
+function angularMajorCompatGuarantee(range) {
+    let newRange = semver.validRange(range);
+    if (!newRange) {
+        return range;
+    }
+    let major = 1;
+    while (!semver.gtr(major + '.0.0', newRange)) {
+        major++;
+        if (major >= 99) {
+            return newRange;
+        }
+    }
+    newRange = range;
+    for (let minor = 0; minor < 20; minor++) {
+        newRange += ` || ^${major}.${minor}.0-alpha.0 `;
+    }
+    return semver.validRange(newRange) || range;
+}
+const knownPeerCompatibleList = {
+    '@angular/core': angularMajorCompatGuarantee,
+};
+function _updatePeerVersion(infoMap, name, range) {
+    const maybePackageInfo = infoMap.get(name);
+    if (!maybePackageInfo) {
+        return range;
+    }
+    if (maybePackageInfo.target) {
+        name = maybePackageInfo.target.updateMetadata.packageGroupName || name;
+    }
+    else {
+        name = maybePackageInfo.installed.updateMetadata.packageGroupName || name;
+    }
+    const maybeTransform = knownPeerCompatibleList[name];
+    if (maybeTransform) {
+        if (typeof maybeTransform == 'function') {
+            return maybeTransform(range);
+        }
+        else {
+            return maybeTransform;
+        }
+    }
+    return range;
+}
+function _validateForwardPeerDependencies(name, infoMap, logger) {
+    let error = false;
+    const info = infoMap.get(name);
+    if (!info || !info.target) {
+        return error;
+    }
+    const peerDependencies = info.target.packageJson.peerDependencies || {};
+    const peerDependenciesMeta = info.target.packageJson.peerDependenciesMeta || {};
+    for (const [peer, range] of Object.entries(peerDependencies)) {
+        const peerInfo = infoMap.get(peer);
+        if (!peerInfo) {
+            continue;
+        }
+        const isOptional = !!peerDependenciesMeta[peer]?.optional;
+        const resolvedRange = _updatePeerVersion(infoMap, peer, range);
+        const resolvedVersion = peerInfo.target ? peerInfo.target.version : peerInfo.installed.version;
+        if (!semver.satisfies(resolvedVersion, resolvedRange, { includePrerelease: true })) {
+            logger.error(`Package ${JSON.stringify(name)} has an incompatible peer dependency to ` +
+                `${JSON.stringify(peer)} (requires ${JSON.stringify(range)}, ` +
+                `would install ${JSON.stringify(resolvedVersion)}).`);
+            error = error || !isOptional;
+        }
+    }
+    return error;
+}
+function _validateReversePeerDependencies(name, version, infoMap, logger, next) {
+    let error = false;
+    for (const [installed, installedInfo] of infoMap.entries()) {
+        const installedLogger = logger.createChild(installed);
+        installedLogger.debug(`${installed}...`);
+        const peers = (installedInfo.target || installedInfo.installed).packageJson.peerDependencies;
+        const peersMeta = (installedInfo.target || installedInfo.installed).packageJson
+            .peerDependenciesMeta;
+        for (const [peer, range] of Object.entries(peers || {})) {
+            if (peer !== name) {
+                continue;
+            }
+            const isOptional = !!peersMeta?.[peer]?.optional;
+            const resolvedRange = _updatePeerVersion(infoMap, name, range);
+            if (!semver.satisfies(version, resolvedRange, { includePrerelease: next || undefined })) {
+                logger.error(`Package ${JSON.stringify(installed)} has an incompatible peer dependency to ` +
+                    `${JSON.stringify(name)} (requires ${JSON.stringify(range)}, ` +
+                    `would install ${JSON.stringify(version)}).`);
+                error = error || !isOptional;
+            }
+        }
+    }
+    return error;
+}
+function _validateUpdatePackages(infoMap, force, next, logger) {
+    logger.debug('Validating peer dependencies...');
+    let error = false;
+    for (const name of infoMap.keys()) {
+        const info = infoMap.get(name);
+        if (!info || !info.target) {
+            continue;
+        }
+        logger.debug(`Checking ${name}...`);
+        error = _validateForwardPeerDependencies(name, infoMap, logger) || error;
+        error =
+            _validateReversePeerDependencies(name, info.target.version, infoMap, logger, next) || error;
+    }
+    if (error && !force) {
+        throw new Error('Incompatible peer dependencies found. See above for details. ' +
+            'You can bypass this check using the --force option.');
+    }
+}
+function _getUpdateMetadata(packageJson, logger) {
+    const metadata = packageJson['ng-update'];
+    const result = {
+        packageGroup: {},
+        requirements: {},
+    };
+    if (!metadata || typeof metadata != 'object' || Array.isArray(metadata)) {
+        return result;
+    }
+    if (metadata['packageGroup']) {
+        const packageGroup = metadata['packageGroup'];
+        if (Array.isArray(packageGroup) && packageGroup.every((x) => typeof x == 'string')) {
+            result.packageGroup = packageGroup.reduce((group, name) => {
+                group[name] = packageJson.version;
+                return group;
+            }, {});
+        }
+        else if (typeof packageGroup == 'object' && packageGroup !== null) {
+            result.packageGroup = Object.entries(packageGroup).reduce((group, [name, version]) => {
+                if (typeof version == 'string') {
+                    group[name] = version;
+                }
+                return group;
+            }, {});
+        }
+        else {
+            logger.warn(`PackageGroup metadata for ${packageJson.name} is malformed. Ignoring.`);
+        }
+    }
+    if (typeof metadata['packageGroupName'] == 'string') {
+        result.packageGroupName = metadata['packageGroupName'];
+    }
+    if (typeof metadata['migrations'] == 'string') {
+        result.migrations = metadata['migrations'];
+    }
+    return result;
+}
+function isPnpActive(workspaceRoot) {
+    return (process.versions.pnp !== undefined ||
+        (0, node_fs_1.existsSync)(path.join(workspaceRoot, '.pnp.cjs')) ||
+        (0, node_fs_1.existsSync)(path.join(workspaceRoot, '.pnp.js')));
+}
+function findPackageJson(workspaceDir, packageName) {
+    if (isPnpActive(workspaceDir)) {
+        try {
+            const workspaceRequire = (0, node_module_1.createRequire)(path.join(workspaceDir, 'package.json'));
+            return workspaceRequire.resolve(`${packageName}/package.json`);
+        }
+        catch {
+            return undefined;
+        }
+    }
+    let currentDir = workspaceDir;
+    while (true) {
+        const candidatePath = path.join(currentDir, 'node_modules', packageName, 'package.json');
+        if ((0, node_fs_1.existsSync)(candidatePath)) {
+            return (0, node_fs_1.realpathSync)(candidatePath);
+        }
+        const parentDir = path.dirname(currentDir);
+        if (parentDir === currentDir) {
+            break;
+        }
+        currentDir = parentDir;
+    }
+    return undefined;
+}
+function getInstalledPackageJson(packageName, workspaceRoot) {
+    try {
+        const manifestPath = findPackageJson(workspaceRoot, packageName);
+        if (manifestPath) {
+            const content = (0, node_fs_1.readFileSync)(manifestPath, 'utf8');
+            return JSON.parse(content);
+        }
+    }
+    catch { }
+    return null;
+}
+function getInstalledVersion(packageName, workspaceRoot) {
+    const pkgJson = getInstalledPackageJson(packageName, workspaceRoot);
+    return pkgJson?.version ?? null;
+}
+function _buildLocalPackageInfo(name, allDependencies, workspaceRoot) {
+    const packageJsonRange = allDependencies.get(name);
+    if (!packageJsonRange) {
+        throw new Error(`Package ${JSON.stringify(name)} was not found in package.json.`);
+    }
+    const localPkgJson = getInstalledPackageJson(name, workspaceRoot);
+    if (!localPkgJson) {
+        throw new Error(`Package ${name} is not installed.`);
+    }
+    const installedVersion = localPkgJson.version;
+    const npmPackageJson = {
+        name,
+        versions: {
+            [installedVersion]: localPkgJson,
+        },
+        'dist-tags': {},
+    };
+    const logger = new core_1.logging.NullLogger();
+    return {
+        name,
+        npmPackageJson,
+        installed: {
+            version: installedVersion,
+            packageJson: localPkgJson,
+            updateMetadata: _getUpdateMetadata(localPkgJson, logger),
+        },
+        packageJsonRange,
+    };
+}
+function _buildPackageInfo(packages, allDependencies, npmPackageJson, workspaceRoot, logger) {
+    const name = npmPackageJson.name;
+    const packageJsonRange = allDependencies.get(name);
+    if (!packageJsonRange) {
+        throw new Error(`Package ${JSON.stringify(name)} was not found in package.json.`);
+    }
+    const localPkgJson = getInstalledPackageJson(name, workspaceRoot);
+    let installedVersion = localPkgJson?.version;
+    const packageVersionsNonDeprecated = [];
+    const packageVersionsDeprecated = [];
+    for (const [version, { deprecated }] of Object.entries(npmPackageJson.versions ?? {})) {
+        if (deprecated) {
+            packageVersionsDeprecated.push(version);
+        }
+        else {
+            packageVersionsNonDeprecated.push(version);
+        }
+    }
+    const findSatisfyingVersion = (targetVersion) => (semver.maxSatisfying(packageVersionsNonDeprecated, targetVersion) ??
+        semver.maxSatisfying(packageVersionsDeprecated, targetVersion)) ??
+        undefined;
+    if (!installedVersion) {
+        installedVersion = findSatisfyingVersion(packageJsonRange);
+    }
+    if (!installedVersion) {
+        throw new Error(`An unexpected error happened; could not determine version for package ${name}.`);
+    }
+    const versions = npmPackageJson.versions ?? {};
+    const installedPackageJson = versions[installedVersion] || localPkgJson;
+    if (!installedPackageJson) {
+        throw new Error(`An unexpected error happened; package ${name} has no version ${installedVersion}.`);
+    }
+    let targetVersion = packages.get(name);
+    if (targetVersion) {
+        const distTags = npmPackageJson['dist-tags'] ?? {};
+        if (distTags[targetVersion]) {
+            targetVersion = distTags[targetVersion];
+        }
+        else if (targetVersion == 'next') {
+            targetVersion = distTags['latest'];
+        }
+        else {
+            targetVersion = findSatisfyingVersion(targetVersion);
+        }
+    }
+    if (targetVersion && semver.lte(targetVersion, installedVersion)) {
+        logger.debug(`Package ${name} already satisfied by package.json (${packageJsonRange}).`);
+        targetVersion = undefined;
+    }
+    const target = targetVersion
+        ? {
+            version: targetVersion,
+            packageJson: versions[targetVersion],
+            updateMetadata: _getUpdateMetadata(versions[targetVersion], logger),
+        }
+        : undefined;
+    return {
+        name,
+        npmPackageJson,
+        installed: {
+            version: installedVersion,
+            packageJson: installedPackageJson,
+            updateMetadata: _getUpdateMetadata(installedPackageJson, logger),
+        },
+        target,
+        packageJsonRange,
+    };
+}
+function _buildPackageList(options, allDependencies, logger) {
+    const packages = new Map();
+    const inputPackages = options.packages ?? [];
+    if (inputPackages.length === 0) {
+        return packages;
+    }
+    for (const pkg of inputPackages) {
+        let pkgName = pkg;
+        let pkgVersion;
+        if (pkg.startsWith('@')) {
+            const parts = pkg.split('@');
+            pkgName = '@' + parts[1];
+            pkgVersion = parts[2];
+        }
+        else if (pkg.includes('@')) {
+            const parts = pkg.split('@');
+            pkgName = parts[0];
+            pkgVersion = parts[1];
+        }
+        if (!allDependencies.has(pkgName)) {
+            throw new Error(`Package ${JSON.stringify(pkgName)} is not in package.json.`);
+        }
+        if (options.migrateOnly && !pkgVersion && options.from) {
+            pkgVersion = options.from;
+        }
+        packages.set(pkgName, (pkgVersion || (options.next ? 'next' : 'latest')));
+    }
+    return packages;
+}
+function resolvePackageVersion(metadata, range, next = false) {
+    const distTags = metadata['dist-tags'] ?? {};
+    if (distTags[range]) {
+        return distTags[range];
+    }
+    if (range === 'next') {
+        return distTags['latest'] ?? null;
+    }
+    const packageVersionsNonDeprecated = [];
+    const packageVersionsDeprecated = [];
+    for (const [v, { deprecated }] of Object.entries(metadata.versions ?? {})) {
+        if (deprecated) {
+            packageVersionsDeprecated.push(v);
+        }
+        else {
+            packageVersionsNonDeprecated.push(v);
+        }
+    }
+    return (semver.maxSatisfying(packageVersionsNonDeprecated, range, {
+        includePrerelease: next || undefined,
+    }) ??
+        semver.maxSatisfying(packageVersionsDeprecated, range, {
+            includePrerelease: next || undefined,
+        }));
+}
+function _addPackageGroup(packages, allDependencies, metadata, logger) {
+    const maybePackage = packages.get(metadata.name);
+    if (!maybePackage) {
+        return;
+    }
+    const distTags = metadata['dist-tags'] ?? {};
+    let version = maybePackage;
+    if (distTags[version]) {
+        version = distTags[version];
+    }
+    else if (version === 'next') {
+        version = distTags['latest'];
+    }
+    else {
+        const packageVersionsNonDeprecated = [];
+        const packageVersionsDeprecated = [];
+        const versions = metadata.versions ?? {};
+        for (const [v, { deprecated }] of Object.entries(versions)) {
+            if (deprecated) {
+                packageVersionsDeprecated.push(v);
+            }
+            else {
+                packageVersionsNonDeprecated.push(v);
+            }
+        }
+        version =
+            (semver.maxSatisfying(packageVersionsNonDeprecated, version) ??
+                semver.maxSatisfying(packageVersionsDeprecated, version)) ??
+                version;
+    }
+    const versions = metadata.versions ?? {};
+    if (!versions[version]) {
+        return;
+    }
+    const ngUpdateMetadata = versions[version]['ng-update'];
+    if (!ngUpdateMetadata) {
+        return;
+    }
+    const packageGroup = ngUpdateMetadata['packageGroup'];
+    if (!packageGroup) {
+        return;
+    }
+    let packageGroupNormalized;
+    if (Array.isArray(packageGroup) && !packageGroup.some((x) => typeof x != 'string')) {
+        packageGroupNormalized = packageGroup.reduce((acc, curr) => {
+            acc[curr] = version;
+            return acc;
+        }, {});
+    }
+    else if (typeof packageGroup === 'object' && packageGroup !== null) {
+        packageGroupNormalized = Object.entries(packageGroup).reduce((acc, [name, v]) => {
+            if (typeof v === 'string') {
+                acc[name] = v;
+            }
+            return acc;
+        }, {});
+    }
+    else {
+        logger.warn(`PackageGroup metadata for ${metadata.name} is malformed. Ignoring.`);
+        return;
+    }
+    for (const [member, memberVersion] of Object.entries(packageGroupNormalized)) {
+        if (packages.has(member)) {
+            continue;
+        }
+        if (allDependencies.has(member)) {
+            packages.set(member, memberVersion);
+        }
+    }
+}
+async function _addPeerDependencies(packages, allDependencies, npmPackageJson, workspaceRoot, fetchMetadata, logger) {
+    const maybePackage = packages.get(npmPackageJson.name);
+    if (!maybePackage) {
+        return;
+    }
+    const distTags = npmPackageJson['dist-tags'] ?? {};
+    const version = distTags[maybePackage] || maybePackage;
+    const versions = npmPackageJson.versions ?? {};
+    const packageJson = versions[version];
+    if (!packageJson) {
+        return;
+    }
+    for (const [peer, range] of Object.entries(packageJson.peerDependencies || {})) {
+        if (packages.has(peer)) {
+            continue;
+        }
+        const installedVersion = getInstalledVersion(peer, workspaceRoot);
+        if (installedVersion) {
+            if (semver.satisfies(installedVersion, range)) {
+                continue;
+            }
+        }
+        else {
+            const packageJsonRange = allDependencies.get(peer);
+            if (packageJsonRange) {
+                const peerMetadata = await fetchMetadata(peer);
+                if (peerMetadata) {
+                    const packageVersionsNonDeprecated = [];
+                    const packageVersionsDeprecated = [];
+                    for (const [v, { deprecated }] of Object.entries(peerMetadata.versions ?? {})) {
+                        if (deprecated) {
+                            packageVersionsDeprecated.push(v);
+                        }
+                        else {
+                            packageVersionsNonDeprecated.push(v);
+                        }
+                    }
+                    const resolvedInstalledVersion = semver.maxSatisfying(packageVersionsNonDeprecated, packageJsonRange) ??
+                        semver.maxSatisfying(packageVersionsDeprecated, packageJsonRange);
+                    if (resolvedInstalledVersion && semver.satisfies(resolvedInstalledVersion, range)) {
+                        continue;
+                    }
+                }
+            }
+        }
+        packages.set(peer, range);
+    }
+}
+function _formatVersion(v) {
+    if (v === undefined) {
+        return v;
+    }
+    if (semver.valid(v)) {
+        return v;
+    }
+    const coerced = semver.coerce(v);
+    return coerced ? coerced.toString() : undefined;
+}
+function isPkgFromRegistry(name, specifier) {
+    const result = npm_package_arg_1.default.resolve(name, specifier);
+    return !!result.registry;
+}
+async function resolveUserUpdatePlan(options, logger) {
+    const workspaceRoot = options.workspaceRoot ?? process.cwd();
+    const packageJsonPath = path.join(workspaceRoot, 'package.json');
+    if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
+        throw new Error('Could not find a package.json. Are you in a Node project?');
+    }
+    const rawJson = (0, node_fs_1.readFileSync)(packageJsonPath, 'utf8');
+    const packageJsonContent = JSON.parse(rawJson);
+    const getDependencies = (deps) => Object.entries(deps ?? {}).map(([name, range]) => [name, range]);
+    const allRawDeps = [
+        ...getDependencies(packageJsonContent.dependencies),
+        ...getDependencies(packageJsonContent.devDependencies),
+        ...getDependencies(packageJsonContent.peerDependencies),
+    ];
+    const npmDeps = new Map(allRawDeps.filter(([name, specifier]) => {
+        try {
+            return isPkgFromRegistry(name, specifier);
+        }
+        catch {
+            logger.warn(`Package ${name} was not found on the registry. Skipping.`);
+            return false;
+        }
+    }));
+    const packagesOption = options.packages ?? [];
+    const normalizedPackages = packagesOption.reduce((acc, curr) => {
+        return acc.concat(curr.split(','));
+    }, []);
+    options.packages = normalizedPackages;
+    if (options.migrateOnly && options.from) {
+        if (options.packages.length !== 1) {
+            throw new Error('--from requires that only a single package be passed.');
+        }
+    }
+    options.from = _formatVersion(options.from);
+    options.to = _formatVersion(options.to);
+    const usingYarn = options.packageManager === 'yarn';
+    const packages = _buildPackageList(options, npmDeps, logger);
+    const npmPackageJsonMap = new Map();
+    const getOrFetchPackageMetadata = async (packageName) => {
+        let metadata = npmPackageJsonMap.get(packageName);
+        if (!metadata) {
+            const raw = await (0, package_metadata_1.getNpmPackageJson)(packageName, logger, {
+                registry: options.registry,
+                usingYarn,
+                verbose: options.verbose,
+            });
+            if (raw.name) {
+                metadata = raw;
+                npmPackageJsonMap.set(packageName, metadata);
+            }
+        }
+        return metadata ?? null;
+    };
+    if (packages.size === 0) {
+        await Promise.all(Array.from(npmDeps.keys()).map(async (depName) => {
+            await getOrFetchPackageMetadata(depName);
+        }));
+    }
+    else {
+        let lastPackagesSize;
+        do {
+            lastPackagesSize = packages.size;
+            let lastGroupSize;
+            do {
+                lastGroupSize = packages.size;
+                for (const name of Array.from(packages.keys())) {
+                    const metadata = await getOrFetchPackageMetadata(name);
+                    const spec = packages.get(name);
+                    if (metadata && spec) {
+                        const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                        if (resolvedVersion) {
+                            packages.set(name, resolvedVersion);
+                        }
+                        _addPackageGroup(packages, npmDeps, metadata, logger);
+                    }
+                }
+            } while (packages.size > lastGroupSize);
+            for (const name of Array.from(packages.keys())) {
+                const metadata = await getOrFetchPackageMetadata(name);
+                const spec = packages.get(name);
+                if (metadata && spec) {
+                    const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                    if (resolvedVersion) {
+                        packages.set(name, resolvedVersion);
+                    }
+                    await _addPeerDependencies(packages, npmDeps, metadata, workspaceRoot, getOrFetchPackageMetadata, logger);
+                }
+            }
+        } while (packages.size > lastPackagesSize);
+    }
+    const packageInfoMap = new Map();
+    for (const depName of npmDeps.keys()) {
+        const isUpdating = packages.has(depName);
+        const localPkgJson = getInstalledPackageJson(depName, workspaceRoot);
+        if (isUpdating || !localPkgJson) {
+            const metadata = await getOrFetchPackageMetadata(depName);
+            if (metadata) {
+                packageInfoMap.set(depName, _buildPackageInfo(packages, npmDeps, metadata, workspaceRoot, logger));
+            }
+            else {
+                packageInfoMap.set(depName, _buildLocalPackageInfo(depName, npmDeps, workspaceRoot));
+            }
+        }
+        else {
+            packageInfoMap.set(depName, _buildLocalPackageInfo(depName, npmDeps, workspaceRoot));
+        }
+    }
+    const packagesToUpdate = new Map();
+    const migrationsToRun = [];
+    if (packages.size > 0) {
+        if (!(options.migrateOnly && options.from && options.packages)) {
+            const sublog = new core_1.logging.LevelCapLogger('validation', logger.createChild(''), 'warn');
+            _validateUpdatePackages(packageInfoMap, !!options.force, !!options.next, sublog);
+            for (const [name, info] of packageInfoMap.entries()) {
+                if (!info.target || !info.installed) {
+                    continue;
+                }
+                packagesToUpdate.set(name, info.target.version);
+                if (info.target.updateMetadata.migrations) {
+                    migrationsToRun.push({
+                        package: name,
+                        collection: info.target.updateMetadata.migrations,
+                        from: info.installed.version,
+                        to: info.target.version,
+                    });
+                }
+            }
+        }
+    }
+    return {
+        packagesToUpdate,
+        migrationsToRun,
+        packageInfoMap,
+    };
+}
+function printUpdateUsageMessage(infoMap, logger, next = false) {
+    const packageGroups = new Map();
+    const packagesToUpdate = [...infoMap.entries()]
+        .map(([name, info]) => {
+        const distTags = info.npmPackageJson['dist-tags'] ?? {};
+        let tag = next ? (distTags['next'] ? 'next' : 'latest') : 'latest';
+        let version = distTags[tag] ?? info.installed.version;
+        const versions = info.npmPackageJson.versions ?? {};
+        let target = versions[version];
+        const versionDiff = semver.diff(info.installed.version, version);
+        if (versionDiff !== 'patch' &&
+            versionDiff !== 'minor' &&
+            /^@(?:angular|nguniversal)\//.test(name)) {
+            const installedMajorVersion = semver.parse(info.installed.version)?.major;
+            const toInstallMajorVersion = semver.parse(version)?.major;
+            if (installedMajorVersion !== undefined &&
+                toInstallMajorVersion !== undefined &&
+                installedMajorVersion < toInstallMajorVersion - 1) {
+                const nextMajorVersion = `${installedMajorVersion + 1}.`;
+                const nextMajorVersions = Object.keys(versions)
+                    .filter((v) => v.startsWith(nextMajorVersion))
+                    .sort((a, b) => (a > b ? -1 : 1));
+                if (nextMajorVersions.length) {
+                    version = nextMajorVersions[0];
+                    target = versions[version];
+                    tag = '';
+                }
+            }
+        }
+        return {
+            name,
+            info,
+            version,
+            tag,
+            target,
+        };
+    })
+        .filter(({ info, version, target }) => target?.['ng-update'] && semver.compare(info.installed.version, version) < 0)
+        .map(({ name, info, version, tag, target }) => {
+        // Look for packageGroup.
+        const ngUpdate = target['ng-update'];
+        const packageGroup = ngUpdate?.['packageGroup'];
+        if (packageGroup) {
+            const packageGroupNames = Array.isArray(packageGroup)
+                ? packageGroup
+                : Object.keys(packageGroup);
+            const packageGroupName = ngUpdate?.['packageGroupName'] || packageGroupNames.find((n) => infoMap.has(n));
+            if (packageGroupName) {
+                if (packageGroups.has(name)) {
+                    return null;
+                }
+                for (const groupName of packageGroupNames) {
+                    packageGroups.set(groupName, packageGroupName);
+                }
+                packageGroups.set(packageGroupName, packageGroupName);
+                name = packageGroupName;
+            }
+        }
+        let command = `ng update ${name}`;
+        if (!tag) {
+            command += `@${semver.parse(version)?.major || version}`;
+        }
+        else if (tag == 'next') {
+            command += ' --next';
+        }
+        return [name, `${info.installed.version} -> ${version} `, command];
+    })
+        .filter((x) => x !== null)
+        .sort((a, b) => a[0].localeCompare(b[0]));
+    if (packagesToUpdate.length == 0) {
+        logger.info('We analyzed your package.json and everything seems to be in order. Good work!');
+        return;
+    }
+    logger.info('We analyzed your package.json, there are some packages to update:\n');
+    // Find the largest name to know the padding needed.
+    let namePad = Math.max(...[...infoMap.keys()].map((x) => x.length)) + 2;
+    if (!Number.isFinite(namePad)) {
+        namePad = 30;
+    }
+    const pads = [namePad, 25, 0];
+    logger.info('  ' + ['Name', 'Version', 'Command to update'].map((x, i) => x.padEnd(pads[i])).join(''));
+    const totalWidth = pads.reduce((sum, width) => sum + width, 20);
+    logger.info(` ${'-'.repeat(totalWidth)}`);
+    packagesToUpdate.forEach((fields) => {
+        if (!fields) {
+            return;
+        }
+        logger.info('  ' + fields.map((x, i) => x.padEnd(pads[i])).join(''));
+    });
+    logger.info(`\nThere might be additional packages which don't provide 'ng update' capabilities that are outdated.\n` +
+        `You can update the additional packages by running the update command of your package manager.`);
+}
+async function applyUpdatePlan(workspaceRoot, plan, logger) {
+    const packageJsonPath = path.join(workspaceRoot, 'package.json');
+    const packageJsonContent = await node_fs_1.promises.readFile(packageJsonPath, 'utf8');
+    const packageJson = JSON.parse(packageJsonContent);
+    const updateDependency = (deps, name, newVersion) => {
+        const oldVersion = deps[name];
+        const execResult = /^[\^~]/.exec(oldVersion);
+        deps[name] = `${execResult ? execResult[0] : ''}${newVersion}`;
+    };
+    for (const [name, targetVersion] of plan.packagesToUpdate.entries()) {
+        logger.info(`Updating package.json with dependency ${name} to version ${targetVersion}...`);
+        if (packageJson.dependencies && packageJson.dependencies[name]) {
+            updateDependency(packageJson.dependencies, name, targetVersion);
+            if (packageJson.devDependencies) {
+                delete packageJson.devDependencies[name];
+            }
+            if (packageJson.peerDependencies) {
+                delete packageJson.peerDependencies[name];
+            }
+        }
+        else if (packageJson.devDependencies && packageJson.devDependencies[name]) {
+            updateDependency(packageJson.devDependencies, name, targetVersion);
+            if (packageJson.peerDependencies) {
+                delete packageJson.peerDependencies[name];
+            }
+        }
+        else if (packageJson.peerDependencies && packageJson.peerDependencies[name]) {
+            updateDependency(packageJson.peerDependencies, name, targetVersion);
+        }
+        else {
+            if (!packageJson.dependencies) {
+                packageJson.dependencies = {};
+            }
+            packageJson.dependencies[name] = `^${targetVersion}`;
+        }
+    }
+    const eofMatches = packageJsonContent.match(/\r?\n$/);
+    const eof = eofMatches?.[0] ?? '';
+    const newContent = JSON.stringify(packageJson, null, 2) + eof;
+    await node_fs_1.promises.writeFile(packageJsonPath, newContent, 'utf8');
+}
+//# sourceMappingURL=update-resolver.js.map

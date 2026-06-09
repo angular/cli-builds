@@ -54,13 +54,13 @@ const schematic_engine_host_1 = require("../../command-builder/utilities/schemat
 const color_1 = require("../../utilities/color");
 const environment_options_1 = require("../../utilities/environment-options");
 const error_1 = require("../../utilities/error");
+const update_resolver_1 = require("./update-resolver");
 const cli_version_1 = require("./utilities/cli-version");
 const constants_1 = require("./utilities/constants");
 const git_1 = require("./utilities/git");
 const migration_1 = require("./utilities/migration");
 class CommandError extends Error {
 }
-const UPDATE_SCHEMATIC_COLLECTION = path.join(__dirname, 'schematic/collection.json');
 class UpdateCommandModule extends command_module_1.CommandModule {
     scope = command_module_1.CommandScope.In;
     shouldReportAnalytics = false;
@@ -207,16 +207,23 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             engineHostCreator: (options) => new schematic_engine_host_1.SchematicEngineHost(options.resolvePaths),
         });
         if (packages.length === 0) {
-            // Show status
-            const { success } = await (0, migration_1.executeSchematic)(workflow, logger, UPDATE_SCHEMATIC_COLLECTION, 'update', {
-                force: options.force,
-                next: options.next,
-                verbose: options.verbose,
-                packageManager: packageManager.name,
-                packages: [],
-                workspaceRoot: this.context.root,
-            });
-            return success ? 0 : 1;
+            try {
+                const plan = await (0, update_resolver_1.resolveUserUpdatePlan)({
+                    force: options.force,
+                    next: options.next,
+                    verbose: options.verbose,
+                    packageManager: packageManager.name,
+                    packages: [],
+                    workspaceRoot: this.context.root,
+                }, logger);
+                (0, update_resolver_1.printUpdateUsageMessage)(plan.packageInfoMap, logger, options.next);
+                return 0;
+            }
+            catch (error) {
+                (0, error_1.assertIsError)(error);
+                logger.error(error.message);
+                return 1;
+            }
         }
         return options.migrateOnly
             ? this.migrateOnly(workflow, packages[0].name, rootDependencies, options, packageManager)
@@ -237,7 +244,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             packageNode = await readPackageManifest(path.join(packagePath, 'package.json'));
         }
         if (!packageNode) {
-            const jsonPath = findPackageJson(this.context.root, packageName);
+            const jsonPath = (0, update_resolver_1.findPackageJson)(this.context.root, packageName);
             if (jsonPath) {
                 packageNode = await readPackageManifest(jsonPath);
                 if (!packagePath) {
@@ -377,104 +384,97 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         if (packagesToUpdate.length === 0) {
             return 0;
         }
-        const { success } = await (0, migration_1.executeSchematic)(workflow, logger, UPDATE_SCHEMATIC_COLLECTION, 'update', {
-            verbose: options.verbose,
-            force: options.force,
-            next: options.next,
-            packageManager: this.context.packageManager.name,
-            packages: packagesToUpdate,
-            workspaceRoot: this.context.root,
-        });
-        if (success) {
-            const { root: commandRoot } = this.context;
-            const ignorePeerDependencies = await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose);
-            const tasks = new listr2_1.Listr([
-                {
-                    title: 'Cleaning node modules directory',
-                    async task(_, task) {
-                        try {
-                            await node_fs_1.promises.rm(path.join(commandRoot, 'node_modules'), {
-                                force: true,
-                                recursive: true,
-                                maxRetries: 3,
-                            });
+        let plan;
+        try {
+            plan = await (0, update_resolver_1.resolveUserUpdatePlan)({
+                packages: packagesToUpdate,
+                force: options.force,
+                next: options.next,
+                packageManager: packageManager.name,
+                verbose: options.verbose,
+                workspaceRoot: this.context.root,
+            }, logger);
+        }
+        catch (error) {
+            (0, error_1.assertIsError)(error);
+            logger.error(error.message);
+            return 1;
+        }
+        try {
+            await (0, update_resolver_1.applyUpdatePlan)(this.context.root, plan, logger);
+        }
+        catch (error) {
+            (0, error_1.assertIsError)(error);
+            logger.error(`Error updating package.json: ${error.message}`);
+            return 1;
+        }
+        const { root: commandRoot } = this.context;
+        const ignorePeerDependencies = await (0, cli_version_1.shouldForcePackageManager)(packageManager, logger, options.verbose);
+        const tasks = new listr2_1.Listr([
+            {
+                title: 'Cleaning node modules directory',
+                async task(_, task) {
+                    try {
+                        await node_fs_1.promises.rm(path.join(commandRoot, 'node_modules'), {
+                            force: true,
+                            recursive: true,
+                            maxRetries: 3,
+                        });
+                    }
+                    catch (e) {
+                        (0, error_1.assertIsError)(e);
+                        if (e.code === 'ENOENT') {
+                            task.skip('Cleaning not required. Node modules directory not found.');
                         }
-                        catch (e) {
-                            (0, error_1.assertIsError)(e);
-                            if (e.code === 'ENOENT') {
-                                task.skip('Cleaning not required. Node modules directory not found.');
-                            }
-                        }
-                    },
+                    }
                 },
-                {
-                    title: 'Installing packages',
-                    async task() {
-                        try {
-                            await packageManager.install({
-                                ignorePeerDependencies,
-                            });
-                        }
-                        catch (e) {
-                            throw new CommandError('Unable to install packages');
-                        }
-                    },
+            },
+            {
+                title: 'Installing packages',
+                async task() {
+                    try {
+                        await packageManager.install({
+                            ignorePeerDependencies,
+                        });
+                    }
+                    catch (e) {
+                        throw new CommandError('Unable to install packages');
+                    }
                 },
-            ]);
-            try {
-                await tasks.run();
-            }
-            catch (e) {
-                if (e instanceof CommandError) {
-                    return 1;
-                }
-                throw e;
+            },
+        ]);
+        try {
+            await tasks.run();
+            // Clear Node's module resolution path cache to prevent stale lookups
+            // when resolving migration package paths.
+            const Module = require('node:module');
+            if (Module && Module._pathCache) {
+                Module._pathCache = Object.create(null);
             }
         }
-        if (success && options.createCommits) {
+        catch (e) {
+            if (e instanceof CommandError) {
+                return 1;
+            }
+            throw e;
+        }
+        if (options.createCommits) {
             if (!(0, migration_1.commitChanges)(logger, `Angular CLI update for packages - ${packagesToUpdate.join(', ')}`)) {
                 return 1;
             }
         }
-        // This is a temporary workaround to allow data to be passed back from the update schematic
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const migrations = global.externalMigrations;
-        if (success && migrations) {
-            const rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');
+        const migrations = plan.migrationsToRun;
+        if (migrations) {
             for (const migration of migrations) {
                 // Resolve the package from the workspace root, as otherwise it will be resolved from the temp
                 // installed CLI version.
-                let packagePath;
-                logVerbose(`Resolving migration package '${migration.package}' from '${this.context.root}'...`);
-                try {
-                    try {
-                        packagePath = path.dirname(
-                        // This may fail if the `package.json` is not exported as an entry point
-                        rootRequire.resolve(path.join(migration.package, 'package.json')));
-                    }
-                    catch (e) {
-                        (0, error_1.assertIsError)(e);
-                        if (e.code === 'MODULE_NOT_FOUND') {
-                            // Fallback to trying to resolve the package's main entry point
-                            packagePath = rootRequire.resolve(migration.package);
-                        }
-                        else {
-                            throw e;
-                        }
-                    }
-                }
-                catch (e) {
-                    (0, error_1.assertIsError)(e);
-                    if (e.code === 'MODULE_NOT_FOUND') {
-                        logVerbose(e.toString());
-                        logger.error(`Migrations for package (${migration.package}) were not found.` +
-                            ' The package could not be found in the workspace.');
-                    }
-                    else {
-                        logger.error(`Unable to resolve migrations for package (${migration.package}).  [${e.message}]`);
-                    }
+                const packageJsonPath = (0, update_resolver_1.findPackageJson)(this.context.root, migration.package);
+                if (!packageJsonPath) {
+                    logger.error(`Migrations for package (${migration.package}) were not found.` +
+                        ' The package could not be found in the workspace.');
                     return 1;
                 }
+                const packagePath = path.dirname(packageJsonPath);
                 let migrations;
                 // Check if it is a package-local location
                 const localMigrations = path.join(packagePath, migration.collection);
@@ -506,7 +506,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 }
             }
         }
-        return success ? 0 : 1;
+        return 0;
     }
 }
 exports.default = UpdateCommandModule;
@@ -514,16 +514,6 @@ async function readPackageManifest(manifestPath) {
     try {
         const content = await node_fs_1.promises.readFile(manifestPath, 'utf8');
         return JSON.parse(content);
-    }
-    catch {
-        return undefined;
-    }
-}
-function findPackageJson(workspaceDir, packageName) {
-    try {
-        const projectRequire = (0, node_module_1.createRequire)(path.join(workspaceDir, 'package.json'));
-        const packageJsonPath = projectRequire.resolve(`${packageName}/package.json`);
-        return packageJsonPath;
     }
     catch {
         return undefined;
