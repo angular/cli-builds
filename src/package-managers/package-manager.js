@@ -493,6 +493,19 @@ class PackageManager {
         // This can cause issues with subsequent `require.resolve` calls.
         // Writing an empty package.json file beforehand prevents this.
         await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'package.json'), '{}');
+        // To prevent pnpm from traversing up the directory tree and modifying the project's workspace lockfile,
+        // copy the project's `pnpm-workspace.yaml` (excluding monorepo local overrides/packages)
+        // to the temporary directory if it exists, or write an empty one to act as a workspace boundary.
+        if (this.name === 'pnpm') {
+            try {
+                const workspaceConfigPath = (0, node_path_1.join)(this.cwd, 'pnpm-workspace.yaml');
+                const content = await this.host.readFile(workspaceConfigPath);
+                await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'pnpm-workspace.yaml'), sanitizePnpmWorkspace(content));
+            }
+            catch {
+                await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'pnpm-workspace.yaml'), "packages:\n  - '.'\n");
+            }
+        }
         // Copy configuration files if the package manager requires it (e.g., bun).
         if (this.descriptor.copyConfigFromProject) {
             for (const configFile of this.descriptor.configFiles) {
@@ -519,4 +532,55 @@ class PackageManager {
     }
 }
 exports.PackageManager = PackageManager;
+/**
+ * Sanitizes a `pnpm-workspace.yaml` file content to be safely used inside
+ * a temporary installation directory.
+ *
+ * This function removes monorepo-specific settings that would fail or cause
+ * unintended behaviors in a standalone, temporary project environment:
+ * 1. Removes the `overrides:` block, as it may contain `workspace:` protocol
+ *    resolutions which cannot be resolved in a standalone folder.
+ * 2. Rewrites the `packages:` block to include only the current directory (`'.'`),
+ *    isolating the temporary installation from other projects in the monorepo.
+ *
+ * All other settings (such as `minimumReleaseAge`, package extensions, etc.)
+ * are preserved intact.
+ *
+ * @param content The original `pnpm-workspace.yaml` content.
+ * @returns The sanitized YAML content.
+ */
+function sanitizePnpmWorkspace(content) {
+    const lines = content.split(/\r?\n/);
+    const result = [];
+    let inBlockToRemove = false;
+    let blockIndent = 0;
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            result.push(line);
+            continue;
+        }
+        // Determine the current line's indentation level.
+        const indent = line.length - line.trimStart().length;
+        // If we are currently parsing a block to remove, skip any lines with larger indentation.
+        if (inBlockToRemove) {
+            if (indent > blockIndent) {
+                continue;
+            }
+            inBlockToRemove = false;
+        }
+        // Identify blocks we want to remove or customize (e.g. 'overrides' or 'packages').
+        if (trimmed.startsWith('overrides:') || trimmed.startsWith('packages:')) {
+            inBlockToRemove = true;
+            blockIndent = indent;
+            if (trimmed.startsWith('packages:')) {
+                // Replace packages list to restrict it strictly to the current standalone folder.
+                result.push(line.replace(/packages:.*/, "packages:\n  - '.'"));
+            }
+            continue;
+        }
+        result.push(line);
+    }
+    return result.join('\n');
+}
 //# sourceMappingURL=package-manager.js.map
