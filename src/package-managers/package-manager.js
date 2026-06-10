@@ -328,13 +328,27 @@ class PackageManager {
      * @returns A promise that resolves to the `PackageMetadata` object, or `null` if the package is not found.
      */
     async getRegistryMetadata(packageName, options = {}) {
-        const commandArgs = [...this.descriptor.getManifestCommand, packageName];
-        const formatter = this.descriptor.viewCommandFieldArgFormatter;
-        if (formatter) {
-            commandArgs.push(...formatter(METADATA_FIELDS));
-        }
         const cacheKey = options.registry ? `${packageName}|${options.registry}` : packageName;
-        return this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryMetadata(stdout, logger), { ...options, cache: this.#metadataCache, cacheKey });
+        if (!options.bypassCache) {
+            const cached = this.#metadataCache.get(cacheKey);
+            if (cached !== undefined) {
+                return cached;
+            }
+        }
+        let metadata = null;
+        if (this.descriptor.getRegistryMetadata) {
+            metadata = await this.descriptor.getRegistryMetadata(packageName, (args, parser) => this.#fetchAndParse(args, parser, options));
+        }
+        else {
+            const commandArgs = [...this.descriptor.getManifestCommand, packageName];
+            const formatter = this.descriptor.viewCommandFieldArgFormatter;
+            if (formatter) {
+                commandArgs.push(...formatter(METADATA_FIELDS));
+            }
+            metadata = await this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryMetadata(stdout, logger), options);
+        }
+        this.#metadataCache.set(cacheKey, metadata);
+        return metadata;
     }
     /**
      * Fetches the registry manifest for a specific version of a package.
