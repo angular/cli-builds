@@ -495,25 +495,24 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 case 'version':
                     manifest = metadata.versions[requestIdentifier.fetchSpec];
                     break;
-                case 'range':
-                    for (const potentialManifest of Object.values(metadata.versions)) {
-                        // Ignore deprecated package versions
-                        if (potentialManifest.deprecated) {
-                            continue;
+                case 'range': {
+                    const potentialManifests = Object.values(metadata.versions).filter((potentialManifest) => semver.satisfies(potentialManifest.version, requestIdentifier.fetchSpec, {
+                        loose: true,
+                    }));
+                    const nonDeprecated = potentialManifests.filter((m) => !m.deprecated);
+                    const deprecated = potentialManifests.filter((m) => !!m.deprecated);
+                    const selectLatest = (manifests) => {
+                        let max;
+                        for (const m of manifests) {
+                            if (!max || semver.gt(m.version, max.version, { loose: true })) {
+                                max = m;
+                            }
                         }
-                        // Only consider versions that are within the range
-                        if (!semver.satisfies(potentialManifest.version, requestIdentifier.fetchSpec, {
-                            loose: true,
-                        })) {
-                            continue;
-                        }
-                        // Update the used manifest if current potential is newer than existing or there is not one yet
-                        if (!manifest ||
-                            semver.gt(potentialManifest.version, manifest.version, { loose: true })) {
-                            manifest = potentialManifest;
-                        }
-                    }
+                        return max;
+                    };
+                    manifest = selectLatest(nonDeprecated) ?? selectLatest(deprecated);
                     break;
+                }
             }
             if (!manifest) {
                 logger.error(`Package specified by '${requestIdentifier.raw}' does not exist within the registry.`);
