@@ -155,6 +155,32 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         versionCommand: ['--version'],
         listDependenciesCommand: ['pm', 'ls'],
         getManifestCommand: ['pm', 'view', '--json'],
+        getRegistryMetadata: async (packageName, fetchAndParse) => {
+            const [distTags, versions] = await Promise.all([
+                fetchAndParse(['pm', 'view', '--json', packageName, 'dist-tags'], (stdout) => {
+                    if (!stdout) {
+                        return {};
+                    }
+                    const parsed = JSON.parse(stdout);
+                    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+                }),
+                fetchAndParse(['pm', 'view', '--json', packageName, 'versions'], (stdout) => {
+                    if (!stdout) {
+                        return null;
+                    }
+                    const parsed = JSON.parse(stdout);
+                    return Array.isArray(parsed) ? parsed : [parsed];
+                }),
+            ]);
+            if (!versions || versions.length === 0) {
+                return null;
+            }
+            return {
+                name: packageName,
+                'dist-tags': (distTags || {}),
+                versions: versions,
+            };
+        },
         outputParsers: {
             listDependencies: parsers_1.parseBunDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
