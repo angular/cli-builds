@@ -65,6 +65,8 @@ export interface PackageManagerDescriptor {
     readonly requiresManifestVersionLookup?: boolean;
     /** A function that formats the arguments for field-filtered registry views. */
     readonly viewCommandFieldArgFormatter?: (fields: readonly string[]) => string[];
+    /** An optional custom function to fetch registry metadata when the default logic is not sufficient. */
+    readonly getRegistryMetadata?: (packageName: string, fetchAndParse: <T>(args: readonly string[], parser: (stdout: string, logger?: Logger) => T | null) => Promise<T | null>) => Promise<PackageMetadata | null>;
     /** A collection of functions to parse the output of specific commands. */
     readonly outputParsers: {
         /** A function to parse the output of `listDependenciesCommand`. */
@@ -234,6 +236,11 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         versionCommand: string[];
         listDependenciesCommand: string[];
         getManifestCommand: string[];
+        getRegistryMetadata: (packageName: string, fetchAndParse: <T>(args: readonly string[], parser: (stdout: string, logger?: Logger) => T | null) => Promise<T | null>) => Promise<{
+            name: string;
+            'dist-tags': Record<string, string>;
+            versions: string[];
+        } | null>;
         outputParsers: {
             listDependencies: typeof parseBunDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
