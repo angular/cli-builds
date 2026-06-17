@@ -41,12 +41,14 @@ const STABLE_TOOLS = [
     doc_search_1.DOC_SEARCH_TOOL,
     projects_1.LIST_PROJECTS_TOOL,
     zoneless_migration_1.ZONELESS_MIGRATION_TOOL,
+    run_target_1.RUN_TARGET_TOOL,
+    ...DEVSERVER_TOOLS,
 ];
 /**
  * The set of tools that are available but not enabled by default.
  * These tools are considered experimental and may have limitations.
  */
-exports.EXPERIMENTAL_TOOLS = [run_target_1.RUN_TARGET_TOOL, ...DEVSERVER_TOOLS];
+exports.EXPERIMENTAL_TOOLS = [];
 /**
  * Experimental tools that are grouped together under a single name.
  *
@@ -54,7 +56,7 @@ exports.EXPERIMENTAL_TOOLS = [run_target_1.RUN_TARGET_TOOL, ...DEVSERVER_TOOLS];
  */
 exports.EXPERIMENTAL_TOOL_GROUPS = {
     'all': exports.EXPERIMENTAL_TOOLS,
-    'devserver': DEVSERVER_TOOLS,
+    'devserver': [],
 };
 async function createMcpServer(options, logger) {
     const server = new mcp_js_1.McpServer({
@@ -163,7 +165,7 @@ function assembleToolDeclarations(stableDeclarations, experimentalDeclarations, 
             if (tool) {
                 toolDeclarations.push(tool);
             }
-            else {
+            else if (!stableDeclarations.some((t) => t.name === toolName)) {
                 options.logger.warn(`Unknown experimental tool: ${toolName}`);
             }
         }
