@@ -42,7 +42,7 @@ export interface NgUpdate {
     /**
      * A list of package names that should be updated together.
      */
-    packageGroup?: string[];
+    packageGroup?: string[] | Record<string, string>;
 }
 /**
  * Represents the full metadata for a package available in the registry.

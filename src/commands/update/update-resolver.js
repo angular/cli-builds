@@ -43,6 +43,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RegistryClient = void 0;
+exports.getSatisfyingVersion = getSatisfyingVersion;
 exports.angularMajorCompatGuarantee = angularMajorCompatGuarantee;
 exports.isPnpActive = isPnpActive;
 exports.findPackageJson = findPackageJson;
@@ -55,7 +57,59 @@ const node_module_1 = require("node:module");
 const path = __importStar(require("node:path"));
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const semver = __importStar(require("semver"));
-const package_metadata_1 = require("../../utilities/package-metadata");
+class RegistryClient {
+    packageManager;
+    logger;
+    metadataCache = new Map();
+    manifestCache = new Map();
+    constructor(packageManager, logger) {
+        this.packageManager = packageManager;
+        this.logger = logger;
+    }
+    async getMetadata(packageName) {
+        let promise = this.metadataCache.get(packageName);
+        if (!promise) {
+            promise = this.packageManager.getRegistryMetadata(packageName).catch((e) => {
+                this.metadataCache.delete(packageName);
+                throw e;
+            });
+            this.metadataCache.set(packageName, promise);
+        }
+        return promise;
+    }
+    async getManifest(packageName, version) {
+        const key = `${packageName}@${version}`;
+        let promise = this.manifestCache.get(key);
+        if (!promise) {
+            promise = this.packageManager.getRegistryManifest(packageName, version).catch((e) => {
+                this.manifestCache.delete(key);
+                throw e;
+            });
+            this.manifestCache.set(key, promise);
+        }
+        return promise;
+    }
+}
+exports.RegistryClient = RegistryClient;
+async function getSatisfyingVersion(registryClient, packageName, versions, range, next) {
+    const options = { includePrerelease: next || undefined };
+    const candidates = versions.filter((v) => semver.satisfies(v, range, options));
+    const sorted = semver.rsort(candidates);
+    for (const version of sorted) {
+        const manifest = await registryClient.getManifest(packageName, version);
+        if (manifest && !manifest.deprecated) {
+            return version;
+        }
+    }
+    // Fallback to deprecated versions if no non-deprecated version satisfies
+    for (const version of sorted) {
+        const manifest = await registryClient.getManifest(packageName, version);
+        if (manifest) {
+            return version;
+        }
+    }
+    return null;
+}
 function angularMajorCompatGuarantee(range) {
     let newRange = semver.validRange(range);
     if (!newRange) {
@@ -259,9 +313,7 @@ function _buildLocalPackageInfo(name, allDependencies, workspaceRoot) {
     const installedVersion = localPkgJson.version;
     const npmPackageJson = {
         name,
-        versions: {
-            [installedVersion]: localPkgJson,
-        },
+        versions: [installedVersion],
         'dist-tags': {},
     };
     const logger = new core_1.logging.NullLogger();
@@ -276,7 +328,7 @@ function _buildLocalPackageInfo(name, allDependencies, workspaceRoot) {
         packageJsonRange,
     };
 }
-function _buildPackageInfo(packages, allDependencies, npmPackageJson, workspaceRoot, logger) {
+async function _buildPackageInfo(packages, allDependencies, npmPackageJson, workspaceRoot, registryClient, logger) {
     const name = npmPackageJson.name;
     const packageJsonRange = allDependencies.get(name);
     if (!packageJsonRange) {
@@ -284,27 +336,13 @@ function _buildPackageInfo(packages, allDependencies, npmPackageJson, workspaceR
     }
     const localPkgJson = getInstalledPackageJson(name, workspaceRoot);
     let installedVersion = localPkgJson?.version;
-    const packageVersionsNonDeprecated = [];
-    const packageVersionsDeprecated = [];
-    for (const [version, { deprecated }] of Object.entries(npmPackageJson.versions ?? {})) {
-        if (deprecated) {
-            packageVersionsDeprecated.push(version);
-        }
-        else {
-            packageVersionsNonDeprecated.push(version);
-        }
-    }
-    const findSatisfyingVersion = (targetVersion) => (semver.maxSatisfying(packageVersionsNonDeprecated, targetVersion) ??
-        semver.maxSatisfying(packageVersionsDeprecated, targetVersion)) ??
-        undefined;
     if (!installedVersion) {
-        installedVersion = findSatisfyingVersion(packageJsonRange);
+        installedVersion = (await getSatisfyingVersion(registryClient, name, npmPackageJson.versions, packageJsonRange));
     }
     if (!installedVersion) {
         throw new Error(`An unexpected error happened; could not determine version for package ${name}.`);
     }
-    const versions = npmPackageJson.versions ?? {};
-    const installedPackageJson = versions[installedVersion] || localPkgJson;
+    const installedPackageJson = localPkgJson || (await registryClient.getManifest(name, installedVersion));
     if (!installedPackageJson) {
         throw new Error(`An unexpected error happened; package ${name} has no version ${installedVersion}.`);
     }
@@ -318,20 +356,24 @@ function _buildPackageInfo(packages, allDependencies, npmPackageJson, workspaceR
             targetVersion = distTags['latest'];
         }
         else {
-            targetVersion = findSatisfyingVersion(targetVersion);
+            targetVersion = (await getSatisfyingVersion(registryClient, name, npmPackageJson.versions, targetVersion));
         }
     }
     if (targetVersion && semver.lte(targetVersion, installedVersion)) {
         logger.debug(`Package ${name} already satisfied by package.json (${packageJsonRange}).`);
         targetVersion = undefined;
     }
-    const target = targetVersion
-        ? {
-            version: targetVersion,
-            packageJson: versions[targetVersion],
-            updateMetadata: _getUpdateMetadata(versions[targetVersion], logger),
+    let target;
+    if (targetVersion) {
+        const targetPackageJson = await registryClient.getManifest(name, targetVersion);
+        if (targetPackageJson) {
+            target = {
+                version: targetVersion,
+                packageJson: targetPackageJson,
+                updateMetadata: _getUpdateMetadata(targetPackageJson, logger),
+            };
         }
-        : undefined;
+    }
     return {
         name,
         npmPackageJson,
@@ -373,7 +415,7 @@ function _buildPackageList(options, allDependencies, logger) {
     }
     return packages;
 }
-function resolvePackageVersion(metadata, range, next = false) {
+async function resolvePackageVersion(registryClient, metadata, range, next = false) {
     const distTags = metadata['dist-tags'] ?? {};
     if (distTags[range]) {
         return distTags[range];
@@ -381,24 +423,9 @@ function resolvePackageVersion(metadata, range, next = false) {
     if (range === 'next') {
         return distTags['latest'] ?? null;
     }
-    const packageVersionsNonDeprecated = [];
-    const packageVersionsDeprecated = [];
-    for (const [v, { deprecated }] of Object.entries(metadata.versions ?? {})) {
-        if (deprecated) {
-            packageVersionsDeprecated.push(v);
-        }
-        else {
-            packageVersionsNonDeprecated.push(v);
-        }
-    }
-    return (semver.maxSatisfying(packageVersionsNonDeprecated, range, {
-        includePrerelease: next || undefined,
-    }) ??
-        semver.maxSatisfying(packageVersionsDeprecated, range, {
-            includePrerelease: next || undefined,
-        }));
+    return getSatisfyingVersion(registryClient, metadata.name, metadata.versions, range, next);
 }
-function _addPackageGroup(packages, allDependencies, metadata, logger) {
+async function _addPackageGroup(packages, allDependencies, metadata, registryClient, logger) {
     const maybePackage = packages.get(metadata.name);
     if (!maybePackage) {
         return;
@@ -412,27 +439,14 @@ function _addPackageGroup(packages, allDependencies, metadata, logger) {
         version = distTags['latest'];
     }
     else {
-        const packageVersionsNonDeprecated = [];
-        const packageVersionsDeprecated = [];
-        const versions = metadata.versions ?? {};
-        for (const [v, { deprecated }] of Object.entries(versions)) {
-            if (deprecated) {
-                packageVersionsDeprecated.push(v);
-            }
-            else {
-                packageVersionsNonDeprecated.push(v);
-            }
-        }
         version =
-            (semver.maxSatisfying(packageVersionsNonDeprecated, version) ??
-                semver.maxSatisfying(packageVersionsDeprecated, version)) ??
-                version;
+            (await getSatisfyingVersion(registryClient, metadata.name, metadata.versions, version)) ?? version;
     }
-    const versions = metadata.versions ?? {};
-    if (!versions[version]) {
+    const packageJson = await registryClient.getManifest(metadata.name, version);
+    if (!packageJson) {
         return;
     }
-    const ngUpdateMetadata = versions[version]['ng-update'];
+    const ngUpdateMetadata = packageJson['ng-update'];
     if (!ngUpdateMetadata) {
         return;
     }
@@ -468,15 +482,14 @@ function _addPackageGroup(packages, allDependencies, metadata, logger) {
         }
     }
 }
-async function _addPeerDependencies(packages, allDependencies, npmPackageJson, workspaceRoot, fetchMetadata, logger) {
+async function _addPeerDependencies(packages, allDependencies, npmPackageJson, workspaceRoot, registryClient, logger) {
     const maybePackage = packages.get(npmPackageJson.name);
     if (!maybePackage) {
         return;
     }
     const distTags = npmPackageJson['dist-tags'] ?? {};
     const version = distTags[maybePackage] || maybePackage;
-    const versions = npmPackageJson.versions ?? {};
-    const packageJson = versions[version];
+    const packageJson = await registryClient.getManifest(npmPackageJson.name, version);
     if (!packageJson) {
         return;
     }
@@ -493,20 +506,9 @@ async function _addPeerDependencies(packages, allDependencies, npmPackageJson, w
         else {
             const packageJsonRange = allDependencies.get(peer);
             if (packageJsonRange) {
-                const peerMetadata = await fetchMetadata(peer);
+                const peerMetadata = await registryClient.getMetadata(peer);
                 if (peerMetadata) {
-                    const packageVersionsNonDeprecated = [];
-                    const packageVersionsDeprecated = [];
-                    for (const [v, { deprecated }] of Object.entries(peerMetadata.versions ?? {})) {
-                        if (deprecated) {
-                            packageVersionsDeprecated.push(v);
-                        }
-                        else {
-                            packageVersionsNonDeprecated.push(v);
-                        }
-                    }
-                    const resolvedInstalledVersion = semver.maxSatisfying(packageVersionsNonDeprecated, packageJsonRange) ??
-                        semver.maxSatisfying(packageVersionsDeprecated, packageJsonRange);
+                    const resolvedInstalledVersion = await getSatisfyingVersion(registryClient, peer, peerMetadata.versions, packageJsonRange);
                     if (resolvedInstalledVersion && semver.satisfies(resolvedInstalledVersion, range)) {
                         continue;
                     }
@@ -530,7 +532,7 @@ function isPkgFromRegistry(name, specifier) {
     const result = npm_package_arg_1.default.resolve(name, specifier);
     return !!result.registry;
 }
-async function resolveUserUpdatePlan(options, logger) {
+async function resolveUserUpdatePlan(options, packageManager, logger) {
     const workspaceRoot = options.workspaceRoot ?? process.cwd();
     const packageJsonPath = path.join(workspaceRoot, 'package.json');
     if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
@@ -567,21 +569,9 @@ async function resolveUserUpdatePlan(options, logger) {
     options.to = _formatVersion(options.to);
     const usingYarn = options.packageManager === 'yarn';
     const packages = _buildPackageList(options, npmDeps, logger);
-    const npmPackageJsonMap = new Map();
+    const registryClient = new RegistryClient(packageManager, logger);
     const getOrFetchPackageMetadata = async (packageName) => {
-        let metadata = npmPackageJsonMap.get(packageName);
-        if (!metadata) {
-            const raw = await (0, package_metadata_1.getNpmPackageJson)(packageName, logger, {
-                registry: options.registry,
-                usingYarn,
-                verbose: options.verbose,
-            });
-            if (raw.name) {
-                metadata = raw;
-                npmPackageJsonMap.set(packageName, metadata);
-            }
-        }
-        return metadata ?? null;
+        return registryClient.getMetadata(packageName);
     };
     if (packages.size === 0) {
         await Promise.all(Array.from(npmDeps.keys()).map(async (depName) => {
@@ -599,11 +589,11 @@ async function resolveUserUpdatePlan(options, logger) {
                     const metadata = await getOrFetchPackageMetadata(name);
                     const spec = packages.get(name);
                     if (metadata && spec) {
-                        const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                        const resolvedVersion = await resolvePackageVersion(registryClient, metadata, spec, !!options.next);
                         if (resolvedVersion) {
                             packages.set(name, resolvedVersion);
                         }
-                        _addPackageGroup(packages, npmDeps, metadata, logger);
+                        await _addPackageGroup(packages, npmDeps, metadata, registryClient, logger);
                     }
                 }
             } while (packages.size > lastGroupSize);
@@ -611,32 +601,28 @@ async function resolveUserUpdatePlan(options, logger) {
                 const metadata = await getOrFetchPackageMetadata(name);
                 const spec = packages.get(name);
                 if (metadata && spec) {
-                    const resolvedVersion = resolvePackageVersion(metadata, spec, !!options.next);
+                    const resolvedVersion = await resolvePackageVersion(registryClient, metadata, spec, !!options.next);
                     if (resolvedVersion) {
                         packages.set(name, resolvedVersion);
                     }
-                    await _addPeerDependencies(packages, npmDeps, metadata, workspaceRoot, getOrFetchPackageMetadata, logger);
+                    await _addPeerDependencies(packages, npmDeps, metadata, workspaceRoot, registryClient, logger);
                 }
             }
         } while (packages.size > lastPackagesSize);
     }
-    const packageInfoMap = new Map();
-    for (const depName of npmDeps.keys()) {
+    const packageInfoEntries = await Promise.all(Array.from(npmDeps.keys(), async (depName) => {
         const isUpdating = packages.has(depName);
         const localPkgJson = getInstalledPackageJson(depName, workspaceRoot);
         if (isUpdating || !localPkgJson) {
             const metadata = await getOrFetchPackageMetadata(depName);
             if (metadata) {
-                packageInfoMap.set(depName, _buildPackageInfo(packages, npmDeps, metadata, workspaceRoot, logger));
-            }
-            else {
-                packageInfoMap.set(depName, _buildLocalPackageInfo(depName, npmDeps, workspaceRoot));
+                const info = await _buildPackageInfo(packages, npmDeps, metadata, workspaceRoot, registryClient, logger);
+                return [depName, info];
             }
         }
-        else {
-            packageInfoMap.set(depName, _buildLocalPackageInfo(depName, npmDeps, workspaceRoot));
-        }
-    }
+        return [depName, _buildLocalPackageInfo(depName, npmDeps, workspaceRoot)];
+    }));
+    const packageInfoMap = new Map(packageInfoEntries);
     const packagesToUpdate = new Map();
     const migrationsToRun = [];
     if (packages.size > 0) {
@@ -663,17 +649,16 @@ async function resolveUserUpdatePlan(options, logger) {
         packagesToUpdate,
         migrationsToRun,
         packageInfoMap,
+        registryClient,
     };
 }
-function printUpdateUsageMessage(infoMap, logger, next = false) {
+async function printUpdateUsageMessage(infoMap, registryClient, logger, next = false) {
     const packageGroups = new Map();
-    const packagesToUpdate = [...infoMap.entries()]
-        .map(([name, info]) => {
+    const mappedPackages = await Promise.all(Array.from(infoMap.entries(), async ([name, info]) => {
         const distTags = info.npmPackageJson['dist-tags'] ?? {};
         let tag = next ? (distTags['next'] ? 'next' : 'latest') : 'latest';
         let version = distTags[tag] ?? info.installed.version;
-        const versions = info.npmPackageJson.versions ?? {};
-        let target = versions[version];
+        const versions = info.npmPackageJson.versions ?? [];
         const versionDiff = semver.diff(info.installed.version, version);
         if (versionDiff !== 'patch' &&
             versionDiff !== 'minor' &&
@@ -684,16 +669,16 @@ function printUpdateUsageMessage(infoMap, logger, next = false) {
                 toInstallMajorVersion !== undefined &&
                 installedMajorVersion < toInstallMajorVersion - 1) {
                 const nextMajorVersion = `${installedMajorVersion + 1}.`;
-                const nextMajorVersions = Object.keys(versions)
+                const nextMajorVersions = versions
                     .filter((v) => v.startsWith(nextMajorVersion))
                     .sort((a, b) => (a > b ? -1 : 1));
                 if (nextMajorVersions.length) {
                     version = nextMajorVersions[0];
-                    target = versions[version];
                     tag = '';
                 }
             }
         }
+        const target = info.target?.packageJson || (await registryClient.getManifest(name, version));
         return {
             name,
             info,
@@ -701,17 +686,19 @@ function printUpdateUsageMessage(infoMap, logger, next = false) {
             tag,
             target,
         };
-    })
+    }));
+    const packagesToUpdate = mappedPackages
         .filter(({ info, version, target }) => target?.['ng-update'] && semver.compare(info.installed.version, version) < 0)
         .map(({ name, info, version, tag, target }) => {
         // Look for packageGroup.
-        const ngUpdate = target['ng-update'];
+        const ngUpdate = target?.['ng-update'];
         const packageGroup = ngUpdate?.['packageGroup'];
         if (packageGroup) {
             const packageGroupNames = Array.isArray(packageGroup)
                 ? packageGroup
                 : Object.keys(packageGroup);
-            const packageGroupName = ngUpdate?.['packageGroupName'] || packageGroupNames.find((n) => infoMap.has(n));
+            const packageGroupName = ngUpdate?.['packageGroupName'] ||
+                packageGroupNames.find((n) => infoMap.has(n));
             if (packageGroupName) {
                 if (packageGroups.has(name)) {
                     return null;

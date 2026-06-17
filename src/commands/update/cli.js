@@ -215,8 +215,8 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                     packageManager: packageManager.name,
                     packages: [],
                     workspaceRoot: this.context.root,
-                }, logger);
-                (0, update_resolver_1.printUpdateUsageMessage)(plan.packageInfoMap, logger, options.next);
+                }, packageManager, logger);
+                await (0, update_resolver_1.printUpdateUsageMessage)(plan.packageInfoMap, plan.registryClient, logger, options.next);
                 return 0;
             }
             catch (error) {
@@ -393,7 +393,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 packageManager: packageManager.name,
                 verbose: options.verbose,
                 workspaceRoot: this.context.root,
-            }, logger);
+            }, packageManager, logger);
         }
         catch (error) {
             (0, error_1.assertIsError)(error);

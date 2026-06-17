@@ -6,10 +6,20 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 import { logging } from '@angular-devkit/core';
-import { NpmRepositoryPackageJson, PackageManifest } from '../../utilities/package-metadata';
+import type { PackageManager, PackageManifest, PackageMetadata } from '../../package-managers';
 export type VersionRange = string & {
     __VERSION_RANGE: void;
 };
+export declare class RegistryClient {
+    private packageManager;
+    private logger;
+    private metadataCache;
+    private manifestCache;
+    constructor(packageManager: PackageManager, logger: logging.LoggerApi);
+    getMetadata(packageName: string): Promise<PackageMetadata | null>;
+    getManifest(packageName: string, version: string): Promise<PackageManifest | null>;
+}
+export declare function getSatisfyingVersion(registryClient: RegistryClient, packageName: string, versions: string[], range: string, next?: boolean): Promise<string | null>;
 export declare function angularMajorCompatGuarantee(range: string): string;
 export interface PackageVersionInfo {
     version: VersionRange;
@@ -18,7 +28,7 @@ export interface PackageVersionInfo {
 }
 export interface PackageInfo {
     name: string;
-    npmPackageJson: NpmRepositoryPackageJson;
+    npmPackageJson: PackageMetadata;
     installed: PackageVersionInfo;
     target?: PackageVersionInfo;
     packageJsonRange: string;
@@ -54,9 +64,10 @@ export interface UpdatePlan {
         to: string;
     }[];
     packageInfoMap: Map<string, PackageInfo>;
+    registryClient: RegistryClient;
 }
 export declare function isPnpActive(workspaceRoot: string): boolean;
 export declare function findPackageJson(workspaceDir: string, packageName: string): string | undefined;
-export declare function resolveUserUpdatePlan(options: UpdateResolverOptions, logger: logging.LoggerApi): Promise<UpdatePlan>;
-export declare function printUpdateUsageMessage(infoMap: Map<string, PackageInfo>, logger: logging.LoggerApi, next?: boolean): void;
+export declare function resolveUserUpdatePlan(options: UpdateResolverOptions, packageManager: PackageManager, logger: logging.LoggerApi): Promise<UpdatePlan>;
+export declare function printUpdateUsageMessage(infoMap: Map<string, PackageInfo>, registryClient: RegistryClient, logger: logging.LoggerApi, next?: boolean): Promise<void>;
 export declare function applyUpdatePlan(workspaceRoot: string, plan: UpdatePlan, logger: logging.LoggerApi): Promise<void>;
