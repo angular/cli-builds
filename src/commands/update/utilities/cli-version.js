@@ -94,7 +94,7 @@ async function checkCLIVersion(packagesToUpdate, logger, packageManager, next = 
         return null;
     }
     const version = manifest.version;
-    return version_1.VERSION.full === version ? null : version;
+    return version_1.VERSION.full === version ? null : String(runnerVersion);
 }
 /**
  * Determines the version of the CLI to use for the update process.
