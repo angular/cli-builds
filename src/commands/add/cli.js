@@ -53,7 +53,6 @@ const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const semver_1 = __importStar(require("semver"));
 const command_module_1 = require("../../command-builder/command-module");
 const schematics_command_module_1 = require("../../command-builder/schematics-command-module");
-const package_managers_1 = require("../../package-managers");
 const error_1 = require("../../utilities/error");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
@@ -514,33 +513,22 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
         const { packageManager } = this.context;
         // Only show if installation will actually occur
         task.title = 'Installing package';
-        try {
-            if (context.savePackage === false) {
-                task.title += ' in temporary location';
-                // Temporary packages are located in a different directory
-                // Hence we need to resolve them using the temp path
-                const { workingDirectory } = await packageManager.acquireTempPackage(packageIdentifier.toString(), {
-                    registry,
-                });
-                const tempRequire = (0, node_module_1.createRequire)(workingDirectory + '/');
-                (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
-                const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
-                context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
-            }
-            else {
-                await packageManager.add(packageIdentifier.toString(), 'none', savePackage === 'devDependencies', false, true, {
-                    registry,
-                });
-            }
+        if (context.savePackage === false) {
+            task.title += ' in temporary location';
+            // Temporary packages are located in a different directory
+            // Hence we need to resolve them using the temp path
+            const { workingDirectory } = await packageManager.acquireTempPackage(packageIdentifier.toString(), {
+                registry,
+            });
+            const tempRequire = (0, node_module_1.createRequire)(workingDirectory + '/');
+            (0, node_assert_1.default)(context.collectionName, 'Collection name should always be available');
+            const resolvedCollectionPath = tempRequire.resolve((0, node_path_1.join)(context.collectionName, 'package.json'));
+            context.collectionName = (0, node_path_1.dirname)(resolvedCollectionPath);
         }
-        catch (e) {
-            if (e instanceof package_managers_1.PackageManagerError) {
-                const output = e.stderr || e.stdout;
-                if (output) {
-                    throw new CommandError(`Package installation failed: ${e.message}\nOutput: ${output}`);
-                }
-            }
-            throw e;
+        else {
+            await packageManager.add(packageIdentifier.toString(), 'none', savePackage === 'devDependencies', false, true, {
+                registry,
+            });
         }
     }
     async isProjectVersionValid(packageIdentifier) {

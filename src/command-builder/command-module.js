@@ -49,6 +49,7 @@ const helpers_1 = require("yargs/helpers");
 const analytics_1 = require("../analytics/analytics");
 const analytics_collector_1 = require("../analytics/analytics-collector");
 const analytics_parameters_1 = require("../analytics/analytics-parameters");
+const package_managers_1 = require("../package-managers");
 const completion_1 = require("../utilities/completion");
 const memoize_1 = require("../utilities/memoize");
 const definitions_1 = require("./definitions");
@@ -95,13 +96,14 @@ let CommandModule = (() => {
         }
         async handler(args) {
             const { _, $0, ...options } = args;
+            const { logger } = this.context;
             // Camelize options as yargs will return the object in kebab-case when camel casing is disabled.
             const camelCasedOptions = {};
             for (const [key, value] of Object.entries(options)) {
                 camelCasedOptions[helpers_1.Parser.camelCase(key)] = value;
             }
             // Set up autocompletion if appropriate.
-            const autocompletionExitCode = await (0, completion_1.considerSettingUpAutocompletion)(this.commandName, this.context.logger);
+            const autocompletionExitCode = await (0, completion_1.considerSettingUpAutocompletion)(this.commandName, logger);
             if (autocompletionExitCode !== undefined) {
                 process.exitCode = autocompletionExitCode;
                 return;
@@ -119,7 +121,12 @@ let CommandModule = (() => {
             }
             catch (e) {
                 if (e instanceof core_1.schema.SchemaValidationException) {
-                    this.context.logger.fatal(`Error: ${e.message}`);
+                    logger.fatal(`Error: ${e.message}`);
+                    exitCode = 1;
+                }
+                else if (e instanceof package_managers_1.PackageManagerError) {
+                    const output = e.stderr || e.stdout;
+                    logger.fatal(`Error: Package installation failed: ${e.message}${output ? `\nOutput: ${output}` : ''}`);
                     exitCode = 1;
                 }
                 else {
