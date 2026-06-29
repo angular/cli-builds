@@ -165,3 +165,23 @@ export declare function parseBunDependencies(stdout: string, logger?: Logger): M
  * @returns A map of package names to their installed package details.
  */
 export declare function parseYarnModernDependencies(stdout: string, logger?: Logger): Map<string, InstalledPackage>;
+/**
+ * Parses the output of the pnpm minimum-release-age config command.
+ * @param output The string output to parse (in minutes).
+ * @param version The active package manager version string.
+ * @returns The duration in milliseconds.
+ */
+export declare function parsePnpmReleaseAge(output: string, version: string): number;
+/**
+ * Parses the output of the yarn npmMinimalAgeGate config command.
+ * @param output The string output to parse (duration string or minutes).
+ * @returns The duration in milliseconds.
+ */
+export declare function parseYarnReleaseAge(output: string, version: string): number;
+/**
+ * Parses the output of the npm before config option.
+ * Converts the absolute cutoff date into a relative age in milliseconds.
+ * @param output The date string to parse.
+ * @returns The age in milliseconds.
+ */
+export declare function parseNpmBeforeDate(output: string): number;

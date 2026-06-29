@@ -13,13 +13,14 @@ export type VersionRange = string & {
 export declare class RegistryClient {
     private packageManager;
     private logger;
+    readonly minReleaseAge: number;
     private metadataCache;
     private manifestCache;
-    constructor(packageManager: PackageManager, logger: logging.LoggerApi);
+    constructor(packageManager: PackageManager, logger: logging.LoggerApi, minReleaseAge?: number);
     getMetadata(packageName: string): Promise<PackageMetadata | null>;
     getManifest(packageName: string, version: string): Promise<PackageManifest | null>;
 }
-export declare function getSatisfyingVersion(registryClient: RegistryClient, packageName: string, versions: string[], range: string, next?: boolean): Promise<string | null>;
+export declare function getSatisfyingVersion(registryClient: RegistryClient, metadata: PackageMetadata, range: string, next?: boolean): Promise<string | null>;
 export declare function angularMajorCompatGuarantee(range: string): string;
 export interface PackageVersionInfo {
     version: VersionRange;

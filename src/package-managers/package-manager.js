@@ -61,6 +61,7 @@ class PackageManager {
     #initializationError;
     #dependencyCache = null;
     #version;
+    #minimumReleaseAge;
     #activeTasks = 0;
     #pendingTasks = [];
     #maxConcurrent = 5;
@@ -570,6 +571,34 @@ class PackageManager {
             throw e;
         }
         return { workingDirectory, cleanup };
+    }
+    /**
+     * Gets the active release age gate limit in milliseconds.
+     * @returns A promise that resolves to the limit in milliseconds, or `0` if not set.
+     */
+    async getMinimumReleaseAge() {
+        if (this.#minimumReleaseAge === undefined) {
+            this.#minimumReleaseAge = this.#resolveMinimumReleaseAge();
+        }
+        return this.#minimumReleaseAge;
+    }
+    /**
+     * Resolves the active minimum release age by querying the package manager configuration
+     * and parsing the resulting setting.
+     * @returns A promise that resolves to the limit in milliseconds, or `0` if not set.
+     */
+    async #resolveMinimumReleaseAge() {
+        if (this.descriptor.getReleaseAgeConfigCommand && this.descriptor.outputParsers.getReleaseAge) {
+            try {
+                const { stdout } = await this.#run(this.descriptor.getReleaseAgeConfigCommand);
+                const version = await this.getVersion();
+                return this.descriptor.outputParsers.getReleaseAge(stdout, version);
+            }
+            catch {
+                // Ignore failures and fallback to 0
+            }
+        }
+        return 0;
     }
 }
 exports.PackageManager = PackageManager;

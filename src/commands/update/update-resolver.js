@@ -60,11 +60,13 @@ const semver = __importStar(require("semver"));
 class RegistryClient {
     packageManager;
     logger;
+    minReleaseAge;
     metadataCache = new Map();
     manifestCache = new Map();
-    constructor(packageManager, logger) {
+    constructor(packageManager, logger, minReleaseAge = 0) {
         this.packageManager = packageManager;
         this.logger = logger;
+        this.minReleaseAge = minReleaseAge;
     }
     async getMetadata(packageName) {
         let promise = this.metadataCache.get(packageName);
@@ -91,19 +93,35 @@ class RegistryClient {
     }
 }
 exports.RegistryClient = RegistryClient;
-async function getSatisfyingVersion(registryClient, packageName, versions, range, next) {
+function isReleaseAgeSatisfied(registryClient, metadata, version) {
+    const minReleaseAge = registryClient.minReleaseAge;
+    if (!minReleaseAge || !metadata.time) {
+        return true;
+    }
+    const publishTimeStr = metadata.time[version];
+    if (!publishTimeStr) {
+        return true;
+    }
+    const publishTime = Date.parse(publishTimeStr);
+    if (isNaN(publishTime)) {
+        return true;
+    }
+    return Date.now() - publishTime >= minReleaseAge;
+}
+async function getSatisfyingVersion(registryClient, metadata, range, next) {
     const options = { includePrerelease: next || undefined };
-    const candidates = versions.filter((v) => semver.satisfies(v, range, options));
+    let candidates = metadata.versions.filter((v) => semver.satisfies(v, range, options));
+    candidates = candidates.filter((version) => isReleaseAgeSatisfied(registryClient, metadata, version));
     const sorted = semver.rsort(candidates);
     for (const version of sorted) {
-        const manifest = await registryClient.getManifest(packageName, version);
+        const manifest = await registryClient.getManifest(metadata.name, version);
         if (manifest && !manifest.deprecated) {
             return version;
         }
     }
     // Fallback to deprecated versions if no non-deprecated version satisfies
     for (const version of sorted) {
-        const manifest = await registryClient.getManifest(packageName, version);
+        const manifest = await registryClient.getManifest(metadata.name, version);
         if (manifest) {
             return version;
         }
@@ -337,7 +355,7 @@ async function _buildPackageInfo(packages, allDependencies, npmPackageJson, work
     const localPkgJson = getInstalledPackageJson(name, workspaceRoot);
     let installedVersion = localPkgJson?.version;
     if (!installedVersion) {
-        installedVersion = (await getSatisfyingVersion(registryClient, name, npmPackageJson.versions, packageJsonRange));
+        installedVersion = (await getSatisfyingVersion(registryClient, npmPackageJson, packageJsonRange));
     }
     if (!installedVersion) {
         throw new Error(`An unexpected error happened; could not determine version for package ${name}.`);
@@ -349,14 +367,16 @@ async function _buildPackageInfo(packages, allDependencies, npmPackageJson, work
     let targetVersion = packages.get(name);
     if (targetVersion) {
         const distTags = npmPackageJson['dist-tags'] ?? {};
-        if (distTags[targetVersion]) {
-            targetVersion = distTags[targetVersion];
+        let resolvedVersion = distTags[targetVersion] ?? (targetVersion === 'next' ? distTags['latest'] : undefined);
+        if (resolvedVersion &&
+            !isReleaseAgeSatisfied(registryClient, npmPackageJson, resolvedVersion)) {
+            resolvedVersion = undefined;
         }
-        else if (targetVersion == 'next') {
-            targetVersion = distTags['latest'];
+        if (resolvedVersion) {
+            targetVersion = resolvedVersion;
         }
         else {
-            targetVersion = (await getSatisfyingVersion(registryClient, name, npmPackageJson.versions, targetVersion));
+            targetVersion = (await getSatisfyingVersion(registryClient, npmPackageJson, distTags[targetVersion] || targetVersion === 'next' ? '*' : targetVersion));
         }
     }
     if (targetVersion && semver.lte(targetVersion, installedVersion)) {
@@ -417,13 +437,14 @@ function _buildPackageList(options, allDependencies, logger) {
 }
 async function resolvePackageVersion(registryClient, metadata, range, next = false) {
     const distTags = metadata['dist-tags'] ?? {};
-    if (distTags[range]) {
-        return distTags[range];
+    let resolvedVersion = distTags[range] ?? (range === 'next' ? distTags['latest'] : undefined);
+    if (resolvedVersion && !isReleaseAgeSatisfied(registryClient, metadata, resolvedVersion)) {
+        resolvedVersion = undefined;
     }
-    if (range === 'next') {
-        return distTags['latest'] ?? null;
+    if (resolvedVersion) {
+        return resolvedVersion;
     }
-    return getSatisfyingVersion(registryClient, metadata.name, metadata.versions, range, next);
+    return getSatisfyingVersion(registryClient, metadata, distTags[range] || range === 'next' ? '*' : range, next);
 }
 async function _addPackageGroup(packages, allDependencies, metadata, registryClient, logger) {
     const maybePackage = packages.get(metadata.name);
@@ -432,15 +453,16 @@ async function _addPackageGroup(packages, allDependencies, metadata, registryCli
     }
     const distTags = metadata['dist-tags'] ?? {};
     let version = maybePackage;
-    if (distTags[version]) {
-        version = distTags[version];
+    let resolvedVersion = distTags[version] ?? (version === 'next' ? distTags['latest'] : undefined);
+    if (resolvedVersion && !isReleaseAgeSatisfied(registryClient, metadata, resolvedVersion)) {
+        resolvedVersion = undefined;
     }
-    else if (version === 'next') {
-        version = distTags['latest'];
+    if (resolvedVersion) {
+        version = resolvedVersion;
     }
     else {
         version =
-            (await getSatisfyingVersion(registryClient, metadata.name, metadata.versions, version)) ?? version;
+            (await getSatisfyingVersion(registryClient, metadata, distTags[version] || version === 'next' ? '*' : version)) ?? version;
     }
     const packageJson = await registryClient.getManifest(metadata.name, version);
     if (!packageJson) {
@@ -508,7 +530,7 @@ async function _addPeerDependencies(packages, allDependencies, npmPackageJson, w
             if (packageJsonRange) {
                 const peerMetadata = await registryClient.getMetadata(peer);
                 if (peerMetadata) {
-                    const resolvedInstalledVersion = await getSatisfyingVersion(registryClient, peer, peerMetadata.versions, packageJsonRange);
+                    const resolvedInstalledVersion = await getSatisfyingVersion(registryClient, peerMetadata, packageJsonRange);
                     if (resolvedInstalledVersion && semver.satisfies(resolvedInstalledVersion, range)) {
                         continue;
                     }
@@ -569,7 +591,8 @@ async function resolveUserUpdatePlan(options, packageManager, logger) {
     options.to = _formatVersion(options.to);
     const usingYarn = options.packageManager === 'yarn';
     const packages = _buildPackageList(options, npmDeps, logger);
-    const registryClient = new RegistryClient(packageManager, logger);
+    const minReleaseAge = await packageManager.getMinimumReleaseAge();
+    const registryClient = new RegistryClient(packageManager, logger, minReleaseAge);
     const getOrFetchPackageMetadata = async (packageName) => {
         return registryClient.getMetadata(packageName);
     };

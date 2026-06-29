@@ -14,7 +14,7 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseBunDependencies, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies } from './parsers';
+import { parseBunDependencies, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnReleaseAge } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -57,6 +57,8 @@ export interface PackageManagerDescriptor {
     readonly versionCommand: readonly string[];
     /** The command to list all installed dependencies. */
     readonly listDependenciesCommand: readonly string[];
+    /** The command to get the release age configuration value. */
+    readonly getReleaseAgeConfigCommand?: readonly string[];
     /** The command to get the current package name. */
     readonly getPackageNameCommand?: readonly string[];
     /** The command to fetch the registry manifest of a package. */
@@ -79,6 +81,8 @@ export interface PackageManagerDescriptor {
         getRegistryMetadata: (stdout: string, logger?: Logger) => PackageMetadata | null;
         /** A function to parse the output when a command fails. */
         getError?: (output: string, logger?: Logger) => ErrorInfo | null;
+        /** A function to parse the output of the release age config command. */
+        getReleaseAge?: (output: string, version: string) => number;
     };
     /** A function that checks if a structured error represents a "package not found" error. */
     readonly isNotFound: (error: ErrorInfo) => boolean;
@@ -121,6 +125,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        getReleaseAgeConfigCommand: string[];
         getPackageNameCommand: string[];
         getManifestCommand: string[];
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
@@ -129,6 +134,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
             getError: typeof parseNpmLikeError;
+            getReleaseAge: typeof parseNpmBeforeDate;
         };
         isNotFound: typeof isKnownNotFound;
     };
@@ -151,6 +157,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        getReleaseAgeConfigCommand: string[];
         getManifestCommand: string[];
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
         outputParsers: {
@@ -158,6 +165,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
             getError: typeof parseNpmLikeError;
+            getReleaseAge: typeof parseYarnReleaseAge;
         };
         isNotFound: typeof isKnownNotFound;
     };
@@ -206,6 +214,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        getReleaseAgeConfigCommand: string[];
         getPackageNameCommand: string[];
         getManifestCommand: string[];
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
@@ -214,6 +223,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
             getError: typeof parseNpmLikeError;
+            getReleaseAge: typeof parsePnpmReleaseAge;
         };
         isNotFound: typeof isKnownNotFound;
     };

@@ -192,4 +192,9 @@ export declare class PackageManager {
         workingDirectory: string;
         cleanup: () => Promise<void>;
     }>;
+    /**
+     * Gets the active release age gate limit in milliseconds.
+     * @returns A promise that resolves to the limit in milliseconds, or `0` if not set.
+     */
+    getMinimumReleaseAge(): Promise<number>;
 }
