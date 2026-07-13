@@ -9,26 +9,6 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-/**
- * Parses the output of `npm list` or a compatible command.
- *
- * The expected JSON structure is:
- * ```json
- * {
- *   "dependencies": {
- *     "@angular/cli": {
- *       "version": "18.0.0",
- *       "path": "/path/to/project/node_modules/@angular/cli", // path is optional
- *       ... (other package.json properties)
- *     }
- *   }
- * }
- * ```
- *
- * @param stdout The standard output of the command.
- * @param logger An optional logger instance.
- * @returns A map of package names to their installed package details.
- */
 export declare function parseNpmLikeDependencies(stdout: string, logger?: Logger, options?: {
     workspacePackageName?: string;
 }): Map<string, InstalledPackage>;
