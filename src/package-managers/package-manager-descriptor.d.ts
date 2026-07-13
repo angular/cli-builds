@@ -150,6 +150,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         noLockfileFlag: string;
         ignoreScriptsFlag: string;
         configFiles: string[];
+        copyConfigFromProject: true;
         getRegistryOptions: (registry: string) => {
             env: {
                 YARN_NPM_REGISTRY_SERVER: string;
