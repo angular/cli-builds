@@ -400,6 +400,14 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             logger.error(error.message);
             return 1;
         }
+        const packageJsonPath = path.join(this.context.root, 'package.json');
+        let originalPackageJsonContent;
+        try {
+            originalPackageJsonContent = await node_fs_1.promises.readFile(packageJsonPath, 'utf8');
+        }
+        catch {
+            // Ignore backup errors.
+        }
         try {
             await (0, update_resolver_1.applyUpdatePlan)(this.context.root, plan, logger);
         }
@@ -413,6 +421,11 @@ class UpdateCommandModule extends command_module_1.CommandModule {
         const tasks = new listr2_1.Listr([
             {
                 title: 'Cleaning node modules directory',
+                skip() {
+                    return packageManager.name !== 'npm'
+                        ? 'Cleaning not required for this package manager.'
+                        : false;
+                },
                 async task(_, task) {
                     try {
                         await node_fs_1.promises.rm(path.join(commandRoot, 'node_modules'), {
@@ -453,6 +466,16 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             }
         }
         catch (e) {
+            if (originalPackageJsonContent !== undefined) {
+                try {
+                    await node_fs_1.promises.writeFile(packageJsonPath, originalPackageJsonContent, 'utf8');
+                    logger.info('Restored package.json to its original state.');
+                }
+                catch (restoreError) {
+                    (0, error_1.assertIsError)(restoreError);
+                    logger.error(`Failed to restore package.json: ${restoreError.message}`);
+                }
+            }
             if (e instanceof CommandError) {
                 return 1;
             }
