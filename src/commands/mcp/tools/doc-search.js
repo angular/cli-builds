@@ -63,7 +63,7 @@ const MIN_SUPPORTED_DOCS_VERSION = 17;
  * condition where a newly released CLI might default to searching for a documentation index that
  * doesn't exist yet.
  */
-const LATEST_KNOWN_DOCS_VERSION = 20;
+const LATEST_KNOWN_DOCS_VERSION = 22;
 const docSearchInputSchema = zod_1.z.object({
     query: zod_1.z
         .string()
@@ -118,27 +118,66 @@ Searches the official Angular documentation (angular.dev) to answer questions ab
     factory: createDocSearchHandler,
 });
 function createDocSearchHandler({ logger }) {
-    let client;
-    return async ({ query, includeTopContent, version }) => {
-        if (!client) {
+    let apiKey;
+    async function performSearch(query, version) {
+        if (!apiKey) {
             const dcip = (0, node_crypto_1.createDecipheriv)('aes-256-gcm', (constants_1.k1 + ALGOLIA_APP_ID).padEnd(32, '^'), constants_1.iv).setAuthTag(Buffer.from(constants_1.at, 'base64'));
-            const { searchClient } = await Promise.resolve().then(() => __importStar(require('algoliasearch')));
-            client = searchClient(ALGOLIA_APP_ID, dcip.update(ALGOLIA_API_E, 'hex', 'utf-8') + dcip.final('utf-8'));
+            apiKey = dcip.update(ALGOLIA_API_E, 'hex', 'utf-8') + dcip.final('utf-8');
         }
+        const url = `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/angular_v${version}/query`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Algolia-Application-Id': ALGOLIA_APP_ID,
+                'X-Algolia-API-Key': apiKey,
+            },
+            body: JSON.stringify({
+                query,
+                attributesToRetrieve: [
+                    'hierarchy.lvl0',
+                    'hierarchy.lvl1',
+                    'hierarchy.lvl2',
+                    'hierarchy.lvl3',
+                    'hierarchy.lvl4',
+                    'hierarchy.lvl5',
+                    'hierarchy.lvl6',
+                    'content',
+                    'type',
+                    'url',
+                ],
+                hitsPerPage: 10,
+            }),
+            signal: AbortSignal.timeout(5000), // Timeout after 5 seconds
+        });
+        if (!response.ok) {
+            throw new Error(`Search request failed with status ${response.status} (${response.statusText})`);
+        }
+        const data = (await response.json());
+        return data.hits;
+    }
+    return async ({ query, includeTopContent, version }) => {
         let finalSearchedVersion = Math.max(version ?? LATEST_KNOWN_DOCS_VERSION, MIN_SUPPORTED_DOCS_VERSION);
-        let searchResults;
+        let allHits;
         try {
-            searchResults = await client.search(createSearchArguments(query, finalSearchedVersion));
+            allHits = await performSearch(query, finalSearchedVersion);
         }
-        catch { }
+        catch (error) {
+            logger.warn(`Error searching Angular v${finalSearchedVersion} documentation: ${error}`);
+        }
         // If the initial search for a newer-than-stable version returns no results, it may be because
         // the index for that version doesn't exist yet. In this case, fall back to the latest known
         // stable version.
-        if (!searchResults && finalSearchedVersion > LATEST_KNOWN_DOCS_VERSION) {
+        if ((!allHits || allHits.length === 0) && finalSearchedVersion > LATEST_KNOWN_DOCS_VERSION) {
+            logger.warn(`Documentation index for v${finalSearchedVersion} not found or empty. Falling back to v${LATEST_KNOWN_DOCS_VERSION}.`);
             finalSearchedVersion = LATEST_KNOWN_DOCS_VERSION;
-            searchResults = await client.search(createSearchArguments(query, finalSearchedVersion));
+            try {
+                allHits = await performSearch(query, finalSearchedVersion);
+            }
+            catch (error) {
+                logger.warn(`Error searching fallback Angular v${finalSearchedVersion} documentation: ${error}`);
+            }
         }
-        const allHits = searchResults?.results.flatMap((result) => result.hits);
         if (!allHits?.length) {
             return {
                 content: [
@@ -264,39 +303,5 @@ function formatHitToParts(hit) {
     const title = hierarchy.pop() ?? '';
     const breadcrumb = hierarchy.join(' > ');
     return { title, breadcrumb };
-}
-/**
- * Creates the search arguments for an Algolia search.
- *
- * The arguments are based on the search implementation in `adev`.
- *
- * @param query The search query string.
- * @returns The search arguments for the Algolia client.
- */
-function createSearchArguments(query, version) {
-    // Search arguments are based on adev's search service:
-    // https://github.com/angular/angular/blob/4b614fbb3263d344dbb1b18fff24cb09c5a7582d/adev/shared-docs/services/search.service.ts#L58
-    return [
-        {
-            indexName: `angular_v${version}`,
-            params: {
-                query,
-                attributesToRetrieve: [
-                    'hierarchy.lvl0',
-                    'hierarchy.lvl1',
-                    'hierarchy.lvl2',
-                    'hierarchy.lvl3',
-                    'hierarchy.lvl4',
-                    'hierarchy.lvl5',
-                    'hierarchy.lvl6',
-                    'content',
-                    'type',
-                    'url',
-                ],
-                hitsPerPage: 10,
-            },
-            type: 'default',
-        },
-    ];
 }
 //# sourceMappingURL=doc-search.js.map
