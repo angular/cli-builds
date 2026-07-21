@@ -14,9 +14,10 @@ export declare class RegistryClient {
     private packageManager;
     private logger;
     readonly minReleaseAge: number;
+    private getRegistryName?;
     private metadataCache;
     private manifestCache;
-    constructor(packageManager: PackageManager, logger: logging.LoggerApi, minReleaseAge?: number);
+    constructor(packageManager: PackageManager, logger: logging.LoggerApi, minReleaseAge?: number, getRegistryName?: ((name: string) => string) | undefined);
     getMetadata(packageName: string): Promise<PackageMetadata | null>;
     getManifest(packageName: string, version: string): Promise<PackageManifest | null>;
 }
