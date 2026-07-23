@@ -43,11 +43,11 @@ async function stopDevserver(input, context) {
     });
 }
 exports.DEVSERVER_STOP_TOOL = (0, tool_registry_1.declareTool)({
-    name: 'devserver.stop',
+    name: 'devserver_stop',
     title: 'Stop Development Server',
     description: `
 <Purpose>
-Stops a running Angular development server ("ng serve") that was started with the "devserver.start" tool.
+Stops a running Angular development server ("ng serve") that was started with the "devserver_start" tool.
 </Purpose>
 <Use Cases>
 * **Stopping the Server:** Use this tool to terminate a running development server and retrieve the logs.
