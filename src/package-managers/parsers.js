@@ -200,10 +200,18 @@ function isValidManifest(obj) {
     if (typeof obj !== 'object' || obj === null) {
         return false;
     }
-    const record = obj;
-    const name = record.name;
-    const version = record.version;
+    const { name, version } = obj;
     return typeof name === 'string' && typeof version === 'string' && (0, semver_1.valid)(version) !== null;
+}
+function isValidMetadata(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+        return false;
+    }
+    const { name, versions, 'dist-tags': distTags } = obj;
+    return (typeof name === 'string' &&
+        Array.isArray(versions) &&
+        typeof distTags === 'object' &&
+        distTags !== null);
 }
 /**
  * Parses the output of `npm view` or a compatible command to get a package manifest.
@@ -257,7 +265,22 @@ function parseNpmLikeMetadata(stdout, logger) {
         logger?.debug('  stdout is empty. No metadata found.');
         return null;
     }
-    return JSON.parse(stdout);
+    const result = JSON.parse(stdout);
+    // npm 12+ `npm view --json` always returns an array of objects.
+    if (Array.isArray(result)) {
+        for (const item of result) {
+            if (isValidMetadata(item)) {
+                return item;
+            }
+        }
+        logger?.debug('  No valid metadata found in the array.');
+        return null;
+    }
+    if (!isValidMetadata(result)) {
+        logger?.debug('  Parsed JSON is not valid metadata (missing name, versions, or dist-tags).');
+        return null;
+    }
+    return result;
 }
 /**
  * Parses the output of `yarn info` (classic) to get a package manifest.
@@ -371,9 +394,15 @@ function parseNpmLikeError(output, logger) {
         logger?.debug('  output is empty. No error found.');
         return null;
     }
-    // Attempt to parse as JSON first (common for pnpm, modern yarn, bun)
+    // Attempt to parse as JSON first (common for pnpm, modern yarn, bun, npm 12)
     try {
-        const jsonError = JSON.parse(output);
+        let jsonError = JSON.parse(output);
+        if (Array.isArray(jsonError)) {
+            jsonError = jsonError[0];
+        }
+        if (jsonError && typeof jsonError === 'object' && 'error' in jsonError) {
+            jsonError = jsonError.error;
+        }
         if (jsonError &&
             typeof jsonError.code === 'string' &&
             (typeof jsonError.summary === 'string' || typeof jsonError.message === 'string')) {
