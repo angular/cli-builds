@@ -43,6 +43,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.resolveFallbackMigrations = resolveFallbackMigrations;
 const tools_1 = require("@angular-devkit/schematics/tools");
 const listr2_1 = require("listr2");
 const node_fs_1 = require("node:fs");
@@ -486,7 +487,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 return 1;
             }
         }
-        const migrations = plan.migrationsToRun;
+        const migrations = await resolveFallbackMigrations(this.context.root, plan);
         if (migrations) {
             for (const migration of migrations) {
                 // Resolve the package from the workspace root, as otherwise it will be resolved from the temp
@@ -541,5 +542,45 @@ async function readPackageManifest(manifestPath) {
     catch {
         return undefined;
     }
+}
+/**
+ * Resolves migrations from installed package manifests on disk when they were omitted
+ * from the initial update plan.
+ *
+ * This fallback is necessary because private package registries (such as GitHub Packages)
+ * frequently strip custom non-npm metadata properties (like `ng-update`) from their remote
+ * registry API responses. By inspecting `node_modules/<package>/package.json` after installation,
+ * we ensure that any migration collections defined by the package are discovered and queued.
+ */
+async function resolveFallbackMigrations(workspaceRoot, plan) {
+    const migrations = [...plan.migrationsToRun];
+    const existingMigrationPackages = new Set(migrations.map((m) => m.package));
+    for (const [packageName, targetVersion] of plan.packagesToUpdate) {
+        if (existingMigrationPackages.has(packageName)) {
+            continue;
+        }
+        const packageJsonPath = (0, update_resolver_1.findPackageJson)(workspaceRoot, packageName);
+        if (packageJsonPath) {
+            try {
+                const packageJson = JSON.parse(await node_fs_1.promises.readFile(packageJsonPath, 'utf8'));
+                const ngUpdate = packageJson?.['ng-update'];
+                if (ngUpdate && typeof ngUpdate === 'object' && typeof ngUpdate.migrations === 'string') {
+                    const installedVersion = plan.packageInfoMap.get(packageName)?.installed.version;
+                    if (installedVersion) {
+                        migrations.push({
+                            package: packageName,
+                            collection: ngUpdate.migrations,
+                            from: installedVersion,
+                            to: targetVersion,
+                        });
+                    }
+                }
+            }
+            catch {
+                // Ignore read/parse errors for optional fallback
+            }
+        }
+    }
+    return migrations;
 }
 //# sourceMappingURL=cli.js.map
