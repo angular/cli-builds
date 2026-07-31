@@ -7,6 +7,7 @@
  */
 import { Argv } from 'yargs';
 import { CommandModule, CommandScope, Options } from '../../command-builder/command-module';
+import { UpdatePlan } from './update-resolver';
 interface UpdateCommandArgs {
     packages?: string[];
     force: boolean;
@@ -31,4 +32,19 @@ export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs
     private migrateOnly;
     private updatePackagesAndMigrate;
 }
+/**
+ * Resolves migrations from installed package manifests on disk when they were omitted
+ * from the initial update plan.
+ *
+ * This fallback is necessary because private package registries (such as GitHub Packages)
+ * frequently strip custom non-npm metadata properties (like `ng-update`) from their remote
+ * registry API responses. By inspecting `node_modules/<package>/package.json` after installation,
+ * we ensure that any migration collections defined by the package are discovered and queued.
+ */
+export declare function resolveFallbackMigrations(workspaceRoot: string, plan: UpdatePlan): Promise<{
+    package: string;
+    collection: string;
+    from: string;
+    to: string;
+}[]>;
 export {};

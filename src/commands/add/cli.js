@@ -201,24 +201,12 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
             {
                 title: 'Confirming installation',
                 enabled: !skipConfirmation && !options.dryRun,
-                skip: (context) => {
-                    if (context.hasSchematics) {
-                        return false;
-                    }
-                    return `The ${listr2_1.color.blue(context.packageIdentifier.toString())} package does not provide \`ng add\` actions.`;
-                },
                 task: (context, task) => this.confirmInstallationTask(context, task),
                 rendererOptions: { persistentOutput: true },
             },
             {
                 title: 'Installing package',
                 skip: (context) => {
-                    if (!context.hasSchematics) {
-                        const builtInSchematic = BUILT_IN_SCHEMATICS[context.packageIdentifier.name];
-                        if (builtInSchematic) {
-                            return `Skipping package installation.`;
-                        }
-                    }
                     if (context.dryRun) {
                         return `Skipping package installation. Would install package ${listr2_1.color.blue(context.packageIdentifier.toString())}.`;
                     }
@@ -244,6 +232,10 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                                 shouldCleanUp = true;
                             }
                         }
+                        else {
+                            await this.cleanUpTemporaryDependency(result.collectionName);
+                            shouldCleanUp = false;
+                        }
                     }
                     catch { }
                 }
@@ -268,6 +260,7 @@ class AddCommandModule extends schematics_command_module_1.SchematicsCommandModu
                 if (packageName) {
                     const builtInSchematic = BUILT_IN_SCHEMATICS[packageName];
                     if (builtInSchematic) {
+                        logger.info(`The ${listr2_1.color.blue(packageName)} package does not provide \`ng add\` actions.`);
                         logger.info('The Angular CLI will use built-in actions to add it to your project.');
                         return this.executeSchematic({
                             ...options,
