@@ -24,6 +24,7 @@ export declare function createMcpServer(options: {
     readOnly?: boolean;
     localOnly?: boolean;
     experimentalTools?: string[];
+    roots?: string[];
 }, logger: {
     warn(text: string): void;
 }): Promise<McpServer>;

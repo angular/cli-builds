@@ -157,8 +157,19 @@ exports.LocalWorkspaceHost = {
         // LocalWorkspaceHost does not enforce roots, so this is a no-op.
     },
 };
+function resolveRoots(roots) {
+    return roots.map((r) => {
+        try {
+            return (0, node_fs_1.realpathSync)((0, node_path_1.resolve)(r));
+        }
+        catch {
+            return (0, node_path_1.resolve)(r);
+        }
+    });
+}
 function createRootRestrictedHost(baseHost, initialRoots = [process.cwd()]) {
-    let roots = initialRoots;
+    const defaultRoots = resolveRoots(initialRoots);
+    let roots = defaultRoots;
     function checkPath(path) {
         const resolvedPath = (0, node_path_1.resolve)(path);
         let realPath;
@@ -202,7 +213,7 @@ function createRootRestrictedHost(baseHost, initialRoots = [process.cwd()]) {
     return {
         ...baseHost,
         setRoots(newRoots) {
-            roots = newRoots;
+            roots = newRoots.length > 0 ? resolveRoots(newRoots) : defaultRoots;
         },
         stat(path) {
             checkPath(path);

@@ -33,6 +33,11 @@ class McpCommandModule extends command_module_1.CommandModule {
     longDescriptionPath = undefined;
     builder(localYargs) {
         return localYargs
+            .option('root', {
+            type: 'string',
+            array: true,
+            describe: 'Allowed root directory paths for filesystem access and workspace discovery. Can be specified multiple times.',
+        })
             .option('read-only', {
             type: 'boolean',
             default: false,
@@ -61,6 +66,7 @@ class McpCommandModule extends command_module_1.CommandModule {
             readOnly: options.readOnly,
             localOnly: options.localOnly,
             experimentalTools: options.experimentalTool,
+            roots: options.root,
         }, this.context.logger);
         const transport = new stdio_1.StdioServerTransport();
         await server.connect(transport);

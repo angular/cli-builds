@@ -19,6 +19,7 @@ export interface McpToolContext {
     exampleDatabasePath?: string;
     devservers: Map<string, Devserver>;
     host: Host;
+    roots?: string[];
 }
 export type McpToolCallback<TInput extends ZodRawShape = ZodRawShape> = (args: z.infer<z.ZodObject<TInput>>, ctx: ServerContext) => ReturnType<ToolCallback>;
 export type McpToolFactory<TInput extends ZodRawShape> = (context: McpToolContext) => McpToolCallback<TInput> | Promise<McpToolCallback<TInput>>;

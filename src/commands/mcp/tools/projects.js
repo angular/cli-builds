@@ -466,7 +466,7 @@ function deduplicateSearchRoots(roots) {
     }
     return deduplicated;
 }
-async function createListProjectsHandler({ server }) {
+async function createListProjectsHandler({ server, roots: configuredRoots }) {
     return async () => {
         const workspaces = [];
         const parsingErrors = [];
@@ -477,11 +477,11 @@ async function createListProjectsHandler({ server }) {
         const clientCapabilities = server.server.getClientCapabilities();
         if (clientCapabilities?.roots) {
             const { roots } = await server.server.listRoots();
-            searchRoots = roots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
+            searchRoots = roots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri)));
         }
-        else {
-            // Fallback to the current working directory if client does not support roots
-            searchRoots = [process.cwd()];
+        if (!searchRoots || searchRoots.length === 0) {
+            searchRoots =
+                configuredRoots && configuredRoots.length > 0 ? configuredRoots : [process.cwd()];
         }
         searchRoots = deduplicateSearchRoots(searchRoots);
         // Pre-resolve allowed roots to handle their own symlinks or normalizations.

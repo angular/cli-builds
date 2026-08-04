@@ -104,7 +104,8 @@ for equivalent actions.
         ...options,
         logger,
     });
-    const restrictedHost = (0, host_1.createRootRestrictedHost)(host_1.LocalWorkspaceHost);
+    const resolvedRoots = options.roots?.map((r) => (0, node_path_1.resolve)(r));
+    const restrictedHost = (0, host_1.createRootRestrictedHost)(host_1.LocalWorkspaceHost, resolvedRoots?.length ? resolvedRoots : [process.cwd()]);
     server.server.oninitialized = () => {
         void (async () => {
             try {
@@ -138,6 +139,7 @@ for equivalent actions.
         exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
         devservers: new Map(),
         host: restrictedHost,
+        roots: resolvedRoots,
     }, toolDeclarations);
     return server;
 }
