@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const stdio_js_1 = require("@modelcontextprotocol/sdk/server/stdio.js");
+const stdio_1 = require("@modelcontextprotocol/server/stdio");
 const command_module_1 = require("../../command-builder/command-module");
 const tty_1 = require("../../utilities/tty");
 const mcp_server_1 = require("./mcp-server");
@@ -62,7 +62,7 @@ class McpCommandModule extends command_module_1.CommandModule {
             localOnly: options.localOnly,
             experimentalTools: options.experimentalTool,
         }, this.context.logger);
-        const transport = new stdio_js_1.StdioServerTransport();
+        const transport = new stdio_1.StdioServerTransport();
         await server.connect(transport);
     }
 }

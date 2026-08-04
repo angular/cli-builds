@@ -164,9 +164,9 @@ async function categorizeFile(sourceFile, host, extras, categorizedFiles) {
         zoneFiles.add(sourceFile);
     }
 }
-async function rankComponentFilesForMigration({ sendRequest }, componentFiles) {
+async function rankComponentFilesForMigration(ctx, componentFiles) {
     try {
-        const response = await sendRequest({
+        const response = await ctx.mcpReq.send({
             method: 'sampling/createMessage',
             params: {
                 messages: [

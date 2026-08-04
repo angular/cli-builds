@@ -10,8 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EXPERIMENTAL_TOOL_GROUPS = exports.EXPERIMENTAL_TOOLS = void 0;
 exports.createMcpServer = createMcpServer;
 exports.assembleToolDeclarations = assembleToolDeclarations;
-const mcp_js_1 = require("@modelcontextprotocol/sdk/server/mcp.js");
-const types_js_1 = require("@modelcontextprotocol/sdk/types.js");
+const server_1 = require("@modelcontextprotocol/server");
 const node_path_1 = require("node:path");
 const node_url_1 = require("node:url");
 const version_1 = require("../../utilities/version");
@@ -59,7 +58,7 @@ exports.EXPERIMENTAL_TOOL_GROUPS = {
     'devserver': [],
 };
 async function createMcpServer(options, logger) {
-    const server = new mcp_js_1.McpServer({
+    const server = new server_1.McpServer({
         name: 'angular-cli-server',
         version: version_1.VERSION.full,
     }, {
@@ -115,7 +114,7 @@ for equivalent actions.
                     const searchRoots = roots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];
                     restrictedHost.setRoots(searchRoots);
                     if (clientCapabilities.roots.listChanged) {
-                        server.server.setNotificationHandler(types_js_1.RootsListChangedNotificationSchema, async () => {
+                        server.server.setNotificationHandler('notifications/roots/list_changed', async () => {
                             try {
                                 const { roots: updatedRoots } = await server.server.listRoots();
                                 const updatedSearchRoots = updatedRoots?.map((r) => (0, node_path_1.normalize)((0, node_url_1.fileURLToPath)(r.uri))) ?? [];

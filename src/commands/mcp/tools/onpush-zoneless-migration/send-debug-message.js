@@ -8,13 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendDebugMessage = sendDebugMessage;
-function sendDebugMessage(message, { sendNotification }) {
-    void sendNotification({
-        method: 'notifications/message',
-        params: {
-            level: 'debug',
-            data: message,
-        },
-    });
+function sendDebugMessage(message, ctx) {
+    void ctx.mcpReq.log('debug', message);
 }
 //# sourceMappingURL=send-debug-message.js.map

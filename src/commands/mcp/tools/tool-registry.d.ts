@@ -5,9 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-import type { McpServer, ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types';
-import type { ZodRawShape } from 'zod';
+import type { McpServer, ServerContext, ToolAnnotations, ToolCallback } from '@modelcontextprotocol/server';
+import { type ZodRawShape, z } from 'zod';
 import type { AngularWorkspace } from '../../../utilities/config';
 import type { Devserver } from '../devserver';
 import type { Host } from '../host';
@@ -21,7 +20,8 @@ export interface McpToolContext {
     devservers: Map<string, Devserver>;
     host: Host;
 }
-export type McpToolFactory<TInput extends ZodRawShape> = (context: McpToolContext) => ToolCallback<TInput> | Promise<ToolCallback<TInput>>;
+export type McpToolCallback<TInput extends ZodRawShape = ZodRawShape> = (args: z.infer<z.ZodObject<TInput>>, ctx: ServerContext) => ReturnType<ToolCallback>;
+export type McpToolFactory<TInput extends ZodRawShape> = (context: McpToolContext) => McpToolCallback<TInput> | Promise<McpToolCallback<TInput>>;
 export interface McpToolDeclaration<TInput extends ZodRawShape, TOutput extends ZodRawShape> {
     name: string;
     title?: string;

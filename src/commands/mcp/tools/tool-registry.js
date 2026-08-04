@@ -9,6 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.declareTool = declareTool;
 exports.registerTools = registerTools;
+const zod_1 = require("zod");
 function declareTool(declaration) {
     return declaration;
 }
@@ -29,7 +30,11 @@ async function registerTools(server, context, declarations) {
             // openWorldHint: false means local only
             config.annotations.openWorldHint = !isLocalOnly;
         }
-        server.registerTool(name, config, handler);
+        server.registerTool(name, {
+            ...config,
+            inputSchema: config.inputSchema ? zod_1.z.object(config.inputSchema) : undefined,
+            outputSchema: config.outputSchema ? zod_1.z.object(config.outputSchema) : undefined,
+        }, handler);
     }
 }
 //# sourceMappingURL=tool-registry.js.map
