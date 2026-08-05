@@ -61,15 +61,13 @@ class McpCommandModule extends command_module_1.CommandModule {
             this.context.logger.info(INTERACTIVE_MESSAGE);
             return;
         }
-        const server = await (0, mcp_server_1.createMcpServer)({
+        (0, stdio_1.serveStdio)(() => (0, mcp_server_1.createMcpServer)({
             workspace: this.context.workspace,
             readOnly: options.readOnly,
             localOnly: options.localOnly,
             experimentalTools: options.experimentalTool,
             roots: options.root,
-        }, this.context.logger);
-        const transport = new stdio_1.StdioServerTransport();
-        await server.connect(transport);
+        }, this.context.logger));
     }
 }
 exports.default = McpCommandModule;
