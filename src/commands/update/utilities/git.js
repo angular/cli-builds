@@ -94,7 +94,7 @@ function checkCleanGit(root) {
             }
         }
     }
-    catch { } // eslint-disable-line no-empty
+    catch { }
     return true;
 }
 function isPathInsideRoot(filePath, root, topLevel) {
