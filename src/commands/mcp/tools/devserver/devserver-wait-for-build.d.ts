@@ -19,8 +19,8 @@ declare const devserverWaitForBuildToolInputSchema: z.ZodObject<{
 export type DevserverWaitForBuildToolInput = z.infer<typeof devserverWaitForBuildToolInputSchema>;
 declare const devserverWaitForBuildToolOutputSchema: z.ZodObject<{
     status: z.ZodEnum<{
-        timeout: "timeout";
         success: "success";
+        timeout: "timeout";
         failure: "failure";
         unknown: "unknown";
     }>;
@@ -33,7 +33,7 @@ export declare function waitForDevserverBuild(input: DevserverWaitForBuildToolIn
         text: string;
     }[];
     structuredContent: {
-        status: "timeout" | "success" | "failure" | "unknown";
+        status: "success" | "timeout" | "failure" | "unknown";
         logs?: string[] | undefined;
     };
 }>;
