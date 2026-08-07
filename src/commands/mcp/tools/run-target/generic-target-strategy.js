@@ -36,7 +36,7 @@ class GenericTargetStrategy {
             args.push('run', `${input.projectName}:${input.targetName}`);
         }
         if (input.configuration) {
-            args.push('-c', input.configuration);
+            args.push(`--configuration=${input.configuration}`);
         }
         let options = input.options;
         if (input.targetName === 'test') {

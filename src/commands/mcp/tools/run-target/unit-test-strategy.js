@@ -20,7 +20,7 @@ class UnitTestTargetStrategy {
     async execute(input, context) {
         const args = ['test', input.projectName];
         if (input.configuration) {
-            args.push('-c', input.configuration);
+            args.push(`--configuration=${input.configuration}`);
         }
         const builder = input.targetDefinition?.builder;
         if (builder === '@angular/build:unit-test') {
