@@ -21,7 +21,7 @@ class BuildTargetStrategy {
     async execute(input, context) {
         const args = ['build', input.projectName];
         if (input.configuration) {
-            args.push('-c', input.configuration);
+            args.push(`--configuration=${input.configuration}`);
         }
         args.push(...(0, options_serializer_1.serializeOptions)(input.options));
         let status = 'success';
