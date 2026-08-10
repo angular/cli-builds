@@ -45,6 +45,7 @@ exports.executeMigration = executeMigration;
 exports.executeMigrations = executeMigrations;
 exports.commitChanges = commitChanges;
 const schematics_1 = require("@angular-devkit/schematics");
+const listr2_1 = require("listr2");
 const semver = __importStar(require("semver"));
 const schematic_workflow_1 = require("../../../command-builder/utilities/schematic-workflow");
 const color_1 = require("../../../utilities/color");
@@ -71,12 +72,12 @@ async function executeSchematic(workflow, logger, collection, schematic, options
     }
     catch (e) {
         if (e instanceof schematics_1.UnsuccessfulWorkflowExecution) {
-            logger.error(`${color_1.figures.cross} Migration failed. See above for further details.\n`);
+            logger.error(`${listr2_1.figures.cross} Migration failed. See above for further details.\n`);
         }
         else {
             (0, error_1.assertIsError)(e);
             const logPath = (0, log_file_1.writeErrorToLogFile)(e);
-            logger.fatal(`${color_1.figures.cross} Migration failed: ${e.message}\n` +
+            logger.fatal(`${listr2_1.figures.cross} Migration failed: ${e.message}\n` +
                 `  See "${logPath}" for further details.\n`);
         }
         return { success: false, files: workflowSubscription.files };
@@ -144,7 +145,7 @@ async function executeMigrations(workflow, logger, packageName, collectionPath, 
 async function executePackageMigrations(workflow, logger, migrations, packageName, commit = false) {
     for (const migration of migrations) {
         const { title, description } = getMigrationTitleAndDescription(migration);
-        logger.info(color_1.colors.cyan(color_1.figures.pointer) + ' ' + color_1.colors.bold(title));
+        logger.info(color_1.colors.cyan(listr2_1.figures.pointer) + ' ' + color_1.colors.bold(title));
         if (description) {
             logger.info('  ' + description);
         }
@@ -235,7 +236,7 @@ async function getOptionalMigrationsToRun(logger, optionalMigrations, packageNam
     if (!(0, tty_1.isTTY)()) {
         for (const migration of optionalMigrations) {
             const { title } = getMigrationTitleAndDescription(migration);
-            logger.info(color_1.colors.cyan(color_1.figures.pointer) + ' ' + color_1.colors.bold(title));
+            logger.info(color_1.colors.cyan(listr2_1.figures.pointer) + ' ' + color_1.colors.bold(title));
             logger.info(color_1.colors.gray(`  ng update ${packageName} --name ${migration.name}`));
             logger.info(''); // Extra trailing newline.
         }
