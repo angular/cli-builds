@@ -1,6 +1,6 @@
 {
   "name": "@angular/cli",
-  "version": "22.1.3+sha-9020ddd",
+  "version": "22.1.3+sha-7ff0d44",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "bin": {
@@ -15,13 +15,13 @@
     "sdk"
   ],
   "dependencies": {
-    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#9020ddd",
-    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#9020ddd",
-    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#9020ddd",
+    "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#7ff0d44",
+    "@angular-devkit/core": "github:angular/angular-devkit-core-builds#7ff0d44",
+    "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#7ff0d44",
     "@inquirer/prompts": "8.5.2",
     "@listr2/prompt-adapter-inquirer": "4.2.4",
     "@modelcontextprotocol/sdk": "1.30.0",
-    "@schematics/angular": "github:angular/schematics-angular-builds#9020ddd",
+    "@schematics/angular": "github:angular/schematics-angular-builds#7ff0d44",
     "jsonc-parser": "3.3.1",
     "listr2": "10.2.2",
     "npm-package-arg": "14.0.0",
@@ -33,14 +33,14 @@
   "ng-update": {
     "migrations": "@schematics/angular/migrations/migration-collection.json",
     "packageGroup": {
-      "@angular/cli": "github:angular/cli-builds#9020ddd",
-      "@angular/build": "github:angular/angular-build-builds#9020ddd",
-      "@angular/ssr": "github:angular/angular-ssr-builds#9020ddd",
-      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#9020ddd",
-      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#9020ddd",
-      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#9020ddd",
-      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#9020ddd",
-      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#9020ddd"
+      "@angular/cli": "github:angular/cli-builds#7ff0d44",
+      "@angular/build": "github:angular/angular-build-builds#7ff0d44",
+      "@angular/ssr": "github:angular/angular-ssr-builds#7ff0d44",
+      "@angular-devkit/architect": "github:angular/angular-devkit-architect-builds#7ff0d44",
+      "@angular-devkit/build-angular": "github:angular/angular-devkit-build-angular-builds#7ff0d44",
+      "@angular-devkit/build-webpack": "github:angular/angular-devkit-build-webpack-builds#7ff0d44",
+      "@angular-devkit/core": "github:angular/angular-devkit-core-builds#7ff0d44",
+      "@angular-devkit/schematics": "github:angular/angular-devkit-schematics-builds#7ff0d44"
     }
   },
   "repository": {
