@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findAngularJsonDir = findAngularJsonDir;
 exports.getProject = getProject;
 exports.getDefaultProjectName = getDefaultProjectName;
+exports.isAllowedWorkspacePath = isAllowedWorkspacePath;
 exports.resolveWorkspaceAndProject = resolveWorkspaceAndProject;
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
