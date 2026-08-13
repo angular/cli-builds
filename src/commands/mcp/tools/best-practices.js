@@ -21,6 +21,7 @@ const node_module_1 = require("node:module");
 const node_path_1 = require("node:path");
 const zod_1 = require("zod");
 const version_1 = require("../../../utilities/version");
+const workspace_utils_1 = require("../workspace-utils");
 const tool_registry_1 = require("./tool-registry");
 const bestPracticesInputSchema = zod_1.z.object({
     workspacePath: zod_1.z
@@ -79,10 +80,26 @@ async function getBundledBestPractices() {
  *
  * @param workspacePath The absolute path to the user's `angular.json` file.
  * @param logger The MCP tool context logger for reporting warnings.
+ * @param server The MCP server context, used to enforce the client's declared roots.
  * @returns A promise that resolves to an object containing the guide's content and source,
  *     or `undefined` if the guide could not be resolved.
  */
-async function getVersionSpecificBestPractices(workspacePath, logger) {
+async function getVersionSpecificBestPractices(workspacePath, logger, server) {
+    if (server) {
+        let isAllowed;
+        try {
+            isAllowed = await (0, workspace_utils_1.isAllowedWorkspacePath)(server, workspacePath);
+        }
+        catch (e) {
+            logger.warn(`Failed to verify workspace path '${workspacePath}': ` +
+                `${e instanceof Error ? e.message : e}. Falling back to the bundled guide.`);
+            return undefined;
+        }
+        if (!isAllowed) {
+            throw new Error(`Workspace path is outside the allowed MCP roots: ${workspacePath}. ` +
+                "You can use 'list_projects' to find available workspaces.");
+        }
+    }
     // 1. Resolve the path to package.json
     let pkgJsonPath;
     try {
@@ -143,14 +160,14 @@ async function getVersionSpecificBestPractices(workspacePath, logger) {
  * @param context The MCP tool context, containing the logger.
  * @returns An async function that serves as the tool's executor.
  */
-function createBestPracticesHandler({ logger }) {
+function createBestPracticesHandler({ logger, server }) {
     let bundledBestPractices;
     return async (input) => {
         let content;
         let source;
         // First, try to get the version-specific guide.
         if (input.workspacePath) {
-            const versionSpecific = await getVersionSpecificBestPractices(input.workspacePath, logger);
+            const versionSpecific = await getVersionSpecificBestPractices(input.workspacePath, logger, server);
             if (versionSpecific) {
                 content = versionSpecific.content;
                 source = versionSpecific.source;

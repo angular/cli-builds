@@ -34,6 +34,7 @@ export declare function getProject(context: McpToolContext, name: string): works
  * be returned.
  */
 export declare function getDefaultProjectName(workspace: AngularWorkspace | undefined): string | undefined;
+export declare function isAllowedWorkspacePath(server: McpToolContext['server'], workspacePath: string): Promise<boolean>;
 /**
  * Resolves workspace and project for tools to operate on.
  *
