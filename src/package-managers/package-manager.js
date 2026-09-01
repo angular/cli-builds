@@ -559,8 +559,14 @@ class PackageManager {
                 await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'pnpm-workspace.yaml'), "packages:\n  - '.'\n");
             }
         }
+        // To prevent Yarn modern from traversing up the directory tree and failing because the temporary
+        // directory is not part of the project's workspace, write an empty `yarn.lock` to act as a project boundary.
+        if (this.name === 'yarn') {
+            await this.host.writeFile((0, node_path_1.join)(workingDirectory, 'yarn.lock'), '');
+        }
         // Copy configuration files if the package manager requires it (e.g., bun, yarn).
         if (this.descriptor.copyConfigFromProject) {
+            let copiedYarnConfig = false;
             for (const configFile of this.descriptor.configFiles) {
                 try {
                     const configPath = (0, node_path_1.join)(this.cwd, configFile);
@@ -569,10 +575,16 @@ class PackageManager {
                         content = sanitizeYarnRc(content);
                     }
                     await this.host.writeFile((0, node_path_1.join)(workingDirectory, configFile), content);
+                    if (this.name === 'yarn') {
+                        copiedYarnConfig = true;
+                    }
                 }
                 catch {
                     // Ignore missing config files.
                 }
+            }
+            if (this.name === 'yarn' && !copiedYarnConfig) {
+                await this.host.writeFile((0, node_path_1.join)(workingDirectory, '.yarnrc.yml'), 'nodeLinker: node-modules\n');
             }
         }
         const flags = [options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : ''].filter((flag) => flag);
