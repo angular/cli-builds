@@ -41,16 +41,13 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DOC_SEARCH_TOOL = void 0;
-const node_crypto_1 = require("node:crypto");
 const node_stream_1 = require("node:stream");
 const zod_1 = require("zod");
-const constants_1 = require("../constants");
 const tool_registry_1 = require("./tool-registry");
 const ALGOLIA_APP_ID = 'L1XWT2UJ7F';
 // https://www.algolia.com/doc/guides/security/api-keys/#search-only-api-key
 // This is a search only, rate limited key. It is sent within the URL of the query request.
-// This is not the actual key.
-const ALGOLIA_API_E = '34738e8ae1a45e58bbce7b0f9810633d8b727b44a6479cf5e14b6a337148bd50';
+const ALGOLIA_API_KEY = 'dfca7ed184db27927a512e5c6668b968';
 /**
  * The minimum major version of Angular for which a version-specific documentation index is known to exist.
  * Searches for versions older than this will be clamped to this version.
