@@ -11,13 +11,16 @@ import { EventCustomDimension, EventCustomMetric } from '../analytics/analytics-
 import { AngularWorkspace } from '../utilities/config';
 import { CommandContext, CommandScope, Options, OtherOptions } from './definitions';
 import { Option } from './utilities/json-schema';
+import '../utilities/markdown-loader';
 export { CommandScope };
 export type { CommandContext, Options, OtherOptions };
 export interface CommandModuleImplementation<T extends {} = {}> extends Omit<YargsCommandModule<{}, T>, 'builder' | 'handler'> {
     /** Scope in which the command can be executed in. */
     scope: CommandScope;
-    /** Path used to load the long description for the command in JSON help text. */
-    longDescriptionPath?: string;
+    /** Long description for the command in JSON help text. */
+    longDescription?: string;
+    /** Relative path to the long description file for the command in JSON help text. */
+    longDescriptionRelativePath?: string;
     /** Object declaring the options the command accepts, or a function accepting and returning a yargs instance. */
     builder(argv: Argv): Promise<Argv<T>> | Argv<T>;
     /** A function which will be passed the parsed argv. */
@@ -32,7 +35,8 @@ export declare abstract class CommandModule<T extends {} = {}> implements Comman
     protected readonly context: CommandContext;
     abstract readonly command: string;
     abstract readonly describe: string | false;
-    abstract readonly longDescriptionPath?: string;
+    readonly longDescription?: string;
+    readonly longDescriptionRelativePath?: string;
     protected readonly shouldReportAnalytics: boolean;
     readonly scope: CommandScope;
     private readonly optionsWithAnalytics;

@@ -14,5 +14,4 @@ export default class E2eCommandModule extends ArchitectCommandModule implements 
     command: string;
     aliases: string[] | undefined;
     describe: string;
-    longDescriptionPath?: string;
 }

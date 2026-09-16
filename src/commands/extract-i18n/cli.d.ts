@@ -12,6 +12,5 @@ export default class ExtractI18nCommandModule extends ArchitectCommandModule imp
     multiTarget: boolean;
     command: string;
     describe: string;
-    longDescriptionPath?: string | undefined;
     findDefaultBuilderName(project: workspaces.ProjectDefinition): Promise<string | undefined>;
 }

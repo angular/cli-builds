@@ -13,7 +13,6 @@ const command_module_1 = require("../../../command-builder/command-module");
 class AnalyticsInfoCommandModule extends command_module_1.CommandModule {
     command = 'info';
     describe = 'Prints analytics gathering and reporting configuration in the console.';
-    longDescriptionPath;
     builder(localYargs) {
         return localYargs.strict();
     }

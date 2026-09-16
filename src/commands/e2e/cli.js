@@ -36,7 +36,6 @@ class E2eCommandModule extends architect_command_module_1.ArchitectCommandModule
     command = 'e2e [project]';
     aliases = command_config_1.RootCommands['e2e'].aliases;
     describe = 'Builds and serves an Angular application, then runs end-to-end tests.';
-    longDescriptionPath;
 }
 exports.default = E2eCommandModule;
 //# sourceMappingURL=cli.js.map

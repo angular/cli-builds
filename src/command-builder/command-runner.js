@@ -78,10 +78,17 @@ async function runCommand(args, logger) {
     for (const CommandModule of await getCommandsToRegister(positional[0])) {
         (0, command_1.addCommandModuleToYargs)(CommandModule, context);
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const usageInstance = localYargs.getInternalMethods().getUsageInstance();
     if (jsonHelp) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const usageInstance = localYargs.getInternalMethods().getUsageInstance();
         usageInstance.help = () => (0, json_help_1.jsonHelpUsage)(localYargs);
+    }
+    else if (!help) {
+        // Yargs eagerly caches and formats the full command help (including table wrapping
+        // and Unicode string-width calculations via cliui) whenever a subcommand executes,
+        // in case the command fails. Because showHelpOnFail is disabled, this formatted text
+        // is never used. Skipping this work avoids non-trivial synchronous overhead during startup.
+        usageInstance.cacheHelpMessage = () => { };
     }
     // Add default command to support version option when no subcommand is specified
     localYargs.command('*', false, (builder) => builder.version('version', 'Show Angular CLI version.', version_1.VERSION.full));

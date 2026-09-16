@@ -12,5 +12,5 @@ export default class TestCommandModule extends ArchitectCommandModule implements
     command: string;
     aliases: string[] | undefined;
     describe: string;
-    longDescriptionPath: string;
+    longDescription: string;
 }

@@ -16,7 +16,6 @@ class GenerateCommandModule extends schematics_command_module_1.SchematicsComman
     command = 'generate';
     aliases = command_config_1.RootCommands['generate'].aliases;
     describe = 'Generates and/or modifies files based on a schematic.';
-    longDescriptionPath;
     async builder(argv) {
         let localYargs = (await super.builder(argv)).command({
             command: '$0 <schematic>',

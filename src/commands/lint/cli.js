@@ -6,9 +6,14 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_path_1 = require("node:path");
 const architect_command_module_1 = require("../../command-builder/architect-command-module");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
+const long_description_md_1 = __importDefault(require("./long-description.md"));
 class LintCommandModule extends architect_command_module_1.ArchitectCommandModule {
     missingTargetChoices = [
         {
@@ -18,7 +23,7 @@ class LintCommandModule extends architect_command_module_1.ArchitectCommandModul
     ];
     multiTarget = true;
     command = 'lint [project]';
-    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
+    longDescription = long_description_md_1.default;
     describe = 'Runs linting tools on Angular application code in a given project folder.';
 }
 exports.default = LintCommandModule;

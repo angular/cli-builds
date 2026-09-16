@@ -18,7 +18,7 @@ export default class AddCommandModule extends SchematicsCommandModule implements
     #private;
     command: string;
     describe: string;
-    longDescriptionPath: string;
+    longDescription: string;
     protected allowPrivateSchematics: boolean;
     private readonly schematicName;
     private rootRequire;

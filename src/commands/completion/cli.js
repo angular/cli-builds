@@ -6,17 +6,22 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_path_1 = require("node:path");
 const command_module_1 = require("../../command-builder/command-module");
 const command_1 = require("../../command-builder/utilities/command");
 const color_1 = require("../../utilities/color");
 const completion_1 = require("../../utilities/completion");
 const error_1 = require("../../utilities/error");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
+const long_description_md_1 = __importDefault(require("./long-description.md"));
 class CompletionCommandModule extends command_module_1.CommandModule {
     command = 'completion';
     describe = 'Set up Angular CLI autocompletion for your terminal.';
-    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
+    longDescription = long_description_md_1.default;
     builder(localYargs) {
         (0, command_1.addCommandModuleToYargs)(CompletionScriptCommandModule, this.context);
         return localYargs;
@@ -50,7 +55,6 @@ exports.default = CompletionCommandModule;
 class CompletionScriptCommandModule extends command_module_1.CommandModule {
     command = 'script';
     describe = 'Generate a bash and zsh real-time type-ahead autocompletion script.';
-    longDescriptionPath = undefined;
     builder(localYargs) {
         return localYargs;
     }

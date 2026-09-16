@@ -10,7 +10,6 @@ import { CommandModule, type CommandModuleImplementation } from '../../command-b
 export default class McpCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: false;
-    longDescriptionPath: undefined;
     builder(localYargs: Argv): Argv;
     run(options: {
         root: string[] | undefined;

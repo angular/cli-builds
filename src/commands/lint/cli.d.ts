@@ -12,6 +12,6 @@ export default class LintCommandModule extends ArchitectCommandModule implements
     missingTargetChoices: MissingTargetChoice[];
     multiTarget: boolean;
     command: string;
-    longDescriptionPath: string;
+    longDescription: string;
     describe: string;
 }

@@ -43,8 +43,6 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandModuleError = exports.CommandModule = exports.CommandScope = void 0;
 const core_1 = require("@angular-devkit/core");
-const node_fs_1 = require("node:fs");
-const node_path_1 = require("node:path");
 const helpers_1 = require("yargs/helpers");
 const analytics_1 = require("../analytics/analytics");
 const analytics_collector_1 = require("../analytics/analytics-collector");
@@ -55,6 +53,7 @@ const memoize_1 = require("../utilities/memoize");
 const definitions_1 = require("./definitions");
 Object.defineProperty(exports, "CommandScope", { enumerable: true, get: function () { return definitions_1.CommandScope; } });
 const json_schema_1 = require("./utilities/json-schema");
+require("../utilities/markdown-loader");
 let CommandModule = (() => {
     let _instanceExtraInitializers = [];
     let _getAnalytics_decorators;
@@ -66,6 +65,8 @@ let CommandModule = (() => {
             if (_metadata) Object.defineProperty(this, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         }
         context = __runInitializers(this, _instanceExtraInitializers);
+        longDescription;
+        longDescriptionRelativePath;
         shouldReportAnalytics = true;
         scope = definitions_1.CommandScope.Both;
         optionsWithAnalytics = new Map();
@@ -79,17 +80,19 @@ let CommandModule = (() => {
          * `false` will result in a hidden command.
          */
         get fullDescribe() {
-            return this.describe === false
-                ? false
-                : {
-                    describe: this.describe,
-                    ...(this.longDescriptionPath
-                        ? {
-                            longDescriptionRelativePath: (0, node_path_1.relative)((0, node_path_1.join)(__dirname, '../../../../'), this.longDescriptionPath).replace(/\\/g, node_path_1.posix.sep),
-                            longDescription: (0, node_fs_1.readFileSync)(this.longDescriptionPath, 'utf8').replace(/\r\n/g, '\n'),
-                        }
-                        : {}),
-                };
+            if (this.describe === false) {
+                return false;
+            }
+            const description = {
+                describe: this.describe,
+            };
+            if (this.longDescription) {
+                description.longDescription = this.longDescription.replace(/\r\n/g, '\n');
+                description.longDescriptionRelativePath =
+                    this.longDescriptionRelativePath ??
+                        `@angular/cli/src/commands/${this.commandName}/long-description.md`;
+            }
+            return description;
         }
         get commandName() {
             return this.command.split(' ', 1)[0];

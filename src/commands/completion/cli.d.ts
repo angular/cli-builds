@@ -10,7 +10,7 @@ import { CommandModule, CommandModuleImplementation } from '../../command-builde
 export default class CompletionCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
-    longDescriptionPath: string;
+    longDescription: string;
     builder(localYargs: Argv): Argv;
     run(): Promise<number>;
 }

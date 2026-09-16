@@ -55,6 +55,9 @@ const schematic_engine_host_1 = require("../../command-builder/utilities/schemat
 const color_1 = require("../../utilities/color");
 const environment_options_1 = require("../../utilities/environment-options");
 const error_1 = require("../../utilities/error");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
+const long_description_md_1 = __importDefault(require("./long-description.md"));
 const update_resolver_1 = require("./update-resolver");
 const cli_version_1 = require("./utilities/cli-version");
 const constants_1 = require("./utilities/constants");
@@ -68,7 +71,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
     resolvePaths = [__dirname, this.context.root];
     command = 'update [packages..]';
     describe = 'Updates your workspace and its dependencies. See https://update.angular.dev/.';
-    longDescriptionPath = path.join(__dirname, 'long-description.md');
+    longDescription = long_description_md_1.default;
     builder(localYargs) {
         return localYargs
             .positional('packages', {

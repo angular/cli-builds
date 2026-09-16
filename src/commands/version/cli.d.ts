@@ -14,7 +14,6 @@ export default class VersionCommandModule extends CommandModule implements Comma
     command: string;
     aliases: string[] | undefined;
     describe: string;
-    longDescriptionPath?: string | undefined;
     /**
      * Builds the command-line options for the `ng version` command.
      * @param localYargs The `yargs` instance to configure.

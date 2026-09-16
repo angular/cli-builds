@@ -14,7 +14,6 @@ class ExtractI18nCommandModule extends architect_command_module_1.ArchitectComma
     multiTarget = false;
     command = 'extract-i18n [project]';
     describe = 'Extracts i18n messages from source code.';
-    longDescriptionPath;
     async findDefaultBuilderName(project) {
         // Only application type projects have a default i18n extraction target
         if (project.extensions['projectType'] !== 'application') {

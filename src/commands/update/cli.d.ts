@@ -26,7 +26,7 @@ export default class UpdateCommandModule extends CommandModule<UpdateCommandArgs
     private readonly resolvePaths;
     command: string;
     describe: string;
-    longDescriptionPath: string;
+    longDescription: string;
     builder(localYargs: Argv): Argv<UpdateCommandArgs>;
     run(options: Options<UpdateCommandArgs>): Promise<number | void>;
     private migrateOnly;
