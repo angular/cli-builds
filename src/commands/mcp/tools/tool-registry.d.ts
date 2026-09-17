@@ -16,7 +16,6 @@ export interface McpToolContext {
     logger: {
         warn(text: string): void;
     };
-    exampleDatabasePath?: string;
     devservers: Map<string, Devserver>;
     host: Host;
     roots?: string[];

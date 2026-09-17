@@ -136,7 +136,6 @@ for equivalent actions.
     await (0, tool_registry_1.registerTools)(server, {
         workspace: options.workspace,
         logger,
-        exampleDatabasePath: (0, node_path_1.join)(__dirname, '../../../lib/code-examples.db'),
         devservers: new Map(),
         host: restrictedHost,
         roots: resolvedRoots,
