@@ -11,6 +11,7 @@ export default class AwesomeCommandModule extends CommandModule implements Comma
     command: string;
     describe: false;
     deprecated: boolean;
+    longDescriptionPath?: string | undefined;
     builder(localYargs: Argv): Argv;
     run(): void;
 }

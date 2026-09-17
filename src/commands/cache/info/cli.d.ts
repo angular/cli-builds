@@ -10,6 +10,7 @@ import { CommandModule, CommandModuleImplementation, CommandScope } from '../../
 export declare class CacheInfoCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
+    longDescriptionPath?: string | undefined;
     scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;

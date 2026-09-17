@@ -14,6 +14,7 @@ const utilities_1 = require("../utilities");
 class CacheCleanModule extends command_module_1.CommandModule {
     command = 'clean';
     describe = 'Deletes persistent disk cache from disk.';
+    longDescriptionPath;
     scope = command_module_1.CommandScope.In;
     builder(localYargs) {
         return localYargs.strict();

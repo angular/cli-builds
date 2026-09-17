@@ -15,7 +15,7 @@ interface ConfigCommandArgs {
 export default class ConfigCommandModule extends CommandModule<ConfigCommandArgs> implements CommandModuleImplementation<ConfigCommandArgs> {
     command: string;
     describe: string;
-    longDescription: string;
+    longDescriptionPath: string;
     builder(localYargs: Argv): Argv<ConfigCommandArgs>;
     run(options: Options<ConfigCommandArgs>): Promise<number | void>;
     private get;

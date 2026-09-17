@@ -32,6 +32,7 @@ class VersionCommandModule extends command_module_1.CommandModule {
     command = 'version';
     aliases = command_config_1.RootCommands['version'].aliases;
     describe = 'Outputs Angular CLI version.';
+    longDescriptionPath;
     /**
      * Builds the command-line options for the `ng version` command.
      * @param localYargs The `yargs` instance to configure.

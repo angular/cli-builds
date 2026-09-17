@@ -56,9 +56,6 @@ const schematics_command_module_1 = require("../../command-builder/schematics-co
 const error_1 = require("../../utilities/error");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
-const long_description_md_1 = __importDefault(require("./long-description.md"));
 class CommandError extends Error {
 }
 /**
@@ -98,7 +95,7 @@ const BUILT_IN_SCHEMATICS = {
 class AddCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     command = 'add <collection>';
     describe = 'Adds support for an external library to your project.';
-    longDescription = long_description_md_1.default;
+    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
     allowPrivateSchematics = true;
     schematicName = 'ng-add';
     rootRequire = (0, node_module_1.createRequire)(this.context.root + '/');

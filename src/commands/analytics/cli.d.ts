@@ -10,7 +10,7 @@ import { CommandModule, CommandModuleImplementation, Options } from '../../comma
 export default class AnalyticsCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
-    longDescription: string;
+    longDescriptionPath: string;
     builder(localYargs: Argv): Argv;
     run(_options: Options<{}>): void;
 }

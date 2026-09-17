@@ -30,6 +30,7 @@ For more information and documentation, visit: https://angular.dev/ai/mcp
 class McpCommandModule extends command_module_1.CommandModule {
     command = 'mcp';
     describe = false;
+    longDescriptionPath = undefined;
     builder(localYargs) {
         return localYargs
             .option('root', {

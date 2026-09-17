@@ -11,6 +11,7 @@ export declare class CacheDisableModule extends CommandModule implements Command
     command: string;
     aliases: string;
     describe: string;
+    longDescriptionPath: string | undefined;
     scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;
@@ -19,6 +20,7 @@ export declare class CacheEnableModule extends CommandModule implements CommandM
     command: string;
     aliases: string;
     describe: string;
+    longDescriptionPath: string | undefined;
     scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(): Promise<void>;

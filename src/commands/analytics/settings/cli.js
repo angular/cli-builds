@@ -11,6 +11,7 @@ exports.AnalyticsPromptModule = exports.AnalyticsEnableModule = exports.Analytic
 const analytics_1 = require("../../../analytics/analytics");
 const command_module_1 = require("../../../command-builder/command-module");
 class AnalyticsSettingModule extends command_module_1.CommandModule {
+    longDescriptionPath;
     builder(localYargs) {
         return localYargs
             .option('global', {

@@ -50,6 +50,7 @@ const utilities_1 = require("../utilities");
 class CacheInfoCommandModule extends command_module_1.CommandModule {
     command = 'info';
     describe = 'Prints persistent disk cache configuration and statistics in the console.';
+    longDescriptionPath;
     scope = command_module_1.CommandScope.In;
     builder(localYargs) {
         return localYargs.strict();

@@ -15,6 +15,7 @@ export default class GenerateCommandModule extends SchematicsCommandModule imple
     command: string;
     aliases: string[] | undefined;
     describe: string;
+    longDescriptionPath?: string | undefined;
     builder(argv: Argv): Promise<Argv<GenerateCommandArgs>>;
     run(options: Options<GenerateCommandArgs> & OtherOptions): Promise<number | void>;
     private getCollectionNames;

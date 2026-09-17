@@ -12,4 +12,5 @@ export default class ServeCommandModule extends ArchitectCommandModule implement
     command: string;
     aliases: string[] | undefined;
     describe: string;
+    longDescriptionPath?: string | undefined;
 }

@@ -16,7 +16,7 @@ export default class RunCommandModule extends ArchitectBaseCommandModule<RunComm
     scope: CommandScope;
     command: string;
     describe: string;
-    longDescription: string;
+    longDescriptionPath: string;
     builder(argv: Argv): Promise<Argv<RunCommandArgs>>;
     run(options: Options<RunCommandArgs> & OtherOptions): Promise<number>;
     protected makeTargetSpecifier(options?: Options<RunCommandArgs>): Target | undefined;

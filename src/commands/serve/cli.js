@@ -14,6 +14,7 @@ class ServeCommandModule extends architect_command_module_1.ArchitectCommandModu
     command = 'serve [project]';
     aliases = command_config_1.RootCommands['serve'].aliases;
     describe = 'Builds and serves your application, rebuilding on file changes.';
+    longDescriptionPath;
 }
 exports.default = ServeCommandModule;
 //# sourceMappingURL=cli.js.map

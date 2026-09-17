@@ -10,6 +10,7 @@ import { CommandModule, CommandModuleImplementation, Options } from '../../../co
 export declare class AnalyticsInfoCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
+    longDescriptionPath?: string;
     builder(localYargs: Argv): Argv;
     run(_options: Options<{}>): Promise<void>;
 }

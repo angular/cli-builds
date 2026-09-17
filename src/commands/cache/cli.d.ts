@@ -10,7 +10,7 @@ import { CommandModule, CommandModuleImplementation, CommandScope, Options } fro
 export default class CacheCommandModule extends CommandModule implements CommandModuleImplementation {
     command: string;
     describe: string;
-    longDescription: string;
+    longDescriptionPath: string;
     scope: CommandScope;
     builder(localYargs: Argv): Argv;
     run(_options: Options<{}>): void;

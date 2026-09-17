@@ -12,6 +12,6 @@ export default class DeployCommandModule extends ArchitectCommandModule implemen
     missingTargetChoices: MissingTargetChoice[];
     multiTarget: boolean;
     command: string;
-    longDescription: string;
+    longDescriptionPath: string;
     describe: string;
 }

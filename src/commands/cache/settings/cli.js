@@ -14,6 +14,7 @@ class CacheDisableModule extends command_module_1.CommandModule {
     command = 'disable';
     aliases = 'off';
     describe = 'Disables persistent disk cache for all projects in the workspace.';
+    longDescriptionPath;
     scope = command_module_1.CommandScope.In;
     builder(localYargs) {
         return localYargs;
@@ -27,6 +28,7 @@ class CacheEnableModule extends command_module_1.CommandModule {
     command = 'enable';
     aliases = 'on';
     describe = 'Enables disk cache for all projects in the workspace.';
+    longDescriptionPath;
     scope = command_module_1.CommandScope.In;
     builder(localYargs) {
         return localYargs;

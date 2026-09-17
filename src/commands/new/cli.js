@@ -6,17 +6,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_path_1 = require("node:path");
 const command_module_1 = require("../../command-builder/command-module");
 const schematics_command_module_1 = require("../../command-builder/schematics-command-module");
 const version_1 = require("../../utilities/version");
 const command_config_1 = require("../command-config");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
-const long_description_md_1 = __importDefault(require("./long-description.md"));
 class NewCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     schematicName = 'ng-new';
     scope = command_module_1.CommandScope.Out;
@@ -24,7 +19,7 @@ class NewCommandModule extends schematics_command_module_1.SchematicsCommandModu
     command = 'new [name]';
     aliases = command_config_1.RootCommands['new'].aliases;
     describe = 'Creates a new Angular workspace.';
-    longDescription = long_description_md_1.default;
+    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
     async builder(argv) {
         const localYargs = (await super.builder(argv)).option('collection', {
             alias: 'c',

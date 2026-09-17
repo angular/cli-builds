@@ -13,6 +13,7 @@ class AwesomeCommandModule extends command_module_1.CommandModule {
     command = 'make-this-awesome';
     describe = false;
     deprecated = false;
+    longDescriptionPath;
     builder(localYargs) {
         return localYargs;
     }

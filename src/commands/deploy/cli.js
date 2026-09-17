@@ -6,14 +6,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.dev/license
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_path_1 = require("node:path");
 const architect_command_module_1 = require("../../command-builder/architect-command-module");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
-const long_description_md_1 = __importDefault(require("./long-description.md"));
 class DeployCommandModule extends architect_command_module_1.ArchitectCommandModule {
     // The below choices should be kept in sync with the list in https://angular.dev/tools/cli/deployment
     missingTargetChoices = [
@@ -36,7 +31,7 @@ class DeployCommandModule extends architect_command_module_1.ArchitectCommandMod
     ];
     multiTarget = false;
     command = 'deploy [project]';
-    longDescription = long_description_md_1.default;
+    longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
     describe = 'Invokes the deploy builder for a specified project or for the default project in the workspace.';
 }
 exports.default = DeployCommandModule;

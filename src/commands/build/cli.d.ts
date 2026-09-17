@@ -12,5 +12,5 @@ export default class BuildCommandModule extends ArchitectCommandModule implement
     command: string;
     aliases: string[] | undefined;
     describe: string;
-    longDescription: string;
+    longDescriptionPath: string;
 }
