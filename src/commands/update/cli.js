@@ -464,9 +464,8 @@ class UpdateCommandModule extends command_module_1.CommandModule {
             await tasks.run();
             // Clear Node's module resolution path cache to prevent stale lookups
             // when resolving migration package paths.
-            const Module = require('node:module');
-            if (Module && Module._pathCache) {
-                Module._pathCache = Object.create(null);
+            if ('_pathCache' in node_module_1.Module) {
+                node_module_1.Module._pathCache = Object.create(null);
             }
         }
         catch (e) {
