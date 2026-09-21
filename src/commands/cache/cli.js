@@ -14,8 +14,6 @@ const command_module_1 = require("../../command-builder/command-module");
 const command_1 = require("../../command-builder/utilities/command");
 const cli_1 = require("./clean/cli");
 const cli_2 = require("./info/cli");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
 const long_description_md_1 = __importDefault(require("./long-description.md"));
 const cli_3 = require("./settings/cli");
 class CacheCommandModule extends command_module_1.CommandModule {

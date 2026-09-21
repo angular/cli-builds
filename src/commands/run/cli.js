@@ -12,8 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const architect_base_command_module_1 = require("../../command-builder/architect-base-command-module");
 const command_module_1 = require("../../command-builder/command-module");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
 const long_description_md_1 = __importDefault(require("./long-description.md"));
 class RunCommandModule extends architect_base_command_module_1.ArchitectBaseCommandModule {
     scope = command_module_1.CommandScope.In;

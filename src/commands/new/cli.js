@@ -14,8 +14,6 @@ const command_module_1 = require("../../command-builder/command-module");
 const schematics_command_module_1 = require("../../command-builder/schematics-command-module");
 const version_1 = require("../../utilities/version");
 const command_config_1 = require("../command-config");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
 const long_description_md_1 = __importDefault(require("./long-description.md"));
 class NewCommandModule extends schematics_command_module_1.SchematicsCommandModule {
     schematicName = 'ng-new';

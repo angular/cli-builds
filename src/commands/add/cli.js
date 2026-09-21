@@ -56,8 +56,6 @@ const schematics_command_module_1 = require("../../command-builder/schematics-co
 const error_1 = require("../../utilities/error");
 const tty_1 = require("../../utilities/tty");
 const version_1 = require("../../utilities/version");
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore strict-deps: Markdown files are asset dependencies bundled/loaded at runtime
 const long_description_md_1 = __importDefault(require("./long-description.md"));
 class CommandError extends Error {
 }
