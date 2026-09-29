@@ -4349,14 +4349,14 @@
             "**/*.spec.ts",
             "**/*.test.ts"
           ],
-          "description": "Specifies glob patterns of files to include for testing, relative to the project root. This option also has special handling for directory paths (includes all test files within) and file paths (includes the corresponding test file if one exists)."
+          "description": "Specifies glob patterns of files to include for testing, relative to the project source root. This option also has special handling for directory paths (includes all test files within) and file paths (includes the corresponding test file if one exists)."
         },
         "exclude": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Specifies glob patterns of files to exclude from testing, relative to the project root."
+          "description": "Specifies glob patterns of files to exclude from testing, relative to the project source root."
         },
         "filter": {
           "type": "string",
@@ -4810,7 +4810,7 @@
           "default": [
             "**/*.spec.ts"
           ],
-          "description": "Globs of files to include, relative to project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
+          "description": "Globs of files to include, relative to the project source root. \nThere are 2 special cases:\n - when a path to a directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists, it will be included instead."
         },
         "exclude": {
           "type": "array",
@@ -4818,7 +4818,7 @@
             "type": "string"
           },
           "default": [],
-          "description": "Globs of files to exclude, relative to the project root."
+          "description": "Globs of files to exclude, relative to the project source root."
         },
         "sourceMap": {
           "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration.",
@@ -5118,7 +5118,7 @@
           "default": [
             "**/*.spec.ts"
           ],
-          "description": "Globs of files to include, relative to project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
+          "description": "Globs of files to include, relative to the project source root. \nThere are 2 special cases:\n - when a path to a directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists, it will be included instead."
         },
         "exclude": {
           "type": "array",
@@ -5126,7 +5126,7 @@
             "type": "string"
           },
           "default": [],
-          "description": "Globs of files to exclude, relative to the project root."
+          "description": "Globs of files to exclude, relative to the project source root."
         },
         "sourceMap": {
           "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration.",
