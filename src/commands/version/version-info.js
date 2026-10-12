@@ -54,6 +54,13 @@ async function gatherVersionInfo(context) {
         }
     }
     const angularCoreVersion = packages['@angular/core'];
+    let packageManagerVersion;
+    try {
+        packageManagerVersion = await context.packageManager.getVersion();
+    }
+    catch {
+        // Ignore errors if the package manager is not available.
+    }
     return {
         cli: {
             version: version_1.VERSION.full,
@@ -72,7 +79,7 @@ async function gatherVersionInfo(context) {
             },
             packageManager: {
                 name: context.packageManager.name,
-                version: await context.packageManager.getVersion(),
+                version: packageManagerVersion,
             },
         },
         packages,

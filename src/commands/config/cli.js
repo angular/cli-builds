@@ -7,6 +7,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseJsonPath = parseJsonPath;
 const node_crypto_1 = require("node:crypto");
 const node_path_1 = require("node:path");
 const command_module_1 = require("../../command-builder/command-module");
@@ -96,7 +97,6 @@ exports.default = ConfigCommandModule;
  * ["a", 3, "foo", "bar", 2].
  * @param path The JSON string to parse.
  * @returns {(string|number)[]} The fragments for the string.
- * @private
  */
 function parseJsonPath(path) {
     const fragments = (path || '').split(/\./g);
@@ -115,7 +115,7 @@ function parseJsonPath(path) {
             const indices = match[2]
                 .slice(1, -1)
                 .split('][')
-                .map((x) => (/^\d$/.test(x) ? +x : x.replace(/"|'/g, '')));
+                .map((x) => (/^\d+$/.test(x) ? +x : x.replace(/"|'/g, '')));
             result.push(...indices);
         }
     }
