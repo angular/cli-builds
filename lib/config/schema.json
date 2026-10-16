@@ -1539,7 +1539,7 @@
         "entryFile": {
           "type": "string",
           "format": "path",
-          "description": "The path to the library's public API file, relative to the workspace root. This file defines what parts of the library are accessible to applications that import it.",
+          "description": "The name of the library's public API file, without the `.ts` extension, created in the library's `src` directory. This file defines what parts of the library are accessible to applications that import it.",
           "default": "public-api"
         },
         "prefix": {
@@ -1663,7 +1663,7 @@
       "properties": {
         "directory": {
           "type": "string",
-          "description": "The directory where the new workspace and project should be created. If not specified, the workspace will be created in the current directory."
+          "description": "The directory where the new workspace and project should be created. If not specified, the workspace will be created in a subfolder within the current directory, using the workspace's name."
         },
         "name": {
           "description": "The name for the new workspace and the initial project. This name will be used for the root directory and various identifiers throughout the project.",
@@ -4007,7 +4007,7 @@
         },
         "hmr": {
           "type": "boolean",
-          "description": "Enable hot module replacement. Defaults to the value of 'liveReload'. Currently, only global and component stylesheets are supported."
+          "description": "Enable hot module replacement. Defaults to the value of 'liveReload'. Currently, global stylesheets, component stylesheets, and component templates are supported."
         },
         "watch": {
           "type": "boolean",

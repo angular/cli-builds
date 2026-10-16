@@ -661,8 +661,9 @@ export type AngularInterfaceOptionsSchema = {
  */
 export type LibraryOptionsSchema = {
     /**
-     * The path to the library's public API file, relative to the workspace root. This file
-     * defines what parts of the library are accessible to applications that import it.
+     * The name of the library's public API file, without the `.ts` extension, created in the
+     * library's `src` directory. This file defines what parts of the library are accessible to
+     * applications that import it.
      */
     entryFile?: string;
     /**
@@ -731,7 +732,8 @@ export type AngularNgNewOptionsSchema = {
     createApplication?: boolean;
     /**
      * The directory where the new workspace and project should be created. If not specified,
-     * the workspace will be created in the current directory.
+     * the workspace will be created in a subfolder within the current directory, using the
+     * workspace's name.
      */
     directory?: string;
     /**
