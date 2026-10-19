@@ -436,7 +436,7 @@ export type AngularDirectiveOptionsSchema = {
     module?: string;
     /**
      * The name for the new directive. This will be used to create the directive's class and
-     * spec files (e.g., `my-directive.directive.ts` and `my-directive.directive.spec.ts`).
+     * spec files (e.g., `my-directive.ts` and `my-directive.spec.ts`).
      */
     name: string;
     /**
@@ -486,8 +486,7 @@ export type AngularDirectiveOptionsSchema = {
  */
 export type AngularEnumOptionsSchema = {
     /**
-     * The name for the new enum. This will be used to create the enum file (e.g.,
-     * `my-enum.enum.ts`).
+     * The name for the new enum. This will be used to create the enum file (e.g., `my-enum.ts`).
      */
     name: string;
     /**
@@ -531,7 +530,7 @@ export type AngularGuardOptionsSchema = {
     implements?: [Implement, ...Implement[]];
     /**
      * The name for the new route guard. This will be used to create the guard's class and spec
-     * files (e.g., `my-guard.guard.ts` and `my-guard.guard.spec.ts`).
+     * files (e.g., `example-guard.ts` and `example-guard.spec.ts`).
      */
     name: string;
     /**
@@ -596,8 +595,7 @@ export type AngularInterceptorOptionsSchema = {
     functional?: boolean;
     /**
      * The name for the new interceptor. This will be used to create the interceptor's class and
-     * spec files (e.g., `my-interceptor.interceptor.ts` and
-     * `my-interceptor.interceptor.spec.ts`).
+     * spec files (e.g., `example-interceptor.ts` and `example-interceptor.spec.ts`).
      */
     name: string;
     /**
@@ -628,7 +626,7 @@ export type AngularInterceptorOptionsSchema = {
 export type AngularInterfaceOptionsSchema = {
     /**
      * The name for the new interface. This will be used to create the interface file (e.g.,
-     * `my-interface.interface.ts`).
+     * `my-interface.ts`).
      */
     name: string;
     /**
@@ -878,7 +876,7 @@ export type AngularPipeOptionsSchema = {
     module?: string;
     /**
      * The name for the new pipe. This will be used to create the pipe's class and spec files
-     * (e.g., `my-pipe.pipe.ts` and `my-pipe.pipe.spec.ts`).
+     * (e.g., `example-pipe.ts` and `example-pipe.spec.ts`).
      */
     name: string;
     /**
@@ -930,7 +928,7 @@ export type AngularResolverOptionsSchema = {
     functional?: boolean;
     /**
      * The name for the new resolver. This will be used to create the resolver's class and spec
-     * files (e.g., `my-resolver.resolver.ts` and `my-resolver.resolver.spec.ts`).
+     * files (e.g., `example-resolver.ts` and `example-resolver.spec.ts`).
      */
     name: string;
     /**
@@ -975,7 +973,7 @@ export type AngularServiceOptionsSchema = {
     injectable?: boolean;
     /**
      * The name for the new service. This will be used to create the service's class and spec
-     * files (e.g., `my-service.service.ts` and `my-service.service.spec.ts`).
+     * files (e.g., `my-service.ts` and `my-service.spec.ts`).
      */
     name: string;
     /**

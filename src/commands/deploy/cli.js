@@ -32,7 +32,8 @@ class DeployCommandModule extends architect_command_module_1.ArchitectCommandMod
     multiTarget = false;
     command = 'deploy [project]';
     longDescriptionPath = (0, node_path_1.join)(__dirname, 'long-description.md');
-    describe = 'Invokes the deploy builder for a specified project or for the default project in the workspace.';
+    describe = 'Invokes the deploy builder for a specified project, the only project with a deploy target, ' +
+        'or the project in the current working directory.';
 }
 exports.default = DeployCommandModule;
 //# sourceMappingURL=cli.js.map
