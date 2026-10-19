@@ -168,7 +168,7 @@
             "S"
           ],
           "default": false,
-          "description": "Skip the generation of a unit test files `spec.ts`."
+          "description": "Skip the generation of unit test files `spec.ts`."
         },
         {
           "name": "ssr",
