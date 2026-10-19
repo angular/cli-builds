@@ -964,7 +964,7 @@
           ]
         },
         "skipTests": {
-          "description": "Skip the generation of a unit test files `spec.ts`.",
+          "description": "Skip the generation of unit test files `spec.ts`.",
           "type": "boolean",
           "default": false,
           "alias": "S"
@@ -1819,7 +1819,7 @@
         "aiConfig": {
           "type": "array",
           "uniqueItems": true,
-          "description": "Specifies which AI tools to generate configuration files for. These file are used to improve the outputs of AI tools by following the best practices.",
+          "description": "Specifies which AI tools to generate configuration files for. These files are used to improve the outputs of AI tools by following the best practices.",
           "items": {
             "type": "string",
             "enum": [
@@ -2585,7 +2585,7 @@
           "oneOf": [
             {
               "type": "boolean",
-              "description": "Enable prerending of pages of your application during build time."
+              "description": "Enable prerendering of pages of your application during build time."
             },
             {
               "type": "object",
@@ -4873,12 +4873,12 @@
           "oneOf": [
             {
               "type": "string",
-              "description": "A comma seperate list of browsers to run tests against."
+              "description": "A comma-separated list of browsers to run tests against."
             },
             {
               "const": false,
               "type": "boolean",
-              "description": "Does use run tests against a browser."
+              "description": "Does not run tests against a browser."
             }
           ]
         },
@@ -5180,12 +5180,12 @@
           "oneOf": [
             {
               "type": "string",
-              "description": "A comma seperate list of browsers to run tests against."
+              "description": "A comma-separated list of browsers to run tests against."
             },
             {
               "const": false,
               "type": "boolean",
-              "description": "Does use run tests against a browser."
+              "description": "Does not run tests against a browser."
             }
           ]
         },

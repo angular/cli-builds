@@ -160,7 +160,7 @@ export type AngularApplicationOptionsSchema = {
      */
     skipPackageJson?: boolean;
     /**
-     * Skip the generation of a unit test files `spec.ts`.
+     * Skip the generation of unit test files `spec.ts`.
      */
     skipTests?: boolean;
     /**
@@ -716,7 +716,7 @@ export type LibraryOptionsSchema = {
  */
 export type AngularNgNewOptionsSchema = {
     /**
-     * Specifies which AI tools to generate configuration files for. These file are used to
+     * Specifies which AI tools to generate configuration files for. These files are used to
      * improve the outputs of AI tools by following the best practices.
      */
     aiConfig?: AiConfig[];
