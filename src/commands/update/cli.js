@@ -170,7 +170,7 @@ class UpdateCommandModule extends command_module_1.CommandModule {
                 const packageIdentifier = (0, npm_package_arg_1.default)(request);
                 // only registry identifiers are supported
                 if (!packageIdentifier.registry) {
-                    logger.error(`Package '${request}' is not a registry package identifer.`);
+                    logger.error(`Package '${request}' is not a registry package identifier.`);
                     return 1;
                 }
                 if (packages.some((v) => v.name === packageIdentifier.name)) {

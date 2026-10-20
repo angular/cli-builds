@@ -210,7 +210,7 @@ async function initializeAutocomplete() {
     const rcFile = candidates.find((result) => result.status === 'fulfilled')?.value ?? runCommandCandidates[0];
     // Append Angular autocompletion setup to RC file.
     try {
-        await fs.appendFile(rcFile, '\n\n# Load Angular CLI autocompletion.\nsource <(ng completion script)\n');
+        await fs.appendFile(rcFile, '\n\n# Load Angular CLI autocompletion for interactive shells.\nif [[ $- == *i* ]]; then\n  source <(ng completion script)\nfi\n');
     }
     catch (err) {
         (0, error_1.assertIsError)(err);

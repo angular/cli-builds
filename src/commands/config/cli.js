@@ -74,7 +74,7 @@ class ConfigCommandModule extends command_module_1.CommandModule {
         const [config, configPath] = await (0, config_1.getWorkspaceRaw)(options.global ? 'global' : 'local');
         const { logger } = this.context;
         if (!config || !configPath) {
-            throw new command_module_1.CommandModuleError('Confguration file cannot be found.');
+            throw new command_module_1.CommandModuleError('Configuration file cannot be found.');
         }
         const normalizeUUIDValue = (v) => (v === '' ? (0, node_crypto_1.randomUUID)() : `${v}`);
         const value = options.jsonPath === 'cli.analyticsSharing.uuid'
