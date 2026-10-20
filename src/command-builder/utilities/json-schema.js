@@ -271,11 +271,11 @@ async function parseJsonSchemaToOptions(registry, schema, interactive = true) {
     core_1.json.schema.visitJsonSchema(flattenedSchema, visitor);
     // Sort by positional and name.
     return options.sort((a, b) => {
-        if (a.positional) {
-            return b.positional ? a.positional - b.positional : a.name.localeCompare(b.name);
+        if (a.positional !== undefined) {
+            return b.positional !== undefined ? a.positional - b.positional : -1;
         }
-        else if (b.positional) {
-            return -1;
+        else if (b.positional !== undefined) {
+            return 1;
         }
         return a.name.localeCompare(b.name);
     });
