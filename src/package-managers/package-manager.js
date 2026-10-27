@@ -20,6 +20,7 @@ const node_path_1 = require("node:path");
 const npm_package_arg_1 = __importDefault(require("npm-package-arg"));
 const semver_1 = require("semver");
 const error_1 = require("./error");
+const manifest_dependencies_1 = require("./manifest-dependencies");
 /**
  * The fields to request from the registry for package metadata.
  * This is a performance optimization to avoid downloading the full manifest
@@ -111,8 +112,17 @@ class PackageManager {
         }
         const args = this.descriptor.listDependenciesCommand;
         const workspacePackageName = await this.getCurrentPackageName();
-        const dependencies = await this.#fetchAndParse(args, (stdout, logger) => this.descriptor.outputParsers.listDependencies(stdout, logger, { workspacePackageName }));
-        return (this.#dependencyCache = dependencies ?? new Map());
+        const dependencies = (await this.#fetchAndParse(args, (stdout, logger) => this.descriptor.outputParsers.listDependencies(stdout, logger, { workspacePackageName }))) ?? new Map();
+        if (this.descriptor.requiresManifestDependencyLookup) {
+            const manifestDependencies = await (0, manifest_dependencies_1.resolveManifestDependencies)(this.host, this.cwd, this.descriptor.lockfiles);
+            // Entries resolved from disk intentionally override the command output. In a workspace
+            // member, they reflect the member's actual installed version (which may be nested and
+            // differ from the hoisted root version) and also provide the package path.
+            for (const [name, pkg] of manifestDependencies) {
+                dependencies.set(name, pkg);
+            }
+        }
+        return (this.#dependencyCache = dependencies);
     }
     /**
      * A private method to run a command using the package manager's binary.

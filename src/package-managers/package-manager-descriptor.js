@@ -161,6 +161,10 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         getRegistryOptions: (registry) => ({ args: ['--registry', registry] }),
         versionCommand: ['--version'],
         listDependenciesCommand: ['pm', 'ls'],
+        // `bun pm ls` only outputs root workspace dependencies when run in a workspace member.
+        // See: https://github.com/oven-sh/bun/issues/10008
+        requiresManifestDependencyLookup: true,
+        getPackageNameCommand: ['pm', 'pkg', 'get', 'name'],
         getManifestCommand: ['pm', 'view', '--json'],
         getRegistryMetadata: async (packageName, fetchAndParse) => {
             const [distTags, versions] = await Promise.all([
@@ -192,7 +196,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseBunDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
-            getError: parsers_1.parseNpmLikeError,
+            getError: parsers_1.parseBunError,
         },
         isNotFound: isKnownNotFound,
     },

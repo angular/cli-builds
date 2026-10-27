@@ -14,7 +14,7 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseBunDependencies, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnReleaseAge } from './parsers';
+import { parseBunDependencies, parseBunError, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnReleaseAge } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -57,6 +57,16 @@ export interface PackageManagerDescriptor {
     readonly versionCommand: readonly string[];
     /** The command to list all installed dependencies. */
     readonly listDependenciesCommand: readonly string[];
+    /**
+     * Whether declared dependencies in the current directory's `package.json` should be
+     * resolved from `node_modules` to supplement `listDependenciesCommand`.
+     *
+     * When enabled, this lookup runs for every project using the package manager (not only
+     * workspace members). Resolved entries take precedence over the command output and include
+     * the installed package path. This is required when `listDependenciesCommand` does not
+     * report a workspace member's own dependencies (e.g., `bun pm ls`).
+     */
+    readonly requiresManifestDependencyLookup?: boolean;
     /** The command to get the release age configuration value. */
     readonly getReleaseAgeConfigCommand?: readonly string[];
     /** The command to get the current package name. */
@@ -246,6 +256,8 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         };
         versionCommand: string[];
         listDependenciesCommand: string[];
+        requiresManifestDependencyLookup: true;
+        getPackageNameCommand: string[];
         getManifestCommand: string[];
         getRegistryMetadata: (packageName: string, fetchAndParse: <T>(args: readonly string[], parser: (stdout: string, logger?: Logger) => T | null) => Promise<T | null>) => Promise<{
             name: string;
@@ -256,7 +268,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseBunDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
-            getError: typeof parseNpmLikeError;
+            getError: typeof parseBunError;
         };
         isNotFound: typeof isKnownNotFound;
     };

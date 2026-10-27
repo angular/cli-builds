@@ -114,6 +114,28 @@ export declare function parseNpmLikeError(output: string, logger?: Logger): Erro
  */
 export declare function parseYarnClassicError(output: string, logger?: Logger): ErrorInfo | null;
 /**
+ * Parses the `stdout` or `stderr` output of `bun` commands to extract structured error information.
+ *
+ * Handles flat JSON error payloads emitted on `stdout` by `bun pm view` (e.g., when a requested
+ * version or dist-tag does not exist) as well as plain-text HTTP status errors emitted on `stderr`
+ * (e.g., 404 Not Found). Other JSON error shapes are delegated to `parseNpmLikeError`.
+ *
+ * Example JSON error output:
+ * ```json
+ * { "error": "No matching version found", "version": "@angular/core@99.99.99" }
+ * ```
+ *
+ * Example plain-text error output:
+ * ```
+ * 404 Not Found: https://registry.npmjs.org/@angular%2fnon-existent
+ * ```
+ *
+ * @param output The standard output or standard error of the command.
+ * @param logger An optional logger instance.
+ * @returns An `ErrorInfo` object if parsing is successful, otherwise `null`.
+ */
+export declare function parseBunError(output: string, logger?: Logger): ErrorInfo | null;
+/**
  * Parses the output of `bun pm ls`.
  *
  * Bun does not support JSON output for `pm ls`. The output is a tree structure:
