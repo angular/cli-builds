@@ -165,7 +165,7 @@ let SchematicsCommandModule = (() => {
                 optionTransforms: [
                     // Add configuration file defaults
                     async (schematic, current) => {
-                        const projectName = typeof current?.project === 'string' ? current.project : this.getProjectName();
+                        const projectName = typeof current?.project === 'string' ? current.project : undefined;
                         return {
                             ...(await (0, config_1.getSchematicDefaults)(schematic.collection.name, schematic.name, projectName)),
                             ...current,
@@ -385,7 +385,19 @@ let SchematicsCommandModule = (() => {
             if (projectName) {
                 return projectName;
             }
-            return undefined;
+            if (workspace.projects.size === 0) {
+                throw new Error('Cannot determine project for command.\n' +
+                    'This workspace does not contain any projects. ' +
+                    'Run "ng generate application" or "ng generate library" to create one.');
+            }
+            throw new Error('Cannot determine project for command.\n' +
+                'This is a multi-project workspace and more than one project supports this command. ' +
+                'Use the "--project" option to specify a project or change the current ' +
+                'working directory to a project directory.\n\n' +
+                `Available projects are:\n${[...workspace.projects.keys()]
+                    .sort()
+                    .map((p) => `- ${p}`)
+                    .join('\n')}`);
         }
         getResolvePaths(collectionName) {
             const { workspace, root } = this.context;
