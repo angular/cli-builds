@@ -114,6 +114,24 @@ export declare function parseNpmLikeError(output: string, logger?: Logger): Erro
  */
 export declare function parseYarnClassicError(output: string, logger?: Logger): ErrorInfo | null;
 /**
+ * Parses the `stdout` or `stderr` output of modern yarn (v2+) to extract structured error information.
+ *
+ * Modern yarn reports errors as JSON lines, one per message line. The first line holds the summary,
+ * and registry errors include the HTTP status, which is returned as a standardized error code
+ * (`E${statusCode}`). Other output is delegated to `parseNpmLikeError`.
+ *
+ * Example output (`yarn npm info <missing-package> --json`):
+ * ```json
+ * {"type":"error","name":35,"displayName":"YN0035","indent":"","data":"Package not found"}
+ * {"type":"error","name":35,"displayName":"YN0035","indent":"","data":"  Response Code: 404 (Not Found)"}
+ * ```
+ *
+ * @param output The standard output or standard error of the command.
+ * @param logger An optional logger instance.
+ * @returns An `ErrorInfo` object if parsing is successful, otherwise `null`.
+ */
+export declare function parseYarnModernError(output: string, logger?: Logger): ErrorInfo | null;
+/**
  * Parses the `stdout` or `stderr` output of `bun` commands to extract structured error information.
  *
  * Handles flat JSON error payloads emitted on `stdout` by `bun pm view` (e.g., when a requested

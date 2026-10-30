@@ -83,7 +83,7 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
             listDependencies: parsers_1.parseYarnModernDependencies,
             getRegistryManifest: parsers_1.parseNpmLikeManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
-            getError: parsers_1.parseNpmLikeError,
+            getError: parsers_1.parseYarnModernError,
             getReleaseAge: parsers_1.parseYarnReleaseAge,
         },
         isNotFound: isKnownNotFound,

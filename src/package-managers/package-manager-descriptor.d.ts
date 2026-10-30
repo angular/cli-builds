@@ -14,7 +14,7 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseBunDependencies, parseBunError, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnReleaseAge } from './parsers';
+import { parseBunDependencies, parseBunError, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnModernError, parseYarnReleaseAge } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -175,7 +175,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
             listDependencies: typeof parseYarnModernDependencies;
             getRegistryManifest: typeof parseNpmLikeManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
-            getError: typeof parseNpmLikeError;
+            getError: typeof parseYarnModernError;
             getReleaseAge: typeof parseYarnReleaseAge;
         };
         isNotFound: typeof isKnownNotFound;

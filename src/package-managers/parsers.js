@@ -15,6 +15,7 @@ exports.parseYarnClassicManifest = parseYarnClassicManifest;
 exports.parseYarnClassicMetadata = parseYarnClassicMetadata;
 exports.parseNpmLikeError = parseNpmLikeError;
 exports.parseYarnClassicError = parseYarnClassicError;
+exports.parseYarnModernError = parseYarnModernError;
 exports.parseBunError = parseBunError;
 exports.parseBunDependencies = parseBunDependencies;
 exports.parseYarnModernDependencies = parseYarnModernDependencies;
@@ -499,6 +500,54 @@ function parseYarnClassicError(output, logger) {
     }
     logger?.debug('  Failed to parse yarn classic error. No structured error found.');
     return null;
+}
+/**
+ * Parses the `stdout` or `stderr` output of modern yarn (v2+) to extract structured error information.
+ *
+ * Modern yarn reports errors as JSON lines, one per message line. The first line holds the summary,
+ * and registry errors include the HTTP status, which is returned as a standardized error code
+ * (`E${statusCode}`). Other output is delegated to `parseNpmLikeError`.
+ *
+ * Example output (`yarn npm info <missing-package> --json`):
+ * ```json
+ * {"type":"error","name":35,"displayName":"YN0035","indent":"","data":"Package not found"}
+ * {"type":"error","name":35,"displayName":"YN0035","indent":"","data":"  Response Code: 404 (Not Found)"}
+ * ```
+ *
+ * @param output The standard output or standard error of the command.
+ * @param logger An optional logger instance.
+ * @returns An `ErrorInfo` object if parsing is successful, otherwise `null`.
+ */
+function parseYarnModernError(output, logger) {
+    logger?.debug(`Parsing modern yarn error output...`);
+    logStdout(output, logger); // Log output for debugging purposes
+    if (!output) {
+        logger?.debug('  output is empty. No error found.');
+        return null;
+    }
+    const messages = [];
+    for (const json of parseJsonLines(output, logger)) {
+        if (json?.type === 'error' && typeof json.data === 'string') {
+            messages.push({ code: String(json.displayName ?? 'UNKNOWN_ERROR'), data: json.data });
+        }
+    }
+    if (messages.length === 0) {
+        return parseNpmLikeError(output, logger);
+    }
+    const [first, ...rest] = messages;
+    const statusCodeMatch = messages
+        .map(({ data }) => data.match(/Response Code: (\d{3})/))
+        .find((match) => match !== null);
+    const code = statusCodeMatch ? `E${statusCodeMatch[1]}` : first.code;
+    logger?.debug(`  Successfully parsed modern yarn error with code '${code}'.`);
+    return {
+        code,
+        summary: first.data.trim(),
+        detail: rest
+            .map(({ data }) => data.trim())
+            .filter(Boolean)
+            .join('\n') || undefined,
+    };
 }
 /**
  * Known Bun JSON error messages that indicate a requested version or dist-tag does not exist.
