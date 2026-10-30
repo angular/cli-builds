@@ -19,13 +19,15 @@ class CacheCleanModule extends command_module_1.CommandModule {
     builder(localYargs) {
         return localYargs.strict();
     }
-    run() {
-        const { path } = (0, utilities_1.getCacheConfig)(this.context.workspace);
-        return (0, promises_1.rm)(path, {
+    async run() {
+        const { path, localPath } = (0, utilities_1.getCacheConfig)(this.context.workspace);
+        // In a Git worktree, `path` is shared with the main checkout and `localPath` holds the
+        // development server's Vite cache. Both are the same path outside of a worktree.
+        await Promise.all(Array.from(new Set([path, localPath]), (cachePath) => (0, promises_1.rm)(cachePath, {
             force: true,
             recursive: true,
             maxRetries: 3,
-        });
+        })));
     }
 }
 exports.CacheCleanModule = CacheCleanModule;

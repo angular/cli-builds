@@ -67,6 +67,7 @@ function getCacheConfig(workspace) {
     }
     const defaultSettings = {
         path: getCacheBasePath(workspace.basePath, '.angular/cache'),
+        localPath: (0, node_path_1.resolve)(workspace.basePath, '.angular/cache'),
         environment: workspace_schema_1.Environment.Local,
         enabled: true,
     };
@@ -83,6 +84,7 @@ function getCacheConfig(workspace) {
      } = cacheSettings;
     return {
         path: getCacheBasePath(workspace.basePath, path),
+        localPath: (0, node_path_1.resolve)(workspace.basePath, path),
         environment,
         enabled,
     };
