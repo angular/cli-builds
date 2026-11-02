@@ -289,11 +289,12 @@ class PackageManager {
      * @param options.ignoreScripts If true, prevents lifecycle scripts from being executed.
      * @returns A promise that resolves when the command is complete.
      */
-    async install(options = { ignoreScripts: true }) {
+    async install(options = {}) {
+        const { force, ignoreScripts = true, ignorePeerDependencies } = options;
         const flags = [
-            options.force ? this.descriptor.forceFlag : '',
-            options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : '',
-            options.ignorePeerDependencies ? (this.descriptor.ignorePeerDependenciesFlag ?? '') : '',
+            force ? this.descriptor.forceFlag : '',
+            ignoreScripts ? this.descriptor.ignoreScriptsFlag : '',
+            ignorePeerDependencies ? (this.descriptor.ignorePeerDependenciesFlag ?? '') : '',
         ].filter((flag) => flag);
         const args = [...this.descriptor.installCommand, ...flags];
         await this.#run(args, options);
@@ -423,6 +424,12 @@ class PackageManager {
         }
         const cacheKey = options.registry ? `${specifier}|${options.registry}` : specifier;
         const manifest = await this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });
+        // Modern yarn returns the latest version instead of an error when the requested one does not exist.
+        if (manifest &&
+            (0, semver_1.validRange)(version) &&
+            !(0, semver_1.satisfies)(manifest.version, version, { includePrerelease: true })) {
+            return null;
+        }
         // If the provided version was not a specific version, also cache the specific fetched version
         if (manifest && manifest.version !== version) {
             const manifestSpecifier = `${manifest.name}@${manifest.version}`;
@@ -610,7 +617,8 @@ class PackageManager {
                 await this.host.writeFile((0, node_path_1.join)(workingDirectory, '.yarnrc.yml'), 'nodeLinker: node-modules\n');
             }
         }
-        const flags = [options.ignoreScripts ? this.descriptor.ignoreScriptsFlag : ''].filter((flag) => flag);
+        const { ignoreScripts = true } = options;
+        const flags = [ignoreScripts ? this.descriptor.ignoreScriptsFlag : ''].filter((flag) => flag);
         const args = [this.descriptor.addCommand, specifier, ...flags];
         try {
             await this.#run(args, { ...options, cwd: workingDirectory });
