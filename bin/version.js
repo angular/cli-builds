@@ -15,7 +15,7 @@ var SUPPORTED_NODE_VERSIONS = '^22.22.3 || ^24.15.0 || >=26.0.0';
 /**
  * The version of the Angular CLI.
  */
-var VERSION = '22.3.0-next.4+sha-12578ec';
+var VERSION = '22.3.0-next.4+sha-ad283a6';
 
 /**
  * The supported Node.js versions.
