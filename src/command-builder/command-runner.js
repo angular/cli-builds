@@ -110,7 +110,7 @@ async function runCommand(args, logger) {
         hidden: true,
         type: 'boolean',
     })
-        .help('help', 'Shows a help message for this command in the console.')
+        .help(help, help ? 'Shows a help message for this command in the console.' : undefined)
         // A complete list of strings can be found: https://github.com/yargs/yargs/blob/main/locales/en.json
         .updateStrings({
         'Commands:': color_1.colors.cyan('Commands:'),

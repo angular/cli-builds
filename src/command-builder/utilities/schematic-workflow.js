@@ -25,15 +25,11 @@ function subscribeToWorkflow(workflow, logger) {
                 logger.error(`ERROR! ${eventPath} ${event.description == 'alreadyExist' ? 'already exists' : 'does not exist'}.`);
                 break;
             case 'update':
-                logs.push(
-                // TODO: `as unknown` was necessary during TS 5.9 update. Figure out a long-term solution.
-                `${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.length} bytes)`);
+                logs.push(`${color_1.colors.cyan('UPDATE')} ${eventPath} (${event.content.byteLength} bytes)`);
                 files.add(eventPath);
                 break;
             case 'create':
-                logs.push(
-                // TODO: `as unknown` was necessary during TS 5.9 update. Figure out a long-term solution.
-                `${color_1.colors.green('CREATE')} ${eventPath} (${event.content.length} bytes)`);
+                logs.push(`${color_1.colors.green('CREATE')} ${eventPath} (${event.content.byteLength} bytes)`);
                 files.add(eventPath);
                 break;
             case 'delete':

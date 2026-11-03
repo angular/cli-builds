@@ -27,6 +27,7 @@ exports.parseNpmBeforeDate = parseNpmBeforeDate;
  * interpret the output of various package manager commands. Separating these
  * into their own file improves modularity and allows for focused testing.
  */
+const node_util_1 = require("node:util");
 const semver_1 = require("semver");
 const MAX_LOG_LENGTH = 1024;
 function logStdout(stdout, logger) {
@@ -363,10 +364,11 @@ function parseYarnClassicMetadata(stdout, logger) {
     return metadata;
 }
 /**
- * Parses the `stdout` or `stderr` output of npm, pnpm, modern yarn, or bun to extract structured error information.
+ * Parses the `stdout` or `stderr` output of npm or pnpm to extract structured error information.
+ * It is also used by `parseBunError` as a fallback for npm-compatible JSON error objects.
  *
  * This parser uses a multi-stage approach. It first attempts to parse the entire `output` as a
- * single JSON object, which is the standard for modern tools like pnpm, yarn, and bun. If JSON
+ * single JSON object, which is the standard for modern tools like pnpm and npm. If JSON
  * parsing fails, it falls back to a line-by-line regex-based approach to handle the plain
  * text output from older versions of npm.
  *
@@ -396,7 +398,7 @@ function parseNpmLikeError(output, logger) {
         logger?.debug('  output is empty. No error found.');
         return null;
     }
-    // Attempt to parse as JSON first (common for pnpm, modern yarn, npm 12)
+    // Attempt to parse as JSON first (common for pnpm, npm 12, and the Bun JSON fallback)
     try {
         let jsonError = JSON.parse(output);
         if (Array.isArray(jsonError)) {
@@ -504,9 +506,9 @@ function parseYarnClassicError(output, logger) {
 /**
  * Parses the `stdout` or `stderr` output of modern yarn (v2+) to extract structured error information.
  *
- * Modern yarn reports errors as JSON lines, one per message line. The first line holds the summary,
- * and registry errors include the HTTP status, which is returned as a standardized error code
- * (`E${statusCode}`). Other output is delegated to `parseNpmLikeError`.
+ * Modern yarn reports errors as JSON lines, one per message line, which may include ANSI color codes
+ * or OSC 8 hyperlinks when colors are enabled (e.g., in CI). The first line holds the summary, and
+ * registry errors include the HTTP status, which is returned as a standardized error code (`E${statusCode}`).
  *
  * Example output (`yarn npm info <missing-package> --json`):
  * ```json
@@ -528,25 +530,41 @@ function parseYarnModernError(output, logger) {
     const messages = [];
     for (const json of parseJsonLines(output, logger)) {
         if (json?.type === 'error' && typeof json.data === 'string') {
-            messages.push({ code: String(json.displayName ?? 'UNKNOWN_ERROR'), data: json.data });
+            const displayName = typeof json.displayName === 'string'
+                ? (0, node_util_1.stripVTControlCharacters)(json.displayName).trim()
+                : '';
+            messages.push({
+                code: displayName || 'UNKNOWN_ERROR',
+                data: (0, node_util_1.stripVTControlCharacters)(json.data),
+            });
         }
     }
     if (messages.length === 0) {
-        return parseNpmLikeError(output, logger);
+        logger?.debug('  Failed to parse modern yarn error. No structured error found.');
+        return null;
     }
-    const [first, ...rest] = messages;
-    const statusCodeMatch = messages
-        .map(({ data }) => data.match(/Response Code: (\d{3})/))
-        .find((match) => match !== null);
-    const code = statusCodeMatch ? `E${statusCodeMatch[1]}` : first.code;
+    let statusCode;
+    for (const { data } of messages) {
+        const match = data.match(/^\s*Response Code:\s*(\d{3})\b/);
+        if (match) {
+            const numericCode = Number(match[1]);
+            if (numericCode < 200 || numericCode >= 300) {
+                statusCode = match[1];
+                break;
+            }
+        }
+    }
+    const [first] = messages;
+    const code = statusCode ? `E${statusCode}` : first.code;
     logger?.debug(`  Successfully parsed modern yarn error with code '${code}'.`);
+    const [summary = `Package manager error: ${code}`, ...detailLines] = messages
+        .flatMap(({ data }) => data.split('\n'))
+        .map((line) => line.trim())
+        .filter(Boolean);
     return {
         code,
-        summary: first.data.trim(),
-        detail: rest
-            .map(({ data }) => data.trim())
-            .filter(Boolean)
-            .join('\n') || undefined,
+        summary,
+        detail: detailLines.join('\n') || undefined,
     };
 }
 /**

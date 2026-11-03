@@ -64,10 +64,11 @@ export declare function parseYarnClassicManifest(stdout: string, logger?: Logger
  */
 export declare function parseYarnClassicMetadata(stdout: string, logger?: Logger): PackageMetadata | null;
 /**
- * Parses the `stdout` or `stderr` output of npm, pnpm, modern yarn, or bun to extract structured error information.
+ * Parses the `stdout` or `stderr` output of npm or pnpm to extract structured error information.
+ * It is also used by `parseBunError` as a fallback for npm-compatible JSON error objects.
  *
  * This parser uses a multi-stage approach. It first attempts to parse the entire `output` as a
- * single JSON object, which is the standard for modern tools like pnpm, yarn, and bun. If JSON
+ * single JSON object, which is the standard for modern tools like pnpm and npm. If JSON
  * parsing fails, it falls back to a line-by-line regex-based approach to handle the plain
  * text output from older versions of npm.
  *
@@ -116,9 +117,9 @@ export declare function parseYarnClassicError(output: string, logger?: Logger): 
 /**
  * Parses the `stdout` or `stderr` output of modern yarn (v2+) to extract structured error information.
  *
- * Modern yarn reports errors as JSON lines, one per message line. The first line holds the summary,
- * and registry errors include the HTTP status, which is returned as a standardized error code
- * (`E${statusCode}`). Other output is delegated to `parseNpmLikeError`.
+ * Modern yarn reports errors as JSON lines, one per message line, which may include ANSI color codes
+ * or OSC 8 hyperlinks when colors are enabled (e.g., in CI). The first line holds the summary, and
+ * registry errors include the HTTP status, which is returned as a standardized error code (`E${statusCode}`).
  *
  * Example output (`yarn npm info <missing-package> --json`):
  * ```json
