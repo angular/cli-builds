@@ -14,7 +14,7 @@ import { ErrorInfo } from './error';
 import { Logger } from './logger';
 import { PackageManifest, PackageMetadata } from './package-metadata';
 import { InstalledPackage } from './package-tree';
-import { parseBunDependencies, parseBunError, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnModernError, parseYarnReleaseAge } from './parsers';
+import { parseBunDependencies, parseBunError, parseNpmBeforeDate, parseNpmLikeDependencies, parseNpmLikeError, parseNpmLikeManifest, parseNpmLikeMetadata, parsePnpmReleaseAge, parseYarnClassicDependencies, parseYarnClassicError, parseYarnClassicManifest, parseYarnClassicMetadata, parseYarnModernDependencies, parseYarnModernError, parseYarnModernManifest, parseYarnReleaseAge } from './parsers';
 /**
  * An interface that describes the commands and properties of a package manager.
  */
@@ -86,7 +86,9 @@ export interface PackageManagerDescriptor {
             workspacePackageName?: string;
         }) => Map<string, InstalledPackage>;
         /** A function to parse the output of `getManifestCommand` for a specific version. */
-        getRegistryManifest: (stdout: string, logger?: Logger) => PackageManifest | null;
+        getRegistryManifest: (stdout: string, logger?: Logger, options?: {
+            version?: string;
+        }) => PackageManifest | null;
         /** A function to parse the output of `getManifestCommand` for the full package metadata. */
         getRegistryMetadata: (stdout: string, logger?: Logger) => PackageMetadata | null;
         /** A function to parse the output when a command fails. */
@@ -173,7 +175,7 @@ export declare const SUPPORTED_PACKAGE_MANAGERS: {
         viewCommandFieldArgFormatter: (fields: readonly string[]) => string[];
         outputParsers: {
             listDependencies: typeof parseYarnModernDependencies;
-            getRegistryManifest: typeof parseNpmLikeManifest;
+            getRegistryManifest: typeof parseYarnModernManifest;
             getRegistryMetadata: typeof parseNpmLikeMetadata;
             getError: typeof parseYarnModernError;
             getReleaseAge: typeof parseYarnReleaseAge;

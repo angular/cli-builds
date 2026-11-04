@@ -78,10 +78,15 @@ exports.SUPPORTED_PACKAGE_MANAGERS = {
         listDependenciesCommand: ['info', '--name-only', '--json'],
         getReleaseAgeConfigCommand: ['config', 'get', 'npmMinimalAgeGate'],
         getManifestCommand: ['npm', 'info', '--json'],
-        viewCommandFieldArgFormatter: (fields) => ['--fields', fields.join(',')],
+        // Always include `dist-tags` so `parseYarnModernManifest` can detect when `yarn npm info`
+        // silently falls back to `latest` for a non-existent dist-tag.
+        viewCommandFieldArgFormatter: (fields) => [
+            '--fields',
+            [...new Set([...fields, 'dist-tags'])].join(','),
+        ],
         outputParsers: {
             listDependencies: parsers_1.parseYarnModernDependencies,
-            getRegistryManifest: parsers_1.parseNpmLikeManifest,
+            getRegistryManifest: parsers_1.parseYarnModernManifest,
             getRegistryMetadata: parsers_1.parseNpmLikeMetadata,
             getError: parsers_1.parseYarnModernError,
             getReleaseAge: parsers_1.parseYarnReleaseAge,

@@ -57,6 +57,26 @@ export declare function parseNpmLikeMetadata(stdout: string, logger?: Logger): P
  */
 export declare function parseYarnClassicManifest(stdout: string, logger?: Logger): PackageManifest | null;
 /**
+ * Parses the output of `yarn npm info` (modern yarn) to get a package manifest.
+ *
+ * Modern yarn silently falls back to `latest` when a requested dist-tag does not exist.
+ * When `options.version` is a dist-tag (not a valid SemVer range), this parser verifies
+ * that the tag exists in the `dist-tags` output field and resolves to the returned manifest
+ * version. The `dist-tags` field is always stripped from the returned manifest.
+ *
+ * NOTE: This only handles the dist-tag case. The equivalent fallback for SemVer versions and
+ * ranges is handled for all package managers by `PackageManager.getRegistryManifest`.
+ *
+ * @param stdout The standard output of the command.
+ * @param logger An optional logger instance.
+ * @param options Optional context including the requested version or dist-tag.
+ * @returns The package manifest object, or `null` if not found or if the requested
+ * dist-tag could not be verified.
+ */
+export declare function parseYarnModernManifest(stdout: string, logger?: Logger, options?: {
+    version?: string;
+}): PackageManifest | null;
+/**
  * Parses the output of `yarn info` (classic) to get package metadata.
  * @param stdout The standard output of the command.
  * @param logger An optional logger instance.

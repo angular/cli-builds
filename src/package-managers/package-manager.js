@@ -403,6 +403,16 @@ class PackageManager {
         return metadata;
     }
     /**
+     * Creates the in-memory cache key for a registry manifest.
+     *
+     * The key is intentionally based on the unquoted `name@version` specifier so that it is
+     * stable regardless of whether the host requires shell quoting for command arguments.
+     */
+    #getManifestCacheKey(packageName, version, registry) {
+        const specifier = `${packageName}@${version}`;
+        return registry ? `${specifier}|${registry}` : specifier;
+    }
+    /**
      * Fetches the registry manifest for a specific version of a package.
      * The manifest is similar to the package's `package.json` file.
      * @param packageName The name of the package to fetch the manifest for.
@@ -422,21 +432,28 @@ class PackageManager {
         if (formatter) {
             commandArgs.push(...formatter(exports.MANIFEST_FIELDS));
         }
-        const cacheKey = options.registry ? `${specifier}|${options.registry}` : specifier;
-        const manifest = await this.#fetchAndParse(commandArgs, (stdout, logger) => this.descriptor.outputParsers.getRegistryManifest(stdout, logger), { ...options, cache: this.#manifestCache, cacheKey });
-        // Modern yarn returns the latest version instead of an error when the requested one does not exist.
-        if (manifest &&
-            (0, semver_1.validRange)(version) &&
-            !(0, semver_1.satisfies)(manifest.version, version, { includePrerelease: true })) {
-            return null;
-        }
+        const cacheKey = this.#getManifestCacheKey(packageName, version, options.registry);
+        const normalizedRange = (0, semver_1.validRange)(version);
+        const manifest = await this.#fetchAndParse(commandArgs, (stdout, logger) => {
+            const parsed = this.descriptor.outputParsers.getRegistryManifest(stdout, logger, {
+                version,
+            });
+            // Modern yarn returns the latest version instead of an error when a requested
+            // version or range does not exist. Validating inside the parser ensures the rejected
+            // result is cached as `null`. Dist-tag fallbacks cannot be detected here and are
+            // validated by the descriptor's parser instead (see `parseYarnModernManifest`).
+            if (parsed &&
+                normalizedRange &&
+                !(0, semver_1.satisfies)(parsed.version, normalizedRange, {
+                    includePrerelease: normalizedRange === '*',
+                })) {
+                return null;
+            }
+            return parsed;
+        }, { ...options, cache: this.#manifestCache, cacheKey });
         // If the provided version was not a specific version, also cache the specific fetched version
         if (manifest && manifest.version !== version) {
-            const manifestSpecifier = `${manifest.name}@${manifest.version}`;
-            const manifestCacheKey = options.registry
-                ? `${manifestSpecifier}|${options.registry}`
-                : manifestSpecifier;
-            this.#manifestCache.set(manifestCacheKey, manifest);
+            this.#manifestCache.set(this.#getManifestCacheKey(manifest.name, manifest.version, options.registry), manifest);
         }
         return manifest;
     }
