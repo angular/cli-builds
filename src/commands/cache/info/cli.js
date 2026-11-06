@@ -57,9 +57,14 @@ class CacheInfoCommandModule extends command_module_1.CommandModule {
     }
     async run() {
         const cacheConfig = (0, utilities_1.getCacheConfig)(this.context.workspace);
-        const { path, environment, enabled } = cacheConfig;
+        const { path, localPath, environment, enabled } = cacheConfig;
         const effectiveStatus = this.effectiveEnabledStatus(cacheConfig);
-        const sizeOnDisk = await this.getSizeOfDirectory(path);
+        // In a Git worktree, `path` is shared with the main checkout while `localPath` holds the
+        // development server's Vite cache. Both are the same path outside of a worktree.
+        const [sizeOnDisk, localSizeOnDisk] = await Promise.all([
+            this.getSizeOfDirectory(path),
+            localPath !== path ? this.getSizeOfDirectory(localPath) : undefined,
+        ]);
         const info = [
             {
                 label: 'Enabled',
@@ -77,12 +82,20 @@ class CacheInfoCommandModule extends command_module_1.CommandModule {
                 label: 'Size on disk',
                 value: color_1.colors.cyan(sizeOnDisk),
             },
-            {
-                label: 'Effective Status',
-                value: (effectiveStatus ? color_1.colors.green('Enabled') : color_1.colors.red('Disabled')) +
-                    ' (current machine)',
-            },
         ];
+        if (localSizeOnDisk !== undefined) {
+            info.push({
+                label: 'Local path',
+                value: color_1.colors.cyan(localPath),
+            }, {
+                label: 'Local size on disk',
+                value: color_1.colors.cyan(localSizeOnDisk),
+            });
+        }
+        info.push({
+            label: 'Effective Status',
+            value: (effectiveStatus ? color_1.colors.green('Enabled') : color_1.colors.red('Disabled')) + ' (current machine)',
+        });
         const maxLabelLength = Math.max(...info.map((l) => l.label.length));
         const output = info
             .map(({ label, value }) => color_1.colors.bold(label.padEnd(maxLabelLength + 2)) + `: ${value}`)
