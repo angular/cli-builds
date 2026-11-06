@@ -23,7 +23,7 @@ class GenerateCommandModule extends schematics_command_module_1.SchematicsComman
             describe: 'Run the provided schematic.',
             builder: (localYargs) => localYargs
                 .positional('schematic', {
-                describe: 'The [collection:schematic] to run.',
+                describe: 'The `[collection:schematic]` to run.',
                 type: 'string',
                 demandOption: true,
             })
