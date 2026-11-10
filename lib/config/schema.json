@@ -169,6 +169,9 @@
         "@schematics/angular:directive": {
           "$ref": "#/definitions/SchematicsAngularDirectiveSchema"
         },
+        "@schematics/angular:entry-point": {
+          "$ref": "#/definitions/SchematicsAngularEntryPointSchema"
+        },
         "@schematics/angular:enum": {
           "$ref": "#/definitions/SchematicsAngularEnumSchema"
         },
@@ -1330,6 +1333,57 @@
           "type": "boolean",
           "default": true,
           "description": "When true, the 'type' option will be appended to the generated class name. When false, only the file name will include the type."
+        }
+      }
+    },
+    "SchematicsAngularEntryPointSchema": {
+      "title": "Angular Entry Point Options Schema",
+      "type": "object",
+      "description": "Creates a new secondary entry point in an Angular library project.",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the secondary entry point (for example, 'testing' or 'feature/sub').",
+          "pattern": "^(?!.*\\.\\.)[a-zA-Z0-9-~][a-zA-Z0-9-._~]*(?:/[a-zA-Z0-9-~][a-zA-Z0-9-._~]*)*$",
+          "$default": {
+            "$source": "argv",
+            "index": 0
+          }
+        },
+        "project": {
+          "type": "string",
+          "description": "The name of the library project where the secondary entry point should be added. If not specified, the CLI will determine the project from the current directory.",
+          "$default": {
+            "$source": "projectName"
+          }
+        },
+        "entryFile": {
+          "type": "string",
+          "format": "path",
+          "description": "The file name at which to create the secondary entry point's public API file, without the `.ts` extension.",
+          "default": "public-api"
+        },
+        "prefix": {
+          "type": "string",
+          "format": "html-selector",
+          "description": "A prefix to apply to generated selectors.",
+          "alias": "p"
+        },
+        "standalone": {
+          "description": "Creates a secondary entry point based upon the standalone API, without NgModules.",
+          "type": "boolean",
+          "default": true
+        },
+        "skipTests": {
+          "type": "boolean",
+          "default": false,
+          "description": "Do not create `spec.ts` test files for the new secondary entry point."
+        },
+        "skipTsConfig": {
+          "type": "boolean",
+          "default": false,
+          "description": "Do not update `tsconfig.json` to add a path mapping for the new secondary entry point."
         }
       }
     },
