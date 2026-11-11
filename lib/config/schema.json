@@ -4235,12 +4235,13 @@
         },
         "i18nDuplicateTranslation": {
           "type": "string",
-          "description": "How to handle duplicate translations.",
+          "description": "How to handle duplicate messages found during extraction.",
           "enum": [
             "error",
             "warning",
             "ignore"
-          ]
+          ],
+          "default": "warning"
         }
       },
       "additionalProperties": false
@@ -4286,12 +4287,13 @@
         },
         "i18nDuplicateTranslation": {
           "type": "string",
-          "description": "How to handle duplicate translations.",
+          "description": "How to handle duplicate messages found during extraction.",
           "enum": [
             "error",
             "warning",
             "ignore"
-          ]
+          ],
+          "default": "warning"
         }
       },
       "additionalProperties": false
