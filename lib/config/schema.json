@@ -1002,7 +1002,8 @@
             "vitest",
             "karma"
           ],
-          "default": "vitest"
+          "default": "vitest",
+          "deprecated": true
         },
         "skipPackageJson": {
           "type": "boolean",
@@ -1657,7 +1658,8 @@
             "vitest",
             "karma"
           ],
-          "default": "vitest"
+          "default": "vitest",
+          "deprecated": true
         }
       }
     },
@@ -1853,7 +1855,8 @@
             "vitest",
             "karma"
           ],
-          "default": "vitest"
+          "default": "vitest",
+          "deprecated": true
         },
         "createApplication": {
           "description": "Create a new initial application project in the new workspace. When false, creates an empty workspace with no initial application. You can then use the `ng generate application` command to create applications in the `projects` directory.",
@@ -5999,6 +6002,7 @@
     "AngularDevkitBuildAngularBuildersNgPackagrSchema": {
       "title": "ng-packagr Target",
       "description": "ng-packagr target options for Build Architect. Use to build library projects.",
+      "deprecated": true,
       "type": "object",
       "properties": {
         "project": {
@@ -6024,6 +6028,7 @@
     "AngularBuildBuildersNgPackagrSchema": {
       "title": "ng-packagr Target",
       "description": "ng-packagr target options for Build Architect. Use to build library projects.",
+      "deprecated": true,
       "type": "object",
       "properties": {
         "project": {
